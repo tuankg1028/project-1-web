@@ -1,0 +1,4 @@
+getIOThread()
+getInstance()
+getMainThread()
+getAdapterName( param)
