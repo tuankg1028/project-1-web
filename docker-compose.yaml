@@ -8,9 +8,9 @@ services:
   redis:
     image: "redis:alpine"
     volumes:
-      - .docker/data/redis:/data
+      - /data/redis:/data
   db:
     image: mongo
     volumes:
-      - .docker/data/db:/data/db
+      - /data/db:/data/db
     restart: unless-stopped
