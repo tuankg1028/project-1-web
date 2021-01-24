@@ -6,6 +6,13 @@ var schema = new Schema(
   {
     name: String,
     categoryName: String,
+    developer: String,
+    updatedDate: String,
+    currentVersion: String,
+    size: String,
+    installs: String,
+    privacyLink: String,
+    chplayLink: String,
     nodes: [
       {
         id: Schema.Types.ObjectId,

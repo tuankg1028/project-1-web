@@ -13,45 +13,55 @@ const API = axios.create({
 });
 
 const seach = async (appName) => {
-  const result = [];
-  const response = await API.get(`/search?q=${appName}`);
-  const $ = cheerio.load(response.data);
+  try {
+    const result = [];
+    const response = await API.get(`/search?q=${appName}`);
+    const $ = cheerio.load(response.data);
 
-  // for each hrefs
-  $("#search-res")
-    .find(".search-dl p a")
-    .each(function (index, element) {
-      result.push($(element).attr("href"));
-    });
+    // for each hrefs
+    $("#search-res")
+      .find(".search-dl p a")
+      .each(function (index, element) {
+        result.push($(element).attr("href"));
+      });
 
-  console.log(chalk.green("APK PURE response: "), JSON.stringify(result));
-  return result;
+    console.log(chalk.green("APK PURE response: "), JSON.stringify(result));
+    return result;
+  } catch (err) {
+    Helpers.Logger.info(err);
+    Helpers.Logger.error("ERROR: seach APK");
+  }
 };
 
 const download = async (appName, appIdFromAPKPure) => {
-  const path = "./apkTemp/" + appName + "-" + uuidv4() + ".apk";
-  const response = await API.get(`${appIdFromAPKPure}/download?from=details`);
+  try {
+    const path = "./apkTemp/" + appName + "-" + uuidv4() + ".apk";
+    const response = await API.get(`${appIdFromAPKPure}/download?from=details`);
 
-  // get download link
-  const $ = cheerio.load(response.data);
-  const downloadLink = $("#download_link").attr("href");
+    // get download link
+    const $ = cheerio.load(response.data);
+    const downloadLink = $("#download_link").attr("href");
 
-  // apk file
-  await API.get(downloadLink, {
-    responseType: "stream",
-  })
-    .then((response) => {
-      return new Promise((resolve, reject) => {
-        response.data.pipe(fs.createWriteStream(path));
-
-        response.data.on("end", resolve);
-      });
+    // apk file
+    await API.get(downloadLink, {
+      responseType: "stream",
     })
-    .then(() => {
-      console.log(chalk.green("Dowloaded file from APK Pure successfully"));
-    });
+      .then((response) => {
+        return new Promise((resolve, reject) => {
+          response.data.pipe(fs.createWriteStream(path));
 
-  return path;
+          response.data.on("end", resolve);
+        });
+      })
+      .then(() => {
+        console.log(chalk.green("Dowloaded file from APK Pure successfully"));
+      });
+
+    return path;
+  } catch (err) {
+    Helpers.Logger.info(err);
+    Helpers.Logger.error("ERROR: download APK");
+  }
 };
 export default {
   seach,

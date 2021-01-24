@@ -4,11 +4,13 @@ import path from "path";
 import Models from "../models";
 import readXlsxFile from "read-excel-file/node";
 import Services from "../services";
-import { isNumber } from "lodash";
+import { create, isNumber } from "lodash";
 import fs from "fs";
 import pLimit from "p-limit";
+import url from "url";
+const { execSync } = require("child_process");
 
-const { MAPPING_FOLDER, SOURCE_APP } = process.env;
+const { MAPPING_FOLDER, SOURCE_APP, APPS_CSV_PATH } = process.env;
 
 const initTreeOnDB = async () => {
   await Models.Tree.deleteMany();
@@ -218,7 +220,100 @@ const _createApp = async (fileInFolder, categoryFolder) => {
     );
   }
 };
+
+const initAppsOnDBByCSV = async () => {
+  const data = await readXlsxFile(APPS_CSV_PATH);
+
+  const [, ...rows] = data;
+
+  let promises = rows.map(async (app) => {
+    if (!app) return null;
+    const appDB = await Models.App.findOne({
+      name: app[1],
+    });
+    if (appDB) null;
+
+    return _createAppByCSV(app);
+  });
+
+  const limit = pLimit(10);
+  promises = promises.map((promise) => limit(() => promise));
+  await Promise.all(promises);
+};
+
+const _createAppByCSV = async (app) => {
+  const [appId, appName, , chplayLink] = app;
+
+  try {
+    Helpers.Logger.step(`Step 0: Parsing ${appName} APP`);
+
+    // get appId from url
+    var urlParts = url.parse(chplayLink, true);
+    var query = urlParts.query;
+    const appIdOnCHPlay = query.id;
+
+    const apkSourcePath = "./sourceTemp/" + appIdOnCHPlay;
+    if (!fs.existsSync(apkSourcePath)) {
+      // download first app
+      const pathFileApk = await Services.APKPure.download(
+        appName,
+        appName + "/" + appIdOnCHPlay
+      );
+
+      Helpers.Logger.step("Step 1: Parse APK to Text files by jadx");
+      execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
+    }
+
+    Helpers.Logger.step("Step 2: Get content APK from source code");
+    const contents = await Helpers.File.getContentOfFolder(
+      `${apkSourcePath}/sources`
+    );
+    Helpers.Logger.step("Step 3: Get tree");
+
+    const tree = await Models.Tree.find().cache(60 * 60 * 24 * 30);
+    // const leafNodes = tree.filter((node) => node.right - node.left === 1);
+    Helpers.Logger.step("Step 4: Get base line value for leaf nodes");
+    await Services.BaseLine.initBaseLineForTree(tree, contents);
+
+    const result = tree.filter((node) => {
+      return node.right - node.left === 1 && node.baseLine === 1;
+    });
+
+    const {
+      developer,
+      categoryName,
+      updatedDate,
+      currentVersion,
+      size,
+      installs,
+      privacyLink,
+    } = await Services.CHPLAY.getInfoApp(appIdOnCHPlay);
+
+    await Models.App.create({
+      name: appName,
+      developer,
+      categoryName,
+      updatedDate,
+      currentVersion,
+      size,
+      installs,
+      privacyLink,
+      chplayLink,
+      nodes: result.map((item) => {
+        return {
+          id: item._id,
+          name: item.name,
+          value: item.baseLine,
+        };
+      }),
+    });
+  } catch (err) {
+    Helpers.Logger.info(err);
+    Helpers.Logger.error(`ERROR: failt _createAppByCSV on ${appName}`);
+  }
+};
 export default {
   initTreeOnDB,
   initAppsOnDB,
+  initAppsOnDBByCSV,
 };

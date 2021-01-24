@@ -25,7 +25,10 @@ app.use(bodyParser.json());
 // Helpers.Init.initTreeOnDB();
 
 // init apps on database
-Helpers.Init.initAppsOnDB();
+// Helpers.Init.initAppsOnDB();
+
+// init apps on database by csv 
+Helpers.Init.initAppsOnDBByCSV();
 
 app.get("/", function (req, res) {
   res.render("pages/index");
