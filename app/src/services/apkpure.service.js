@@ -3,6 +3,7 @@ import axios from "axios";
 import cheerio from "cheerio";
 import chalk from "chalk";
 import fs from "fs";
+import Helpers from "../helpers";
 import { v4 as uuidv4 } from "uuid";
 
 const { APK_PURE_API } = process.env;
@@ -59,7 +60,7 @@ const download = async (appName, appIdFromAPKPure) => {
 
     return path;
   } catch (err) {
-    Helpers.Logger.info(err);
+    console.log(err);
     Helpers.Logger.error("ERROR: download APK");
   }
 };

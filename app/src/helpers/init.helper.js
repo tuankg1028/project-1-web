@@ -1,4 +1,4 @@
-require("../configs/env.config");
+require("dotenv").config();
 import Helpers from "./";
 import path from "path";
 import Models from "../models";
@@ -222,23 +222,29 @@ const _createApp = async (fileInFolder, categoryFolder) => {
 };
 
 const initAppsOnDBByCSV = async () => {
-  const data = await readXlsxFile(APPS_CSV_PATH);
+  try {
+    console.log(APPS_CSV_PATH);
+    const data = await readXlsxFile(APPS_CSV_PATH);
 
-  const [, ...rows] = data;
+    const [, ...rows] = data;
 
-  let promises = rows.map(async (app) => {
-    if (!app) return null;
-    const appDB = await Models.App.findOne({
-      name: app[1],
+    let promises = rows.map(async (app) => {
+      if (!app) return null;
+      const appDB = await Models.App.findOne({
+        name: app[1],
+      });
+      if (appDB) null;
+
+      return _createAppByCSV(app);
     });
-    if (appDB) null;
 
-    return _createAppByCSV(app);
-  });
-
-  const limit = pLimit(10);
-  promises = promises.map((promise) => limit(() => promise));
-  await Promise.all(promises);
+    const limit = pLimit(10);
+    promises = promises.map((promise) => limit(() => promise));
+    await Promise.all(promises);
+  } catch (err) {
+    console.log(err);
+    Helpers.Logger.error("ERROR: initAppsOnDBByCSV");
+  }
 };
 
 const _createAppByCSV = async (app) => {
@@ -253,16 +259,14 @@ const _createAppByCSV = async (app) => {
     const appIdOnCHPlay = query.id;
 
     const apkSourcePath = "./sourceTemp/" + appIdOnCHPlay;
-    if (!fs.existsSync(apkSourcePath)) {
-      // download first app
-      const pathFileApk = await Services.APKPure.download(
-        appName,
-        appName + "/" + appIdOnCHPlay
-      );
-
-      Helpers.Logger.step("Step 1: Parse APK to Text files by jadx");
-      execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
-    }
+    // download first app
+    const pathFileApk = await Services.APKPure.download(
+      appName,
+      "apkpure/" + appIdOnCHPlay
+    );
+    return;
+    Helpers.Logger.step("Step 1: Parse APK to Text files by jadx");
+    execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
 
     Helpers.Logger.step("Step 2: Get content APK from source code");
     const contents = await Helpers.File.getContentOfFolder(
@@ -307,8 +311,11 @@ const _createAppByCSV = async (app) => {
         };
       }),
     });
+
+    fs.unlink(pathFileApk);
+    fs.rmdir(apkSourcePath);
   } catch (err) {
-    Helpers.Logger.info(err);
+    console.log(err);
     Helpers.Logger.error(`ERROR: failt _createAppByCSV on ${appName}`);
   }
 };
