@@ -51,16 +51,14 @@ router.post("/transform", async (req, res) => {
     Helpers.Logger.step("Step 6: Get base line value for leaf nodes");
     await Services.BaseLine.initBaseLineForTree(tree, contents);
 
-    const result = tree.filter((node) => {
+    const functionConstant = tree.filter((node) => {
       return node.right - node.left === 1 && node.baseLine === 1;
     });
-    console.timeEnd("Baseline");
-    const endDAPTTime = elapsed_time(startDAPTime);
+
+    const treeResult = await buildTreeFromNodeBaseLine(functionConstant);
+
     res.json({
-      timeForDownload: "10s",
-      timeForParseAPK: "40s",
-      timeForDAP: endDAPTTime,
-      result,
+      treeResult,
     });
   } catch (err) {
     console.error(err);
@@ -68,6 +66,79 @@ router.post("/transform", async (req, res) => {
   }
 });
 
+async function buildTreeFromNodeBaseLine(nodes) {
+  const result = {};
+  for (let i = 0; i < functions.length; i++) {
+    const functionConstant = functions[i];
+
+    // lv 3
+    const lv3 = await Modesl.Tree.findById(functionConstant.parent).cache(
+      60 * 60 * 24 * 30
+    );
+
+    const lv2 = await Modesl.Tree.findById(lv3.parent).cache(60 * 60 * 24 * 30);
+
+    const lv1 = await Modesl.Tree.findById(lv2.parent).cache(60 * 60 * 24 * 30);
+
+    // check exist lv1
+    if (!result[lv1.id]) {
+      // total childrent of lv1
+
+      const totalChildren = await Modesl.Tree.count({
+        parent: lv1.id,
+      });
+      result[lv1.id] = {
+        ...lv1,
+        totalChildren,
+        children: [],
+      };
+    }
+
+    // check exist lv2
+    const lv2InResult = result[lv1.id].children.filter(
+      (item) => item.id === lv2.id
+    )[0];
+    if (!lv2InResult) {
+      const totalChildren = await Modesl.Tree.count({
+        parent: lv2.id,
+      });
+      const data = {
+        ...lv2,
+        totalChildren,
+        children: [],
+      };
+
+      treeResult[lv1.id].children.push(data);
+    }
+
+    // check exist lv2
+    const lv3InResult = lv2InResult.children.filter(
+      (item) => item.id === lv3.id
+    )[0];
+    if (!lv3InResult) {
+      const totalChildren = await Modesl.Tree.count({
+        parent: lv3.id,
+      });
+      const data = {
+        ...lv3,
+        totalChildren,
+        children: [functionConstant],
+      };
+
+      // push to lv2
+      treeResult[lv1.id].children
+        .filter((item) => item.id === lv2.id)[0]
+        .push(data);
+    } else {
+      // push to lv 2
+      lv3InResult.children
+        .filter((item) => item.id === lv3.id)[0]
+        .children.push(data);
+    }
+  }
+
+  return result;
+}
 async function mainTest() {
   try {
     const appName = "facebook";

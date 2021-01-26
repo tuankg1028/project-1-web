@@ -223,12 +223,11 @@ const _createApp = async (fileInFolder, categoryFolder) => {
 
 const initAppsOnDBByCSV = async () => {
   try {
-    console.log(APPS_CSV_PATH);
     const data = await readXlsxFile(APPS_CSV_PATH);
 
-    const [, ...rows] = data;
+    const [, rows] = data;
 
-    let promises = rows.map(async (app) => {
+    let promises = [rows].map(async (app) => {
       if (!app) return null;
       const appDB = await Models.App.findOne({
         name: app[1],
@@ -238,7 +237,7 @@ const initAppsOnDBByCSV = async () => {
       return _createAppByCSV(app);
     });
 
-    const limit = pLimit(10);
+    const limit = pLimit(1);
     promises = promises.map((promise) => limit(() => promise));
     await Promise.all(promises);
   } catch (err) {
@@ -264,7 +263,7 @@ const _createAppByCSV = async (app) => {
       appName,
       "apkpure/" + appIdOnCHPlay
     );
-    return;
+
     Helpers.Logger.step("Step 1: Parse APK to Text files by jadx");
     execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
 

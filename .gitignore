@@ -3,3 +3,4 @@ app/dist
 app/data/apps
 app/sourceTemp
 app/apkTemp
+.docker

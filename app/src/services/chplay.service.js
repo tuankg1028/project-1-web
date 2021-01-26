@@ -68,7 +68,7 @@ const getInfoApp = async (appId) => {
       privacyLink,
     };
   } catch (err) {
-    Helpers.Logger.info(err);
+    console.log(err);
     Helpers.Logger.error("ERROR: getInfoApp");
   }
 };
