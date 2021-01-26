@@ -51,26 +51,23 @@ router.post("/transform", async (req, res) => {
     Helpers.Logger.step("Step 6: Get base line value for leaf nodes");
     await Services.BaseLine.initBaseLineForTree(tree, contents);
 
-    const functionConstant = tree.filter((node) => {
+    const functionConstants = tree.filter((node) => {
       return node.right - node.left === 1 && node.baseLine === 1;
     });
 
-    const treeResult = await buildTreeFromNodeBaseLine(functionConstant);
+    const treeResult = await buildTreeFromNodeBaseLine(functionConstants);
 
-    res.json({
-      treeResult,
-    });
+    res.render("pages/transform", { tree: treeResult });
   } catch (err) {
     console.error(err);
     Helpers.Logger.error(`${err.message}`);
   }
 });
 
-async function buildTreeFromNodeBaseLine(nodes) {
-  const result = {};
-  for (let i = 0; i < functions.length; i++) {
-    const functionConstant = functions[i];
-
+async function buildTreeFromNodeBaseLine(functionConstants) {
+  const result = [];
+  for (let i = 0; i < functionConstants.length; i++) {
+    const functionConstant = functionConstants[i];
     // lv 3
     const lv3 = await Modesl.Tree.findById(functionConstant.parent).cache(
       60 * 60 * 24 * 30
@@ -80,22 +77,28 @@ async function buildTreeFromNodeBaseLine(nodes) {
 
     const lv1 = await Modesl.Tree.findById(lv2.parent).cache(60 * 60 * 24 * 30);
 
+    console.log(1, lv1.name, functionConstant.name);
+
+    let lv1InResult = result.filter((item) => item.id === lv1.id)[0];
     // check exist lv1
-    if (!result[lv1.id]) {
+    if (!lv1InResult) {
       // total childrent of lv1
 
       const totalChildren = await Modesl.Tree.count({
         parent: lv1.id,
       });
-      result[lv1.id] = {
-        ...lv1,
+      const data = {
+        ...lv1.toJSON(),
         totalChildren,
         children: [],
       };
+
+      result.push(data);
     }
+    lv1InResult = result.filter((item) => item.id === lv1.id)[0];
 
     // check exist lv2
-    const lv2InResult = result[lv1.id].children.filter(
+    let lv2InResult = lv1InResult.children.filter(
       (item) => item.id === lv2.id
     )[0];
     if (!lv2InResult) {
@@ -103,13 +106,14 @@ async function buildTreeFromNodeBaseLine(nodes) {
         parent: lv2.id,
       });
       const data = {
-        ...lv2,
+        ...lv2.toJSON(),
         totalChildren,
         children: [],
       };
 
-      treeResult[lv1.id].children.push(data);
+      lv1InResult.children.push(data);
     }
+    lv2InResult = lv1InResult.children.filter((item) => item.id === lv2.id)[0];
 
     // check exist lv2
     const lv3InResult = lv2InResult.children.filter(
@@ -120,20 +124,15 @@ async function buildTreeFromNodeBaseLine(nodes) {
         parent: lv3.id,
       });
       const data = {
-        ...lv3,
+        ...lv3.toJSON(),
         totalChildren,
         children: [functionConstant],
       };
 
-      // push to lv2
-      treeResult[lv1.id].children
-        .filter((item) => item.id === lv2.id)[0]
-        .push(data);
+      lv2InResult.children.push(data);
     } else {
       // push to lv 2
-      lv3InResult.children
-        .filter((item) => item.id === lv3.id)[0]
-        .children.push(data);
+      lv3InResult.children.push(functionConstant);
     }
   }
 
