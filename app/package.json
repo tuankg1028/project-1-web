@@ -7,7 +7,7 @@
     "lint": "eslint --fix --ext .js,.jsx .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf dist && mkdir ./dist",
-    "build-babel": "babel ./src -s -d ./dist",
+    "build-babel": "babel ./src -s -d ./dist --copy-files",
     "build": "npm run clean && npm run build-babel",
     "start": "npm run build && cross-env NODE_ENV=production node -max-old-space-size=8192 dist/index.js",
     "dev": "babel-watch src/index.js"
