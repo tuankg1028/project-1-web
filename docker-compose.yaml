@@ -6,7 +6,7 @@ services:
     ports:
       - "3333:3333"
     volumes:
-      - ~/jadx/redis:./jadx
+      - ~/jadx:./jadx
   redis:
     image: "redis:alpine"
     volumes:
