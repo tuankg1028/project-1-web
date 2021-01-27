@@ -33,7 +33,8 @@ router.post("/transform", async (req, res) => {
       console.timeEnd("Download APK Pure");
       console.time("Parse APK Pure");
       Helpers.Logger.step("Step 3: Parse APK to Text files by jadx");
-      execSync(`jadx -d ${apkSourcePath} ${pathFileApk}`);
+      // execSync(`jadx -d ${apkSourcePath} ${pathFileApk}`);
+      execSync(`sh ./jadx/build/jadx/bin/jadx ${apkSourcePath} ${pathFileApk}`);
     }
     // TODO: check folder existed
     Helpers.Logger.step("Step 4: Get content APK from source code");
