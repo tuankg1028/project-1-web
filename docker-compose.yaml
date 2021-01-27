@@ -14,3 +14,5 @@ services:
     volumes:
       - /data/db:/data/db
     restart: unless-stopped
+  jadx: 
+    image: cincan/jadx
