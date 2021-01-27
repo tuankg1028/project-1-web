@@ -21,7 +21,7 @@ router.post("/transform", async (req, res) => {
 
     const appAPKPureId = listAppIdsFromAPKPure[0];
 
-    const apkSourcePath = "./sourceTemp" + appAPKPureId;
+    const apkSourcePath = "sourceTemp" + appAPKPureId;
 
     if (!fs.existsSync(apkSourcePath)) {
       // download first app
@@ -34,7 +34,7 @@ router.post("/transform", async (req, res) => {
       console.time("Parse APK Pure");
       Helpers.Logger.step("Step 3: Parse APK to Text files by jadx");
       // execSync(`jadx -d ${apkSourcePath} ${pathFileApk}`);
-      execSync(`sh ./jadx/build/jadx/bin/jadx ${apkSourcePath} ${pathFileApk}`);
+      execSync(`sh ./jadx/build/jadx/bin/jadx -d ${apkSourcePath} ${pathFileApk}`);
     }
     // TODO: check folder existed
     Helpers.Logger.step("Step 4: Get content APK from source code");
