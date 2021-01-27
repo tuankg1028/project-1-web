@@ -16,5 +16,3 @@ services:
     restart: unless-stopped
   jadx: 
     image: cincan/jadx
-    volumes:
-      - /samples:/samples

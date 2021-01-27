@@ -21,7 +21,7 @@ router.post("/transform", async (req, res) => {
 
     const appAPKPureId = listAppIdsFromAPKPure[0];
 
-    const apkSourcePath = "./sourceTemp/" + appAPKPureId;
+    const apkSourcePath = "./sourceTemp" + appAPKPureId;
 
     if (!fs.existsSync(apkSourcePath)) {
       // download first app
