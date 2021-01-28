@@ -54,10 +54,10 @@ router.post("/transform", async (req, res) => {
       Helpers.Logger.step("Step 5: Get tree");
 
       const startDAPTime = process.hrtime();
-      const tree = await Modesl.Tree.find().cache(60 * 60 * 24 * 30);
+      let tree = await Modesl.Tree.find().cache(60 * 60 * 24 * 30);
       // const leafNodes = tree.filter((node) => node.right - node.left === 1);
       Helpers.Logger.step("Step 6: Get base line value for leaf nodes");
-      await Services.BaseLine.initBaseLineForTree(tree, contents);
+      tree = await Services.BaseLine.initBaseLineForTree(tree, contents);
 
       const functionConstants = tree.filter((node) => {
         return node.right - node.left === 1 && node.baseLine === 1;
