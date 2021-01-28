@@ -10,6 +10,7 @@ const csv = require("csvtojson");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 var slug = require("slug");
 const { readdirSync } = require("fs");
+import pLimit from "p-limit";
 import parallel from "run-parallel";
 let excelPath = "/Users/a1234/individual/abc/find-data/Mapping Function.xlsx"; // xlsx
 let dirPath = __dirname + "/../../data/functions"; // txt files
@@ -49,6 +50,7 @@ const initBaseLineForTree = async (tree, contents) => {
 };
 
 const _compureBaseLineForNode = async (node, tree, contents) => {
+  const limit = pLimit(5000);
   // const isLeafNode = node.right - node.left === 1;
   // let baseLine = 0;
   // // is leaf node
@@ -73,14 +75,15 @@ const _compureBaseLineForNode = async (node, tree, contents) => {
 
   const leafNodes = tree.filter((node) => node.right - node.left === 1);
 
-  await Promise.all(
-    leafNodes.map((item) => {
-      return _computeBaseLineLeafNode(item, contents).then((baseLine) => {
+  const promises = leafNodes.map((item) => {
+    return limit(() =>
+      _computeBaseLineLeafNode(item, contents).then((baseLine) => {
         if (baseLine) _updateBaseLineNodeInTree(item, baseLine, tree);
-      });
-    })
-  );
+      })
+    );
+  });
 
+  await Promise.all(promises);
   return;
 };
 

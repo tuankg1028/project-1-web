@@ -227,7 +227,7 @@ const initAppsOnDBByCSV = async () => {
 
     const [, ...rows] = data;
 
-    let promises = [rows].map(async (app) => {
+    let promises = rows.map(async (app) => {
       if (!app) return null;
       const appDB = await Models.App.findOne({
         name: app[1],

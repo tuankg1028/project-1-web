@@ -47,6 +47,7 @@ router.post("/transform", async (req, res) => {
       const contents = await Helpers.File.getContentOfFolder(
         `${apkSourcePath}/sources`
       );
+
       console.timeEnd("Parse APK Pure");
 
       console.time("Baseline");
@@ -61,11 +62,11 @@ router.post("/transform", async (req, res) => {
       const functionConstants = tree.filter((node) => {
         return node.right - node.left === 1 && node.baseLine === 1;
       });
+
+      treeResult = await buildTreeFromNodeBaseLine(functionConstants);
     } else {
       treeResult = appDB.nodes;
     }
-
-    treeResult = await buildTreeFromNodeBaseLine(functionConstants);
 
     res.render("pages/transform", { tree: treeResult });
   } catch (err) {
