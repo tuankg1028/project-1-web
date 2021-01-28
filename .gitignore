@@ -4,3 +4,4 @@ app/data/apps
 app/sourceTemp
 app/apkTemp
 .docker
+jadx
