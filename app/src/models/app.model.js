@@ -18,6 +18,7 @@ var schema = new Schema(
         id: Schema.Types.ObjectId,
         name: String,
         value: Number,
+        parent: Schema.Types.ObjectId,
       },
     ],
   },

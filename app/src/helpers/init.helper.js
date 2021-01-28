@@ -225,7 +225,7 @@ const initAppsOnDBByCSV = async () => {
   try {
     const data = await readXlsxFile(APPS_CSV_PATH);
 
-    const [, rows] = data;
+    const [, ...rows] = data;
 
     let promises = [rows].map(async (app) => {
       if (!app) return null;
@@ -237,7 +237,7 @@ const initAppsOnDBByCSV = async () => {
       return _createAppByCSV(app);
     });
 
-    const limit = pLimit(1);
+    const limit = pLimit(50);
     promises = promises.map((promise) => limit(() => promise));
     await Promise.all(promises);
   } catch (err) {
@@ -265,7 +265,9 @@ const _createAppByCSV = async (app) => {
     );
 
     Helpers.Logger.step("Step 1: Parse APK to Text files by jadx");
-    execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
+    execSync(
+      `sh ${__dirname}/../../jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
+    );
 
     Helpers.Logger.step("Step 2: Get content APK from source code");
     const contents = await Helpers.File.getContentOfFolder(
@@ -307,6 +309,7 @@ const _createAppByCSV = async (app) => {
           id: item._id,
           name: item.name,
           value: item.baseLine,
+          parent: node.parent,
         };
       }),
     });

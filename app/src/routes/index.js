@@ -13,50 +13,59 @@ router.post("/transform", async (req, res) => {
   try {
     console.time("Download APK Pure");
     const { appName } = req.body;
-    Helpers.Logger.step("Step 1: Search apps from APK Pure");
-    const listAppIdsFromAPKPure = await Services.APKPure.seach(appName);
-    if (!listAppIdsFromAPKPure.length)
-      throw new Error("No app found from APK Pure");
-    Helpers.Logger.step("Step 2: Download app from APK Pure");
 
-    const appAPKPureId = listAppIdsFromAPKPure[0];
+    const appDB = await Modesl.App.findOne({ name: appName });
+    let treeResult = [];
+    if (!appDB) {
+      Helpers.Logger.step("Step 1: Search apps from APK Pure");
+      const listAppIdsFromAPKPure = await Services.APKPure.seach(appName);
+      if (!listAppIdsFromAPKPure.length)
+        throw new Error("No app found from APK Pure");
+      Helpers.Logger.step("Step 2: Download app from APK Pure");
 
-    const apkSourcePath = "sourceTemp" + appAPKPureId;
+      const appAPKPureId = listAppIdsFromAPKPure[0];
 
-    if (!fs.existsSync(apkSourcePath)) {
-      // download first app
-      const pathFileApk = await Services.APKPure.download(
-        appName,
-        appAPKPureId
+      const apkSourcePath = "sourceTemp" + appAPKPureId;
+
+      if (!fs.existsSync(apkSourcePath)) {
+        // download first app
+        const pathFileApk = await Services.APKPure.download(
+          appName,
+          appAPKPureId
+        );
+
+        console.timeEnd("Download APK Pure");
+        console.time("Parse APK Pure");
+        Helpers.Logger.step("Step 3: Parse APK to Text files by jadx");
+        // execSync(`jadx -d ${apkSourcePath} ${pathFileApk}`);
+        execSync(
+          `sh ./jadx/build/jadx/bin/jadx -d ${apkSourcePath} ${pathFileApk}`
+        );
+      }
+      // TODO: check folder existed
+      Helpers.Logger.step("Step 4: Get content APK from source code");
+      const contents = await Helpers.File.getContentOfFolder(
+        `${apkSourcePath}/sources`
       );
+      console.timeEnd("Parse APK Pure");
 
-      console.timeEnd("Download APK Pure");
-      console.time("Parse APK Pure");
-      Helpers.Logger.step("Step 3: Parse APK to Text files by jadx");
-      // execSync(`jadx -d ${apkSourcePath} ${pathFileApk}`);
-      execSync(`sh ./jadx/build/jadx/bin/jadx -d ${apkSourcePath} ${pathFileApk}`);
+      console.time("Baseline");
+      Helpers.Logger.step("Step 5: Get tree");
+
+      const startDAPTime = process.hrtime();
+      const tree = await Modesl.Tree.find().cache(60 * 60 * 24 * 30);
+      // const leafNodes = tree.filter((node) => node.right - node.left === 1);
+      Helpers.Logger.step("Step 6: Get base line value for leaf nodes");
+      await Services.BaseLine.initBaseLineForTree(tree, contents);
+
+      const functionConstants = tree.filter((node) => {
+        return node.right - node.left === 1 && node.baseLine === 1;
+      });
+    } else {
+      treeResult = appDB.nodes;
     }
-    // TODO: check folder existed
-    Helpers.Logger.step("Step 4: Get content APK from source code");
-    const contents = await Helpers.File.getContentOfFolder(
-      `${apkSourcePath}/sources`
-    );
-    console.timeEnd("Parse APK Pure");
 
-    console.time("Baseline");
-    Helpers.Logger.step("Step 5: Get tree");
-
-    const startDAPTime = process.hrtime();
-    const tree = await Modesl.Tree.find().cache(60 * 60 * 24 * 30);
-    // const leafNodes = tree.filter((node) => node.right - node.left === 1);
-    Helpers.Logger.step("Step 6: Get base line value for leaf nodes");
-    await Services.BaseLine.initBaseLineForTree(tree, contents);
-
-    const functionConstants = tree.filter((node) => {
-      return node.right - node.left === 1 && node.baseLine === 1;
-    });
-
-    const treeResult = await buildTreeFromNodeBaseLine(functionConstants);
+    treeResult = await buildTreeFromNodeBaseLine(functionConstants);
 
     res.render("pages/transform", { tree: treeResult });
   } catch (err) {
