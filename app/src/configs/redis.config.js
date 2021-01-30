@@ -2,7 +2,7 @@ import redis from "redis";
 import Utils from "../utils";
 
 const { REDIS_HOST } = process.env;
-console.log(1, REDIS_HOST);
+
 const redisClient = redis.createClient();
 
 redisClient.select(0);

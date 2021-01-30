@@ -5,6 +5,7 @@ import chalk from "chalk";
 import fs from "fs";
 import Helpers from "../helpers";
 import { v4 as uuidv4 } from "uuid";
+import url from "url";
 
 const { APK_PURE_API } = process.env;
 
@@ -64,7 +65,43 @@ const download = async (appName, appIdFromAPKPure) => {
     Helpers.Logger.error("ERROR: download APK");
   }
 };
+
+const getInfoApp = async (appId) => {
+  try {
+    const result = [];
+    const response = await API.get(`${appId}`);
+
+    const $ = cheerio.load(response.data);
+
+    let CHPlayLink, AppId;
+    $(".additional li").each(function (i, elem) {
+      const type = $(this).find("strong").text();
+      console.log(2, type);
+      switch (type) {
+        case "Available on:":
+          CHPlayLink = $(this).find("a").first().attr("href");
+
+          break;
+      }
+    });
+
+    if (CHPlayLink) {
+      var urlParts = url.parse(CHPlayLink, true);
+      var query = urlParts.query;
+      AppId = query.id;
+    }
+
+    return {
+      CHPlayLink,
+      AppId,
+    };
+  } catch (err) {
+    console.log(err);
+    Helpers.Logger.error("ERROR: APKPURE getInfoApp");
+  }
+};
 export default {
+  getInfoApp,
   seach,
   download,
 };
