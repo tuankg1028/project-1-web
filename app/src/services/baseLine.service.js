@@ -72,9 +72,13 @@ const _compureBaseLineForNode = async (node, tree, contents) => {
   //   baseLine = _.sumBy(childrentInTree, "baseLine") / childrenIds.length;
   // }
   // if (baseLine) _updateBaseLineNodeInTree(node, baseLine, tree);
+  const leafNodes = await Models.Tree.find({
+    $where: function () {
+      return this.right - this.left === 1;
+    },
+  }).cache(60 * 60 * 24 * 30);
 
-  const leafNodes = tree.filter((node) => node.right - node.left === 1);
-
+  contents = contents.toLowerCase();
   const promises = leafNodes.map((item) => {
     return limit(() =>
       _computeBaseLineLeafNode(item, contents).then((baseLine) => {
@@ -111,9 +115,7 @@ const _computeBaseLineLeafNode = async (leafNode, contents) => {
   );
   const lastFunctionOfParent = parent.name.split(".").pop();
 
-  return contents
-    .toLowerCase()
-    .includes(parent.name.toLowerCase().replace(/\s|;/g, "")) &&
+  return contents.includes(parent.name.toLowerCase().replace(/\s|;/g, "")) &&
     contents.includes(
       lastFunctionOfParent.toLowerCase() +
         "." +
