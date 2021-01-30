@@ -27,7 +27,10 @@ const getInfoApp = async (appId) => {
 
     const developer = $(".qQKdcc").first().find(".T32cc").first().text();
     const categoryName = $(".qQKdcc").first().find(".T32cc").last().text();
-
+    const appName = $(".AHFaub").first().find("span").last().text();
+    const description = $("meta[itemprop='description']")
+      .first()
+      .attr("content");
     let updatedDate, currentVersion, size, installs, privacyLink;
     $(".hAyfc").each(function (i, elem) {
       const type = $(this).find(".BgcNfc").text();
@@ -66,6 +69,8 @@ const getInfoApp = async (appId) => {
       size,
       installs,
       privacyLink,
+      appName,
+      description,
     };
   } catch (err) {
     console.log(err);

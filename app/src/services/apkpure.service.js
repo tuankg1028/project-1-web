@@ -76,7 +76,7 @@ const getInfoApp = async (appId) => {
     let CHPlayLink, AppId;
     $(".additional li").each(function (i, elem) {
       const type = $(this).find("strong").text();
-      console.log(2, type);
+
       switch (type) {
         case "Available on:":
           CHPlayLink = $(this).find("a").first().attr("href");

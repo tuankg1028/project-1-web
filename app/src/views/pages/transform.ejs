@@ -14,10 +14,14 @@
   </head>
   <body>
     
-   <div class="container">
+   <div class="container mt-3">
+      <h1><%= appName %></h1>
+      <div class="font-weight-bold"><span>Developer: <%= developer %></span><span class="ml-2">Category: <%= categoryName %></span></div>
+      <div><a href=<%= privacyLink %>>Privacy Policy</a></div>
+      <p>Description: <%= description %></p>
       <% tree.forEach(function(lv1, indexOfLv1){ %>
       <!-- card -->
-      <div class="card mt-3">
+      <div class="card">
         <div class="card-body">
           <h3 class="card-title"><%= indexOfLv1 + 1 + ". " + lv1.name %></h3>
           <h5 class="card-subtitle mb-2 text-muted"><%= lv1.children.length + "/" + lv1.totalChildren %> (<%= Math.round(((lv1.children.length / lv1.totalChildren) * 100) * 100) / 100 + "%" %>)</h5>

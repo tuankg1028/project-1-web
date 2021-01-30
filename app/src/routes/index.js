@@ -15,7 +15,7 @@ router.post("/transform", async (req, res) => {
     const { appName } = req.body;
 
     const appDB = await Modesl.App.findOne({ name: appName });
-    let treeResult = [];
+    let data = {};
     if (!appDB) {
       Helpers.Logger.step("Step 1: Search apps from APK Pure");
       const listAppIdsFromAPKPure = await Services.APKPure.seach(appName);
@@ -25,6 +25,9 @@ router.post("/transform", async (req, res) => {
 
       const appAPKPureId = listAppIdsFromAPKPure[0];
 
+      const { AppId: AppIdCHPlay } = await Services.APKPure.getInfoApp(
+        appAPKPureId
+      );
       const apkSourcePath = "sourceTemp" + appAPKPureId;
 
       if (!fs.existsSync(apkSourcePath)) {
@@ -63,12 +66,30 @@ router.post("/transform", async (req, res) => {
         return node.right - node.left === 1 && node.baseLine === 1;
       });
 
-      treeResult = await buildTreeFromNodeBaseLine(functionConstants);
+      const appInfo = await Services.CHPLAY.getInfoApp(AppIdCHPlay);
+
+      data = {
+        ...appInfo,
+        nodes: functionConstants,
+      };
+      // create app
+      await Modesl.App.create({
+        ...appInfo,
+        nodes: functionConstants.map((item) => {
+          return {
+            id: item._id,
+            name: item.name,
+            value: item.baseLine,
+            parent: item.parent,
+          };
+        }),
+      });
     } else {
-      treeResult = appDB.nodes;
+      data = appDB;
     }
 
-    res.render("pages/transform", { tree: treeResult });
+    data.tree = await buildTreeFromNodeBaseLine(data.nodes);
+    res.render("pages/transform", data);
   } catch (err) {
     console.error(err);
     Helpers.Logger.error(`${err.message}`);
@@ -87,8 +108,6 @@ async function buildTreeFromNodeBaseLine(functionConstants) {
     const lv2 = await Modesl.Tree.findById(lv3.parent).cache(60 * 60 * 24 * 30);
 
     const lv1 = await Modesl.Tree.findById(lv2.parent).cache(60 * 60 * 24 * 30);
-
-    console.log(1, lv1.name, functionConstant.name);
 
     let lv1InResult = result.filter((item) => item.id === lv1.id)[0];
     // check exist lv1
