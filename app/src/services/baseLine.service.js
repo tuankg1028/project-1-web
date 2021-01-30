@@ -109,20 +109,27 @@ const _computeBaseLineLeafNode = async (leafNode, contents) => {
   //   if (isFound) return 1;
   // }
 
-  if (!leafNode.name) return 0;
-  const parent = await Models.Tree.findById(leafNode.parent).cache(
-    60 * 60 * 24 * 30
-  );
-  const lastFunctionOfParent = parent.name.split(".").pop();
+  try {
+    if (!leafNode.name) return 0;
+    const parent = await Models.Tree.findById(leafNode.parent).cache(
+      60 * 60 * 24 * 30
+    );
+    const lastFunctionOfParent = parent.name.split(".").pop();
 
-  return contents.includes(parent.name.toLowerCase().replace(/\s|;/g, "")) &&
-    contents.includes(
-      lastFunctionOfParent.toLowerCase() +
-        "." +
-        leafNode.name.toLowerCase().replace(/\([A-Za-z0-9_.<>, \[\]]*\)/i, "")
-    )
-    ? 1
-    : 0;
+    return contents.includes(parent.name.toLowerCase().replace(/\s|;/g, "")) &&
+      contents.includes(
+        lastFunctionOfParent.toLowerCase() +
+          "." +
+          leafNode.name.toLowerCase().replace(/\([A-Za-z0-9_.<>, \[\]]*\)/i, "")
+      )
+      ? 1
+      : 0;
+  } catch (e) {
+    console.log(e);
+    Helpers.Logger.error(`ERROR _computeBaseLineLeafNode: ${e.message}`);
+
+    return 0;
+  }
 };
 function getTxtFilePaths(filePaths) {
   return _.filter(filePaths, (filePath) => path.extname(filePath) === ".txt");
