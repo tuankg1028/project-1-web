@@ -104,6 +104,8 @@
             nodesHtml = buildTreeHtml(treeNode)
 
             $("#card-wrap").html(nodesHtml);
+          }).fail(function( response ) {
+            console.log(response)
           })
         } else {
           console.log()
