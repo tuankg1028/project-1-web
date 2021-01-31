@@ -93,7 +93,7 @@ router.put("/app/:id/nodes", async (req, res) => {
       Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
       // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
       execSync(
-        `sh ./jadx/build/jadx/bin/jadx -d ${apkSourcePath} ${pathFileApk}`
+        `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
       );
     }
     // TODO: check folder existed
