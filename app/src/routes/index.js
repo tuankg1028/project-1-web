@@ -25,10 +25,9 @@ router.get("/app/:appName", async (req, res) => {
       const listAppIdsFromAPKPure = await Services.APKPure.seach(appName);
       if (!listAppIdsFromAPKPure.length)
         throw new Error("No app found from APK Pure");
-      Helpers.Logger.step("Step 2: Download app from APK Pure");
 
       const appAPKPureId = listAppIdsFromAPKPure[0];
-
+      Helpers.Logger.step("Step 2: Get app info from APK pure");
       const { AppId: AppIdCHPlay } = await Services.APKPure.getInfoApp(
         appAPKPureId
       );
@@ -44,12 +43,15 @@ router.get("/app/:appName", async (req, res) => {
         });
       }
 
+      const data = {
+        ...appInfo,
+        appAPKPureId,
+        id: appDB.id,
+      };
+
+      Helpers.Logger.step("App Response: ", JSON.stringify(data, null, 2));
       return res.json({
-        data: {
-          ...appInfo,
-          appAPKPureId,
-          id: appDB.id,
-        },
+        data,
         isExisted: false,
       });
     }
@@ -58,6 +60,7 @@ router.get("/app/:appName", async (req, res) => {
     appDB = appDB.toJSON();
     appDB.tree = await buildTreeFromNodeBaseLine(appDB.nodes);
 
+    Helpers.Logger.step("App Response: ", JSON.stringify(appDB, null, 2));
     return res.json({
       data: appDB,
       isExisted: true,
@@ -70,55 +73,36 @@ router.get("/app/:appName", async (req, res) => {
 
 router.put("/app/:id/nodes", async (req, res) => {
   try {
+    Helpers.Logger.step(
+      "Step 0: Get nodes" + JSON.stringify(req.params, null, 2)
+    );
     const { id: appIdDB } = req.params;
     const appDB = await Modesl.App.findById(appIdDB).cache(60 * 60 * 24 * 30);
-
-    // await Modesl.App.updateOne(
-    //   {
-    //     _id: appIdDB,
-    //   },
-    //   {
-    //     $set: {
-    //       nodes: [
-    //         {
-    //           name: "abc1",
-    //         },
-    //       ],
-    //     },
-    //   },
-    //   { multi: true }
-    // )
-    //   .then(console.log)
-    //   .catch(console.error);
 
     const { appAPKPureId, appName } = appDB;
     const apkSourcePath = "sourceTemp" + appAPKPureId;
 
     if (!fs.existsSync(apkSourcePath)) {
+      Helpers.Logger.step("Step 1: Download apk");
       // download first app
       const pathFileApk = await Services.APKPure.download(
         appName,
         appAPKPureId
       );
 
-      console.timeEnd("Download APK Pure");
-      console.time("Parse APK Pure");
-      Helpers.Logger.step("Step 3: Parse APK to Text files by jadx");
-      // execSync(`jadx -d ${apkSourcePath} ${pathFileApk}`);
+      Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
+      // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
       execSync(
         `sh ./jadx/build/jadx/bin/jadx -d ${apkSourcePath} ${pathFileApk}`
       );
     }
     // TODO: check folder existed
-    Helpers.Logger.step("Step 4: Get content APK from source code");
+    Helpers.Logger.step("Step 3: Get content APK from source code");
     const contents = await Helpers.File.getContentOfFolder(
       `${apkSourcePath}/sources`
     );
 
-    console.timeEnd("Parse APK Pure");
-
-    console.time("Baseline");
-    Helpers.Logger.step("Step 5: Get tree");
+    Helpers.Logger.step("Step 4: Get tree");
 
     let tree = await Modesl.Tree.find().cache(60 * 60 * 24 * 30);
     // const leafNodes = tree.filter((node) => node.right - node.left === 1);
@@ -128,10 +112,6 @@ router.put("/app/:id/nodes", async (req, res) => {
     const functionConstants = tree.filter((node) => {
       return node.right - node.left === 1 && node.baseLine === 1;
     });
-
-    // data = {
-    //   nodes: functionConstants,
-    // };
 
     // create app
     await Modesl.App.updateOne(
