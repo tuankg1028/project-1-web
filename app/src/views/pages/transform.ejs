@@ -13,7 +13,9 @@
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    
+  <div id="wrap-loader">
+    <div class="loader">Loading...</div>
+  </div>
    <div class="container mt-3">
       <input type="hidden" id="app-name-inputed" value=<%= appName %>>
    
@@ -36,7 +38,23 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.3/qs.min.js"></script>
     <script type="text/javascript" src="/js/main.js"></script>
     <script type="text/javascript">
+      function startLoad() {
+        $("html, body").css({
+          overflow: "hidden",
+          height: "100%"
+        });
+        $("#wrap-loader").show(0);
+      }
+
+      function endLoad() {
+        $("#wrap-loader").hide(0);
+        $("html, body").css({
+          overflow: "auto",
+          height: "auto"
+        });
+      }
       $(function() {
+        startLoad()
         const appName = $("#app-name-inputed").val()
           
       $.ajax({
@@ -46,7 +64,7 @@
         // data: { id : menuId },
         // dataType: "html"
       }).done(function( response ) {
-        
+        endLoad()
         const { developer,
           categoryName,
           updatedDate,
