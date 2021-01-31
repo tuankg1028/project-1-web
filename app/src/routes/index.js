@@ -91,7 +91,6 @@ router.put("/app/:id/nodes", async (req, res) => {
     execSync(
       `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
     );
-    TODO: check folder existed
     Helpers.Logger.step("Step 3: Get content APK from source code");
     const contents = await Helpers.File.getContentOfFolder(
       `${apkSourcePath}/sources`
