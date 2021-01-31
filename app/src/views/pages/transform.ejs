@@ -15,64 +15,14 @@
   <body>
     
    <div class="container mt-3">
-      <h1><%= appName %></h1>
-      <div class="font-weight-bold"><span>Developer: <%= developer %></span><span class="ml-2">Category: <%= categoryName %></span></div>
-      <div><a href=<%= privacyLink %>>Privacy Policy</a></div>
-      <p>Description: <%= description %></p>
-      <% tree.forEach(function(lv1, indexOfLv1){ %>
-      <!-- card -->
-      <div class="card">
-        <div class="card-body">
-          <h3 class="card-title"><%= indexOfLv1 + 1 + ". " + lv1.name %></h3>
-          <h5 class="card-subtitle mb-2 text-muted"><%= lv1.children.length + "/" + lv1.totalChildren %> (<%= Math.round(((lv1.children.length / lv1.totalChildren) * 100) * 100) / 100 + "%" %>)</h5>
+      <input type="hidden" id="app-name-inputed" value=<%= appName %>>
+   
+      <div id="info">
 
-          <p class="card-text">
-            <h5>APIs</h5>
-            <div class="apis">
-              <% lv1.children.forEach(function(lv2){ %>
-                <div class="api ml-3 mt-2">
-                  <div class="font-weight-bold mb-1"><%= lv2.name %> (<%= Math.round(((lv2.children.length / lv2.totalChildren) * 100) * 100) / 100 + "%" %>)</div>
-                  <!-- <div>
-                    <div class="font-weight-bold">Description:</div>
-                    <div>
-                      <%= lv2.desc %>
-                    </div>
-                  </div> -->
-                  <div class="classes">
-                    <!-- <h5>Classes</h5> -->
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">Class Name</th>
-                          <th scope="col">Description</th>
-                          <th scope="col">Functions & Constants</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <% lv2.children.forEach(function(lv3, indexOfLv3){ %>
-                        <tr>
-                          <th scope="row"><%= indexOfLv3 + 1 %></th>
-                          <td><%= lv3.name %></td>
-                          <td><%= lv3.desc %></td>
-                          <td>
-                              <% lv3.children.forEach(function(lv4){ %>
-                              <div class="font-weight-bold">- <%= lv4.name %></div>
-                              <% }) %>
-                          </td>
-                        </tr>
-                        <% }) %>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              <% }) %>
-            </div>
-          </p>
-        </div>
       </div>
-      <% }) %>
-      
+      <div id="card-wrap">
+
+      </div>
 
    </div>
     
@@ -85,5 +35,136 @@
     <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.3/qs.min.js"></script>
     <script type="text/javascript" src="/js/main.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        const appName = $("#app-name-inputed").val()
+          
+      $.ajax({
+        url: `/app/${appName}`,
+        method: "GET",
+        timeout: 1000000
+        // data: { id : menuId },
+        // dataType: "html"
+      }).done(function( response ) {
+        
+        const { developer,
+          categoryName,
+          updatedDate,
+          currentVersion,
+          size,
+          installs,
+          privacyLink,
+          appName,
+          description,
+          id,
+          isCompleted,
+          tree
+        } = response.data;
+
+        const infoHTML = `
+          <h1>${appName}</h1>
+          <div class="font-weight-bold"><span>Developer: ${developer}</span><span class="ml-2">Category: ${categoryName}</span></div>
+          <div><a href=${privacyLink}>Privacy Policy</a></div>
+          <p>Description: ${description}</p>
+        `;
+        console.log(infoHTML)
+        $("#info").html(infoHTML);
+
+        let nodesHtml = "";
+        if(!isCompleted) {
+
+          $.ajax({
+            url: `/app/${id}/nodes`,
+            timeout: 1000000,
+            method: "PUT",
+            
+          }).done(function( response ) { 
+            console.log(response);
+
+            const treeNode = response.data;
+
+            nodesHtml = buildTreeHtml(treeNode)
+
+            $("#card-wrap").html(nodesHtml);
+          })
+        } else {
+          console.log()
+          nodesHtml = buildTreeHtml(tree)
+          console.log(3, nodesHtml)
+          $("#card-wrap").html(nodesHtml);
+        }
+
+        
+      });
+
+      function buildTreeHtml(tree) {
+        let infoHTML = "";
+        tree.forEach(function(lv1, indexOfLv1){ 
+            infoHTML += 
+            `
+            <!-- card -->
+            <div class="card mt-2">
+              <div class="card-body">
+                <h3 class="card-title">${indexOfLv1 + 1 + ". " + lv1.name}</h3>
+                <h5 class="card-subtitle mb-2 text-muted">${lv1.children.length + "/" + lv1.totalChildren} (${Math.round(((lv1.children.length / lv1.totalChildren) * 100) * 100) / 100 + "%"})</h5>
+
+                <p class="card-text">
+                  <h5>APIs</h5>
+                  <div class="apis">`;
+                    (lv1.children.forEach(function(lv2){
+                      infoHTML +=`
+                      <div class="api ml-3 mt-2">
+                        <div class="font-weight-bold mb-1">${lv2.name} (${ Math.round(((lv2.children.length / lv2.totalChildren) * 100) * 100) / 100 + "%" })</div>
+                        <!-- <div>
+                          <div class="font-weight-bold">Description:</div>
+                          <div>
+                            ${lv2.desc}
+                          </div>
+                        </div> -->
+                        <div class="classes">
+                          <!-- <h5>Classes</h5> -->
+                          <table class="table table-bordered">
+                            <thead>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Class Name</th>
+                                <th scope="col">Description</th>
+                              </tr>
+                            </thead>
+                            <tbody> `;
+                              (lv2.children.forEach(function(lv3, indexOfLv3){
+                                infoHTML +=`
+                                <tr>
+                                  <th scope="row">${indexOfLv3 + 1}</th>
+                                  <td>${lv3.name}</td>
+                                  <td>${lv3.desc}</td>
+                                </tr>
+                                ` 
+                              }))
+                              infoHTML +=  `
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      `
+                      
+                    }))
+                    infoHTML +=
+                    `
+                  </div>
+                </p>
+              </div>
+              
+              
+            </div>
+            <!-- end card -->
+            `
+        })
+
+        return infoHTML;
+      }
+      });
+    </script>
   </body>
 </html>
+

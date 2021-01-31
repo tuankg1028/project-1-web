@@ -125,6 +125,7 @@ const _computeBaseLineLeafNode = async (leafNode, contents) => {
       ? 1
       : 0;
   } catch (e) {
+    console.log(leafNode);
     console.log(e);
     Helpers.Logger.error(`ERROR _computeBaseLineLeafNode: ${e.message}`);
 

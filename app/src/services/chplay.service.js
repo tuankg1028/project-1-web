@@ -27,10 +27,17 @@ const getInfoApp = async (appId) => {
 
     const developer = $(".qQKdcc").first().find(".T32cc").first().text();
     const categoryName = $(".qQKdcc").first().find(".T32cc").last().text();
-    const appName = $(".AHFaub").first().find("span").last().text();
+    const appName = $(".AHFaub")
+      .first()
+      .find("span")
+      .last()
+      .text()
+      .toLowerCase();
     const description = $("meta[itemprop='description']")
       .first()
-      .attr("content");
+      .attr("content")
+      .replace(/\n/g, "<br>");
+
     let updatedDate, currentVersion, size, installs, privacyLink;
     $(".hAyfc").each(function (i, elem) {
       const type = $(this).find(".BgcNfc").text();

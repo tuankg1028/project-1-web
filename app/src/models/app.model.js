@@ -4,15 +4,18 @@ var findOrCreate = require("mongoose-findorcreate");
 
 var schema = new Schema(
   {
-    name: String,
+    appName: String,
     categoryName: String,
     developer: String,
     updatedDate: String,
+    description: String,
     currentVersion: String,
     size: String,
     installs: String,
     privacyLink: String,
     chplayLink: String,
+    isCompleted: Boolean,
+    appAPKPureId: String,
     nodes: [
       {
         id: Schema.Types.ObjectId,
