@@ -91,7 +91,7 @@ router.put("/app/:id/nodes", async (req, res) => {
     //   .then(console.log)
     //   .catch(console.error);
 
-    const { appAPKPureId } = appDB;
+    const { appAPKPureId, appName } = appDB;
     const apkSourcePath = "sourceTemp" + appAPKPureId;
 
     if (!fs.existsSync(apkSourcePath)) {
