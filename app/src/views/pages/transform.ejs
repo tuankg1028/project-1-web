@@ -82,7 +82,7 @@
         const infoHTML = `
           <h1>${appName}</h1>
           <div class="font-weight-bold"><span>Developer: ${developer}</span><span class="ml-2">Category: ${categoryName}</span></div>
-          <div><a href=${privacyLink}>Privacy Policy</a></div>
+          <div><a href="${privacyLink}" target="_blank">Privacy Policy</a></div>
           <p>Description: ${description}</p>
         `;
         console.log(infoHTML)
@@ -110,7 +110,6 @@
         } else {
           console.log()
           nodesHtml = buildTreeHtml(tree)
-          console.log(3, nodesHtml)
           $("#card-wrap").html(nodesHtml);
         }
 
