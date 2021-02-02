@@ -97,9 +97,10 @@
             method: "PUT",
             
           }).done(function( response ) { 
-            console.log(response);
 
-            const treeNode = response.data;
+            const treeNode =  response.data || response;
+
+            console.log(treeNode);
 
             nodesHtml = buildTreeHtml(treeNode)
 
