@@ -96,15 +96,12 @@ router.put("/app/:id/nodes", async (req, res) => {
       `${apkSourcePath}/sources`
     );
 
-    Helpers.Logger.step("Step 4: Get tree");
+    Helpers.Logger.step("Step 4: Get base line value for leaf nodes");
+    const leafNodeBaseLines = await Services.BaseLine.initBaseLineForTree(
+      contents
+    );
 
-    let tree = await Models.Tree.find().cache(60 * 60 * 24 * 30);
-    // const leafNodes = tree.filter((node) => node.right - node.left === 1);
-    Helpers.Logger.step("Step 6: Get base line value for leaf nodes");
-    tree = await Services.BaseLine.initBaseLineForTree(tree, contents);
-
-    // const root = await Mode
-    const functionConstants = tree.filter((node) => {
+    const functionConstants = leafNodeBaseLines.filter((node) => {
       return node.right - node.left === 1 && node.baseLine === 1;
     });
 

@@ -1,56 +1,52 @@
 import Helpers from "../helpers";
 import Models from "../models";
-const bluebird = require("bluebird");
-const readXlsxFile = require("read-excel-file/node");
-const dir = bluebird.promisifyAll(require("node-dir"));
+import os from "os";
+import bluebird from "bluebird";
 const _ = require("lodash");
 const path = require("path");
 const readline = require("linebyline");
-const csv = require("csvtojson");
-const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 var slug = require("slug");
-const { readdirSync } = require("fs");
-import pLimit from "p-limit";
-import parallel from "run-parallel";
-let excelPath = "/Users/a1234/individual/abc/find-data/Mapping Function.xlsx"; // xlsx
-let dirPath = __dirname + "/../../data/functions"; // txt files
-let csvPath = "/Users/a1234/individual/abc/find-data/FunctionMapping.csv"; // csv file
 
-// HEADERS FOR "file-names.csv"
-let headersForFileNames = [
-  {
-    id: "stt",
-    title: "STT",
-  },
-  {
-    id: "filename",
-    title: "FILE NAME",
-  },
-];
-
-const initBaseLineForTree = async (tree, contents) => {
-  // init baseLine with 0
-  tree = tree.map((leafNode) => {
-    return {
-      ...leafNode.toJSON(),
-      baseLine: 0,
-    };
-  });
-
+const initBaseLineForTree = async (contents) => {
   // const root = tree.filter((node) => !node.parent)[0];
 
   // let lv1Nodes = tree.filter((node) => node.parent == root.id);
   // lv1Nodes = await Promise.all(
   //   lv1Nodes.map((node) => _compureBaseLineForNode(node, tree, contents))
   // );
+  contents = contents.toLowerCase();
+  let leafNodes = await Models.Tree.find({
+    $where: function () {
+      return this.right - this.left === 1;
+    },
+  }).lean();
 
-  await _compureBaseLineForNode(1, tree, contents);
+  // add parent prop to leafNode
+  leafNodes = await Promise.all(
+    leafNodes.map(async (leafNode) => {
+      const parent = await Models.Tree.findById(leafNode.parent).cache(
+        60 * 60 * 24 * 30
+      );
+      return {
+        ...leafNode,
+        parent: parent ? parent.toJSON() : null,
+      };
+    })
+  );
 
-  return tree;
+  const cpuCount = os.cpus().length;
+  const leafNodeChunks = _.chunk(leafNodes, cpuCount);
+  Helpers.Logger.info(`Running on: ${cpuCount} cpus`);
+  const promises = leafNodeChunks.map((leafNodeChunks) => {
+    return _computeBaseLineForNode(contents, leafNodeChunks);
+  });
+
+  const result = await Promise.all(promises);
+
+  return _.flatten(result);
 };
 
-const _compureBaseLineForNode = async (node, tree, contents) => {
-  const limit = pLimit(5000);
+const _computeBaseLineForNode = async (contents, leafNodes) => {
   // const isLeafNode = node.right - node.left === 1;
   // let baseLine = 0;
   // // is leaf node
@@ -72,23 +68,22 @@ const _compureBaseLineForNode = async (node, tree, contents) => {
   //   baseLine = _.sumBy(childrentInTree, "baseLine") / childrenIds.length;
   // }
   // if (baseLine) _updateBaseLineNodeInTree(node, baseLine, tree);
-  const leafNodes = await Models.Tree.find({
-    $where: function () {
-      return this.right - this.left === 1;
-    },
-  }).cache(60 * 60 * 24 * 30);
 
-  contents = contents.toLowerCase();
-  const promises = leafNodes.map((item) => {
-    return limit(() =>
-      _computeBaseLineLeafNode(item, contents).then((baseLine) => {
-        if (baseLine) _updateBaseLineNodeInTree(item, baseLine, tree);
-      })
+  const { Worker } = require("worker_threads");
+  const result = await new Promise((resolve, reject) => {
+    const worker = new Worker(
+      path.join(__dirname, "../workers/computeBaseLineLeafNode.worker.js"),
+      {
+        workerData: {
+          leafNodes,
+          contents,
+        },
+      }
     );
-  });
 
-  await Promise.all(promises);
-  return;
+    worker.on("message", resolve);
+  });
+  return result;
 };
 
 const _updateBaseLineNodeInTree = (node, value, tree) => {
@@ -97,18 +92,6 @@ const _updateBaseLineNodeInTree = (node, value, tree) => {
   nodeInTree.baseLine = value;
 };
 const _computeBaseLineLeafNode = async (leafNode, contents) => {
-  // contents = contents.split("/n");
-  // for (let j = 0; j < contents.length; j++) {
-  //   console.log(j, leafNode.name);
-  //   const line = contents[j];
-
-  //   let text = line.trim().replace(";", "");
-
-  //   // =================== CHECKING EACH LINES (TXT) IN EXCEL FILE ==============
-  //   let isFound = getRecordByClassName(text, leafNode);
-  //   if (isFound) return 1;
-  // }
-
   try {
     if (!leafNode.name) return 0;
     const parent = await Models.Tree.findById(leafNode.parent).cache(
