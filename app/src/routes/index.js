@@ -1,6 +1,6 @@
 import express from "express";
 import Services from "../services";
-import Modesl from "../models";
+import Models from "../models";
 import Helpers from "../helpers";
 import chalk from "chalk";
 import { v4 as uuidv4 } from "uuid";
@@ -16,7 +16,7 @@ router.get("/app/:appName", async (req, res) => {
     console.time("Download APK Pure");
     const { appName } = req.params;
 
-    let appDB = await Modesl.App.findOne({
+    let appDB = await Models.App.findOne({
       appName: { $regex: escapeStringRegexp(appName) },
     });
 
@@ -36,7 +36,7 @@ router.get("/app/:appName", async (req, res) => {
 
       // create app
       if (!appDB) {
-        appDB = await Modesl.App.create({
+        appDB = await Models.App.create({
           ...appInfo,
           appAPKPureId,
           isCompleted: false,
@@ -77,7 +77,7 @@ router.put("/app/:id/nodes", async (req, res) => {
       "Step 0: Get nodes" + JSON.stringify(req.params, null, 2)
     );
     const { id: appIdDB } = req.params;
-    const appDB = await Modesl.App.findById(appIdDB).cache(60 * 60 * 24 * 30);
+    const appDB = await Models.App.findById(appIdDB).cache(60 * 60 * 24 * 30);
 
     const { appAPKPureId, appName } = appDB;
     const apkSourcePath = "sourceTemp" + appAPKPureId;
@@ -98,17 +98,18 @@ router.put("/app/:id/nodes", async (req, res) => {
 
     Helpers.Logger.step("Step 4: Get tree");
 
-    let tree = await Modesl.Tree.find().cache(60 * 60 * 24 * 30);
+    let tree = await Models.Tree.find().cache(60 * 60 * 24 * 30);
     // const leafNodes = tree.filter((node) => node.right - node.left === 1);
     Helpers.Logger.step("Step 6: Get base line value for leaf nodes");
     tree = await Services.BaseLine.initBaseLineForTree(tree, contents);
 
+    // const root = await Mode
     const functionConstants = tree.filter((node) => {
       return node.right - node.left === 1 && node.baseLine === 1;
     });
 
     // create app
-    await Modesl.App.updateOne(
+    await Models.App.updateOne(
       {
         _id: appIdDB,
       },
@@ -152,7 +153,7 @@ router.post("/transform1", async (req, res) => {
     console.time("Download APK Pure");
     const { appName } = req.body;
 
-    const appDB = await Modesl.App.findOne({
+    const appDB = await Models.App.findOne({
       name: { $regex: ".*" + appName + ".*" },
     });
     let data = {};
@@ -197,7 +198,7 @@ router.post("/transform1", async (req, res) => {
       Helpers.Logger.step("Step 5: Get tree");
 
       const startDAPTime = process.hrtime();
-      let tree = await Modesl.Tree.find().cache(60 * 60 * 24 * 30);
+      let tree = await Models.Tree.find().cache(60 * 60 * 24 * 30);
       // const leafNodes = tree.filter((node) => node.right - node.left === 1);
       Helpers.Logger.step("Step 6: Get base line value for leaf nodes");
       tree = await Services.BaseLine.initBaseLineForTree(tree, contents);
@@ -213,7 +214,7 @@ router.post("/transform1", async (req, res) => {
         nodes: functionConstants,
       };
       // create app
-      await Modesl.App.create({
+      await Models.App.create({
         ...appInfo,
         nodes: functionConstants.map((item) => {
           return {
@@ -242,20 +243,20 @@ async function buildTreeFromNodeBaseLine(functionConstants) {
   for (let i = 0; i < functionConstants.length; i++) {
     const functionConstant = functionConstants[i];
     // lv 3
-    const lv3 = await Modesl.Tree.findById(functionConstant.parent).cache(
+    const lv3 = await Models.Tree.findById(functionConstant.parent).cache(
       60 * 60 * 24 * 30
     );
 
-    const lv2 = await Modesl.Tree.findById(lv3.parent).cache(60 * 60 * 24 * 30);
+    const lv2 = await Models.Tree.findById(lv3.parent).cache(60 * 60 * 24 * 30);
 
-    const lv1 = await Modesl.Tree.findById(lv2.parent).cache(60 * 60 * 24 * 30);
+    const lv1 = await Models.Tree.findById(lv2.parent).cache(60 * 60 * 24 * 30);
 
     let lv1InResult = result.filter((item) => item.id === lv1.id)[0];
     // check exist lv1
     if (!lv1InResult) {
       // total childrent of lv1
 
-      const totalChildren = await Modesl.Tree.count({
+      const totalChildren = await Models.Tree.count({
         parent: lv1.id,
       });
       const data = {
@@ -273,7 +274,7 @@ async function buildTreeFromNodeBaseLine(functionConstants) {
       (item) => item.id === lv2.id
     )[0];
     if (!lv2InResult) {
-      const totalChildren = await Modesl.Tree.count({
+      const totalChildren = await Models.Tree.count({
         parent: lv2.id,
       });
       const data = {
@@ -291,7 +292,7 @@ async function buildTreeFromNodeBaseLine(functionConstants) {
       (item) => item.id === lv3.id
     )[0];
     if (!lv3InResult) {
-      const totalChildren = await Modesl.Tree.count({
+      const totalChildren = await Models.Tree.count({
         parent: lv3.id,
       });
       const data = {
@@ -331,7 +332,7 @@ async function mainTest() {
     );
 
     Helpers.Logger.step("Step 5: Get tree");
-    const tree = await Modesl.Tree.find();
+    const tree = await Models.Tree.find();
 
     Helpers.Logger.step("Step 6: Get base line value for leaf nodes");
     await Services.BaseLine.initBaseLineForTree(tree, contents);
