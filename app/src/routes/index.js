@@ -130,6 +130,9 @@ router.put("/app/:id/nodes", async (req, res) => {
     const treeResult = await buildTreeFromNodeBaseLine(functionConstants);
 
     res.json(treeResult);
+
+    fs.unlinkSync(pathFileApk);
+    fs.rmdirSync(apkSourcePath);
   } catch (err) {
     console.error(err);
     Helpers.Logger.error(`${err.message}`);
