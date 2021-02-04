@@ -107,24 +107,31 @@ router.put("/app/:id/nodes", async (req, res) => {
     Helpers.Logger.info(
       `Node data: ${JSON.stringify(functionConstants, null, 2)}`
     );
+
+    const appData = {
+      isCompleted: true,
+      nodes: functionConstants.map((item) => {
+        return {
+          id: item._id,
+          name: item.name,
+          value: item.baseLine,
+          parent: item.parent._id,
+        };
+      }),
+    };
+
+    Helpers.Logger.info(`APP DATA: ${JSON.stringify(appData, null, 2)}`);
     // create app
     await Models.App.updateOne(
       {
         _id: appIdDB,
       },
       {
-        $set: {
-          isCompleted: true,
-          nodes: functionConstants.map((item) => {
-            return {
-              id: item._id,
-              name: item.name,
-              value: item.baseLine,
-              parent: item.parent._id,
-            };
-          }),
-        },
-      }
+        $set: appData,
+      },
+      {},
+      (err, data) =>
+        Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
     );
 
     const treeResult = await buildTreeFromNodeBaseLine(functionConstants);
