@@ -4,11 +4,10 @@ const { parentPort, workerData } = require("worker_threads");
 const { leafNodes, contents } = workerData;
 const result = leafNodes.map((leafNode) => {
   try {
-    let baseLine = 0;
     const { parent } = leafNode;
     const lastFunctionOfParent = parent.name.split(".").pop();
 
-    baseLine =
+    const baseLine =
       contents.includes(parent.name.toLowerCase().replace(/\s|;/g, "")) &&
       contents.includes(
         lastFunctionOfParent.toLowerCase() +
@@ -18,6 +17,7 @@ const result = leafNodes.map((leafNode) => {
         ? 1
         : 0;
     return {
+      _id: leafNode._id,
       id: leafNode._id,
       name: leafNode.name,
       desc: leafNode.desc,

@@ -104,7 +104,9 @@ router.put("/app/:id/nodes", async (req, res) => {
     const functionConstants = leafNodeBaseLines.filter((node) => {
       return node.right - node.left === 1 && node.baseLine === 1;
     });
-
+    Helpers.Logger.info(
+      `Node data: ${JSON.stringify(functionConstants, null, 2)}`
+    );
     // create app
     await Models.App.updateOne(
       {
@@ -118,7 +120,7 @@ router.put("/app/:id/nodes", async (req, res) => {
               id: item._id,
               name: item.name,
               value: item.baseLine,
-              parent: item.parent,
+              parent: item.parent._id,
             };
           }),
         },
@@ -255,7 +257,7 @@ async function buildTreeFromNodeBaseLine(functionConstants) {
 
       const totalChildren = await Models.Tree.count({
         parent: lv1.id,
-      });
+      }).cache(60 * 60 * 24 * 30);
       const data = {
         ...lv1.toJSON(),
         totalChildren,
@@ -273,7 +275,7 @@ async function buildTreeFromNodeBaseLine(functionConstants) {
     if (!lv2InResult) {
       const totalChildren = await Models.Tree.count({
         parent: lv2.id,
-      });
+      }).cache(60 * 60 * 24 * 30);
       const data = {
         ...lv2.toJSON(),
         totalChildren,
@@ -291,7 +293,7 @@ async function buildTreeFromNodeBaseLine(functionConstants) {
     if (!lv3InResult) {
       const totalChildren = await Models.Tree.count({
         parent: lv3.id,
-      });
+      }).cache(60 * 60 * 24 * 30);
       const data = {
         ...lv3.toJSON(),
         totalChildren,

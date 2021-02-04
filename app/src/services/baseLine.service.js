@@ -19,20 +19,8 @@ const initBaseLineForTree = async (contents) => {
     $where: function () {
       return this.right - this.left === 1;
     },
-  }).lean();
-
-  // add parent prop to leafNode
-  leafNodes = await Promise.all(
-    leafNodes.map(async (leafNode) => {
-      const parent = await Models.Tree.findById(leafNode.parent).cache(
-        60 * 60 * 24 * 30
-      );
-      return {
-        ...leafNode,
-        parent: parent ? parent.toJSON() : null,
-      };
-    })
-  );
+  }).populate("parent");
+  leafNodes = JSON.parse(JSON.stringify(leafNodes));
 
   const cpuCount = os.cpus().length;
   const leafNodeChunks = _.chunk(leafNodes, cpuCount);

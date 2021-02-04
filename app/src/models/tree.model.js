@@ -8,7 +8,10 @@ var schema = new Schema(
     left: Number,
     right: Number,
     desc: String,
-    parent: Schema.Types.ObjectId,
+    parent: {
+      type: Schema.Types.ObjectId,
+      ref: "tree",
+    },
   },
   {
     timestamps: true,
