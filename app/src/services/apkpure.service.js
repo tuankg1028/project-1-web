@@ -60,23 +60,38 @@ const download = async (appName, appIdFromAPKPure) => {
       }
     });
 
+    // go to list of download page (ex: https://apkpure.com/facebook/com.facebook.katana/variant/304.0.0.39.118-APK#variants)
+    const downloadListResponse = await API.get(downloadLink);
+    const $DownloadList = cheerio.load(downloadListResponse.data);
+    const downloadPageLink = $DownloadList(".table .table-row")
+      .last()
+      .find(".down a")
+      .attr("href");
+
+    // get download link
+    const downloadPageResponse = await API.get(downloadPageLink);
+    const $DownloadLink = cheerio.load(downloadPageResponse.data);
+
+    downloadLink = $DownloadLink("#download_link").attr("href");
     // apk file
     await new Promise(function (resolve, reject) {
-      API.get(downloadLink, {
-        responseType: "stream",
-      }).then((response) => {
-        response.data.pipe(fs.createWriteStream(pathFile));
+      axios
+        .get(downloadLink, {
+          responseType: "stream",
+        })
+        .then((response) => {
+          response.data.pipe(fs.createWriteStream(pathFile));
 
-        response.data.on("end", () => {
-          setTimeout(() => {
-            console.log(
-              chalk.green("Dowloaded file from APK Pure successfully")
-            );
+          response.data.on("end", () => {
+            setTimeout(() => {
+              console.log(
+                chalk.green("Dowloaded file from APK Pure successfully")
+              );
 
-            resolve();
-          }, 3000);
+              resolve();
+            }, 3000);
+          });
         });
-      });
     });
 
     return pathFile;
