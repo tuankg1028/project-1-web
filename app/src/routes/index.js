@@ -6,34 +6,35 @@ import chalk from "chalk";
 import { v4 as uuidv4 } from "uuid";
 import _ from "lodash";
 import fs from "fs";
+import rimraf from "rimraf";
+Models.App.deleteMany({ isCompleted: false });
 const escapeStringRegexp = require("escape-string-regexp");
 
 const { execSync, spawn } = require("child_process");
 const router = express.Router();
 
-router.get("/app/:appName", async (req, res) => {
+router.post("/app", async (req, res) => {
   try {
-    console.time("Download APK Pure");
-    const { appName } = req.params;
+    const { appName } = req.body;
+
+    Helpers.Logger.step("Step 1: Search apps from APK Pure");
+    const listAppIdsFromAPKPure = await Services.APKPure.seach(appName);
+    if (!listAppIdsFromAPKPure.length)
+      throw new Error("No app found from APK Pure");
+
+    const appAPKPureId = listAppIdsFromAPKPure[0];
+    Helpers.Logger.step("Step 2: Get app info from APK pure");
+    const { AppId: AppIdCHPlay } = await Services.APKPure.getInfoApp(
+      appAPKPureId
+    );
+
+    const appInfo = await Services.CHPLAY.getInfoApp(AppIdCHPlay);
 
     let appDB = await Models.App.findOne({
-      appName: { $regex: escapeStringRegexp(appName) },
+      appName: { $regex: escapeStringRegexp(appInfo.appName) },
     });
 
     if (!appDB || (appDB && !appDB.isCompleted)) {
-      Helpers.Logger.step("Step 1: Search apps from APK Pure");
-      const listAppIdsFromAPKPure = await Services.APKPure.seach(appName);
-      if (!listAppIdsFromAPKPure.length)
-        throw new Error("No app found from APK Pure");
-
-      const appAPKPureId = listAppIdsFromAPKPure[0];
-      Helpers.Logger.step("Step 2: Get app info from APK pure");
-      const { AppId: AppIdCHPlay } = await Services.APKPure.getInfoApp(
-        appAPKPureId
-      );
-
-      const appInfo = await Services.CHPLAY.getInfoApp(AppIdCHPlay);
-
       // create app
       if (!appDB) {
         appDB = await Models.App.create({
@@ -58,6 +59,7 @@ router.get("/app/:appName", async (req, res) => {
 
     Helpers.Logger.info("The app was existed");
     appDB = appDB.toJSON();
+
     appDB.tree = await buildTreeFromNodeBaseLine(appDB.nodes);
 
     Helpers.Logger.step("App Response: ", JSON.stringify(appDB, null, 2));
@@ -72,19 +74,21 @@ router.get("/app/:appName", async (req, res) => {
 });
 
 router.put("/app/:id/nodes", async (req, res) => {
+  const { id: appIdDB } = req.params;
+  let pathFileApk;
+  let apkSourcePath;
   try {
     Helpers.Logger.step(
       "Step 0: Get nodes" + JSON.stringify(req.params, null, 2)
     );
-    const { id: appIdDB } = req.params;
     const appDB = await Models.App.findById(appIdDB).cache(60 * 60 * 24 * 30);
 
     const { appAPKPureId, appName } = appDB;
-    const apkSourcePath = "sourceTemp" + appAPKPureId;
+    apkSourcePath = "sourceTemp" + appAPKPureId;
 
     Helpers.Logger.step("Step 1: Download apk");
     // download first app
-    const pathFileApk = await Services.APKPure.download(appName, appAPKPureId);
+    pathFileApk = await Services.APKPure.download(appName, appAPKPureId);
 
     Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
     // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
@@ -138,18 +142,36 @@ router.put("/app/:id/nodes", async (req, res) => {
 
     res.json(treeResult);
 
-    fs.unlinkSync(pathFileApk);
-    fs.rmdirSync(apkSourcePath);
+    // remove file and folder
+    if (fs.existsSync(__dirname + "/../../" + apkSourcePath)) {
+      rimraf(__dirname + "/../../" + apkSourcePath, function () {
+        Helpers.Logger.info("folder removed");
+      });
+    }
+    if (fs.existsSync(__dirname + "/../../" + pathFileApk)) {
+      fs.unlinkSync(__dirname + "/../../" + pathFileApk);
+    }
   } catch (err) {
+    // remove file and folder
+    if (fs.existsSync(__dirname + "/../../" + apkSourcePath)) {
+      rimraf(__dirname + "/../../" + apkSourcePath, function () {
+        Helpers.Logger.info("folder removed");
+      });
+    }
+    if (fs.existsSync(__dirname + "/../../" + pathFileApk)) {
+      fs.unlinkSync(__dirname + "/../../" + pathFileApk);
+    }
+
     console.error(err);
     Helpers.Logger.error(`${err.message}`);
+    res.status(400).json({ error: err.message });
   }
 });
 
 router.post("/transform", async (req, res) => {
   try {
     const { appName } = req.body;
-
+    console.log(appName);
     res.render("pages/transform", { appName });
   } catch (err) {
     console.error(err);
@@ -252,14 +274,11 @@ async function buildTreeFromNodeBaseLine(functionConstants) {
   for (let i = 0; i < functionConstants.length; i++) {
     const functionConstant = functionConstants[i];
     // lv 3
-    const lv3 = await Models.Tree.findById(functionConstant.parent).cache(
-      60 * 60 * 24 * 30
-    );
+    const lv3 = await Models.Tree.findById(functionConstant.parent);
 
-    const lv2 = await Models.Tree.findById(lv3.parent).cache(60 * 60 * 24 * 30);
+    const lv2 = await Models.Tree.findById(lv3.parent);
 
-    const lv1 = await Models.Tree.findById(lv2.parent).cache(60 * 60 * 24 * 30);
-
+    const lv1 = await Models.Tree.findById(lv2.parent);
     let lv1InResult = result.filter((item) => item.id === lv1.id)[0];
     // check exist lv1
     if (!lv1InResult) {
@@ -267,7 +286,7 @@ async function buildTreeFromNodeBaseLine(functionConstants) {
 
       const totalChildren = await Models.Tree.count({
         parent: lv1.id,
-      }).cache(60 * 60 * 24 * 30);
+      });
       const data = {
         ...lv1.toJSON(),
         totalChildren,
@@ -285,7 +304,7 @@ async function buildTreeFromNodeBaseLine(functionConstants) {
     if (!lv2InResult) {
       const totalChildren = await Models.Tree.count({
         parent: lv2.id,
-      }).cache(60 * 60 * 24 * 30);
+      });
       const data = {
         ...lv2.toJSON(),
         totalChildren,
@@ -303,7 +322,7 @@ async function buildTreeFromNodeBaseLine(functionConstants) {
     if (!lv3InResult) {
       const totalChildren = await Models.Tree.count({
         parent: lv3.id,
-      }).cache(60 * 60 * 24 * 30);
+      });
       const data = {
         ...lv3.toJSON(),
         totalChildren,

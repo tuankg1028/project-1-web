@@ -38,11 +38,23 @@ const seach = async (appName) => {
 const download = async (appName, appIdFromAPKPure) => {
   try {
     const path = "./apkTemp/" + appName + "-" + uuidv4() + ".apk";
-    const response = await API.get(`${appIdFromAPKPure}/download?from=details`);
+    const response = await API.get(`${appIdFromAPKPure}/versions`);
 
     // get download link
     const $ = cheerio.load(response.data);
-    const downloadLink = $("#download_link").attr("href");
+    let downloadLink;
+    $(".ver-wrap li").each(function () {
+      const type = $(this).find(".ver-item-t.ver-apk").text();
+
+      switch (type) {
+        case "APK":
+          if (!downloadLink) {
+            downloadLink = $(this).find("a").attr("href");
+          }
+
+          break;
+      }
+    });
 
     // apk file
     await API.get(downloadLink, {

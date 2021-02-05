@@ -17,7 +17,7 @@
     <div class="loader">Loading...</div>
   </div>
    <div class="container mt-3">
-      <input type="hidden" id="app-name-inputed" value=<%= appName %>>
+      <input type="hidden" id="app-name-inputed" value="<%= appName %>">
    
       <div id="info">
 
@@ -58,10 +58,10 @@
         const appName = $("#app-name-inputed").val()
           
       $.ajax({
-        url: `/app/${appName}`,
-        method: "GET",
-        timeout: 1000000
-        // data: { id : menuId },
+        url: `/app`,
+        method: "POST",
+        timeout: 1000000,
+        data: { appName },
         // dataType: "html"
       }).done(function( response ) {
         endLoad()
@@ -107,6 +107,7 @@
             $("#card-wrap").html(nodesHtml);
           }).fail(function( response ) {
             console.log(response)
+            alert("Parsing APK fail")
           })
         } else {
           console.log()
@@ -115,7 +116,7 @@
         }
 
         
-      });
+      })
 
       function buildTreeHtml(tree) {
         let infoHTML = "";
