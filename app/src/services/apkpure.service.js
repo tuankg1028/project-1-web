@@ -61,19 +61,23 @@ const download = async (appName, appIdFromAPKPure) => {
     });
 
     // apk file
-    await API.get(downloadLink, {
-      responseType: "stream",
-    })
-      .then((response) => {
-        return new Promise((resolve, reject) => {
-          response.data.pipe(fs.createWriteStream(pathFile));
+    await new Promise(function (resolve, reject) {
+      API.get(downloadLink, {
+        responseType: "stream",
+      }).then((response) => {
+        response.data.pipe(fs.createWriteStream(pathFile));
 
-          response.data.on("end", resolve);
+        response.data.on("end", () => {
+          setTimeout(() => {
+            console.log(
+              chalk.green("Dowloaded file from APK Pure successfully")
+            );
+
+            resolve();
+          }, 3000);
         });
-      })
-      .then(() => {
-        console.log(chalk.green("Dowloaded file from APK Pure successfully"));
       });
+    });
 
     return pathFile;
   } catch (err) {
