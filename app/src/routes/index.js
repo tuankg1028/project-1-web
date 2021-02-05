@@ -4,6 +4,7 @@ import Models from "../models";
 import Helpers from "../helpers";
 import chalk from "chalk";
 import { v4 as uuidv4 } from "uuid";
+import path from "path";
 import _ from "lodash";
 import fs from "fs";
 import rimraf from "rimraf";
@@ -84,13 +85,14 @@ router.put("/app/:id/nodes", async (req, res) => {
     const appDB = await Models.App.findById(appIdDB).cache(60 * 60 * 24 * 30);
 
     const { appAPKPureId, appName } = appDB;
-    apkSourcePath = "sourceTemp" + appAPKPureId;
+    apkSourcePath = path.join(__dirname, `../../sourceTemp/${appAPKPureId}`);
 
     Helpers.Logger.step("Step 1: Download apk");
     // download first app
     pathFileApk = await Services.APKPure.download(appName, appAPKPureId);
 
     Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
+
     // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
     execSync(
       `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`

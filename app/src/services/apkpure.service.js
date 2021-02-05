@@ -6,7 +6,7 @@ import fs from "fs";
 import Helpers from "../helpers";
 import { v4 as uuidv4 } from "uuid";
 import url from "url";
-
+import path from "path";
 const { APK_PURE_API } = process.env;
 
 const API = axios.create({
@@ -37,7 +37,11 @@ const seach = async (appName) => {
 
 const download = async (appName, appIdFromAPKPure) => {
   try {
-    const path = "./apkTemp/" + appName + "-" + uuidv4() + ".apk";
+    const pathFile = path.join(
+      __dirname,
+      "../../",
+      "apkTemp/" + appName + "-" + uuidv4() + ".apk"
+    );
     const response = await API.get(`${appIdFromAPKPure}/versions`);
 
     // get download link
@@ -62,7 +66,7 @@ const download = async (appName, appIdFromAPKPure) => {
     })
       .then((response) => {
         return new Promise((resolve, reject) => {
-          response.data.pipe(fs.createWriteStream(path));
+          response.data.pipe(fs.createWriteStream(pathFile));
 
           response.data.on("end", resolve);
         });
@@ -71,7 +75,7 @@ const download = async (appName, appIdFromAPKPure) => {
         console.log(chalk.green("Dowloaded file from APK Pure successfully"));
       });
 
-    return path;
+    return pathFile;
   } catch (err) {
     console.log(err);
     Helpers.Logger.error("ERROR: download APK");
