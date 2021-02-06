@@ -22,10 +22,9 @@ const initBaseLineForTree = async (contents) => {
   }).populate("parent");
   leafNodes = JSON.parse(JSON.stringify(leafNodes));
 
-  // const cpuCount = os.cpus().length;
-  const cpuCount = 3;
+  const cpuCount = os.cpus().length;
   const leafNodeChunks = _.chunk(leafNodes, cpuCount);
-  Helpers.Logger.info(`Running on: ${cpuCount} cpus`);
+  // Helpers.Logger.info(`Running on: ${cpuCount} cpus`);
   const promises = leafNodeChunks.map((leafNodeChunks) => {
     return _computeBaseLineForNode(contents, leafNodeChunks);
   });
@@ -58,25 +57,28 @@ const _computeBaseLineForNode = async (contents, leafNodes) => {
   // }
   // if (baseLine) _updateBaseLineNodeInTree(node, baseLine, tree);
 
-  const { Worker } = require("worker_threads");
-  const result = await new Promise((resolve, reject) => {
-    const worker = new Worker(
-      path.join(__dirname, "../workers/computeBaseLineLeafNode.worker.js"),
-      {
-        workerData: {
-          leafNodes,
-          contents,
-        },
-      }
-    );
+  // use workers
+  // const { Worker } = require("worker_threads");
+  // const result = await new Promise((resolve, reject) => {
+  //   const worker = new Worker(
+  //     path.join(__dirname, "../workers/computeBaseLineLeafNode.worker.js"),
+  //     {
+  //       workerData: {
+  //         leafNodes,
+  //         contents,
+  //       },
+  //     }
+  //   );
 
-    worker.on("message", resolve);
-    worker.on("error", reject);
-    worker.on("exit", (code) => {
-      if (code !== 0)
-        reject(new Error(`Worker stopped with exit code ${code}`));
-    });
-  });
+  //   worker.on("message", resolve);
+  //   worker.on("error", reject);
+  //   worker.on("exit", (code) => {
+  //     if (code !== 0)
+  //       reject(new Error(`Worker stopped with exit code ${code}`));
+  //   });
+  // });
+
+  const result = await _computeBaseLineLeafNode(leafNodes, contents);
   return result;
 };
 
@@ -85,29 +87,40 @@ const _updateBaseLineNodeInTree = (node, value, tree) => {
 
   nodeInTree.baseLine = value;
 };
-const _computeBaseLineLeafNode = async (leafNode, contents) => {
-  try {
-    if (!leafNode.name) return 0;
-    const parent = await Models.Tree.findById(leafNode.parent).cache(
-      60 * 60 * 24 * 30
-    );
-    const lastFunctionOfParent = parent.name.split(".").pop();
+const _computeBaseLineLeafNode = async (leafNodes, contents) => {
+  const result = leafNodes.map((leafNode) => {
+    try {
+      const { parent } = leafNode;
+      const lastFunctionOfParent = parent.name.split(".").pop();
 
-    return contents.includes(parent.name.toLowerCase().replace(/\s|;/g, "")) &&
-      contents.includes(
-        lastFunctionOfParent.toLowerCase() +
-          "." +
-          leafNode.name.toLowerCase().replace(/\([A-Za-z0-9_.<>, \[\]]*\)/i, "")
-      )
-      ? 1
-      : 0;
-  } catch (e) {
-    console.log(leafNode);
-    console.log(e);
-    Helpers.Logger.error(`ERROR _computeBaseLineLeafNode: ${e.message}`);
-
-    return 0;
-  }
+      const baseLine =
+        contents.includes(parent.name.toLowerCase().replace(/\s|;/g, "")) &&
+        contents.includes(
+          lastFunctionOfParent.toLowerCase() +
+            "." +
+            leafNode.name
+              .toLowerCase()
+              .replace(/\([A-Za-z0-9_.<>, \[\]]*\)/i, "")
+        )
+          ? 1
+          : 0;
+      return {
+        _id: leafNode._id,
+        id: leafNode._id,
+        name: leafNode.name,
+        desc: leafNode.desc,
+        left: leafNode.left,
+        right: leafNode.right,
+        parent: leafNode.parent,
+        baseLine,
+      };
+    } catch (e) {
+      console.log(leafNode);
+      console.log(e);
+      Helpers.Logger.error(`ERROR _computeBaseLineLeafNode: ${e.message}`);
+    }
+  });
+  return result;
 };
 function getTxtFilePaths(filePaths) {
   return _.filter(filePaths, (filePath) => path.extname(filePath) === ".txt");
