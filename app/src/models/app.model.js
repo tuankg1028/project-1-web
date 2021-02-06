@@ -9,6 +9,7 @@ var schema = new Schema(
     developer: String,
     updatedDate: String,
     description: String,
+    contentPrivacyPolicy: String,
     currentVersion: String,
     size: String,
     installs: String,

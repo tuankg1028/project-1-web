@@ -38,7 +38,12 @@ const getInfoApp = async (appId) => {
       .attr("content")
       .replace(/\n/g, "<br>");
 
-    let updatedDate, currentVersion, size, installs, privacyLink;
+    let updatedDate,
+      currentVersion,
+      size,
+      installs,
+      privacyLink,
+      contentPrivacyPolicy;
     $(".hAyfc").each(function (i, elem) {
       const type = $(this).find(".BgcNfc").text();
 
@@ -68,6 +73,14 @@ const getInfoApp = async (appId) => {
       }
     });
 
+    // get content of privacy policy
+    if (privacyLink) {
+      const privacyPolicyResponse = await axios.get(privacyLink);
+      const $Privacy = cheerio.load(privacyPolicyResponse.data);
+
+      contentPrivacyPolicy = $Privacy("body").text();
+    }
+
     return {
       developer,
       categoryName,
@@ -78,6 +91,7 @@ const getInfoApp = async (appId) => {
       privacyLink,
       appName,
       description,
+      contentPrivacyPolicy,
     };
   } catch (err) {
     console.log(err);
