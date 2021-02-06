@@ -22,7 +22,8 @@ const initBaseLineForTree = async (contents) => {
   }).populate("parent");
   leafNodes = JSON.parse(JSON.stringify(leafNodes));
 
-  const cpuCount = os.cpus().length;
+  // const cpuCount = os.cpus().length;
+  const cpuCount = 3;
   const leafNodeChunks = _.chunk(leafNodes, cpuCount);
   Helpers.Logger.info(`Running on: ${cpuCount} cpus`);
   const promises = leafNodeChunks.map((leafNodeChunks) => {
