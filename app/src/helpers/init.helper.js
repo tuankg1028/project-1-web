@@ -340,10 +340,10 @@ const _createAppByCSV = async (app) => {
 
         Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
 
-        execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
-        // execSync(
-        //   `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
-        // );
+        // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
+        execSync(
+          `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
+        );
         Helpers.Logger.step("Step 3: Get content APK from source code");
         const contents = await Helpers.File.getContentOfFolder(
           `${apkSourcePath}/sources`
