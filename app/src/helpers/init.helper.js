@@ -387,8 +387,6 @@ const _createAppByCSV = async (app) => {
             Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
         );
 
-        const treeResult = await buildTreeFromNodeBaseLine(functionConstants);
-
         // remove file and folder
         if (fs.existsSync(__dirname + "/../../" + apkSourcePath)) {
           rimraf(__dirname + "/../../" + apkSourcePath, function () {
@@ -398,7 +396,7 @@ const _createAppByCSV = async (app) => {
         if (fs.existsSync(__dirname + "/../../" + pathFileApk)) {
           fs.unlinkSync(__dirname + "/../../" + pathFileApk);
         }
-        return treeResult;
+        return functionConstants;
       } catch (err) {
         // remove file and folder
         if (fs.existsSync(__dirname + "/../../" + apkSourcePath)) {
