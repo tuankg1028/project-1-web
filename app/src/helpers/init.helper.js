@@ -7,7 +7,10 @@ import Services from "../services";
 import { create, isNumber } from "lodash";
 import fs from "fs";
 import pLimit from "p-limit";
-import url from "url";
+import rimraf from "rimraf";
+const escapeStringRegexp = require("escape-string-regexp");
+import _ from "lodash";
+
 const { execSync } = require("child_process");
 
 const { MAPPING_FOLDER, SOURCE_APP, APPS_CSV_PATH } = process.env;
@@ -227,19 +230,28 @@ const initAppsOnDBByCSV = async () => {
 
     const [, ...rows] = data;
 
-    let promises = rows.map(async (app) => {
-      if (!app) return null;
+    for (let i = 0; i < rows.length; i++) {
+      const app = rows[i];
+
+      if (!app) continue;
       const appDB = await Models.App.findOne({
         name: app[1],
       });
       if (appDB) null;
 
-      return _createAppByCSV(app);
-    });
+      await _createAppByCSV(app);
+    }
+    // let promises = rows.map(async (app) => {
+    //   if (!app) return null;
+    //   const appDB = await Models.App.findOne({
+    //     name: app[1],
+    //   });
+    //   if (appDB) null;
 
-    const limit = pLimit(50);
-    promises = promises.map((promise) => limit(() => promise));
-    await Promise.all(promises);
+    //   return _createAppByCSV(app);
+    // });
+
+    // await Promise.all(promises);
   } catch (err) {
     console.log(err);
     Helpers.Logger.error("ERROR: initAppsOnDBByCSV");
@@ -250,75 +262,167 @@ const _createAppByCSV = async (app) => {
   const [appId, appName, , chplayLink] = app;
 
   try {
-    Helpers.Logger.step(`Step 0: Parsing ${appName} APP`);
+    const _createApp = async (appName) => {
+      try {
+        Helpers.Logger.step("Step 1: Search apps from APK Pure");
+        const listAppIdsFromAPKPure = await Services.APKPure.seach(appName);
+        if (!listAppIdsFromAPKPure.length)
+          throw new Error("No app found from APK Pure");
 
-    // get appId from url
-    var urlParts = url.parse(chplayLink, true);
-    var query = urlParts.query;
-    const appIdOnCHPlay = query.id;
+        const appAPKPureId = listAppIdsFromAPKPure[0];
+        Helpers.Logger.step("Step 2: Get app info from APK pure");
+        const { AppId: AppIdCHPlay } = await Services.APKPure.getInfoApp(
+          appAPKPureId
+        );
 
-    const apkSourcePath = "./sourceTemp/" + appIdOnCHPlay;
-    // download first app
-    const pathFileApk = await Services.APKPure.download(
-      appName,
-      "apkpure/" + appIdOnCHPlay
-    );
+        const appInfo = await Services.CHPLAY.getInfoApp(AppIdCHPlay);
 
-    Helpers.Logger.step("Step 1: Parse APK to Text files by jadx");
-    execSync(
-      `sh ${__dirname}/../../jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
-    );
+        let appDB = await Models.App.findOne({
+          appName: { $regex: escapeStringRegexp(appInfo.appName) },
+        });
 
-    Helpers.Logger.step("Step 2: Get content APK from source code");
-    const contents = await Helpers.File.getContentOfFolder(
-      `${apkSourcePath}/sources`
-    );
-    Helpers.Logger.step("Step 3: Get tree");
+        if (!appDB || (appDB && !appDB.isCompleted)) {
+          // create app
+          if (!appDB) {
+            appDB = await Models.App.create({
+              ...appInfo,
+              appAPKPureId,
+              isCompleted: false,
+            });
+          }
 
-    const tree = await Models.Tree.find().cache(60 * 60 * 24 * 30);
-    // const leafNodes = tree.filter((node) => node.right - node.left === 1);
-    Helpers.Logger.step("Step 4: Get base line value for leaf nodes");
-    await Services.BaseLine.initBaseLineForTree(tree, contents);
+          const data = {
+            ...appInfo,
+            appAPKPureId,
+            id: appDB.id,
+          };
 
-    const result = tree.filter((node) => {
-      return node.right - node.left === 1 && node.baseLine === 1;
-    });
+          Helpers.Logger.step("App Response: ", JSON.stringify(data, null, 2));
+          return {
+            data,
+            isExisted: false,
+          };
+        }
 
-    const {
-      developer,
-      categoryName,
-      updatedDate,
-      currentVersion,
-      size,
-      installs,
-      privacyLink,
-    } = await Services.CHPLAY.getInfoApp(appIdOnCHPlay);
+        Helpers.Logger.info("The app was existed");
+        appDB = appDB.toJSON();
 
-    await Models.App.create({
-      name: appName,
-      developer,
-      categoryName,
-      updatedDate,
-      currentVersion,
-      size,
-      installs,
-      privacyLink,
-      chplayLink,
-      nodes: result.map((item) => {
+        appDB.tree = await buildTreeFromNodeBaseLine(appDB.nodes);
+
+        Helpers.Logger.step("App Response: ", JSON.stringify(appDB, null, 2));
         return {
-          id: item._id,
-          name: item.name,
-          value: item.baseLine,
-          parent: node.parent,
+          data: appDB,
+          isExisted: true,
         };
-      }),
-    });
+      } catch (err) {
+        console.error(err);
+        Helpers.Logger.error(`${err.message}`);
+      }
+    };
+    const _createNodes = async (appIdDB) => {
+      let pathFileApk;
+      let apkSourcePath;
+      try {
+        Helpers.Logger.step(
+          "Step 0: Get nodes " + JSON.stringify(appIdDB, null, 2)
+        );
+        const appDB = await Models.App.findById(appIdDB);
 
-    fs.unlink(pathFileApk);
-    fs.rmdir(apkSourcePath);
+        const { appAPKPureId, appName } = appDB;
+        apkSourcePath = path.join(
+          __dirname,
+          `../../sourceTemp/${appAPKPureId}`
+        );
+
+        Helpers.Logger.step("Step 1: Download apk");
+        // download first app
+        pathFileApk = await Services.APKPure.download(appName, appAPKPureId);
+
+        Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
+
+        execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
+        // execSync(
+        //   `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
+        // );
+        Helpers.Logger.step("Step 3: Get content APK from source code");
+        const contents = await Helpers.File.getContentOfFolder(
+          `${apkSourcePath}/sources`
+        );
+
+        Helpers.Logger.step("Step 4: Get base line value for leaf nodes");
+        const leafNodeBaseLines = await Services.BaseLine.initBaseLineForTree(
+          contents
+        );
+
+        const functionConstants = leafNodeBaseLines.filter((node) => {
+          return node.right - node.left === 1 && node.baseLine === 1;
+        });
+        Helpers.Logger.info(
+          `Node data: ${JSON.stringify(functionConstants, null, 2)}`
+        );
+
+        const appData = {
+          isCompleted: true,
+          nodes: functionConstants.map((item) => {
+            return {
+              id: item._id,
+              name: item.name,
+              value: item.baseLine,
+              parent: item.parent._id,
+            };
+          }),
+        };
+
+        Helpers.Logger.info(`APP DATA: ${JSON.stringify(appData, null, 2)}`);
+        // create app
+        await Models.App.updateOne(
+          {
+            _id: appIdDB,
+          },
+          {
+            $set: appData,
+          },
+          {},
+          (err, data) =>
+            Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
+        );
+
+        const treeResult = await buildTreeFromNodeBaseLine(functionConstants);
+
+        // remove file and folder
+        if (fs.existsSync(__dirname + "/../../" + apkSourcePath)) {
+          rimraf(__dirname + "/../../" + apkSourcePath, function () {
+            Helpers.Logger.info("folder removed");
+          });
+        }
+        if (fs.existsSync(__dirname + "/../../" + pathFileApk)) {
+          fs.unlinkSync(__dirname + "/../../" + pathFileApk);
+        }
+        return treeResult;
+      } catch (err) {
+        // remove file and folder
+        if (fs.existsSync(__dirname + "/../../" + apkSourcePath)) {
+          rimraf(__dirname + "/../../" + apkSourcePath, function () {
+            Helpers.Logger.info("folder removed");
+          });
+        }
+        if (fs.existsSync(__dirname + "/../../" + pathFileApk)) {
+          fs.unlinkSync(__dirname + "/../../" + pathFileApk);
+        }
+
+        console.error(err);
+        Helpers.Logger.error(`${err.message}`);
+        return { error: err.message };
+      }
+    };
+    const appDB = await _createApp(appName);
+
+    if (!appDB.data.isCompleted) {
+      await _createNodes(appDB.data.id);
+    }
   } catch (err) {
     console.log(err);
-    Helpers.Logger.error(`ERROR: failt _createAppByCSV on ${appName}`);
+    Helpers.Logger.error(`ERROR: _createAppByCSV on ${appName} app`);
   }
 };
 export default {
