@@ -307,8 +307,6 @@ const _createAppByCSV = async (app) => {
         Helpers.Logger.info("The app was existed");
         appDB = appDB.toJSON();
 
-        appDB.tree = await buildTreeFromNodeBaseLine(appDB.nodes);
-
         Helpers.Logger.step("App Response: ", JSON.stringify(appDB, null, 2));
         return {
           data: appDB,
