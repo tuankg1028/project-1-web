@@ -74,6 +74,8 @@ const download = async (appName, appIdFromAPKPure) => {
 
     downloadLink = $DownloadLink("#download_link").attr("href");
     // apk file
+
+    if (!downloadLink) return null;
     await new Promise(function (resolve, reject) {
       axios
         .get(downloadLink, {
@@ -98,6 +100,7 @@ const download = async (appName, appIdFromAPKPure) => {
   } catch (err) {
     console.log(err);
     Helpers.Logger.error("ERROR: download APK");
+    return null;
   }
 };
 

@@ -336,6 +336,7 @@ const _createAppByCSV = async (app) => {
         // download first app
         pathFileApk = await Services.APKPure.download(appName, appAPKPureId);
 
+        if (!pathFileApk) throw new Error("Cannot download apk");
         Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
 
         // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
