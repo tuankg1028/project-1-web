@@ -75,10 +75,15 @@ const getInfoApp = async (appId) => {
 
     // get content of privacy policy
     if (privacyLink) {
-      const privacyPolicyResponse = await axios.get(privacyLink);
-      const $Privacy = cheerio.load(privacyPolicyResponse.data);
+      try {
+        const privacyPolicyResponse = await axios.get(privacyLink);
+        const $Privacy = cheerio.load(privacyPolicyResponse.data);
 
-      contentPrivacyPolicy = $Privacy("body").text();
+        contentPrivacyPolicy = $Privacy("body").text();
+      } catch (err) {
+        Helpers.Logger.error(err.message);
+        Helpers.Logger.error("ERROR: Get content privacy policy");
+      }
     }
 
     return {
