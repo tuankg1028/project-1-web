@@ -387,35 +387,27 @@ const _createAppByCSV = async (app) => {
         );
 
         // remove file and folder
-        console.log(
-          1,
-          __dirname + "/../../" + apkSourcePath,
-          fs.existsSync(__dirname + "/../../" + apkSourcePath)
-        );
-        if (fs.existsSync(__dirname + "/../../" + apkSourcePath)) {
-          rimraf(__dirname + "/../../" + apkSourcePath, function () {
+
+        if (fs.existsSync(apkSourcePath)) {
+          rimraf(apkSourcePath, function () {
             Helpers.Logger.info("folder removed");
           });
         }
 
-        console.log(
-          1,
-          __dirname + "/../../" + pathFileApk,
-          fs.existsSync(__dirname + "/../../" + pathFileApk)
-        );
-        if (fs.existsSync(__dirname + "/../../" + pathFileApk)) {
-          fs.unlinkSync(__dirname + "/../../" + pathFileApk);
+        if (fs.existsSync(pathFileApk)) {
+          fs.unlinkSync(pathFileApk);
         }
         return functionConstants;
       } catch (err) {
         // remove file and folder
-        if (fs.existsSync(__dirname + "/../../" + apkSourcePath)) {
-          rimraf(__dirname + "/../../" + apkSourcePath, function () {
+        if (fs.existsSync(apkSourcePath)) {
+          rimraf(apkSourcePath, function () {
             Helpers.Logger.info("folder removed");
           });
         }
-        if (fs.existsSync(__dirname + "/../../" + pathFileApk)) {
-          fs.unlinkSync(__dirname + "/../../" + pathFileApk);
+
+        if (fs.existsSync(pathFileApk)) {
+          fs.unlinkSync(pathFileApk);
         }
 
         console.error(err);
