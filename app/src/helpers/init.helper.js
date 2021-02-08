@@ -180,8 +180,12 @@ const initAppsOnDB = async () => {
       promises.push(limit(() => _createApp(fileInFolder, categoryFolder)));
     }
   }
+  const promisesChunk = _.chunk(promises, 100);
 
-  await Promise.all(promises);
+  for (let i = 0; i < promisesChunk.length; i++) {
+    const promiseChunk = promisesChunk[i];
+    await Promise.all(promiseChunk);
+  }
   Helpers.Logger.info("END initAppsOnDB");
 };
 
@@ -239,28 +243,36 @@ const initAppsOnDBByCSV = async () => {
       });
       if (appDB) null;
 
-      await _createAppByCSV(app);
+      await _createAppDB(app);
     }
-    // let promises = rows.map(async (app) => {
-    //   if (!app) return null;
-    //   const appDB = await Models.App.findOne({
-    //     name: app[1],
-    //   });
-    //   if (appDB) null;
-
-    //   return _createAppByCSV(app);
-    // });
-
-    // await Promise.all(promises);
   } catch (err) {
     console.log(err);
     Helpers.Logger.error("ERROR: initAppsOnDBByCSV");
   }
 };
 
-const _createAppByCSV = async (app) => {
-  const [appId, appName, , chplayLink] = app;
+const initAppsOnDB36K = async () => {
+  try {
+    let data = fs.readFileSync(
+      path.join(__dirname, "../../", "data/app_names(36k).txt")
+    );
+    data = JSON.parse(data);
 
+    const promises = [];
+    for (let i = 0; i < data.length; i++) {
+      const appName = data[i];
+
+      promises.push(_createAppDB(appName));
+    }
+
+    await Promise.all(promises);
+  } catch (err) {
+    console.log(err);
+    Helpers.Logger.error("ERROR: initAppsOnDB36K");
+  }
+};
+
+const _createAppDB = async (appName) => {
   try {
     const _createApp = async (appName) => {
       try {
@@ -429,4 +441,5 @@ export default {
   initTreeOnDB,
   initAppsOnDB,
   initAppsOnDBByCSV,
+  initAppsOnDB36K,
 };

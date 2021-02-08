@@ -1,6 +1,5 @@
 require("dotenv").config();
 import express from "express";
-import chalk from "chalk";
 import morgan from "morgan";
 import path from "path";
 import bodyParser from "body-parser";
@@ -28,8 +27,10 @@ app.use(bodyParser.json());
 // Helpers.Init.initAppsOnDB();
 
 // init apps on database by csv
-Helpers.Init.initAppsOnDBByCSV();
+// Helpers.Init.initAppsOnDBByCSV();
 
+// init apps on database (36k)
+Helpers.Init.initAppsOnDB36K();
 app.get("/", function (req, res) {
   res.render("pages/index");
 });
@@ -39,5 +40,5 @@ app.use(routes);
 
 const PORT = process.env.PORT || 3333;
 app.listen(PORT, () =>
-  console.log("Server listening on: http://localhost:3333")
+  Helpers.Logger.info("Server listening on: http://localhost:3333")
 );
