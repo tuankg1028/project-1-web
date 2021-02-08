@@ -17,7 +17,7 @@ const API = axios.create({
 const seach = async (appName) => {
   try {
     const result = [];
-    const response = await API.get(`/search?q=${appName}`);
+    const response = await API.get(`/search?q=${encodeURI(appName)}`);
     const $ = cheerio.load(response.data);
 
     // for each hrefs
@@ -31,7 +31,7 @@ const seach = async (appName) => {
     return result;
   } catch (err) {
     Helpers.Logger.info(err);
-    Helpers.Logger.error("ERROR: seach APK");
+    Helpers.Logger.error(`ERROR: seach APK for ${appName} app`);
   }
 };
 
