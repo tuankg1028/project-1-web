@@ -85,7 +85,10 @@ router.put("/app/:id/nodes", async (req, res) => {
     const appDB = await Models.App.findById(appIdDB).cache(60 * 60 * 24 * 30);
 
     const { appAPKPureId, appName } = appDB;
-    apkSourcePath = path.join(__dirname, `../../sourceTemp/${appAPKPureId}`);
+    apkSourcePath = path.join(
+      __dirname,
+      `../../sourceTemp/${appAPKPureId.replace(/\//g, "")}`
+    );
 
     Helpers.Logger.step("Step 1: Download apk");
     // download first app

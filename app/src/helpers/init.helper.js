@@ -337,7 +337,7 @@ const _createAppDB = async (appName) => {
         const { appAPKPureId, appName } = appDB;
         apkSourcePath = path.join(
           __dirname,
-          `../../sourceTemp/${appAPKPureId}`
+          `../../sourceTemp/${appAPKPureId.replace(/\//g, "")}`
         );
 
         Helpers.Logger.step("Step 1: Download apk");
