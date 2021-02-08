@@ -425,6 +425,7 @@ const _createAppDB = async (appName) => {
     };
     const appDB = await _createApp(appName);
 
+    Helpers.Logger.info(`App data Created: ${JSON.stringify(appDB)}`);
     if (!appDB.data.isCompleted) {
       await _createNodes(appDB.data.id);
     }
