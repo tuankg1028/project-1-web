@@ -248,6 +248,7 @@ const initAppsOnDBByCSV = async () => {
 
 const initAppsOnDB36K = async () => {
   try {
+    const limit = pLimit(10);
     let data = fs.readFileSync(
       path.join(__dirname, "../../", "data/app_names(36k).txt")
     );
@@ -257,15 +258,10 @@ const initAppsOnDB36K = async () => {
     for (let i = 0; i < data.length; i++) {
       const appName = data[i];
 
-      promises.push(_createAppDB(appName));
+      promises.push(limit(() => _createAppDB(appName)));
     }
 
-    const promisesChunk = _.chunk(promises, 1);
-
-    for (let i = 0; i < promisesChunk.length; i++) {
-      const promiseChunk = promisesChunk[i];
-      await Promise.all(promiseChunk);
-    }
+    await Promise.all(promises).then(console.log);
   } catch (err) {
     console.log(err);
     Helpers.Logger.error("ERROR: initAppsOnDB36K");
