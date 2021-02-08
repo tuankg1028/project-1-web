@@ -150,6 +150,7 @@
                                 <th scope="col">#</th>
                                 <th scope="col">Class Name</th>
                                 <th scope="col">Description</th>
+                                <th scope="col">Functions/Constants</th>
                               </tr>
                             </thead>
                             <tbody> `;
@@ -159,6 +160,7 @@
                                   <th scope="row">${indexOfLv3 + 1}</th>
                                   <td>${lv3.name}</td>
                                   <td>${lv3.desc}</td>
+                                  <td>${lv3.children.length + "/" + lv3.totalChildren} (${ Math.round(((lv3.children.length / lv3.totalChildren) * 100) * 100) / 100 + "%" })</td>
                                 </tr>
                                 ` 
                               }))

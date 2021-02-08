@@ -90,6 +90,7 @@ router.put("/app/:id/nodes", async (req, res) => {
     Helpers.Logger.step("Step 1: Download apk");
     // download first app
     pathFileApk = await Services.APKPure.download(appName, appAPKPureId);
+    if (!pathFileApk) throw new Error("Cannot download apk");
 
     Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
 
@@ -285,13 +286,12 @@ async function buildTreeFromNodeBaseLine(functionConstants) {
     // check exist lv1
     if (!lv1InResult) {
       // total childrent of lv1
-
-      const totalChildren = await Models.Tree.count({
-        parent: lv1.id,
-      });
+      // const totalChildren = await Models.Tree.count({
+      //   parent: lv1.id,
+      // });
       const data = {
         ...lv1.toJSON(),
-        totalChildren,
+        totalChildren: getTotalBySubTree(lv1.name, 2),
         children: [],
       };
 
@@ -304,12 +304,12 @@ async function buildTreeFromNodeBaseLine(functionConstants) {
       (item) => item.id === lv2.id
     )[0];
     if (!lv2InResult) {
-      const totalChildren = await Models.Tree.count({
-        parent: lv2.id,
-      });
+      // const totalChildren = await Models.Tree.count({
+      //   parent: lv2.id,
+      // });
       const data = {
         ...lv2.toJSON(),
-        totalChildren,
+        totalChildren: getTotalBySubTree(lv1.name, 3),
         children: [],
       };
 
@@ -322,12 +322,12 @@ async function buildTreeFromNodeBaseLine(functionConstants) {
       (item) => item.id === lv3.id
     )[0];
     if (!lv3InResult) {
-      const totalChildren = await Models.Tree.count({
-        parent: lv3.id,
-      });
+      // const totalChildren = await Models.Tree.count({
+      //   parent: lv3.id,
+      // });
       const data = {
         ...lv3.toJSON(),
-        totalChildren,
+        totalChildren: getTotalBySubTree(lv1.name, 4),
         children: [functionConstant],
       };
 
@@ -339,6 +339,82 @@ async function buildTreeFromNodeBaseLine(functionConstants) {
   }
 
   return result;
+}
+
+function getTotalBySubTree(name, lv) {
+  switch (name) {
+    case "Location":
+      if (lv === 2) {
+        return 6;
+      } else if (lv === 3) {
+        return 92;
+      } else if (lv === 4) {
+        return 1275;
+      }
+      break;
+    case "Media":
+      if (lv === 2) {
+        return 24;
+      } else if (lv === 3) {
+        return 588;
+      } else if (lv === 4) {
+        return 7585;
+      }
+      break;
+
+    case "Connection":
+      if (lv === 2) {
+        return 13;
+      } else if (lv === 3) {
+        return 329;
+      } else if (lv === 4) {
+        return 3634;
+      }
+      break;
+
+    case "Hardware":
+      if (lv === 2) {
+        return 8;
+      } else if (lv === 3) {
+        return 84;
+      } else if (lv === 4) {
+        return 1232;
+      }
+      break;
+
+    case "Telephony":
+      if (lv === 2) {
+        return 8;
+      } else if (lv === 3) {
+        return 127;
+      } else if (lv === 4) {
+        return 1942;
+      }
+      break;
+
+    case "User info":
+      if (lv === 2) {
+        return 2;
+      } else if (lv === 3) {
+        return 58;
+      } else if (lv === 4) {
+        return 577;
+      }
+      break;
+
+    case "Health and fitness":
+      if (lv === 2) {
+        return 5;
+      } else if (lv === 3) {
+        return 82;
+      } else if (lv === 4) {
+        return 872;
+      }
+      break;
+
+    default:
+      break;
+  }
 }
 async function mainTest() {
   try {
