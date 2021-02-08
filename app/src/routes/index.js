@@ -20,7 +20,7 @@ router.post("/app", async (req, res) => {
 
     Helpers.Logger.step("Step 1: Search apps from APK Pure");
     const listAppIdsFromAPKPure = await Services.APKPure.seach(appName);
-    if (!listAppIdsFromAPKPure.length)
+    if (!listAppIdsFromAPKPure || !listAppIdsFromAPKPure.length)
       throw new Error("No app found from APK Pure");
 
     const appAPKPureId = listAppIdsFromAPKPure[0];
