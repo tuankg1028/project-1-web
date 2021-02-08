@@ -180,12 +180,7 @@ const initAppsOnDB = async () => {
       promises.push(limit(() => _createApp(fileInFolder, categoryFolder)));
     }
   }
-  const promisesChunk = _.chunk(promises, 100);
-
-  for (let i = 0; i < promisesChunk.length; i++) {
-    const promiseChunk = promisesChunk[i];
-    await Promise.all(promiseChunk);
-  }
+  await Promise.all(promises);
   Helpers.Logger.info("END initAppsOnDB");
 };
 
@@ -265,7 +260,12 @@ const initAppsOnDB36K = async () => {
       promises.push(_createAppDB(appName));
     }
 
-    await Promise.all(promises);
+    const promisesChunk = _.chunk(promises, 1);
+
+    for (let i = 0; i < promisesChunk.length; i++) {
+      const promiseChunk = promisesChunk[i];
+      await Promise.all(promiseChunk);
+    }
   } catch (err) {
     console.log(err);
     Helpers.Logger.error("ERROR: initAppsOnDB36K");
@@ -434,7 +434,7 @@ const _createAppDB = async (appName) => {
     }
   } catch (err) {
     console.log(err);
-    Helpers.Logger.error(`ERROR: _createAppByCSV on ${appName} app`);
+    Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appName} app`);
   }
 };
 export default {
