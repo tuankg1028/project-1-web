@@ -61,22 +61,31 @@ const download = async (appName, appIdFromAPKPure) => {
       }
     });
 
-    // go to list of download page (ex: https://apkpure.com/facebook/com.facebook.katana/variant/304.0.0.39.118-APK#variants)
-    // const downloadListResponse = await API.get(downloadLink);
-    // const $DownloadList = cheerio.load(downloadListResponse.data);
-    // const downloadPageLink = $DownloadList(".table .table-row")
-    //   .last()
-    //   .find(".down a")
-    //   .attr("href");
-
     // get download link
     const downloadPageResponse = await API.get(downloadLink);
     const $DownloadLink = cheerio.load(downloadPageResponse.data);
+    const downloadLinkTmp = $DownloadLink("#download_link").attr("href");
 
-    downloadLink = $DownloadLink("#download_link").attr("href");
-    // apk file
+    if (!downloadLinkTmp) {
+      // go to list of download page (ex: https://apkpure.com/facebook/com.facebook.katana/variant/304.0.0.39.118-APK#variants)
+      const downloadListResponse = await API.get(downloadLink);
+      const $DownloadList = cheerio.load(downloadListResponse.data);
+      const downloadPageLink = $DownloadList(".table .table-row")
+        .last()
+        .find(".down a")
+        .attr("href");
+      downloadLink = downloadPageLink;
+    } else {
+      downloadLink = downloadLinkTmp;
+    }
 
     if (!downloadLink) return null;
+
+    // add https
+    if (!downloadLink.includes("http")) {
+      downloadLink = APK_PURE_API + downloadLink;
+    }
+
     await new Promise(function (resolve, reject) {
       axios
         .get(downloadLink, {
