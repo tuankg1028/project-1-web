@@ -238,7 +238,7 @@ const initAppsOnDBByCSV = async () => {
       });
       if (appDB) null;
 
-      await _createAppDB(app);
+      await _createAppDB(app[1]);
     }
   } catch (err) {
     console.log(err);
