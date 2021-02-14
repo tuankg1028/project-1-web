@@ -30,6 +30,7 @@ async function initData() {
   // init apps on database (36k)
   await Helpers.Init.initAppsOnDB36K();
 }
+initData();
 
 app.get("/", function (req, res) {
   res.render("pages/index");
