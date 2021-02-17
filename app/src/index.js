@@ -22,11 +22,11 @@ app.use(bodyParser.json());
 
 async function initData() {
   // init tree on database
-  await Helpers.Init.initTreeOnDB();
+  // await Helpers.Init.initTreeOnDB();
   // init apps on database
   // Helpers.Init.initAppsOnDB();
   // init apps on database by csv
-  await Helpers.Init.initAppsOnDBByCSV();
+  // await Helpers.Init.initAppsOnDBByCSV();
   // init apps on database (36k)
   await Helpers.Init.initAppsOnDB36K();
 }
