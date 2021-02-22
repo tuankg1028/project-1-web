@@ -257,8 +257,9 @@ const initAppsOnDB36K = async () => {
     const promises = [];
     for (let i = 0; i < data.length; i++) {
       const appName = data[i];
-
-      promises.push(limit(() => _createAppDB(appName)));
+      await _createAppDB(appName);
+      await sleep(500);
+      // promises.push(limit(() => _createAppDB(appName)));
     }
 
     await Promise.all(promises).then(console.log);
@@ -267,6 +268,10 @@ const initAppsOnDB36K = async () => {
     Helpers.Logger.error("ERROR: initAppsOnDB36K");
   }
 };
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 const _createAppDB = async (appName) => {
   try {
@@ -426,9 +431,9 @@ const _createAppDB = async (appName) => {
     const appDB = await _createApp(appName);
 
     Helpers.Logger.info(`App data Created: ${JSON.stringify(appDB)}`);
-    if (!appDB.data.isCompleted) {
-      await _createNodes(appDB.data.id);
-    }
+    // if (!appDB.data.isCompleted) {
+    //   await _createNodes(appDB.data.id);
+    // }
   } catch (err) {
     console.log(err);
     Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appName} app`);
