@@ -256,10 +256,22 @@ const initAppsOnDB36K = async () => {
 
     const promises = [];
     for (let i = 0; i < data.length; i++) {
+      console.log(`APP Number ${i + 1}`);
       const appName = data[i];
+
+      // check app run
+      const isRun = await Models.AppTemp.findOne({
+        appName,
+        type: "36k",
+      });
+      if (isRun) continue;
+
       await _createAppDB(appName);
-      console.log(`End APP Number ${i + 1}`);
-      await sleep(500);
+      await Models.AppTemp.create({
+        appName,
+        type: "36k",
+      });
+
       // promises.push(limit(() => _createAppDB(appName)));
     }
 
