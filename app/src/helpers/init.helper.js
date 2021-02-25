@@ -265,10 +265,6 @@ const initAppsOnDB36K = async () => {
         type: "36k",
       });
       if (isRun) continue;
-      await Models.AppTemp.create({
-        appName,
-        type: "36k",
-      });
 
       // await _createAppDB(appName);
 
@@ -302,9 +298,15 @@ const _createAppDB = async (appName) => {
         );
 
         const appInfo = await Services.CHPLAY.getInfoApp(AppIdCHPlay);
+        if (!appInfo) return;
 
         let appDB = await Models.App.findOne({
           appName: { $regex: escapeStringRegexp(appInfo.appName) },
+        });
+
+        await Models.AppTemp.create({
+          appName,
+          type: "36k",
         });
 
         if (!appDB || (appDB && !appDB.isCompleted)) {
