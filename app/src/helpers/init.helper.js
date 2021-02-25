@@ -265,14 +265,14 @@ const initAppsOnDB36K = async () => {
         type: "36k",
       });
       if (isRun) continue;
-
-      await _createAppDB(appName);
       await Models.AppTemp.create({
         appName,
         type: "36k",
       });
 
-      // promises.push(limit(() => _createAppDB(appName)));
+      // await _createAppDB(appName);
+
+      promises.push(limit(() => _createAppDB(appName)));
     }
 
     await Promise.all(promises).then(console.log);
