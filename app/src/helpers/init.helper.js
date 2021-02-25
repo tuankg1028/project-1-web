@@ -258,6 +258,7 @@ const initAppsOnDB36K = async () => {
     for (let i = 0; i < data.length; i++) {
       const appName = data[i];
       await _createAppDB(appName);
+      console.log(`End APP Number ${i + 1}`);
       await sleep(500);
       // promises.push(limit(() => _createAppDB(appName)));
     }
