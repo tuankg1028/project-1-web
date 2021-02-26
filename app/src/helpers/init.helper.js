@@ -249,7 +249,7 @@ const initAppsOnDBByCSV = async () => {
 
 const initAppsOnDB36K = async () => {
   try {
-    const limit = pLimit(100);
+    const limit = pLimit(1);
     // let data = fs.readFileSync(
     //   path.join(__dirname, "../../", "data/app_names(36k).txt")
     // );
@@ -281,7 +281,8 @@ const initAppsOnDB36K = async () => {
       Helpers.Logger.info(`Running ${i + 1}/${apps.length}`);
       const app = apps[i];
 
-      promises.push(limit(() => _createAppDB(app.id)));
+      await _createAppDB(app.id);
+      // promises.push(limit(() => _createAppDB(app.id)));
     }
 
     await Promise.all(promises).then(console.log);
