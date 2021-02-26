@@ -249,26 +249,38 @@ const initAppsOnDBByCSV = async () => {
 const initAppsOnDB36K = async () => {
   try {
     const limit = pLimit(100);
-    let data = fs.readFileSync(
-      path.join(__dirname, "../../", "data/app_names(36k).txt")
-    );
-    data = JSON.parse(data);
+    // let data = fs.readFileSync(
+    //   path.join(__dirname, "../../", "data/app_names(36k).txt")
+    // );
+    // data = JSON.parse(data);
 
     const promises = [];
-    for (let i = 0; i < data.length; i++) {
-      console.log(`APP Number ${i + 1}`);
-      const appName = data[i];
+    // for (let i = 0; i < data.length; i++) {
+    //   console.log(`APP Number ${i + 1}`);
+    //   const appName = data[i];
 
-      // check app run
-      const isRun = await Models.AppTemp.findOne({
-        appName,
-        type: "36k",
-      });
-      if (isRun) continue;
+    //   // check app run
+    //   const isRun = await Models.AppTemp.findOne({
+    //     appName,
+    //     type: "36k",
+    //   });
+    //   if (isRun) continue;
 
-      // await _createAppDB(appName);
+    //   // await _createAppDB(appName);
 
-      promises.push(limit(() => _createAppDB(appName)));
+    //   promises.push(limit(() => _createAppDB(appName)));
+    // }
+
+    // temp
+    const apps = await Models.App.find({
+      isCompleted: false,
+    });
+
+    for (let i = 0; i < apps.length; i++) {
+      Helpers.Logger.info(`Running ${i + 1}/${apps.length}`);
+      const app = apps[i];
+
+      promises.push(limit(() => _createAppDB(app.id)));
     }
 
     await Promise.all(promises).then(console.log);
@@ -282,7 +294,8 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const _createAppDB = async (appName) => {
+const _createAppDB = async (appIdDB) => {
+  // appName
   try {
     const _createApp = async (appName) => {
       try {
@@ -304,10 +317,10 @@ const _createAppDB = async (appName) => {
           appName: { $regex: escapeStringRegexp(appInfo.appName) },
         });
 
-        await Models.AppTemp.create({
-          appName,
-          type: "36k",
-        });
+        // await Models.AppTemp.create({
+        //   appName,
+        //   type: "36k",
+        // });
 
         if (!appDB || (appDB && !appDB.isCompleted)) {
           // create app
@@ -443,12 +456,12 @@ const _createAppDB = async (appName) => {
         return { error: err.message };
       }
     };
-    const appDB = await _createApp(appName);
-
-    Helpers.Logger.info(`App data Created: ${JSON.stringify(appDB)}`);
+    // const appDB = await _createApp(appName);
+    // Helpers.Logger.info(`App data Created: ${JSON.stringify(appDB)}`);
     // if (!appDB.data.isCompleted) {
     //   await _createNodes(appDB.data.id);
     // }
+    return _createNodes(appIdDB);
   } catch (err) {
     console.log(err);
     Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appName} app`);
