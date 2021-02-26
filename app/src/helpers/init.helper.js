@@ -8,6 +8,7 @@ import { create, isNumber } from "lodash";
 import fs from "fs";
 import pLimit from "p-limit";
 import rimraf from "rimraf";
+import { v4 as uuidv4 } from "uuid";
 const escapeStringRegexp = require("escape-string-regexp");
 import _ from "lodash";
 
@@ -368,10 +369,7 @@ const _createAppDB = async (appIdDB) => {
         const appDB = await Models.App.findById(appIdDB);
 
         const { appAPKPureId, appName } = appDB;
-        apkSourcePath = path.join(
-          __dirname,
-          `../../sourceTemp/${appAPKPureId.replace(/\//g, "")}`
-        );
+        apkSourcePath = path.join(__dirname, `../../sourceTemp/${uuidv4()}`);
 
         Helpers.Logger.step("Step 1: Download apk");
         // download first app
