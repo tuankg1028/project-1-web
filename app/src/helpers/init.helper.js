@@ -450,8 +450,6 @@ const _createAppDB = async (appIdDB) => {
           fs.unlinkSync(pathFileApk);
         }
 
-        console.error(err);
-        Helpers.Logger.error(`${err.message}`);
         throw err;
       }
     };
@@ -464,7 +462,7 @@ const _createAppDB = async (appIdDB) => {
     return;
   } catch (err) {
     console.log(err);
-    Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appName} app`);
+    Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appIdDB} app`);
   }
 };
 export default {
