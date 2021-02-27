@@ -452,7 +452,7 @@ const _createAppDB = async (appIdDB) => {
 
         console.error(err);
         Helpers.Logger.error(`${err.message}`);
-        return { error: err.message };
+        throw err;
       }
     };
     // const appDB = await _createApp(appName);
