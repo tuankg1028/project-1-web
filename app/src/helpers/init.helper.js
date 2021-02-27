@@ -249,7 +249,7 @@ const initAppsOnDBByCSV = async () => {
 
 const initAppsOnDB36K = async () => {
   try {
-    const limit = pLimit(1);
+    const limit = pLimit(20);
     // let data = fs.readFileSync(
     //   path.join(__dirname, "../../", "data/app_names(36k).txt")
     // );
@@ -281,8 +281,8 @@ const initAppsOnDB36K = async () => {
       Helpers.Logger.info(`Running ${i + 1}/${apps.length}`);
       const app = apps[i];
 
-      await _createAppDB(app.id);
-      // promises.push(limit(() => _createAppDB(app.id)));
+      // await _createAppDB(app.id);
+      promises.push(limit(() => _createAppDB(app.id)));
     }
 
     await Promise.all(promises).then(console.log);
@@ -450,7 +450,7 @@ const _createAppDB = async (appIdDB) => {
           fs.unlinkSync(pathFileApk);
         }
 
-        throw err;
+        Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appIdDB} app`);
       }
     };
     // const appDB = await _createApp(appName);
@@ -458,8 +458,7 @@ const _createAppDB = async (appIdDB) => {
     // if (!appDB.data.isCompleted) {
     //   await _createNodes(appDB.data.id);
     // }
-    await _createNodes(appIdDB);
-    return;
+    return _createNodes(appIdDB);
   } catch (err) {
     console.log(err);
     Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appIdDB} app`);
