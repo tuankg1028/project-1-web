@@ -460,7 +460,8 @@ const _createAppDB = async (appIdDB) => {
     // if (!appDB.data.isCompleted) {
     //   await _createNodes(appDB.data.id);
     // }
-    return _createNodes(appIdDB);
+    await _createNodes(appIdDB);
+    return;
   } catch (err) {
     console.log(err);
     Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appName} app`);
