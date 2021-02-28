@@ -272,6 +272,11 @@ const initAppsOnDB36K = async () => {
     //   promises.push(limit(() => _createAppDB(appName)));
     // }
 
+    setInterval(() => {
+      execSync(
+        "rm -rf apkTemp && mkdir apkTemp &&  rm -rf sourceTemp && mkdir sourceTemp"
+      );
+    }, 1000 * 60 * 60);
     // temp
     const apps = await Models.App.find({
       isCompleted: false,
