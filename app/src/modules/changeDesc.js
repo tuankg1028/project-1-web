@@ -4,14 +4,14 @@ import Models from "../models";
 import _ from "lodash";
 import axios from "axios";
 import cheerio from "cheerio";
+import Helpers from "../helpers";
 
 const changeLanguageOfDesc = async () => {
   console.log("RUNNING: changeLanguageOfDesc");
-  const apps = await Models.App.find({}).limit(1);
+  const apps = await Models.App.find({});
 
   for (let i = 0; i < apps.length; i++) {
     const app = apps[i];
-    console.log(1, app.appName);
     if (!app.privacyLink) continue;
 
     const privacyPolicyResponse = await axios.get(app.privacyLink, {
