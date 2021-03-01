@@ -9,7 +9,7 @@
     "clean": "rm -rf dist && mkdir ./dist",
     "build-babel": "babel ./src -s -d ./dist --copy-files",
     "build": "npm run clean && npm run build-babel",
-    "start": "npm run build && node --max-old-space-size=30000 --experimental-worker dist/index.js",
+    "start": "node --max-old-space-size=30000 dist/index.js",
     "dev": "babel-watch  src/index.js",
     "category": "babel-watch test/category.js",
     "keyword": "babel-watch modules/keyword.js",
