@@ -60,12 +60,12 @@ const download = async (appName, appIdFromAPKPure) => {
           break;
       }
     });
-
     // get download link
     const downloadPageResponse = await API.get(downloadLink);
     const $DownloadLink = cheerio.load(downloadPageResponse.data);
     const downloadLinkTmp = $DownloadLink("#download_link").attr("href");
 
+    // case table
     if (!downloadLinkTmp) {
       // go to list of download page (ex: https://apkpure.com/facebook/com.facebook.katana/variant/304.0.0.39.118-APK#variants)
       const downloadListResponse = await API.get(downloadLink);
@@ -75,6 +75,13 @@ const download = async (appName, appIdFromAPKPure) => {
         .find(".down a")
         .attr("href");
       downloadLink = downloadPageLink;
+
+      // get link on "click here" button
+      const downloadPageResponse1 = await API.get(downloadLink);
+      const $DownloadLink1 = cheerio.load(downloadPageResponse1.data);
+      const downloadLinkTmp1 = $DownloadLink1("#download_link").attr("href");
+
+      downloadLink = downloadLinkTmp1;
     } else {
       downloadLink = downloadLinkTmp;
     }
