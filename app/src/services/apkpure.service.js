@@ -115,7 +115,7 @@ const download = async (appName, appIdFromAPKPure) => {
 
     return pathFile;
   } catch (err) {
-    console.log(err);
+    console.log(err.message);
     Helpers.Logger.error("ERROR: download APK");
     throw err;
   }
