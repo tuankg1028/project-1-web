@@ -278,9 +278,10 @@ const initAppsOnDB36K = async () => {
       );
     }, 1000 * 60 * 60);
     // temp
-    const apps = await Models.App.find({
+    let apps = await Models.App.find({
       isCompleted: false,
     });
+    apps = _.sampleSize(apps, apps.length);
 
     for (let i = 0; i < apps.length; i++) {
       Helpers.Logger.info(`Running ${i + 1}/${apps.length}`);
