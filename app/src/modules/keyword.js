@@ -14,206 +14,231 @@ const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 const categories = [
   {
     id: "1",
-    keyword: undefined,
+    keywords: [],
     level: "1",
     name: "Admin",
     parent: "null",
   },
   {
     id: "2",
-    keyword: "business, commercial, businesses, purchase",
+    keywords: ["business", "commercial", "businesses", "purchase"],
     level: "1",
     name: "Purchase",
     parent: "null",
   },
   {
     id: "3",
-    keyword: undefined,
+    keywords: [],
     level: "1",
     name: "Education",
     parent: "null",
   },
   {
     id: "4",
-    keyword: "medical, healthcare, health care, disease",
+    keywords: ["medical", "healthcare", "health care", "disease"],
     level: "1",
     name: "Medical",
     parent: "null",
   },
   {
     id: "5",
-    keyword: "booking",
+    keywords: ["booking"],
     level: "1",
     name: "Booking",
     parent: "null",
   },
   {
     id: "6",
-    keyword: undefined,
+    keywords: [],
     level: "1",
     name: "Services",
     parent: "null",
   },
   {
     id: "7",
-    keyword: undefined,
+    keywords: [],
     level: "1",
     name: "Marketing",
     parent: "null",
   },
   {
     id: "8",
-    keyword: "profile, profiling",
+    keywords: ["profile", "profiling"],
     level: "2",
     name: "Profiling",
     parent: "1",
   },
   {
     id: "9",
-    keyword: "Analytics, analysis, analyze, analyse, analyzing",
+    keywords: ["analytics", "analysis", "analyze", "analyse", "analyzing"],
     level: "2",
     name: "Analysis",
     parent: "1",
   },
   {
     id: "10",
-    keyword: "Statistical, statistics",
+    keywords: ["statistical", "statistics"],
     level: "2",
     name: "Statistical",
     parent: "1",
   },
   {
     id: "11",
-    keyword: "ads, advertising, advertisement, advertisers",
+    keywords: ["ads", "advertising", "advertisement", "advertisers"],
     level: "2",
     name: "Advertisements",
     parent: "1",
   },
   {
     id: "12",
-    keyword: "maintain, maintenance, maintained",
+    keywords: ["maintain", "maintenance", "maintained"],
     level: "2",
     name: "Maintenance",
     parent: "1",
   },
   {
     id: "13",
-    keyword:
-      "identifier, identifying, authentication, authenticate, authenticates, identity, identities, identifiable, identifies",
+    keywords: [
+      "identifier",
+      "identifying",
+      "authentication",
+      "authenticate",
+      "authenticates",
+      "identity",
+      "identities",
+      "identifiable",
+      "identifies",
+    ],
     level: "2",
     name: "Identifying",
     parent: "1",
   },
   {
     id: "14",
-    keyword: "Troubleshooting, tests, testing, troubleshoot",
+    keywords: ["troubleshooting", "tests", "testing", "troubleshoot"],
     level: "2",
     name: "Testing/Troubleshooting",
     parent: "1",
   },
   {
     id: "15",
-    keyword: "purchase, purchasing, payment",
+    keywords: ["purchase", "purchasing", "payment"],
     level: "2",
     name: "Payment",
     parent: "2",
   },
   {
     id: "16",
-    keyword: "delivery, shipping, delivering",
+    keywords: ["delivery", "shipping", "delivering"],
     level: "2",
     name: "Delivery",
     parent: "2",
   },
   {
     id: "17",
-    keyword: "Contacting, contacts, contacted, communications",
+    keywords: ["contacting", "contacts", "contacted", "communications"],
     level: "2",
     name: "Contacting",
     parent: "2",
   },
   {
     id: "18",
-    keyword: "research, researching",
+    keywords: ["research", "researching"],
     level: "2",
     name: "Research",
     parent: "3",
   },
   {
     id: "19",
-    keyword: "survey",
+    keywords: ["survey"],
     level: "2",
     name: "Survey",
     parent: "3",
   },
   {
     id: "20",
-    keyword: "Treatment ",
+    keywords: ["treatment"],
     level: "2",
     name: "Treatment",
     parent: "4",
   },
   {
     id: "21",
-    keyword: "diagnostics, diagnosis",
+    keywords: ["diagnostics", "diagnosis"],
     level: "2",
     name: "Diagnosis",
     parent: "4",
   },
   {
     id: "22",
-    keyword: "improve, improving, improvement",
+    keywords: ["improve", "improving", "improvement"],
     level: "2",
     name: "Improving quality",
     parent: "6",
   },
   {
     id: "23",
-    keyword: "new service, new product, new feature, new functions",
+    keywords: ["new service", "new product", "new feature", "new functions"],
     level: "2",
     name: "Developing the new services",
     parent: "6",
   },
   {
     id: "24",
-    keyword: "Direct",
+    keywords: ["direct"],
     level: "2",
     name: "Direct",
     parent: "7",
   },
   {
     id: "25",
-    keyword: "direct &amp;&amp; email",
+    keywords: ["direct &amp;amp;&amp;amp; email"],
     level: "3",
     name: "Direct Email",
     parent: "24",
   },
   {
     id: "26",
-    keyword: "direct &amp;&amp; phone",
+    keywords: ["direct &amp;amp;&amp;amp; phone"],
     level: "3",
     name: "Direct Phone",
     parent: "24",
   },
   {
     id: "27",
-    keyword: "Third-party, 3rd parties, third party, third parties, 3rd party",
+    keywords: [
+      "third-party",
+      "3rd parties",
+      "third party",
+      "third parties",
+      "3rd party",
+    ],
     level: "2",
     name: "Third-party",
     parent: "7",
   },
   {
     id: "28",
-    keyword:
-      "Third-party, 3rd parties, third party, third parties, 3rd party &amp;&amp; email",
+    keywords: [
+      "third-party",
+      "3rd parties",
+      "third party",
+      "third parties",
+      "3rd party &amp;amp;&amp;amp; email",
+    ],
     level: "3",
     name: "Third-party Email",
     parent: "27",
   },
   {
     id: "29",
-    keyword:
-      "Third-party, 3rd parties, third party, third parties, 3rd party &amp;&amp; postal",
+    keywords: [
+      "third-party",
+      "3rd parties",
+      "third party",
+      "third parties",
+      "3rd party &amp;amp;&amp;amp; postal",
+    ],
     level: "3",
     name: "Third-party Postal",
     parent: "27",
@@ -536,22 +561,27 @@ async function main2() {
 }
 
 function checkParentHasContent(childCategoryName, ppCategories) {
-  const childCategory = categories.find(
-    (item) => item.name === childCategoryName
-  );
-  const parentCategory = categories.find(
-    (item) => item.id === childCategory.parent
-  );
+  try {
+    const childCategory = categories.find(
+      (item) => item.name === childCategoryName
+    );
+    const parentCategory = categories.find(
+      (item) => item.id === childCategory.parent
+    );
 
-  if (parentCategory && parentCategory.keyword.length > 0) {
-    const contentsParent = ppCategories[parentCategory.name];
+    if (parentCategory && parentCategory.keywords.length > 0) {
+      const contentsParent = ppCategories[parentCategory.name];
 
-    if (!contentsParent || contentsParent.length === 0) return false;
+      if (!contentsParent || contentsParent.length === 0) return false;
 
-    return checkParentHasContent(parentCategory.name, ppCategories);
+      return checkParentHasContent(parentCategory.name, ppCategories);
+    }
+
+    return true;
+  } catch (error) {
+    console.log("ERROR: checkParentHasContent");
+    throw error;
   }
-
-  return true;
 }
 
 async function getPPCategories(privacyLink) {
