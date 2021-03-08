@@ -217,7 +217,7 @@ const categories = [
     level: "3",
     name: "Third-party Postal",
     parent: "27",
-  },;
+  },
 ];
 
 // [
@@ -474,7 +474,7 @@ async function main2() {
       contentTxt += (contents.length ? contents.join("\n\n") : "No") + "\n";
 
       const isParentHasContent = checkParentHasContent(category, ppCategories);
-      if(!isParentHasContent) continue;
+      if (!isParentHasContent) continue;
 
       let predict = categoryResult[_.findIndex(categories, ["name", category])];
       predict = predict ? predict.trim() : predict;
@@ -486,9 +486,7 @@ async function main2() {
         ? 1
         : "";
 
-        
       appCategoriesAnalyze[slug(category)] = contents.length ? "x" : "";
-
 
       if (
         (contents.length && predict == "x") ||
@@ -537,20 +535,23 @@ async function main2() {
   console.log("DONE");
 }
 
-function checkParentHasContent(childCategoryName, ppCategories) { 
-  const childCategory = categories.find(item => item.name === childCategoryName);
-  const parentCategory = categories.find(item => item.id === childCategory.parent);
+function checkParentHasContent(childCategoryName, ppCategories) {
+  const childCategory = categories.find(
+    (item) => item.name === childCategoryName
+  );
+  const parentCategory = categories.find(
+    (item) => item.id === childCategory.parent
+  );
 
-  if(parentCategory && parentCategory.keyword.length > 0) {
+  if (parentCategory && parentCategory.keyword.length > 0) {
     const contentsParent = ppCategories[parentCategory.name];
 
-    if(!contentsParent || contentsParent.length === 0) return false;
+    if (!contentsParent || contentsParent.length === 0) return false;
 
     return checkParentHasContent(parentCategory.name, ppCategories);
-  } 
+  }
 
-  return true
-  
+  return true;
 }
 
 async function getPPCategories(privacyLink) {
