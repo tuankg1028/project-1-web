@@ -400,38 +400,38 @@ async function main() {
 }
 
 async function main2() {
-  const headerResult = [
-    {
-      id: "stt",
-      title: "#",
-    },
-    {
-      id: "appName",
-      title: "App name",
-    },
-    {
-      id: "devName",
-      title: "Dev name",
-    },
-    {
-      id: "category",
-      title: "Category",
-    },
-    {
-      id: "link",
-      title: "Link",
-    },
-    ...categories.map((category) => {
-      return {
-        id: slug(category.name),
-        title: category.name,
-      };
-    }),
-    {
-      id: "percent",
-      title: "Percent",
-    },
-  ];
+  // const headerResult = [
+  //   {
+  //     id: "stt",
+  //     title: "#",
+  //   },
+  //   {
+  //     id: "appName",
+  //     title: "App name",
+  //   },
+  //   {
+  //     id: "devName",
+  //     title: "Dev name",
+  //   },
+  //   {
+  //     id: "category",
+  //     title: "Category",
+  //   },
+  //   {
+  //     id: "link",
+  //     title: "Link",
+  //   },
+  //   ...categories.map((category) => {
+  //     return {
+  //       id: slug(category.name),
+  //       title: category.name,
+  //     };
+  //   }),
+  //   {
+  //     id: "percent",
+  //     title: "Percent",
+  //   },
+  // ];
 
   const headerAnalyze = [
     {
@@ -486,7 +486,6 @@ async function main2() {
     //   continue;
 
     const ppCategories = await getPPCategories(privacyLink);
-
     if (ppCategories === null) continue;
 
     let contentTxt = `(*.*)	${appName} \n`;
@@ -501,24 +500,28 @@ async function main2() {
       const isParentHasContent = checkParentHasContent(category, ppCategories);
       if (!isParentHasContent) continue;
 
-      let predict = categoryResult[_.findIndex(categories, ["name", category])];
-      predict = predict ? predict.trim() : predict;
-      appCategoriesResult[slug(category)] = contents.length
-        ? predict === "x"
-          ? 1
-          : ""
-        : predict === null || predict === ""
-        ? 1
-        : "";
+      // let predict = categoryResult[_.findIndex(categories, ["name", category])];
+      // predict = predict ? predict.trim() : predict;
+      // appCategoriesResult[slug(category)] = contents.length
+      //   ? predict === "x"
+      //     ? 1
+      //     : ""
+      //   : predict === null || predict === ""
+      //   ? 1
+      //   : "";
+      const parentCategories = getParentCategories(category);
+      parentCategories.forEach((parent) => {
+        appCategoriesAnalyze[slug(parent.name)] = "x";
+      });
 
       appCategoriesAnalyze[slug(category)] = contents.length ? "x" : "";
 
-      if (
-        (contents.length && predict == "x") ||
-        (!contents.length && (predict === null || predict === ""))
-      ) {
-        percent++;
-      }
+      // if (
+      //   (contents.length && predict == "x") ||
+      //   (!contents.length && (predict === null || predict === ""))
+      // ) {
+      //   percent++;
+      // }
     }
     rowsResult.push({
       stt: sttTemp,
@@ -545,11 +548,11 @@ async function main2() {
       "utf8"
     );
   }
-  const csvWriterResult = createCsvWriter({
-    path: "result.csv",
-    header: headerResult,
-  });
-  await csvWriterResult.writeRecords(rowsResult);
+  // const csvWriterResult = createCsvWriter({
+  //   path: "result.csv",
+  //   header: headerResult,
+  // });
+  // await csvWriterResult.writeRecords(rowsResult);
 
   const csvWriterAnalyze = createCsvWriter({
     path: "analyze.csv",
@@ -560,6 +563,26 @@ async function main2() {
   console.log("DONE");
 }
 
+function getParentCategories(childCategoryName, parents = []) {
+  try {
+    const category = categories.find((item) => item.name === childCategoryName);
+
+    if (
+      category.parent &&
+      category.parent !== null &&
+      category.parent !== "null"
+    ) {
+      const parent = categories.find((item) => item.id === category.parent);
+      parents.push(parent);
+
+      getParentCategories(parent.name, parents);
+    }
+    return parents;
+  } catch (error) {
+    console.log("ERROR: getParentCategories");
+    throw error;
+  }
+}
 function checkParentHasContent(childCategoryName, ppCategories) {
   try {
     const childCategory = categories.find(
