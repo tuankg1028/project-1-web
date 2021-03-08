@@ -438,7 +438,7 @@ async function main2() {
   ];
 
   const data = await readXlsxFile(
-    path.join(__dirname, "../data/keyword/PrivacyPolicySample.xlsx")
+    path.join(__dirname, "../../data/keyword/PrivacyPolicySample.xlsx")
   );
 
   const [, ...actvityData] = data;
