@@ -12,72 +12,281 @@ import readXlsxFile from "read-excel-file/node";
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
 const categories = [
-  { name: "Profiling", keywords: ["profile", "profiling"] },
   {
+    id: "1",
+    keyword: undefined,
+    level: "1",
+    name: "Admin",
+    parent: "null",
+  },
+  {
+    id: "2",
+    keyword: "business, commercial, businesses, purchase",
+    level: "1",
+    name: "Purchase",
+    parent: "null",
+  },
+  {
+    id: "3",
+    keyword: undefined,
+    level: "1",
+    name: "Education",
+    parent: "null",
+  },
+  {
+    id: "4",
+    keyword: "medical, healthcare, health care, disease",
+    level: "1",
+    name: "Medical",
+    parent: "null",
+  },
+  {
+    id: "5",
+    keyword: "booking",
+    level: "1",
+    name: "Booking",
+    parent: "null",
+  },
+  {
+    id: "6",
+    keyword: undefined,
+    level: "1",
+    name: "Services",
+    parent: "null",
+  },
+  {
+    id: "7",
+    keyword: undefined,
+    level: "1",
+    name: "Marketing",
+    parent: "null",
+  },
+  {
+    id: "8",
+    keyword: "profile, profiling",
+    level: "2",
+    name: "Profiling",
+    parent: "1",
+  },
+  {
+    id: "9",
+    keyword: "Analytics, analysis, analyze, analyse, analyzing",
+    level: "2",
     name: "Analysis",
-    keywords: ["Analytics", "analysis", "analyze", "analyse", "analyzing"],
+    parent: "1",
   },
   {
+    id: "10",
+    keyword: "Statistical, statistics",
+    level: "2",
     name: "Statistical",
-    keywords: ["Statistical", "statistics"],
-  },
-  { name: "Marketing", keywords: ["marketing"] },
-  {
-    name: "Improving quality",
-    keywords: ["improve", "improving", "improvement"],
+    parent: "1",
   },
   {
+    id: "11",
+    keyword: "ads, advertising, advertisement, advertisers",
+    level: "2",
     name: "Advertisements",
-    keywords: ["ads", "advertising", "advertisement", "advertisers"],
+    parent: "1",
   },
   {
+    id: "12",
+    keyword: "maintain, maintenance, maintained",
+    level: "2",
     name: "Maintenance",
-    keywords: ["maintain", "maintenance", "maintained"],
+    parent: "1",
   },
   {
-    name: "Payment",
-    keywords: ["purchase", "purchasing", "payment"],
-  },
-  {
-    name: "Developing the new services",
-    keywords: ["new service", "new product", "new feature", "new functions"],
-  },
-  { name: "Research", keywords: ["research", "researching"] },
-  {
-    name: "Business/commercial",
-    keywords: ["business", "commercial", "businesses"],
-  },
-  { name: "Survey", keywords: ["survey"] },
-  { name: "Treatment", keywords: ["Treatment"] },
-  { name: "Diagnosis", keywords: ["diagnostics", "diagnosis"] },
-  { name: "Booking", keywords: ["booking"] },
-  {
-    name: "Testing/Troubleshooting",
-    keywords: ["Troubleshooting", "tests", "testing", "troubleshoot"],
-  },
-  {
+    id: "13",
+    keyword:
+      "identifier, identifying, authentication, authenticate, authenticates, identity, identities, identifiable, identifies",
+    level: "2",
     name: "Identifying",
-    keywords: [
-      "identifier",
-      "identifying",
-      "authentication",
-      "authenticate",
-      "authenticates",
-      "identity",
-      "identities",
-      "identifiable",
-      "identifies",
-    ],
+    parent: "1",
   },
   {
-    name: "Contacting",
-    keywords: ["Contacting", "contacts", "contacted", "communications"],
+    id: "14",
+    keyword: "Troubleshooting, tests, testing, troubleshoot",
+    level: "2",
+    name: "Testing/Troubleshooting",
+    parent: "1",
   },
   {
+    id: "15",
+    keyword: "purchase, purchasing, payment",
+    level: "2",
+    name: "Payment",
+    parent: "2",
+  },
+  {
+    id: "16",
+    keyword: "delivery, shipping, delivering",
+    level: "2",
     name: "Delivery",
-    keywords: ["delivery", "shipping", "delivering"],
+    parent: "2",
   },
+  {
+    id: "17",
+    keyword: "Contacting, contacts, contacted, communications",
+    level: "2",
+    name: "Contacting",
+    parent: "2",
+  },
+  {
+    id: "18",
+    keyword: "research, researching",
+    level: "2",
+    name: "Research",
+    parent: "3",
+  },
+  {
+    id: "19",
+    keyword: "survey",
+    level: "2",
+    name: "Survey",
+    parent: "3",
+  },
+  {
+    id: "20",
+    keyword: "Treatment ",
+    level: "2",
+    name: "Treatment",
+    parent: "4",
+  },
+  {
+    id: "21",
+    keyword: "diagnostics, diagnosis",
+    level: "2",
+    name: "Diagnosis",
+    parent: "4",
+  },
+  {
+    id: "22",
+    keyword: "improve, improving, improvement",
+    level: "2",
+    name: "Improving quality",
+    parent: "6",
+  },
+  {
+    id: "23",
+    keyword: "new service, new product, new feature, new functions",
+    level: "2",
+    name: "Developing the new services",
+    parent: "6",
+  },
+  {
+    id: "24",
+    keyword: "Direct",
+    level: "2",
+    name: "Direct",
+    parent: "7",
+  },
+  {
+    id: "25",
+    keyword: "direct &amp;&amp; email",
+    level: "3",
+    name: "Direct Email",
+    parent: "24",
+  },
+  {
+    id: "26",
+    keyword: "direct &amp;&amp; phone",
+    level: "3",
+    name: "Direct Phone",
+    parent: "24",
+  },
+  {
+    id: "27",
+    keyword: "Third-party, 3rd parties, third party, third parties, 3rd party",
+    level: "2",
+    name: "Third-party",
+    parent: "7",
+  },
+  {
+    id: "28",
+    keyword:
+      "Third-party, 3rd parties, third party, third parties, 3rd party &amp;&amp; email",
+    level: "3",
+    name: "Third-party Email",
+    parent: "27",
+  },
+  {
+    id: "29",
+    keyword:
+      "Third-party, 3rd parties, third party, third parties, 3rd party &amp;&amp; postal",
+    level: "3",
+    name: "Third-party Postal",
+    parent: "27",
+  },;
 ];
+
+// [
+//   { name: "Profiling", keywords: ["profile", "profiling"] },
+//   {
+//     name: "Analysis",
+//     keywords: ["Analytics", "analysis", "analyze", "analyse", "analyzing"],
+//   },
+//   {
+//     name: "Statistical",
+//     keywords: ["Statistical", "statistics"],
+//   },
+//   { name: "Marketing", keywords: ["marketing"] },
+//   {
+//     name: "Improving quality",
+//     keywords: ["improve", "improving", "improvement"],
+//   },
+//   {
+//     name: "Advertisements",
+//     keywords: ["ads", "advertising", "advertisement", "advertisers"],
+//   },
+//   {
+//     name: "Maintenance",
+//     keywords: ["maintain", "maintenance", "maintained"],
+//   },
+//   {
+//     name: "Payment",
+//     keywords: ["purchase", "purchasing", "payment"],
+//   },
+//   {
+//     name: "Developing the new services",
+//     keywords: ["new service", "new product", "new feature", "new functions"],
+//   },
+//   { name: "Research", keywords: ["research", "researching"] },
+//   {
+//     name: "Business/commercial",
+//     keywords: ["business", "commercial", "businesses"],
+//   },
+//   { name: "Survey", keywords: ["survey"] },
+//   { name: "Treatment", keywords: ["Treatment"] },
+//   { name: "Diagnosis", keywords: ["diagnostics", "diagnosis"] },
+//   { name: "Booking", keywords: ["booking"] },
+//   {
+//     name: "Testing/Troubleshooting",
+//     keywords: ["Troubleshooting", "tests", "testing", "troubleshoot"],
+//   },
+//   {
+//     name: "Identifying",
+//     keywords: [
+//       "identifier",
+//       "identifying",
+//       "authentication",
+//       "authenticate",
+//       "authenticates",
+//       "identity",
+//       "identities",
+//       "identifiable",
+//       "identifies",
+//     ],
+//   },
+//   {
+//     name: "Contacting",
+//     keywords: ["Contacting", "contacts", "contacted", "communications"],
+//   },
+//   {
+//     name: "Delivery",
+//     keywords: ["delivery", "shipping", "delivering"],
+//   },
+// ];
 
 // const categories = [];
 // let rl = readline(path.join(__dirname, "../data/keyword/KeyWorkSearch.txt"));
@@ -262,6 +471,10 @@ async function main2() {
     for (const category in ppCategories) {
       const contents = ppCategories[category];
       contentTxt += `	(-) ${category} \n`;
+      contentTxt += (contents.length ? contents.join("\n\n") : "No") + "\n";
+
+      const isParentHasContent = checkParentHasContent(category, ppCategories);
+      if(!isParentHasContent) continue;
 
       let predict = categoryResult[_.findIndex(categories, ["name", category])];
       predict = predict ? predict.trim() : predict;
@@ -272,9 +485,10 @@ async function main2() {
         : predict === null || predict === ""
         ? 1
         : "";
+
+        
       appCategoriesAnalyze[slug(category)] = contents.length ? "x" : "";
 
-      contentTxt += (contents.length ? contents.join("\n\n") : "No") + "\n";
 
       if (
         (contents.length && predict == "x") ||
@@ -321,6 +535,22 @@ async function main2() {
   await csvWriterAnalyze.writeRecords(rowsAnalyze);
 
   console.log("DONE");
+}
+
+function checkParentHasContent(childCategoryName, ppCategories) { 
+  const childCategory = categories.find(item => item.name === childCategoryName);
+  const parentCategory = categories.find(item => item.id === childCategory.parent);
+
+  if(parentCategory && parentCategory.keyword.length > 0) {
+    const contentsParent = ppCategories[parentCategory.name];
+
+    if(!contentsParent || contentsParent.length === 0) return false;
+
+    return checkParentHasContent(parentCategory.name, ppCategories);
+  } 
+
+  return true
+  
 }
 
 async function getPPCategories(privacyLink) {

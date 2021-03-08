@@ -42,10 +42,11 @@ const download = async (appName, appIdFromAPKPure) => {
       "../../",
       "apkTemp/" + uuidv4() + ".apk"
     );
+    // STEP 1: GET Link to download
+    const response = await API.get(
+      `${appIdFromAPKPure}/versions`
+    ).catch(() => {});
 
-    const response = await API.get(`${appIdFromAPKPure}/versions`);
-
-    // get download link
     const $ = cheerio.load(response.data);
     let downloadLink;
     $(".ver-wrap li").each(function () {
@@ -60,6 +61,7 @@ const download = async (appName, appIdFromAPKPure) => {
           break;
       }
     });
+
     // get download link
     const downloadPageResponse = await API.get(downloadLink);
     const $DownloadLink = cheerio.load(downloadPageResponse.data);

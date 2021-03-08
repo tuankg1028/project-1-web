@@ -55,46 +55,54 @@ const categories = [
 ];
 (async function main() {
   try {
-    let result = [];
-    const promises = [];
-    for (let i = 0; i < categories.length; i++) {
-      const category = categories[i];
-
-      for (let j = 0; j < countries.length; j++) {
-        const country = countries[j];
-        console.log(category, country);
-
-        const apps = await gplay.list({
-          category: category.toUpperCase(),
-          collection: gplay.collection.TOP_FREE,
-          country: country,
-          num: 1000,
-        });
-
-        result.push(
-          apps.map((app) => {
-            return {
-              title: app.title,
-              category,
-              country,
-            };
-          })
-        );
-      }
-    }
-
-    result = _.flatten(result);
-    result = result.map((app) => {
-      return {
-        title: app.title,
-        category: app.category,
-        country: app.country,
-      };
+    const apps = await gplay.list({
+      // category: category.toUpperCase(),
+      // collection: gplay.collection.TOP_FREE,
+      // country: country,
+      num: 1000,
     });
-    // unique
-    result = _.uniqBy(result, "title");
-    result = _.map(result, "title");
-    fs.writeFileSync("kaka.txt", JSON.stringify(result), "utf8");
+
+    console.log(apps.length);
+    // let result = [];
+    // const promises = [];
+    // for (let i = 0; i < categories.length; i++) {
+    //   const category = categories[i];
+
+    //   for (let j = 0; j < countries.length; j++) {
+    //     const country = countries[j];
+    //     console.log(category, country);
+
+    //     const apps = await gplay.list({
+    //       category: category.toUpperCase(),
+    //       collection: gplay.collection.TOP_FREE,
+    //       country: country,
+    //       num: 1000,
+    //     });
+
+    //     result.push(
+    //       apps.map((app) => {
+    //         return {
+    //           title: app.title,
+    //           category,
+    //           country,
+    //         };
+    //       })
+    //     );
+    //   }
+    // }
+
+    // result = _.flatten(result);
+    // result = result.map((app) => {
+    //   return {
+    //     title: app.title,
+    //     category: app.category,
+    //     country: app.country,
+    //   };
+    // });
+    // // unique
+    // result = _.uniqBy(result, "title");
+    // result = _.map(result, "title");
+    // fs.writeFileSync("kaka.txt", JSON.stringify(result), "utf8");
   } catch (e) {
     console.log(1, e);
   }
