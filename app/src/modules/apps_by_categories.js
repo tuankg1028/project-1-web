@@ -290,8 +290,10 @@ async function main() {
     console.log(`RUNNING ${categoryName}`);
     let apps = await Models.App.find({
       categoryName,
-    }).limit(1000);
-    apps = _.sampleSize([apps, 5);
+    })
+      .sort([["appName", "descending"]])
+      .limit(5);
+    // apps = _.sampleSize(apps, 5);
 
     for (let j = 0; j < apps.length; j++) {
       const { developer, categoryName, appName, nodes, privacyLink } = apps[j];
