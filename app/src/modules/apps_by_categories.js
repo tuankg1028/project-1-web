@@ -329,7 +329,7 @@ async function main() {
         developer,
         category: categoryName,
         appName,
-        apis: apis.join(", "),
+        apis: _.map(apis, "name").join(", "),
         pp: ppCategoriesAPP.join(", "),
       });
     }
@@ -459,8 +459,8 @@ async function getParent(node) {
   const parent = await Models.Tree.findById(node.parent);
 
   if (
-    parent.name !== "root" ||
-    ![
+    parent.name === "root" ||
+    [
       "Connection",
       "Media",
       "Hardware",
