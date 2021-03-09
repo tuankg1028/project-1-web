@@ -287,15 +287,16 @@ async function main() {
   const rows = [];
   for (let i = 0; i < categoriesData.length; i++) {
     const categoryName = categoriesData[i];
+    console.log(`RUNNING ${categoryName}`);
     const apps = await Models.App.find({
       categoryName,
     }).limit(5);
 
     for (let j = 0; j < apps.length; j++) {
       const { developer, categoryName, appName, nodes, privacyLink } = apps[j];
-
+      console.log(`RUNNING ${appName}`);
       let apis = await Promise.all(nodes.map((node) => getParent(node)));
-      console.log(_.uniq(_.map(apis, "name")));
+
       const ppCategoriesAPP = [];
       // pp
       const ppCategories = await getPPCategories(privacyLink);
