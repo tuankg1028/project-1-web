@@ -416,6 +416,7 @@ async function getPPCategories(privacyLink) {
       `http://127.0.0.1:8081/beforeaccept?url_text=${privacyLink}&policy_text=`,
       {
         headers: { "Content-Language": "en-US" },
+        timeout: 10000,
       }
     );
     if (!_.isObject(ppData.data)) return null;
