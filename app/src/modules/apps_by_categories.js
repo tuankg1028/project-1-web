@@ -288,9 +288,10 @@ async function main() {
   for (let i = 0; i < categoriesData.length; i++) {
     const categoryName = categoriesData[i];
     console.log(`RUNNING ${categoryName}`);
-    const apps = await Models.App.find({
+    let apps = await Models.App.find({
       categoryName,
-    }).limit(5);
+    }).limit(1000);
+    apps = _.sampleSize([apps, 5);
 
     for (let j = 0; j < apps.length; j++) {
       const { developer, categoryName, appName, nodes, privacyLink } = apps[j];
