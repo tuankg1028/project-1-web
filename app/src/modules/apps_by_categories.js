@@ -298,7 +298,7 @@ async function main() {
 
       let apis = await Promise.all(nodes.map((node) => getParent(node)));
 
-      const ppCategoriesAPP = [];
+      let ppCategoriesAPP = [];
       // pp
       const ppCategories = await getPPCategories(privacyLink);
       if (ppCategories) {
@@ -323,7 +323,7 @@ async function main() {
           }
         }
       }
-
+      ppCategoriesAPP = _.uniq(ppCategoriesAPP);
       rows.push({
         stt: i + 1 + j,
         developer,
