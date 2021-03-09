@@ -14,7 +14,8 @@
     "category": "babel-watch test/category.js",
     "keyword": "babel-watch src/modules/keyword.js",
     "stas": "babel-watch src/modules/stas.js",
-    "changeDesc": "node --max-old-space-size=30000 dist/modules/changeDesc.js"
+    "changeDesc": "node --max-old-space-size=30000 dist/modules/changeDesc.js",
+    "appsByCategories": "babel-watch src/modules/apps_by_categories.js"
   },
   "keywords": [],
   "author": "",
