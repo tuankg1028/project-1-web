@@ -294,7 +294,7 @@ async function main() {
 
     for (let j = 0; j < apps.length; j++) {
       const { developer, categoryName, appName, nodes, privacyLink } = apps[j];
-      console.log(`RUNNING ${appName}`);
+      console.log(`RUNNING ${appName}: ${apis.length} apis`);
       let apis = await Promise.all(nodes.map((node) => getParent(node)));
 
       const ppCategoriesAPP = [];
@@ -457,8 +457,8 @@ async function getParent(node) {
   const parent = await Models.Tree.findById(node.parent);
 
   if (
-    parent.name === "root" ||
-    [
+    parent.name !== "root" ||
+    ![
       "Connection",
       "Media",
       "Hardware",
@@ -467,8 +467,9 @@ async function getParent(node) {
       "Telephony",
       "UserInfo",
     ].includes(parent.name)
-  )
+  ) {
     return node;
+  }
   return getParent(parent);
 }
 main();
