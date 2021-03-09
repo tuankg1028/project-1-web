@@ -294,7 +294,8 @@ async function main() {
 
     for (let j = 0; j < apps.length; j++) {
       const { developer, categoryName, appName, nodes, privacyLink } = apps[j];
-      console.log(`RUNNING ${appName}: ${apis.length} apis`);
+      console.log(`RUNNING ${appName}: ${nodes.length} nodes`);
+
       let apis = await Promise.all(nodes.map((node) => getParent(node)));
 
       const ppCategoriesAPP = [];
