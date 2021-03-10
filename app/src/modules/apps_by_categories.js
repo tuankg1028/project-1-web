@@ -396,15 +396,6 @@ async function main2(next2Data) {
       id: "category",
       title: "Category",
     },
-    {
-      id: "apis",
-      title: "APIs",
-    },
-    {
-      id: "pp",
-      title: "Privacy Policy",
-    },
-
     ...categories.map((category) => {
       return {
         id: slug(category.name),
@@ -418,12 +409,13 @@ async function main2(next2Data) {
       };
     }),
   ];
+
   const rows = [];
   let stt = 1;
   for (const appName in next2Data) {
     const { developer, category, apis, pp } = next2Data[appName];
 
-    const apisCSV = [];
+    const apisCSV = {};
     apisDB.forEach((item) => {
       apisCSV[item.name] = 0;
     }),
@@ -448,7 +440,7 @@ async function main2(next2Data) {
       developer,
       category,
       appName,
-      ...apis,
+      ...apisCSV,
       ...ppCategories,
     });
     stt++;
