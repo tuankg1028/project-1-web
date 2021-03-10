@@ -419,8 +419,9 @@ async function main2(next2Data) {
     }),
   ];
   const rows = [];
+  let stt = 1;
   for (const appName in next2Data) {
-    const { developer, category, appName, apis, pp } = next2Data[appName];
+    const { developer, category, apis, pp } = next2Data[appName];
 
     const apisCSV = [];
     apisDB.forEach((item) => {
@@ -435,20 +436,22 @@ async function main2(next2Data) {
       ppCategories[category.name] = 0;
     }),
       pp.forEach((item) => {
-        ppCategories[item.name] = 1;
-        const categoriesParent = getParentCategories(item.name);
+        ppCategories[item] = 1;
+        const categoriesParent = getParentCategories(item);
         categoriesParent.forEach((categoryPr) => {
           ppCategories[categoryPr.name] = 1;
         });
       });
 
     rows.push({
+      stt,
       developer,
       category,
       appName,
       ...apis,
       ...ppCategories,
     });
+    stt++;
   }
   const csvWriter = createCsvWriter({
     path: "apps_categories(ver2).csv",
