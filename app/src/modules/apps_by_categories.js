@@ -4,6 +4,7 @@ import Models from "../models";
 import _ from "lodash";
 import fs from "fs";
 import axios from "axios";
+import slug from "slug";
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
 const categories = [
@@ -12,48 +13,6 @@ const categories = [
     keywords: [],
     level: "1",
     name: "Admin",
-    parent: "null",
-  },
-  {
-    id: "2",
-    keywords: ["business", "commercial", "businesses", "purchase"],
-    level: "1",
-    name: "Purchase",
-    parent: "null",
-  },
-  {
-    id: "3",
-    keywords: [],
-    level: "1",
-    name: "Education",
-    parent: "null",
-  },
-  {
-    id: "4",
-    keywords: ["medical", "healthcare", "health care", "disease"],
-    level: "1",
-    name: "Medical",
-    parent: "null",
-  },
-  {
-    id: "5",
-    keywords: ["booking"],
-    level: "1",
-    name: "Booking",
-    parent: "null",
-  },
-  {
-    id: "6",
-    keywords: [],
-    level: "1",
-    name: "Services",
-    parent: "null",
-  },
-  {
-    id: "7",
-    keywords: [],
-    level: "1",
-    name: "Marketing",
     parent: "null",
   },
   {
@@ -116,6 +75,13 @@ const categories = [
     parent: "1",
   },
   {
+    id: "2",
+    keywords: ["business", "commercial", "businesses", "purchase"],
+    level: "1",
+    name: "Purchase",
+    parent: "null",
+  },
+  {
     id: "15",
     keywords: ["purchase", "purchasing", "payment"],
     level: "2",
@@ -137,6 +103,13 @@ const categories = [
     parent: "2",
   },
   {
+    id: "3",
+    keywords: [],
+    level: "1",
+    name: "Education",
+    parent: "null",
+  },
+  {
     id: "18",
     keywords: ["research", "researching"],
     level: "2",
@@ -149,6 +122,13 @@ const categories = [
     level: "2",
     name: "Survey",
     parent: "3",
+  },
+  {
+    id: "4",
+    keywords: ["medical", "healthcare", "health care", "disease"],
+    level: "1",
+    name: "Medical",
+    parent: "null",
   },
   {
     id: "20",
@@ -165,6 +145,20 @@ const categories = [
     parent: "4",
   },
   {
+    id: "5",
+    keywords: ["booking"],
+    level: "1",
+    name: "Booking",
+    parent: "null",
+  },
+  {
+    id: "6",
+    keywords: [],
+    level: "1",
+    name: "Services",
+    parent: "null",
+  },
+  {
     id: "22",
     keywords: ["improve", "improving", "improvement"],
     level: "2",
@@ -178,6 +172,14 @@ const categories = [
     name: "Developing the new services",
     parent: "6",
   },
+  {
+    id: "7",
+    keywords: [],
+    level: "1",
+    name: "Marketing",
+    parent: "null",
+  },
+
   {
     id: "24",
     keywords: ["direct"],
@@ -284,6 +286,8 @@ async function main() {
       title: "Privacy Policy",
     },
   ];
+
+  const next2Data = {};
   const rows = [];
   for (let i = 0; i < categoriesData.length; i++) {
     const categoryName = categoriesData[i];
@@ -333,18 +337,125 @@ async function main() {
         apis: _.uniq(_.map(apis, "name")).join(", "),
         pp: ppCategoriesAPP.join(", "),
       });
+
+      next2Data[appName] = {
+        developer,
+        category: categoryName,
+        appName,
+        apis: _.uniq(_.map(apis, "name")),
+        pp: ppCategoriesAPP,
+      };
     }
   }
 
-  const csvWriter = createCsvWriter({
-    path: "apps_categories.csv",
-    header: headers,
-  });
-  await csvWriter.writeRecords(rows);
+  // const csvWriter = createCsvWriter({
+  //   path: "apps_categories.csv",
+  //   header,
+  // });
+  // await csvWriter.writeRecords(rows);
+
+  await main2(next2Data);
 
   console.log("DONE");
 }
+main();
+async function main2(next2Data) {
+  const getParentCategoriesDB = await Models.Tree.find({
+    name: {
+      $in: [
+        "Connection",
+        "Media",
+        "Hardware",
+        "Health&Fitness",
+        "Location",
+        "Telephony",
+        "UserInfo",
+      ],
+    },
+  });
+  const apisDB = await Models.Tree.find({
+    parent: {
+      $in: _.map(getParentCategoriesDB, "id"),
+    },
+  });
 
+  const headers = [
+    {
+      id: "stt",
+      title: "#",
+    },
+    {
+      id: "appName",
+      title: "App name",
+    },
+    {
+      id: "developer",
+      title: "Developer",
+    },
+    {
+      id: "category",
+      title: "Category",
+    },
+    {
+      id: "apis",
+      title: "APIs",
+    },
+    {
+      id: "pp",
+      title: "Privacy Policy",
+    },
+
+    ...categories.map((category) => {
+      return {
+        id: slug(category.name),
+        title: category.name,
+      };
+    }),
+    ...apisDB.map((item) => {
+      return {
+        id: slug(item.name),
+        title: item.name,
+      };
+    }),
+  ];
+  const rows = [];
+  for (const appName in next2Data) {
+    const { developer, category, appName, apis, pp } = next2Data[appName];
+
+    const apisCSV = [];
+    apisDB.forEach((item) => {
+      apisCSV[item.name] = 0;
+    }),
+      apis.forEach((item) => {
+        apisCSV[item] = 1;
+      });
+
+    const ppCategories = {};
+    categories.forEach((category) => {
+      ppCategories[category.name] = 0;
+    }),
+      pp.forEach((item) => {
+        ppCategories[item.name] = 1;
+        const categoriesParent = getParentCategories(item.name);
+        categoriesParent.forEach((categoryPr) => {
+          ppCategories[categoryPr.name] = 1;
+        });
+      });
+
+    rows.push({
+      developer,
+      category,
+      appName,
+      ...apis,
+      ...ppCategories,
+    });
+  }
+  const csvWriter = createCsvWriter({
+    path: "apps_categories(ver2).csv",
+    header: headers,
+  });
+  await csvWriter.writeRecords(rows);
+}
 function getParentCategories(childCategoryName, parents = []) {
   try {
     const category = categories.find((item) => item.name === childCategoryName);
@@ -475,4 +586,3 @@ async function getParent(node) {
   }
   return getParent(parent);
 }
-main();
