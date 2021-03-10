@@ -417,21 +417,21 @@ async function main2(next2Data) {
 
     const apisCSV = {};
     apisDB.forEach((item) => {
-      apisCSV[item.name] = 0;
+      apisCSV[slug(item.name)] = 0;
     }),
       apis.forEach((item) => {
-        apisCSV[item] = 1;
+        apisCSV[slug(item)] = 1;
       });
 
     const ppCategories = {};
     categories.forEach((category) => {
-      ppCategories[category.name] = 0;
+      ppCategories[slug(category.name)] = 0;
     }),
       pp.forEach((item) => {
-        ppCategories[item] = 1;
+        ppCategories[slug(item)] = 1;
         const categoriesParent = getParentCategories(item);
         categoriesParent.forEach((categoryPr) => {
-          ppCategories[categoryPr.name] = 1;
+          ppCategories[slug(categoryPr.name)] = 1;
         });
       });
 
