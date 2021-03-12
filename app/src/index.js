@@ -39,7 +39,7 @@ app.get("/", function (req, res) {
 // routes
 app.use(routes);
 
-const PORT = process.env.PORT || 3333;
-app.listen(PORT, () =>
-  Helpers.Logger.info("Server listening on: http://localhost:3333")
-);
+// const PORT = process.env.PORT || 3333;
+// app.listen(PORT, () =>
+//   Helpers.Logger.info("Server listening on: http://localhost:3333")
+// );
