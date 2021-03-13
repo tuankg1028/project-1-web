@@ -17,5 +17,5 @@ EXPOSE 8000
 #ADD code/entrypoint.sh /code/
 #COPY code/entrypoint.sh /code/entrypoint.sh
 # RUN chmod +x code/entrypoint.sh
-RUN chmod +x /code/entrypoint.sh
-CMD ["/bin/bash", "/code/entrypoint.sh"]
+RUN chmod +x code/entrypoint.sh
+CMD ["/bin/bash", "code/entrypoint.sh"]
