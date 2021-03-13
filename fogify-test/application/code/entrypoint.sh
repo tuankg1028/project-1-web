@@ -14,7 +14,7 @@ elif [ "$NODE_TYPE" == "EDGE_NODE" ]
 then
     SCONE_VERSION=1 node code/dist/edge-server.js
 else
-    SCONE_VERSION=1 node code/dist/server.js
+    SCONE_VERSION=1 node code/dist/cloud.js
 fi
 
 # run the server

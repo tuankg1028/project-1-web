@@ -3,16 +3,22 @@ services:
     environment:
       NODE_TYPE: CLOUD_NODE
     image: taxi-exp:0.0.1
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
   mec-svc-1:
     environment:
       NODE_TYPE: EDGE_NODE
       REGION: bronx
     image: taxi-exp:0.0.1
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
   mec-svc-2:
     environment:
       NODE_TYPE: EDGE_NODE
       REGION: brooklyn
     image: taxi-exp:0.0.1
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
 version: '3.7'
 x-fogify:
   networks:
