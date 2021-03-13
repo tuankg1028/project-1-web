@@ -5,3 +5,5 @@ app/sourceTemp
 app/apkTemp
 .docker
 app/jadx
+fogify-test/application/code/dist
+fogify-test/application/code/node_modules

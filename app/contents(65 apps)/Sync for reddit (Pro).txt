@@ -1,0 +1,123 @@
+(*.*)	Sync for reddit (Pro) 
+	(-) Admin 
+No
+	(-) Purchase 
+No
+	(-) Education 
+No
+	(-) Medical 
+No
+	(-) Booking 
+No
+	(-) Services 
+No
+	(-) Marketing 
+No
+	(-) Profiling 
+No
+	(-) Analysis 
+No
+	(-) Statistical 
+No
+	(-) Advertisements 
+        unique device identifiers for advertising (google advertiser id or idfa, for example); geographic position.
+	(-) Maintenance 
+ system logs and maintenance  for operation and maintenance purposes, this application and any third-party services may collect files that record interaction with this application (system logs) use other personal data (such as the ip address) for this purpose.
+	(-) Identifying 
+ usage data  information collected automatically through this application (or third-party services employed in this application), which can include: the ip addresses or domain names of the computers utilized by the users who use this application, the uri addresses (uniform resource identifier), the time of the request, the method utilized to submit the request to the server, the size of the file received in response, the numerical code indicating the status of the server's answer (successful outcome, error, etc.), the country of origin, the features of the browser and the operating system utilized by the user, the various time details per visit (e.g., the time spent on each page within the application) and the details about the path followed within the application with special reference to the sequence of pages visited, and other parameters about the device operating system and/or the user's it environment.
+
+        unique device identifiers for advertising (google advertiser id or idfa, for example); geographic position.
+	(-) Testing/Troubleshooting 
+No
+	(-) Payment 
+No
+	(-) Delivery 
+No
+	(-) Contacting 
+ personal data collected for the purposes of the owner’s legitimate interests shall be retained as long as needed to fulfill such purposes. users may find specific information regarding the legitimate interests pursued by the owner within the relevant sections of  this document or by contacting the owner.
+
+the data processing is carried out using computers and/or it enabled tools, following organizational procedures and modes strictly related to the purposes indicated. in addition to the owner, in some cases, the data may be accessible to certain types of persons in charge, involved with the operation of this application (administration, sales, marketing, legal, system administration) or external parties (such as third-party technical service providers, mail carriers, hosting providers, it companies, communications agencies) appointed, if necessary, as data processors by the owner. the updated list of these parties may be requested from the owner at any time.
+	(-) Research 
+No
+	(-) Survey 
+No
+	(-) Treatment 
+No
+	(-) Diagnosis 
+No
+	(-) Improving quality 
+No
+	(-) Developing the new services 
+No
+	(-) Direct 
+    definitions and legal references   personal data (or data)  any information that directly, indirectly, or in connection with other information — including a personal identification number — allows for the identification or identifiability of a natural person.
+	(-) Direct Email 
+No
+	(-) Direct Phone 
+No
+	(-) Third-party 
+any use of cookies – or of other tracking tools – by this application or by the owners of third-party services used by this application serves the purpose of providing the service required by the user, in addition to any other purposes described in the present document and in the cookie policy, if available.
+
+   the purposes of processing  the data concerning the user is collected to allow the owner to provide its service, comply with its legal obligations, respond to enforcement requests, protect its rights and interests (or those of its users or third parties), detect any malicious or fraudulent activity, as well as the following:
+
+ usage data  information collected automatically through this application (or third-party services employed in this application), which can include: the ip addresses or domain names of the computers utilized by the users who use this application, the uri addresses (uniform resource identifier), the time of the request, the method utilized to submit the request to the server, the size of the file received in response, the numerical code indicating the status of the server's answer (successful outcome, error, etc.), the country of origin, the features of the browser and the operating system utilized by the user, the various time details per visit (e.g., the time spent on each page within the application) and the details about the path followed within the application with special reference to the sequence of pages visited, and other parameters about the device operating system and/or the user's it environment.
+
+ system logs and maintenance  for operation and maintenance purposes, this application and any third-party services may collect files that record interaction with this application (system logs) use other personal data (such as the ip address) for this purpose.
+
+      access to third party accounts    twitter account access  personal data: various types of data as specified in the privacy policy of the service
+
+        contact information       owner and data controller  matteo villa  owner contact email: apps@mvilla.it          full policy     owner and data controller  matteo villa  owner contact email: apps@mvilla.it    types of data collected  among the types of personal data that this application collects, by itself or through third parties, there are:
+
+ users are responsible for any third-party personal data obtained, published or shared through this application and confirm that they have the third party's consent to provide the data to the owner.
+
+the data processing is carried out using computers and/or it enabled tools, following organizational procedures and modes strictly related to the purposes indicated. in addition to the owner, in some cases, the data may be accessible to certain types of persons in charge, involved with the operation of this application (administration, sales, marketing, legal, system administration) or external parties (such as third-party technical service providers, mail carriers, hosting providers, it companies, communications agencies) appointed, if necessary, as data processors by the owner. the updated list of these parties may be requested from the owner at any time.
+
+ processing is necessary for the purposes of the legitimate interests pursued by the owner or by a third party.
+
+        access to third party accounts and infrastructure monitoring.  for specific information about the personal data used for each purpose, the user may refer to the section “detailed information on the processing of personal data”.
+
+    access to third party accounts   this type of service allows this application to access data from your account on a third party service and perform actions with it.
+	(-) Third-party Email 
+any use of cookies – or of other tracking tools – by this application or by the owners of third-party services used by this application serves the purpose of providing the service required by the user, in addition to any other purposes described in the present document and in the cookie policy, if available.
+
+   the purposes of processing  the data concerning the user is collected to allow the owner to provide its service, comply with its legal obligations, respond to enforcement requests, protect its rights and interests (or those of its users or third parties), detect any malicious or fraudulent activity, as well as the following:
+
+ usage data  information collected automatically through this application (or third-party services employed in this application), which can include: the ip addresses or domain names of the computers utilized by the users who use this application, the uri addresses (uniform resource identifier), the time of the request, the method utilized to submit the request to the server, the size of the file received in response, the numerical code indicating the status of the server's answer (successful outcome, error, etc.), the country of origin, the features of the browser and the operating system utilized by the user, the various time details per visit (e.g., the time spent on each page within the application) and the details about the path followed within the application with special reference to the sequence of pages visited, and other parameters about the device operating system and/or the user's it environment.
+
+ system logs and maintenance  for operation and maintenance purposes, this application and any third-party services may collect files that record interaction with this application (system logs) use other personal data (such as the ip address) for this purpose.
+
+      access to third party accounts    twitter account access  personal data: various types of data as specified in the privacy policy of the service
+
+        contact information       owner and data controller  matteo villa  owner contact email: apps@mvilla.it          full policy     owner and data controller  matteo villa  owner contact email: apps@mvilla.it    types of data collected  among the types of personal data that this application collects, by itself or through third parties, there are:
+
+ users are responsible for any third-party personal data obtained, published or shared through this application and confirm that they have the third party's consent to provide the data to the owner.
+
+the data processing is carried out using computers and/or it enabled tools, following organizational procedures and modes strictly related to the purposes indicated. in addition to the owner, in some cases, the data may be accessible to certain types of persons in charge, involved with the operation of this application (administration, sales, marketing, legal, system administration) or external parties (such as third-party technical service providers, mail carriers, hosting providers, it companies, communications agencies) appointed, if necessary, as data processors by the owner. the updated list of these parties may be requested from the owner at any time.
+
+ processing is necessary for the purposes of the legitimate interests pursued by the owner or by a third party.
+
+        access to third party accounts and infrastructure monitoring.  for specific information about the personal data used for each purpose, the user may refer to the section “detailed information on the processing of personal data”.
+
+    access to third party accounts   this type of service allows this application to access data from your account on a third party service and perform actions with it.
+	(-) Third-party Postal 
+any use of cookies – or of other tracking tools – by this application or by the owners of third-party services used by this application serves the purpose of providing the service required by the user, in addition to any other purposes described in the present document and in the cookie policy, if available.
+
+   the purposes of processing  the data concerning the user is collected to allow the owner to provide its service, comply with its legal obligations, respond to enforcement requests, protect its rights and interests (or those of its users or third parties), detect any malicious or fraudulent activity, as well as the following:
+
+ usage data  information collected automatically through this application (or third-party services employed in this application), which can include: the ip addresses or domain names of the computers utilized by the users who use this application, the uri addresses (uniform resource identifier), the time of the request, the method utilized to submit the request to the server, the size of the file received in response, the numerical code indicating the status of the server's answer (successful outcome, error, etc.), the country of origin, the features of the browser and the operating system utilized by the user, the various time details per visit (e.g., the time spent on each page within the application) and the details about the path followed within the application with special reference to the sequence of pages visited, and other parameters about the device operating system and/or the user's it environment.
+
+ system logs and maintenance  for operation and maintenance purposes, this application and any third-party services may collect files that record interaction with this application (system logs) use other personal data (such as the ip address) for this purpose.
+
+      access to third party accounts    twitter account access  personal data: various types of data as specified in the privacy policy of the service
+
+        contact information       owner and data controller  matteo villa  owner contact email: apps@mvilla.it          full policy     owner and data controller  matteo villa  owner contact email: apps@mvilla.it    types of data collected  among the types of personal data that this application collects, by itself or through third parties, there are:
+
+ users are responsible for any third-party personal data obtained, published or shared through this application and confirm that they have the third party's consent to provide the data to the owner.
+
+the data processing is carried out using computers and/or it enabled tools, following organizational procedures and modes strictly related to the purposes indicated. in addition to the owner, in some cases, the data may be accessible to certain types of persons in charge, involved with the operation of this application (administration, sales, marketing, legal, system administration) or external parties (such as third-party technical service providers, mail carriers, hosting providers, it companies, communications agencies) appointed, if necessary, as data processors by the owner. the updated list of these parties may be requested from the owner at any time.
+
+ processing is necessary for the purposes of the legitimate interests pursued by the owner or by a third party.
+
+        access to third party accounts and infrastructure monitoring.  for specific information about the personal data used for each purpose, the user may refer to the section “detailed information on the processing of personal data”.
+
+    access to third party accounts   this type of service allows this application to access data from your account on a third party service and perform actions with it.
