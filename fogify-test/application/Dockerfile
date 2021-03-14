@@ -7,6 +7,7 @@ WORKDIR /usr/src/app
 
 COPY code/package*.json code/
 RUN cd code && npm install --production
+RUN apk update && apk add bash
 
 ADD code code
 
