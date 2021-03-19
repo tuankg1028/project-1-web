@@ -7,3 +7,5 @@ app/apkTemp
 app/jadx
 fogify-test/application/code/dist
 fogify-test/application/code/node_modules
+validation-process/application/code/dist
+validation-process/application/code/node_modules

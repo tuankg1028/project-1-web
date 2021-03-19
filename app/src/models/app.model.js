@@ -17,6 +17,8 @@ var schema = new Schema(
     chplayLink: String,
     isCompleted: Boolean,
     appAPKPureId: String,
+    appIdCHPlay: String,
+    CHPlayLink: String,
     nodes: [
       {
         id: Schema.Types.ObjectId,

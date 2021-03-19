@@ -280,8 +280,9 @@ const initAppsOnDB36K = async () => {
     // temp
     let apps = await Models.App.find({
       isCompleted: false,
-    });
-    apps = _.sampleSize(apps, apps.length);
+    }).limit(1);
+    // apps = _.sampleSize(apps, apps.length);
+    // const apps = [{ id: "60376a4192e2b52f3cf84d38" }];
 
     for (let i = 0; i < apps.length; i++) {
       Helpers.Logger.info(`Running ${i + 1}/${apps.length}`);
@@ -302,6 +303,99 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// const _createNodes = async (appIdDB) => {
+//   let pathFileApk;
+//   let apkSourcePath;
+//   try {
+//     Helpers.Logger.step(
+//       "Step 0: Get nodes " + JSON.stringify(appIdDB, null, 2)
+//     );
+//     const appDB = await Models.App.findById(appIdDB);
+
+//     const { appAPKPureId, appName } = appDB;
+//     apkSourcePath = path.join(__dirname, `../../sourceTemp/${uuidv4()}`);
+
+//     Helpers.Logger.step("Step 1: Download apk");
+//     // download first app
+//     pathFileApk = await Services.APKPure.download(appName, appAPKPureId);
+
+//     if (!pathFileApk) throw new Error("Cannot download apk");
+//     Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
+
+//     // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
+//     execSync(
+//       `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
+//     );
+//     Helpers.Logger.step("Step 3: Get content APK from source code");
+//     const contents = await Helpers.File.getContentOfFolder(
+//       `${apkSourcePath}/sources`
+//     );
+
+//     Helpers.Logger.step("Step 4: Get base line value for leaf nodes");
+//     const leafNodeBaseLines = await Services.BaseLine.initBaseLineForTree(
+//       contents
+//     );
+
+//     const functionConstants = leafNodeBaseLines.filter((node) => {
+//       return node.right - node.left === 1 && node.baseLine === 1;
+//     });
+//     Helpers.Logger.info(
+//       `Node data: ${JSON.stringify(functionConstants, null, 2)}`
+//     );
+
+//     const appData = {
+//       isCompleted: true,
+//       nodes: functionConstants.map((item) => {
+//         return {
+//           id: item._id,
+//           name: item.name,
+//           value: item.baseLine,
+//           parent: item.parent._id,
+//         };
+//       }),
+//     };
+
+//     Helpers.Logger.info(`APP DATA: ${JSON.stringify(appData, null, 2)}`);
+//     // create app
+//     await Models.App.updateOne(
+//       {
+//         _id: appIdDB,
+//       },
+//       {
+//         $set: appData,
+//       },
+//       {},
+//       (err, data) =>
+//         Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
+//     );
+
+//     // remove file and folder
+
+//     if (fs.existsSync(apkSourcePath)) {
+//       rimraf(apkSourcePath, function () {
+//         Helpers.Logger.info("folder removed");
+//       });
+//     }
+
+//     if (fs.existsSync(pathFileApk)) {
+//       fs.unlinkSync(pathFileApk);
+//     }
+//     return functionConstants;
+//   } catch (err) {
+//     // remove file and folder
+//     if (fs.existsSync(apkSourcePath)) {
+//       rimraf(apkSourcePath, function () {
+//         Helpers.Logger.info("folder removed");
+//       });
+//     }
+
+//     if (fs.existsSync(pathFileApk)) {
+//       fs.unlinkSync(pathFileApk);
+//     }
+
+//     Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appIdDB} app`);
+//   }
+// };
 const _createAppDB = async (appIdDB) => {
   // appName
   try {
@@ -375,15 +469,16 @@ const _createAppDB = async (appIdDB) => {
         );
         const appDB = await Models.App.findById(appIdDB);
 
-        const { appAPKPureId, appName } = appDB;
+        const { appAPKPureId, appName, appIdCHPlay } = appDB;
         apkSourcePath = path.join(__dirname, `../../sourceTemp/${uuidv4()}`);
 
         Helpers.Logger.step("Step 1: Download apk");
         // download first app
-        pathFileApk = await Services.APKPure.download(appName, appAPKPureId);
+        pathFileApk = await Services.APKDownloader.download(appIdCHPlay);
 
         if (!pathFileApk) throw new Error("Cannot download apk");
         Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
+        return;
 
         // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
         execSync(
@@ -470,9 +565,55 @@ const _createAppDB = async (appIdDB) => {
     Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appIdDB} app`);
   }
 };
+
+const updateApps = async () => {
+  const _updateData = async (app) => {
+    const appName = app.appName;
+    Helpers.Logger.step("Step 1: Search apps from APK Pure");
+    const listAppIdsFromAPKPure = await Services.APKPure.seach(appName);
+    if (!listAppIdsFromAPKPure || !listAppIdsFromAPKPure.length)
+      throw new Error("No app found from APK Pure");
+
+    const appAPKPureId = listAppIdsFromAPKPure[0];
+
+    const {
+      AppId: appIdCHPlay,
+      CHPlayLink,
+    } = await Services.APKPure.getInfoApp(appAPKPureId);
+
+    await Models.App.updateOne(
+      {
+        _id: app.id,
+      },
+      {
+        $set: {
+          appIdCHPlay,
+          CHPlayLink,
+        },
+      },
+      {},
+      (err, data) =>
+        Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
+    );
+  };
+  let apps = await Models.App.find({
+    isCompleted: false,
+  });
+
+  for (let i = 0; i < apps.length; i++) {
+    try {
+      const app = apps[i];
+      _updateData(app);
+    } catch (err) {
+      console.log(err);
+      Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appIdDB} app`);
+    }
+  }
+};
 export default {
   initTreeOnDB,
   initAppsOnDB,
   initAppsOnDBByCSV,
   initAppsOnDB36K,
+  updateApps,
 };

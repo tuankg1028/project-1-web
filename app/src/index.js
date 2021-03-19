@@ -29,6 +29,7 @@ async function initData() {
   // await Helpers.Init.initAppsOnDBByCSV();
   // init apps on database (36k)
   await Helpers.Init.initAppsOnDB36K();
+  // await Helpers.Init.updateApps();
 }
 initData();
 
