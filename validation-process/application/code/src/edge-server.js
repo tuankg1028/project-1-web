@@ -17,5 +17,9 @@ app.post("/", function (req, res) {
 setInterval(() => {
   console.log("Edge sending data to cloud");
   Services.Server.sendData({ message: "Hello Cloud" });
-}, 1000);
-app.listen(8000);
+}, 1000 * 60);
+
+
+app.listen(8000, () => {
+  console.log("Edge node is running");
+});
