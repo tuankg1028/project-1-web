@@ -1,0 +1,37 @@
+extends ../layout
+
+block content
+
+  a#button
+  .container-survey
+    .header
+    .wrap-survey
+      .wrap-content
+        ul.nav.nav-tabs
+          // Questions
+          li.nav-item
+            a.nav-link.active(data-toggle='tab', href='#questions') Questions
+          //- li.nav-item
+          //-   a.nav-link(data-toggle='tab', href='#dap') DAP
+          //- li.nav-item
+          //-   a.nav-link(data-toggle='tab', href='#background') Background
+        // Tab panes
+        .tab-content
+          // Question
+          #questions.container.tab-pane.active
+            block survey-content
+            
+            
+          // tabs
+          //- #dap.container.tab-pane.fade
+          //-   br
+          //-   h3 Menu 1
+          //-   p
+          //-     | Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          //- #background.container.tab-pane.fade
+          //-   br
+          //-   h3 Menu 2
+          //-   p
+          //-     | Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.
+      
+        

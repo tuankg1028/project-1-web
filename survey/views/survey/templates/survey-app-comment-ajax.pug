@@ -1,0 +1,64 @@
+each question, index in questions
+  .wrap-app.mt-4
+    h3.title.text-center
+      | Android Application #{question.indexQuestion}
+    // category
+    .category.text-center.mt-2
+      span.category-label
+        | Category
+      | : #{question.categoryName}
+    .step.wizard-step.current.mt-3(style='')
+      // Description
+      .description.mt-3
+        span.description-lavel.font-weight-bold
+          | I – Description:
+        div
+          | !{question.description}
+    
+    // final
+    .question-1.mt-2
+      .title 1) Based on the fact that
+        span 
+          b Android Application 1  &nbsp
+        spann could collect the all mentioned data above, do you think this app could be risky for your personal data?
+      // anwsers
+      .anwsers.mt-2
+        label.container-radio
+          | Very low
+          input(type='radio'  name="questions[" + question.id + "][final]" value="1" checked=(question.selectedLevel == "1" ? "checked" : null) required)
+          span.checkmark
+
+        label.container-radio
+          | Low
+          input(type='radio'  name="questions[" + question.id + "][final]" checked=(question.selectedLevel == "2" ? "checked" : null) value="2")
+          span.checkmark
+
+        label.container-radio
+          | Neutral
+          input(type='radio'  name="questions[" + question.id + "][final]" checked=(question.selectedLevel == "3" ? "checked" : null) value="3")
+          span.checkmark
+
+        label.container-radio
+          | High
+          input(type='radio'  name="questions[" + question.id+ "][final]" checked=(question.selectedLevel == "4" ? "checked" : null) value="4")
+          span.checkmark
+        
+        label.container-radio
+          | Very High
+          input(type='radio'  name="questions[" + question.id + "][final]" checked=(question.selectedLevel == "5" ? "checked" : null) value="5")
+          //- input(type='radio'  name="questions[" + question.id + "][final]" value="5")
+          span.checkmark
+    // end final
+
+    div.mt-3
+      | Can you please to give me the reason why you think the risk level of  &nbsp
+      //- b Android Application #{question.indexQuestion} &nbsp
+      | is 
+      b #{question.selectedLevelName} &nbsp
+      | ? If you have the other change which level you will choose?
+      br
+      br
+      div Please note that if you do not write the exact reason for your decision or the meaningless text, you must retake our survey.
+    // comment box
+    div.mt-2.comments-data
+      textarea(name="questions[" + question.id + "][comment]", cols="30", rows="5" value="" required)
