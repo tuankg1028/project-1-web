@@ -43,9 +43,7 @@ const download = async (appName, appIdFromAPKPure) => {
       "apkTemp/" + uuidv4() + ".apk"
     );
     // STEP 1: GET Link to download
-    const response = await API.get(
-      `${appIdFromAPKPure}/versions`
-    ).catch(() => {});
+    const response = await API.get(`${appIdFromAPKPure}/versions`);
 
     const $ = cheerio.load(response.data);
     let downloadLink;
