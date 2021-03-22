@@ -35,7 +35,7 @@ const seach = async (appName) => {
   }
 };
 
-const download = async (appName, appIdFromAPKPure) => {
+const download = async (appName, appIdFromAPKPure, id) => {
   try {
     let pathFile = path.join(__dirname, "../../", "apkTemp/" + id + ".apk");
     // STEP 1: GET Link to download
