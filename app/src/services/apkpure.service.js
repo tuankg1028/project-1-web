@@ -37,11 +37,7 @@ const seach = async (appName) => {
 
 const download = async (appName, appIdFromAPKPure) => {
   try {
-    let pathFile = path.join(
-      __dirname,
-      "../../",
-      "apkTemp/" + uuidv4() + ".apk"
-    );
+    let pathFile = path.join(__dirname, "../../", "apkTemp/" + id + ".apk");
     // STEP 1: GET Link to download
     const response = await API.get(`${appIdFromAPKPure}/versions`);
 

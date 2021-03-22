@@ -303,99 +303,6 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// const _createNodes = async (appIdDB) => {
-//   let pathFileApk;
-//   let apkSourcePath;
-//   try {
-//     Helpers.Logger.step(
-//       "Step 0: Get nodes " + JSON.stringify(appIdDB, null, 2)
-//     );
-//     const appDB = await Models.App.findById(appIdDB);
-
-//     const { appAPKPureId, appName } = appDB;
-//     apkSourcePath = path.join(__dirname, `../../sourceTemp/${uuidv4()}`);
-
-//     Helpers.Logger.step("Step 1: Download apk");
-//     // download first app
-//     pathFileApk = await Services.APKPure.download(appName, appAPKPureId);
-
-//     if (!pathFileApk) throw new Error("Cannot download apk");
-//     Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
-
-//     // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
-//     execSync(
-//       `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
-//     );
-//     Helpers.Logger.step("Step 3: Get content APK from source code");
-//     const contents = await Helpers.File.getContentOfFolder(
-//       `${apkSourcePath}/sources`
-//     );
-
-//     Helpers.Logger.step("Step 4: Get base line value for leaf nodes");
-//     const leafNodeBaseLines = await Services.BaseLine.initBaseLineForTree(
-//       contents
-//     );
-
-//     const functionConstants = leafNodeBaseLines.filter((node) => {
-//       return node.right - node.left === 1 && node.baseLine === 1;
-//     });
-//     Helpers.Logger.info(
-//       `Node data: ${JSON.stringify(functionConstants, null, 2)}`
-//     );
-
-//     const appData = {
-//       isCompleted: true,
-//       nodes: functionConstants.map((item) => {
-//         return {
-//           id: item._id,
-//           name: item.name,
-//           value: item.baseLine,
-//           parent: item.parent._id,
-//         };
-//       }),
-//     };
-
-//     Helpers.Logger.info(`APP DATA: ${JSON.stringify(appData, null, 2)}`);
-//     // create app
-//     await Models.App.updateOne(
-//       {
-//         _id: appIdDB,
-//       },
-//       {
-//         $set: appData,
-//       },
-//       {},
-//       (err, data) =>
-//         Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
-//     );
-
-//     // remove file and folder
-
-//     if (fs.existsSync(apkSourcePath)) {
-//       rimraf(apkSourcePath, function () {
-//         Helpers.Logger.info("folder removed");
-//       });
-//     }
-
-//     if (fs.existsSync(pathFileApk)) {
-//       fs.unlinkSync(pathFileApk);
-//     }
-//     return functionConstants;
-//   } catch (err) {
-//     // remove file and folder
-//     if (fs.existsSync(apkSourcePath)) {
-//       rimraf(apkSourcePath, function () {
-//         Helpers.Logger.info("folder removed");
-//       });
-//     }
-
-//     if (fs.existsSync(pathFileApk)) {
-//       fs.unlinkSync(pathFileApk);
-//     }
-
-//     Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appIdDB} app`);
-//   }
-// };
 const _createAppDB = async (appIdDB) => {
   // appName
   try {
@@ -460,6 +367,7 @@ const _createAppDB = async (appIdDB) => {
         Helpers.Logger.error(`${err.message}`);
       }
     };
+
     const _createNodes = async (appIdDB) => {
       let pathFileApk;
       let apkSourcePath;
@@ -469,16 +377,18 @@ const _createAppDB = async (appIdDB) => {
         );
         const appDB = await Models.App.findById(appIdDB);
 
-        const { appAPKPureId, appName, appIdCHPlay } = appDB;
+        const { appAPKPureId, appName, id } = appDB;
         apkSourcePath = path.join(__dirname, `../../sourceTemp/${uuidv4()}`);
 
         Helpers.Logger.step("Step 1: Download apk");
         // download first app
-        pathFileApk = await Services.APKDownloader.download(appIdCHPlay);
-
+        pathFileApk = await Services.APKPure.download(
+          appName,
+          appAPKPureId,
+          id
+        );
         if (!pathFileApk) throw new Error("Cannot download apk");
         Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
-        return;
 
         // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
         execSync(
