@@ -280,8 +280,8 @@ const initAppsOnDB36K = async () => {
     // temp
     let apps = await Models.App.find({
       isCompleted: false,
-    }).limit(1);
-    // apps = _.sampleSize(apps, apps.length);
+    }).limit(10);
+    apps = _.sampleSize(apps, apps.length);
     // const apps = [{ id: "60376a4192e2b52f3cf84d38" }];
 
     for (let i = 0; i < apps.length; i++) {
