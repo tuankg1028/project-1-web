@@ -27,6 +27,15 @@ var schema = new Schema(
         parent: Schema.Types.ObjectId,
       },
     ],
+    apis: [
+      {
+        id: Schema.Types.ObjectId,
+        name: String,
+        left: Number,
+        right: Number,
+        parent: Schema.Types.ObjectId,
+      },
+    ],
   },
   {
     timestamps: true,

@@ -134,16 +134,11 @@ class SurveyController {
       // const { id: userId, isAnswerd, groupSurvey } = req.user;
 
       let questions = await Models.App.find().limit(20)
-        // .select("_id")
+        .select("_id")
         .cache(60 * 60 * 24 * 30); // 1 month;
 
 
-      // questions = await Promise.all(questions.map(async question => {
-      //   return {
-      //     ...question,
-      //     apis: await Promise.all(question.nodes.map(Utils.Function.getAPIFromNode))
-      //   }
-      // }))
+      
 
       const token = req.session.token;
 
@@ -164,7 +159,14 @@ class SurveyController {
 
       question = question.toJSON();
 
+      if(!question.apis) {
+        let apis = await Promise.all(question.nodes.map(Utils.Function.getAPIFromNode));
+        apis = _.uniqBy(apis, "name")
+
+        question.apis = apis
+      }
       
+
       res.render("survey/templates/survey-question-ajax", {
         question,
         indexQuestion: index

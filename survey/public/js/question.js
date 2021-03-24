@@ -331,11 +331,6 @@
 
   function appTimer() {
     $(".slick-active .colec-data").hide();
-    $(".slick-active .comments-data-judgement").hide();
-    $(".login100-form-btn").hide();
-    // const timeBaseOnDesc =
-    //   $(".slick-active form").attr("descLength") <= 500 ? 40000 : 60000;
-    const timeBaseOnDesc = 0;
     // change height
     $(".slick-slide").css(
       "height",
@@ -350,16 +345,6 @@
         $(".slick-active form").height() + 20 + "px"
       );
     }, 0);
-    // show comment
-    setTimeout(() => {
-      $(".slick-active .comments-data-judgement").show();
-      $(".login100-form-btn").show();
-      // change height
-      $(".slick-slide").css(
-        "height",
-        $(".slick-active form").height() + 20 + "px"
-      );
-    }, 60000);
   }
   // radio change
   $("body").on("change", ".final-question", function() {

@@ -1,0 +1,22 @@
+version: '3.7'
+services:
+  nodeserver:
+    build:
+      context: ./app
+    ports:
+      - "3333:3333"
+    volumes:
+      - ~/jadx:./jadx
+  redis:
+    image: "redis:alpine"
+    volumes:
+      - /data/redis:/data
+  db:
+    image: mongo
+    volumes:
+      - /data/db:/data/db
+    restart: unless-stopped
+  # jadx: 
+  #   image: cincan/jadx
+  #   volumes:
+  #     - ./samples:/samples

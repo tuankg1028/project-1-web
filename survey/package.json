@@ -7,7 +7,7 @@
     "clean": "rm -rf dist && mkdir dist",
     "build-babel": "babel src -s -d dist",
     "build": "npm run clean && npm run build-babel",
-    "start": "npm run build && node dist/app.js",
+    "start": "node dist/app.js",
     "dev": "babel-watch src/app.js",
     "create-questions123123123sdad": "babel-node --max_old_space_size=8192 createQuestion.js",
     "create-files": "babel --max_old_space_size=8192 createTxtFile.js",
