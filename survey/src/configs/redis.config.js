@@ -1,7 +1,10 @@
 import redis from "redis";
 import Utils from "../utils";
 
-const redisClient = redis.createClient();
+const redisClient = redis.createClient({
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT
+});
 
 redisClient.select(0);
 
