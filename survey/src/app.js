@@ -77,7 +77,7 @@ app.use(Sentry.Handlers.requestHandler());
 
 app.use(express.static(path.join(__dirname, "../public")));
 
-app.use("/", indexRouter);
+app.use("/survey", indexRouter);
 app.use("/users", usersRouter);
 app.use(Sentry.Handlers.errorHandler());
 // catch 404 and forward to error handler
