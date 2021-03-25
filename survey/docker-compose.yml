@@ -5,9 +5,9 @@ services:
     ports:
       - "3333:3333"
     # service deployment
-    deploy:
-      mode: replicated
-      replicas: 2
+    # deploy:
+    #   mode: replicated
+    #   replicas: 2
       # labels: [APP=NODE_SERVER]
       # # service resource management
       # resources:
