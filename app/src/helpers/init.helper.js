@@ -10,6 +10,8 @@ import pLimit from "p-limit";
 import rimraf from "rimraf";
 import { v4 as uuidv4 } from "uuid";
 const escapeStringRegexp = require("escape-string-regexp");
+var gplay = require("google-play-scraper");
+
 import _ from "lodash";
 
 const { execSync } = require("child_process");
@@ -520,10 +522,66 @@ const updateApps = async () => {
     }
   }
 };
+
+const changeCategoryOf36kApps = async () => {
+  const appsText = await fs.readFileSync(
+    path.join(__dirname, "../../data/app_names(36k).txt"),
+    { encoding: "utf8" }
+  );
+  const apps = JSON.parse(appsText);
+
+  for (let i = 0; i < 1; i++) {
+    const appName = apps[i];
+    updateCategoryOfApp(appName);
+  }
+};
+
+const updateCategoryOfApp = async (appName) => {
+  // Helpers.Logger.step("Step 1: Search apps from APK Pure");
+  // const listAppIdsFromAPKPure = await Services.APKPure.seach(appName);
+  // if (!listAppIdsFromAPKPure || !listAppIdsFromAPKPure.length)
+  //   throw new Error("No app found from APK Pure");
+
+  // const appAPKPureId = listAppIdsFromAPKPure[0];
+  // Helpers.Logger.step("Step 2: Get app info from APK pure");
+  // const { AppId: AppIdCHPlay } = await Services.APKPure.getInfoApp(
+  //   appAPKPureId
+  // );
+
+  // const appInfo = await Services.CHPLAY.getInfoApp(AppIdCHPlay);
+
+  // console.log(appInfo);
+
+  gplay
+    .search({
+      term: appName,
+      num: 1,
+    })
+    .then(console.log, console.log);
+};
+
+const getAppsUninstall = async () => {
+  const apps = await Models.App.find({
+    isCompleted: false,
+  });
+
+  const appChunks = _.chunk(apps, 500);
+
+  appChunks.forEach((chunk, index) => {
+    let content = "";
+    chunk.forEach((app) => {
+      content += `${app.appName} - ${app.developer} == ${app.id} \n`;
+    });
+
+    fs.writeFile(`./top_apps/top_apps${index + 1}.txt`, content, () => {});
+  });
+};
 export default {
   initTreeOnDB,
   initAppsOnDB,
   initAppsOnDBByCSV,
   initAppsOnDB36K,
   updateApps,
+  changeCategoryOf36kApps,
+  getAppsUninstall,
 };

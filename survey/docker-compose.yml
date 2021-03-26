@@ -39,7 +39,7 @@ services:
   db:
     image: mongo
     volumes:
-      - ./data/db:/data
+      - ./data/db:/data/db
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
