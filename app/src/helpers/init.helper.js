@@ -592,6 +592,8 @@ const getAppsUninstall = async () => {
 
     fs.writeFile(`./top_apps/top_apps${index + 1}.txt`, content, () => {});
   });
+
+  console.log("DONE getAppsUninstall");
 };
 getAppsUninstall();
 function ThroughDirectory(Directory, Files = []) {
