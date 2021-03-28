@@ -576,7 +576,6 @@ const getAppsUninstall = async () => {
       const apkFile = apkFiles[i];
 
       if (apkFile.includes(app.id)) {
-        console.log(2, apkFile);
         return false;
       }
     }
