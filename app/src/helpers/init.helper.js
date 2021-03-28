@@ -565,10 +565,12 @@ const getAppsUninstall = async () => {
     "/home/ha/snap/skype/common/apkpure_get/top_apps_Download"
   );
 
+  console.log("apkFiles", apkFiles);
   let apps = await Models.App.find({
     isCompleted: false,
   });
 
+  console.log("apps", apps.length);
   apps = apps.filter((app) => {
     for (let i = 0; i < apkFiles.length; i++) {
       const apkFile = apkFiles[i];
@@ -584,7 +586,9 @@ const getAppsUninstall = async () => {
 
   const appChunks = _.chunk(apps, 500);
 
+  console.log("appChunks", appChunks.length);
   appChunks.forEach((chunk, index) => {
+    console.log("chunk", index);
     let content = "";
     chunk.forEach((app) => {
       content += `${app.appName} - ${app.developer} == ${app.id} \n`;
