@@ -561,8 +561,25 @@ const updateCategoryOfApp = async (appName) => {
 };
 
 const getAppsUninstall = async () => {
-  const apps = await Models.App.find({
+  const apkFiles = ThroughDirectory(
+    "/home/ha/snap/skype/common/apkpure_get/top_apps_Download"
+  );
+
+  let apps = await Models.App.find({
     isCompleted: false,
+  });
+
+  apps = apps.filter((app) => {
+    for (let i = 0; i < apkFiles.length; i++) {
+      const apkFile = apkFiles[i];
+
+      if (apkFile.includes(app.id)) {
+        console.log(2, apkFile);
+        return false;
+      }
+    }
+
+    return true;
   });
 
   const appChunks = _.chunk(apps, 500);
@@ -576,6 +593,17 @@ const getAppsUninstall = async () => {
     fs.writeFile(`./top_apps/top_apps${index + 1}.txt`, content, () => {});
   });
 };
+getAppsUninstall();
+function ThroughDirectory(Directory, Files = []) {
+  fs.readdirSync(Directory).forEach((File) => {
+    const Absolute = path.join(Directory, File);
+    if (fs.statSync(Absolute).isDirectory())
+      return ThroughDirectory(Absolute, Files);
+    else Files.push(Absolute);
+  });
+
+  return Files;
+}
 export default {
   initTreeOnDB,
   initAppsOnDB,
