@@ -319,6 +319,7 @@ const _createAppDBOnFile = async (appIdDB) => {
         Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
 
         // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
+        apkSourcePath = path.join(__dirname, `../../sourceTemp/${uuidv4()}`);
         execSync(
           `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
         );
