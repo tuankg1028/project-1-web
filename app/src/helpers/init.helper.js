@@ -280,10 +280,10 @@ const initAppsOnDB36K = async () => {
       );
     }, 1000 * 60 * 60);
     // temp
-    let apps = await Models.App.find({
+    const apps = await Models.App.find({
       isCompleted: false,
-    });
-    apps = _.sampleSize(apps, apps.length);
+    }).limit(10);
+    // apps = _.sampleSize(apps, apps.length);
     // const apps = [{ id: "60376a4192e2b52f3cf84d38" }];
 
     for (let i = 0; i < apps.length; i++) {
@@ -291,7 +291,7 @@ const initAppsOnDB36K = async () => {
       const app = apps[i];
 
       // await _createAppDB(app.id);
-      promises.push(limit(() => _createAppDB(app.id)));
+      promises.push(limit(() => _createAppDBOnFile(app.id)));
     }
 
     await Promise.all(promises).then(console.log);
@@ -304,6 +304,95 @@ const initAppsOnDB36K = async () => {
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+const _createAppDBOnFile = async (appIdDB) => {
+  // appName
+  try {
+    const _createNodes = async (appIdDB) => {
+      let pathFileApk;
+      let apkSourcePath;
+      try {
+        Helpers.Logger.step("Step 1: Get apk file from source");
+        pathFileApk = _getApkFileFromSource(appIdDB);
+
+        if (!pathFileApk) throw new Error("Cannot find apk file");
+        Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
+
+        // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
+        execSync(
+          `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
+        );
+        Helpers.Logger.step("Step 3: Get content APK from source code");
+        const contents = await Helpers.File.getContentOfFolder(
+          `${apkSourcePath}/sources`
+        );
+
+        Helpers.Logger.step("Step 4: Get base line value for leaf nodes");
+        const leafNodeBaseLines = await Services.BaseLine.initBaseLineForTree(
+          contents
+        );
+
+        const functionConstants = leafNodeBaseLines.filter((node) => {
+          return node.right - node.left === 1 && node.baseLine === 1;
+        });
+        Helpers.Logger.info(
+          `Node data: ${JSON.stringify(functionConstants, null, 2)}`
+        );
+
+        const appData = {
+          isCompleted: true,
+          nodes: functionConstants.map((item) => {
+            return {
+              id: item._id,
+              name: item.name,
+              value: item.baseLine,
+              parent: item.parent._id,
+            };
+          }),
+        };
+
+        Helpers.Logger.info(`APP DATA: ${JSON.stringify(appData, null, 2)}`);
+        // create app
+        await Models.App.updateOne(
+          {
+            _id: appIdDB,
+          },
+          {
+            $set: appData,
+          },
+          {},
+          (err, data) =>
+            Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
+        );
+
+        // remove file and folder
+
+        if (fs.existsSync(apkSourcePath)) {
+          rimraf(apkSourcePath, function () {
+            Helpers.Logger.info("folder removed");
+          });
+        }
+
+        return functionConstants;
+      } catch (err) {
+        console.log(err);
+        // remove file and folder
+        if (fs.existsSync(apkSourcePath)) {
+          rimraf(apkSourcePath, function () {
+            Helpers.Logger.info("folder removed");
+          });
+        }
+
+        Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appIdDB} app`);
+      }
+    };
+
+    return _createNodes(appIdDB);
+  } catch (err) {
+    console.log(err);
+    Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appIdDB} app`);
+  }
+};
 
 const _createAppDB = async (appIdDB) => {
   // appName
@@ -598,7 +687,6 @@ const getAppsUninstall = async () => {
 
   console.log("DONE getAppsUninstall");
 };
-getAppsUninstall();
 function ThroughDirectory(Directory, Files = []) {
   fs.readdirSync(Directory).forEach((File) => {
     const Absolute = path.join(Directory, File);
@@ -608,6 +696,39 @@ function ThroughDirectory(Directory, Files = []) {
   });
 
   return Files;
+}
+
+function _getApkFileFromSource(appId) {
+  let apkPath = "";
+  const apkFilesInFolder1 = ThroughDirectory(
+    "~/snap/skype/common/apkpure_get/new_top_apps_Download"
+  );
+  const apkFilesInFolder2 = ThroughDirectory(
+    "~/snap/skype/common/apkpure_get/top_apps_Download"
+  );
+
+  // find in folder 1
+  for (let i = 0; i < apkFilesInFolder1.length; i++) {
+    const apkFile = apkFilesInFolder1[i];
+
+    if (apkFile.includes(appId)) {
+      apkPath = apkFile;
+      break;
+    }
+  }
+  if (apkPath) return apkPath;
+
+  // find in folder 1
+  for (let i = 0; i < apkFilesInFolder2.length; i++) {
+    const apkFile = apkFilesInFolder2[i];
+
+    if (apkFile.includes(appId)) {
+      apkPath = apkFile;
+      break;
+    }
+  }
+
+  return apkPath;
 }
 export default {
   initTreeOnDB,
