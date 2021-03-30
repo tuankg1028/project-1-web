@@ -251,7 +251,7 @@ const initAppsOnDBByCSV = async () => {
 
 const initAppsOnDB36K = async () => {
   try {
-    const limit = pLimit(50);
+    const limit = pLimit(10);
     // let data = fs.readFileSync(
     //   path.join(__dirname, "../../", "data/app_names(36k).txt")
     // );
