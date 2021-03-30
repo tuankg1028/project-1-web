@@ -701,10 +701,10 @@ function ThroughDirectory(Directory, Files = []) {
 function _getApkFileFromSource(appId) {
   let apkPath = "";
   const apkFilesInFolder1 = ThroughDirectory(
-    "~/snap/skype/common/apkpure_get/new_top_apps_Download"
+    "/home/ha/snap/skype/common/apkpure_get/new_top_apps_Download"
   );
   const apkFilesInFolder2 = ThroughDirectory(
-    "~/snap/skype/common/apkpure_get/top_apps_Download"
+    "/home/ha/snap/skype/common/apkpure_get/top_apps_Download"
   );
 
   // find in folder 1
