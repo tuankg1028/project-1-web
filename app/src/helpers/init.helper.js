@@ -275,9 +275,14 @@ const initAppsOnDB36K = async () => {
     // }
 
     setInterval(() => {
-      execSync(
-        "rm -rf apkTemp && mkdir apkTemp &&  rm -rf sourceTemp && mkdir sourceTemp"
-      );
+      try {
+        execSync(
+          "rm -rf apkTemp && mkdir apkTemp &&  rm -rf sourceTemp && mkdir sourceTemp"
+        );
+      } catch (err) {
+        console.log(err);
+        Helpers.Logger.error("ERROR: remove folder");
+      }
     }, 1000 * 60 * 60);
     // temp
     const apps = await Models.App.find({
