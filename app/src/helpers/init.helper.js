@@ -283,7 +283,7 @@ const initAppsOnDB36K = async () => {
         console.log(err);
         Helpers.Logger.error("ERROR: remove folder");
       }
-    }, 1000 * 60 * 60);
+    }, 1000 * 60 * 60 * 2);
     // temp
     const apps = await Models.App.find({
       isCompleted: false,
@@ -325,6 +325,8 @@ const _createAppDBOnFile = async (appIdDB) => {
 
         // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
         apkSourcePath = path.join(__dirname, `../../sourceTemp/${uuidv4()}`);
+
+        execSync(`mkdir ${apkSourcePath}`);
         execSync(
           `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
         );
