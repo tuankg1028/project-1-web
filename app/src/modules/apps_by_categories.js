@@ -5,9 +5,11 @@ import _ from "lodash";
 import fs from "fs";
 import axios from "axios";
 import slug from "slug";
+import Helpers from "../helpers";
+
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
-const categories = [
+const categoriesCollection = [
   {
     id: "1",
     keywords: [],
@@ -201,47 +203,97 @@ const categories = [
     name: "Direct Phone",
     parent: "24",
   },
+  // {
+  //   id: "27",
+  //   keywords: [
+  //     "third-party",
+  //     "3rd parties",
+  //     "third party",
+  //     "third parties",
+  //     "3rd party",
+  //   ],
+  //   level: "2",
+  //   name: "Third-party",
+  //   parent: "7",
+  // },
+  // {
+  //   id: "28",
+  //   keywords: [
+  //     "third-party",
+  //     "3rd parties",
+  //     "third party",
+  //     "third parties",
+  //     "3rd party &amp;amp;&amp;amp; email",
+  //   ],
+  //   level: "3",
+  //   name: "Third-party Email",
+  //   parent: "27",
+  // },
+  // {
+  //   id: "29",
+  //   keywords: [
+  //     "third-party",
+  //     "3rd parties",
+  //     "third party",
+  //     "third parties",
+  //     "3rd party &amp;amp;&amp;amp; postal",
+  //   ],
+  //   level: "3",
+  //   name: "Third-party Postal",
+  //   parent: "27",
+  // },
+];
+const categoriesThirdParty = [
   {
-    id: "27",
+    id: "1",
     keywords: [
-      "third-party",
+      "Third-party",
       "3rd parties",
       "third party",
       "third parties",
       "3rd party",
     ],
-    level: "2",
+    level: "1",
     name: "Third-party",
-    parent: "7",
+    parent: "null",
   },
   {
-    id: "28",
+    id: "2",
     keywords: [
-      "third-party",
+      "Third-party",
       "3rd parties",
       "third party",
       "third parties",
-      "3rd party &amp;amp;&amp;amp; email",
+      "3rd party && email",
     ],
-    level: "3",
+    level: "2",
     name: "Third-party Email",
-    parent: "27",
+    parent: "1",
   },
   {
-    id: "29",
+    id: "3",
     keywords: [
-      "third-party",
+      "Third-party",
       "3rd parties",
       "third party",
       "third parties",
-      "3rd party &amp;amp;&amp;amp; postal",
+      "3rd party && postal",
     ],
-    level: "3",
+    level: "2",
     name: "Third-party Postal",
-    parent: "27",
+    parent: "1",
   },
 ];
 
+const categoriesRetention = [
+  {
+    id: "1",
+    keywords: ["data retention", "retain"],
+    level: "1",
+    name: "Data retention",
+    parent: "null",
+  },
+];
 const categoriesData = [
   "Beauty",
   "Health & Fitness",
@@ -259,199 +311,8 @@ const categoriesData = [
   "Maps & Navigation",
   "Medical",
 ];
-async function main() {
-  const headers = [
-    {
-      id: "stt",
-      title: "#",
-    },
-    {
-      id: "appName",
-      title: "App name",
-    },
-    {
-      id: "developer",
-      title: "Developer",
-    },
-    {
-      id: "category",
-      title: "Category",
-    },
-    {
-      id: "apis",
-      title: "APIs",
-    },
-    {
-      id: "pp",
-      title: "Privacy Policy",
-    },
-  ];
 
-  const next2Data = {};
-  const rows = [];
-  for (let i = 0; i < categoriesData.length; i++) {
-    const categoryName = categoriesData[i];
-    console.log(`RUNNING ${categoryName}`);
-    const apps = await Models.App.find({
-      categoryName,
-    }).limit(5);
-
-    for (let j = 0; j < apps.length; j++) {
-      const { developer, categoryName, appName, nodes, privacyLink } = apps[j];
-      console.log(`RUNNING ${appName}: ${nodes.length} nodes`);
-
-      let apis = await Promise.all(nodes.map((node) => getParent(node)));
-
-      let ppCategoriesAPP = [];
-      // pp
-      const ppCategories = await getPPCategories(privacyLink);
-      if (ppCategories) {
-        for (const category in ppCategories) {
-          const contents = ppCategories[category];
-
-          const isParentHasContent = checkParentHasContent(
-            category,
-            ppCategories
-          );
-
-          if (isParentHasContent && contents && contents.length > 0) {
-            let childCategories = getChildCategories(category);
-            childCategories = _.map(childCategories, "name");
-            if (childCategories.length === 0) ppCategoriesAPP.push(category);
-
-            if (
-              _.difference(ppCategoriesAPP, childCategories).lenth ===
-              childCategories.lenth
-            )
-              ppCategoriesAPP.push(category);
-          }
-        }
-      }
-      ppCategoriesAPP = _.uniq(ppCategoriesAPP);
-
-      rows.push({
-        stt: i + 1 + j,
-        developer,
-        category: categoryName,
-        appName,
-        apis: _.uniq(_.map(apis, "name")).join(", "),
-        pp: ppCategoriesAPP.join(", "),
-      });
-
-      next2Data[appName] = {
-        developer,
-        category: categoryName,
-        appName,
-        apis: _.uniq(_.map(apis, "name")),
-        pp: ppCategoriesAPP,
-      };
-    }
-  }
-
-  // const csvWriter = createCsvWriter({
-  //   path: "apps_categories.csv",
-  //   header,
-  // });
-  // await csvWriter.writeRecords(rows);
-
-  await main2(next2Data);
-
-  console.log("DONE");
-}
-main();
-async function main2(next2Data) {
-  const getParentCategoriesDB = await Models.Tree.find({
-    name: {
-      $in: [
-        "Connection",
-        "Media",
-        "Hardware",
-        "Health&Fitness",
-        "Location",
-        "Telephony",
-        "UserInfo",
-      ],
-    },
-  });
-  const apisDB = await Models.Tree.find({
-    parent: {
-      $in: _.map(getParentCategoriesDB, "id"),
-    },
-  });
-
-  const headers = [
-    {
-      id: "stt",
-      title: "#",
-    },
-    {
-      id: "appName",
-      title: "App name",
-    },
-    {
-      id: "developer",
-      title: "Developer",
-    },
-    {
-      id: "category",
-      title: "Category",
-    },
-    ...categories.map((category) => {
-      return {
-        id: slug(category.name),
-        title: category.name,
-      };
-    }),
-    ...apisDB.map((item) => {
-      return {
-        id: slug(item.name),
-        title: item.name,
-      };
-    }),
-  ];
-
-  const rows = [];
-  let stt = 1;
-  for (const appName in next2Data) {
-    const { developer, category, apis, pp } = next2Data[appName];
-
-    const apisCSV = {};
-    apisDB.forEach((item) => {
-      apisCSV[slug(item.name)] = 0;
-    }),
-      apis.forEach((item) => {
-        apisCSV[slug(item)] = 1;
-      });
-
-    const ppCategories = {};
-    categories.forEach((category) => {
-      ppCategories[slug(category.name)] = 0;
-    }),
-      pp.forEach((item) => {
-        ppCategories[slug(item)] = 1;
-        const categoriesParent = getParentCategories(item);
-        categoriesParent.forEach((categoryPr) => {
-          ppCategories[slug(categoryPr.name)] = 1;
-        });
-      });
-
-    rows.push({
-      stt,
-      developer,
-      category,
-      appName,
-      ...apisCSV,
-      ...ppCategories,
-    });
-    stt++;
-  }
-  const csvWriter = createCsvWriter({
-    path: "apps_categories(ver2).csv",
-    header: headers,
-  });
-  await csvWriter.writeRecords(rows);
-}
-function getParentCategories(childCategoryName, parents = []) {
+function getParentCategories(childCategoryName, parents = [], categories) {
   try {
     const category = categories.find((item) => item.name === childCategoryName);
 
@@ -472,7 +333,7 @@ function getParentCategories(childCategoryName, parents = []) {
   }
 }
 
-function getChildCategories(categoryName, result = []) {
+function getChildCategories(categoryName, categories, result = []) {
   const category = categories.find((item) => item.name === categoryName);
 
   const childs = categories.filter((item) => item.parent === category.id);
@@ -481,12 +342,12 @@ function getChildCategories(categoryName, result = []) {
   for (let i = 0; i < childs.length; i++) {
     const child = childs[i];
 
-    getChildCategories(child.name, result);
+    getChildCategories(child.name, categories, result);
   }
   return _.flatten(result);
 }
 
-function checkParentHasContent(childCategoryName, ppCategories) {
+function checkParentHasContent(childCategoryName, ppCategories, categories) {
   try {
     const childCategory = categories.find(
       (item) => item.name === childCategoryName
@@ -500,7 +361,11 @@ function checkParentHasContent(childCategoryName, ppCategories) {
 
       if (!contentsParent || contentsParent.length === 0) return false;
 
-      return checkParentHasContent(parentCategory.name, ppCategories);
+      return checkParentHasContent(
+        parentCategory.name,
+        ppCategories,
+        categories
+      );
     }
 
     return true;
@@ -525,36 +390,56 @@ async function getPPCategories(privacyLink) {
     );
     if (!_.isObject(ppData.data)) return null;
 
-    const contents = [
-      ...ppData.data.segments_data_retention,
-      ...ppData.data.segments_first_party_collection,
-      ...ppData.data.segments_third_party_sharing,
-    ];
+    const contentTypes = {
+      collection: ppData.data.segments_first_party_collection,
+      thirdParty: ppData.data.segments_third_party_sharing,
+      retention: ppData.data.segments_data_retention,
+    };
 
-    categories.forEach((category) => {
-      if (!result[category.name]) result[category.name] = [];
-    });
-    // loop contents
-    contents.forEach((content) => {
-      content = content.toLowerCase();
-      // loop categories
+    for (const contentType in contentTypes) {
+      const contents = contentTypes[contentType];
+      let categories;
+      switch (contentType) {
+        case "collection":
+          categories = categoriesCollection;
+          break;
+
+        case "thirdParty":
+          categories = categoriesThirdParty;
+          break;
+
+        default:
+          categories = categoriesRetention;
+          break;
+      }
+
+      result[contentType] = {};
       categories.forEach((category) => {
-        const { keywords } = category;
-
-        // loop keywords
-        for (let i = 0; i < keywords.length; i++) {
-          let keyword = keywords[i];
-          keyword = keyword.toLowerCase();
-          // find keyword in content
-          if (~content.indexOf(keyword)) {
-            if (!_.includes(result[category.name], content)) {
-              result[category.name].push(content);
-            }
-            break;
-          }
-        }
+        if (!result[contentType][category.name])
+          result[contentType][category.name] = [];
       });
-    });
+      // loop contents
+      contents.forEach((content) => {
+        content = content.toLowerCase();
+        // loop categories
+        categories.forEach((category) => {
+          const { keywords } = category;
+
+          // loop keywords
+          for (let i = 0; i < keywords.length; i++) {
+            let keyword = keywords[i];
+            keyword = keyword.toLowerCase();
+            // find keyword in content
+            if (~content.indexOf(keyword)) {
+              if (!_.includes(result[contentType][category.name], content)) {
+                result[contentType][category.name].push(content);
+              }
+              break;
+            }
+          }
+        });
+      });
+    }
 
     return result;
   } catch (e) {
@@ -581,3 +466,216 @@ async function getParent(node) {
   }
   return getParent(parent);
 }
+
+// updateAppsPrivacyPolicy();
+async function updateAppsPrivacyPolicy() {
+  const apps = await Models.App.find({
+    isCompleted: true,
+  })
+    .select("id")
+    .limit(1);
+  const appIds = _.map(apps, "id");
+
+  Promise.all(appIds.map(updateAppPrivacyPolicy));
+
+  // await Helpers.Tree.getTreeFromNode("602951a8163e554ddd9a1274");
+}
+
+async function updateAppPrivacyPolicy(appId) {
+  const app = await Models.App.findById(appId);
+
+  let ppCategoriesAPP = {};
+  // pp
+  const ppCategorieTypes = await getPPCategories(app.privacyLink);
+
+  for (const dataType in ppCategorieTypes) {
+    const ppCategories = ppCategorieTypes[dataType];
+
+    ppCategoriesAPP[dataType] = [];
+    let categories;
+    switch (dataType) {
+      case "collection":
+        categories = categoriesCollection;
+        break;
+
+      case "thirdParty":
+        categories = categoriesThirdParty;
+        break;
+
+      default:
+        categories = categoriesRetention;
+        break;
+    }
+    console.log(categories);
+    if (ppCategories) {
+      for (const category in ppCategories) {
+        const contents = ppCategories[category];
+
+        const isParentHasContent = checkParentHasContent(
+          category,
+          ppCategories,
+          categories
+        );
+
+        if (isParentHasContent && contents && contents.length > 0) {
+          let childCategories = getChildCategories(category, categories);
+          childCategories = _.map(childCategories, "name");
+          if (childCategories.length === 0)
+            ppCategoriesAPP[dataType].push(category);
+
+          if (
+            _.difference(ppCategoriesAPP[dataType], childCategories).lenth ===
+            childCategories.lenth
+          )
+            ppCategoriesAPP[dataType].push(category);
+        }
+      }
+    }
+
+    ppCategoriesAPP[dataType] = _.uniq(ppCategoriesAPP[dataType]);
+  }
+
+  // console.log(1, ppCategoriesAPP);
+}
+
+async function createTreeDataByNode(categoryName, result = []) {
+  const category = categoriesCollection.find(
+    (item) => item.name === categoryName
+  );
+
+  const pathString = getNodePath(category.id);
+  let pathArray = pathString.split(".");
+  pathArray = pathArray.filter((item) => {
+    console.log(1, !!item);
+    return !!item;
+  });
+  _.reverse(pathArray);
+
+  console.log(pathArray);
+
+  const data = await buildTree(pathArray, result);
+  // console.log(1, JSON.stringify(data, null, 2));
+}
+
+async function buildTree(pathArray, result) {
+  if (!pathArray || !pathArray.length) return result;
+  let lv1, lv2, lv3;
+
+  if (pathArray[0]) {
+    lv1 = categoriesCollection.find((item) => item.id === pathArray[0]);
+  }
+
+  if (pathArray[1]) {
+    lv2 = categoriesCollection.find((item) => item.id === pathArray[1]);
+  }
+
+  if (pathArray[2]) {
+    lv3 = categoriesCollection.find((item) => item.id === pathArray[2]);
+  }
+
+  if (lv1) {
+    let lv1Result = result.find((item) => item.id === lv1.id);
+    if (!lv1Result) {
+      result.push(lv1);
+      lv1Result = lv1;
+    }
+    if (!lv1Result.children) lv1.children = [];
+
+    if (lv2) {
+      lv1Result.children.push(lv2);
+
+      if (lv3) {
+        let lv2Result = lv1.children.find((item) => item.id === lv2.id);
+        if (!lv2Result.children) lv2.children = [];
+        lv2Result.children.push(lv3);
+      }
+    }
+  }
+
+  return result;
+}
+
+const getNodePath = (categoryId, pathString = "") => {
+  const category = categoriesCollection.find((item) => item.id === categoryId);
+
+  pathString += `${category.id}.`;
+
+  if (category.parent && category.parent != "null")
+    return getNodePath(category.parent, pathString);
+
+  return pathString;
+};
+// createTreeDataByNode("Contacting");
+const serialize = function (obj) {
+  var str = [];
+  for (var p in obj)
+    if (obj.hasOwnProperty(p)) {
+      str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+    }
+  return str.join("&");
+};
+async function main() {
+  const apps = await Models.App.find().limit(10);
+
+  const appGroups = _.groupBy(apps, "categoryName");
+  // console.log(appGroups);
+
+  let content = "";
+  for (const categoryName in appGroups) {
+    const apps = appGroups[categoryName];
+    content += `Category Name: ${categoryName} - ${apps.length} apps \n`;
+
+    let collectionTotal = 0;
+    let thirdPartyTotal = 0;
+    let retentionTotal = 0;
+    let noneTotal = 0;
+    for (let i = 0; i < apps.length; i++) {
+      const app = apps[i];
+
+      const ppData = await axios.get(
+        `http://127.0.0.1:8081/beforeaccept?url_text=${app.privacyLink}&policy_text=`,
+        {
+          headers: { "Content-Language": "en-US" },
+          timeout: 10000,
+        }
+      );
+
+      if (!ppData.data) {
+        noneTotal++;
+        continue;
+      }
+
+      if (
+        ppData.data.segments_first_party_collection &&
+        ppData.data.segments_first_party_collection.length
+      )
+        collectionTotal++;
+      if (
+        ppData.data.segments_third_party_sharing &&
+        ppData.data.segments_third_party_sharing.length
+      )
+        thirdPartyTotal++;
+      if (
+        ppData.data.segments_data_retention &&
+        ppData.data.segments_data_retention.length
+      )
+        retentionTotal++;
+
+      if (
+        !ppData.data.segments_first_party_collection &&
+        !ppData.data.segments_third_party_sharing &&
+        !ppData.data.segments_data_retention
+      )
+        noneTotal++;
+    }
+
+    content += ` + purpose of data collection: ${collectionTotal} \n`;
+    content += ` + third-party: ${thirdPartyTotal} \n`;
+    content += ` + retention: ${retentionTotal} \n`;
+    content += ` + None: ${noneTotal} \n`;
+  }
+
+  console.log(content);
+}
+
+main();
