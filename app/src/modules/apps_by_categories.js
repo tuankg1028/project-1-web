@@ -615,8 +615,9 @@ const serialize = function (obj) {
   return str.join("&");
 };
 async function main() {
-  const apps = await Models.App.find().limit(10);
-
+  const apps = await Models.App.find()
+    // .limit(1)
+    .select("categoryName privacyLink contentPrivacyPolicy");
   const appGroups = _.groupBy(apps, "categoryName");
   // console.log(appGroups);
 
@@ -633,7 +634,10 @@ async function main() {
       const app = apps[i];
 
       const ppData = await axios.get(
-        `http://127.0.0.1:8081/beforeaccept?url_text=${app.privacyLink}&policy_text=`,
+        `http://127.0.0.1:8081/beforeaccept?url_text=&policy_text=${escape(
+          app.contentPrivacyPolicy
+        )}`,
+        // `http://127.0.0.1:8081/beforeaccept?url_text=${app.privacyLink}&policy_text=`,
         {
           headers: { "Content-Language": "en-US" },
           timeout: 10000,
