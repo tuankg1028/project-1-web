@@ -680,7 +680,7 @@ async function main() {
   // return;
 
   let content = "";
-  for (const categoryName in categoriesData) {
+  for (const categoryName of categoriesData) {
     const apps = await Models.App.find({ categoryName });
     content += `Category Name: ${categoryName} - ${apps.length} apps \n`;
 
