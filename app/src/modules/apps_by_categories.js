@@ -690,9 +690,9 @@ async function main() {
     let noneTotal = 0;
     for (let i = 0; i < apps.length; i++) {
       const app = apps[i];
-
+      let ppData;
       try {
-        const ppData = await axios.get(
+        ppData = await axios.get(
           `http://127.0.0.1:8081/beforeaccept?url_text=&policy_text=${escape(
             app.contentPrivacyPolicy
           )}`,
