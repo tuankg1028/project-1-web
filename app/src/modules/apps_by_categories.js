@@ -295,21 +295,75 @@ const categoriesRetention = [
   },
 ];
 const categoriesData = [
+  // "Beauty",
+  // "Health & Fitness",
+  // "Tools",
+  // "Business",
+  // "Social",
+  // "Shopping",
+  // "Entertainment",
+  // "Travel & Local",
+  // "Music & Audio",
+  // "Finance",
+  // "Education",
+  // "Food & Drink",
+  // "Sports",
+  // "Maps & Navigation",
+  // "Medical",
+
   "Beauty",
+  "Simulation",
+  "Lifestyle",
   "Health & Fitness",
+  "Books & Reference",
   "Tools",
   "Business",
   "Social",
   "Shopping",
+  "Puzzle",
   "Entertainment",
   "Travel & Local",
+  "Comics",
   "Music & Audio",
+  "Strategy",
+  "Video Players & Editors",
+  "Productivity",
   "Finance",
   "Education",
+  "News & Magazines",
+  "Parenting",
   "Food & Drink",
-  "Sports",
-  "Maps & Navigation",
+  "Casual",
   "Medical",
+  "Maps & Navigation",
+  "Auto & Vehicles",
+  "Pretend Play",
+  "Communication",
+  "Sports",
+  "Word",
+  "Action",
+  "Racing",
+  "Dating",
+  "Weather",
+  "Photography",
+  "Personalization",
+  "Art & Design",
+  "Events",
+  "Action & Adventure",
+  "Adventure",
+  "House & Home",
+  "Creativity",
+  "Card",
+  "Casino",
+  "Trivia",
+  "Arcade",
+  "Role Playing",
+  "Educational",
+  "Libraries & Demo",
+  "Board",
+  "Music",
+  "Brain Games",
+  "Music & Video",
 ];
 
 function getParentCategories(childCategoryName, parents = [], categories) {
@@ -615,15 +669,19 @@ const serialize = function (obj) {
   return str.join("&");
 };
 async function main() {
-  const apps = await Models.App.find()
-    // .limit(1)
-    .select("categoryName privacyLink contentPrivacyPolicy");
-  const appGroups = _.groupBy(apps, "categoryName");
-  // console.log(appGroups);
+  // categoriesData
+  // const apps = await Models.App.find()
+  //   // .limit(1)
+  //   .select("categoryName privacyLink contentPrivacyPolicy");
+  // console.log(`app ${apps.length}`);
+  // const appGroups = _.groupBy(apps, "categoryName");
+  // // console.log(appGroups);
+  // console.log(Object.keys(appGroups));
+  // return;
 
   let content = "";
-  for (const categoryName in appGroups) {
-    const apps = appGroups[categoryName];
+  for (const categoryName in categoriesData) {
+    const apps = await Models.App.find({ categoryName });
     content += `Category Name: ${categoryName} - ${apps.length} apps \n`;
 
     let collectionTotal = 0;
