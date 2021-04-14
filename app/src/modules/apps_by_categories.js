@@ -691,16 +691,21 @@ async function main() {
     for (let i = 0; i < apps.length; i++) {
       const app = apps[i];
 
-      const ppData = await axios.get(
-        `http://127.0.0.1:8081/beforeaccept?url_text=&policy_text=${escape(
-          app.contentPrivacyPolicy
-        )}`,
-        // `http://127.0.0.1:8081/beforeaccept?url_text=${app.privacyLink}&policy_text=`,
-        {
-          headers: { "Content-Language": "en-US" },
-          timeout: 10000,
-        }
-      );
+      try {
+        const ppData = await axios.get(
+          `http://127.0.0.1:8081/beforeaccept?url_text=&policy_text=${escape(
+            app.contentPrivacyPolicy
+          )}`,
+          // `http://127.0.0.1:8081/beforeaccept?url_text=${app.privacyLink}&policy_text=`,
+          {
+            headers: { "Content-Language": "en-US" },
+            timeout: 10000,
+          }
+        );
+      } catch (err) {
+        noneTotal++;
+        continue;
+      }
 
       if (!ppData.data) {
         noneTotal++;
