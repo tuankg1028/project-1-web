@@ -800,7 +800,18 @@ async function main() {
 }
 main2();
 async function main2() {
+  const { execSync } = require("child_process");
+  execSync(`mkdir ${path.join(__dirname, "/data")}`);
   const keywords = ["week", "year", "day", "month", "hour", "minute", "second"];
+  const acceptedWords = [
+    "retain",
+    "retention",
+    "remove",
+    "delete",
+    "store",
+    "storage",
+  ];
+  const unexpectedWords = ["years old"];
   let content = "";
   let appsMatchedContent = "";
   for (const categoryGroup in categoryGroups) {
@@ -821,36 +832,48 @@ async function main2() {
     for (let i = 0; i < apps.length; i++) {
       const app = apps[i];
       let ppData;
-      try {
-        ppData = await axios.get(
-          `http://127.0.0.1:8081/beforeaccept?url_text=&policy_text=${escape(
-            app.contentPrivacyPolicy
-          )}`,
-          // `http://127.0.0.1:8081/beforeaccept?url_text=${app.privacyLink}&policy_text=`,
-          {
-            headers: { "Content-Language": "en-US" },
-            timeout: 10000,
-          }
-        );
-      } catch (err) {
-        noneTotal++;
-        continue;
-      }
+      // try {
+      //   ppData = await axios.get(
+      //     `http://127.0.0.1:8081/beforeaccept?url_text=&policy_text=${escape(
+      //       app.contentPrivacyPolicy
+      //     )}`,
+      //     // `http://127.0.0.1:8081/beforeaccept?url_text=${app.privacyLink}&policy_text=`,
+      //     {
+      //       headers: { "Content-Language": "en-US" },
+      //       timeout: 10000,
+      //     }
+      //   );
+      // } catch (err) {
+      //   noneTotal++;
+      //   continue;
+      // }
 
-      if (
-        !ppData.data ||
-        !ppData.data.segments_data_retention ||
-        !ppData.data.segments_data_retention.length
-      ) {
-        noneTotal++;
-        continue;
-      }
+      // if (
+      //   !ppData.data ||
+      //   !ppData.data.segments_data_retention ||
+      //   !ppData.data.segments_data_retention.length
+      // ) {
+      //   noneTotal++;
+      //   continue;
+      // }
+      retentionTotal++;
+      // const dataRetention = ppData.data.segments_data_retention;
 
-      const dataRetention = ppData.data.segments_data_retention;
+      const dataRetention = [
+        "const dataRetention = ppData.data.segments_data_retention; 30 weeks dataRetention = ppData.data.segments_data_retention; years old",
+      ];
+      let isContinue = false;
+      acceptedWords.forEach((item) => {
+        if (dataRetention.join("").includes(item)) isContinue = true;
+      });
+      if (!isContinue) continue;
 
-      // const dataRetention = [
-      //   "const dataRetention = ppData.data.segments_data_retention; 30 weeks dataRetention = ppData.data.segments_data_retention;",
-      // ];
+      isContinue = false;
+      unexpectedWords.forEach((item) => {
+        if (!dataRetention.join("").includes(item)) isContinue = true;
+      });
+      if (!isContinue) continue;
+
       for (let j = 0; j < keywords.length; j++) {
         const keyword = keywords[j];
 
@@ -870,20 +893,21 @@ async function main2() {
           if (matchedItems.length) retentionMatchedNoneNumberTotal++;
         }
       }
-
-      retentionTotal++;
     }
     content += ` + Có keyword và number:  ${retentionMatchedNumberTotal} (${
       (retentionMatchedNumberTotal / retentionTotal) * 100 || 0
     }%) \n`;
     content += ` + Có keyword: ${retentionMatchedNoneNumberTotal} \n\n`;
 
-    console.log(appsMatchedContent);
     fs.writeFile(
       path.join(__dirname, `/data/${categoryGroup}.txt`),
       appsMatchedContent,
       { encoding: "utf8" },
-      () => {}
+      () => {
+        console.log(
+          `Created file ${path.join(__dirname, `/data/${categoryGroup}.txt`)}`
+        );
+      }
     );
   }
 
