@@ -6,7 +6,7 @@ import fs from "fs";
 import axios from "axios";
 import slug from "slug";
 import Helpers from "../helpers";
-
+import path from "path";
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
 const categoriesCollection = [
@@ -294,6 +294,59 @@ const categoriesRetention = [
     parent: "null",
   },
 ];
+const categoryGroups = {
+  Beauty: ["Beauty", "Lifestyle"],
+  Business: ["Business"],
+  Education: ["Education", "Educational"],
+  Entertainment: ["Entertainment", "Photography"],
+  Finance: [
+    "Finance",
+    "Events",
+    "Action",
+    "Action & Adventure",
+    "Adventure",
+    "Arcade",
+    "Art & Design",
+    "Auto & Vehicles",
+    "Board",
+    "Books & Reference",
+    "Brain Games",
+    "Card",
+    "Casino",
+    "Casual",
+    "Comics",
+    "Creativity",
+    "House & Home",
+    "Libraries & Demo",
+    "News & Magazines",
+    "Parenting",
+    "Pretend Play",
+    "Productivity",
+    "Puzzle",
+    "Racing",
+    "Role Playing",
+    "Simulation",
+    "Strategy",
+    "Trivia",
+    "Weather",
+    "Word",
+  ],
+  "Food & Drink": ["Food & Drink"],
+  "Health & Fitness": ["Health & Fitness"],
+  "Maps & Navigation": ["Maps & Navigation"],
+  Medical: ["Medical"],
+  "Music & Audio": [
+    "Music & Audio",
+    "Video Players & Editors",
+    "Music & Video",
+    "Music",
+  ],
+  Shopping: ["Shopping"],
+  Social: ["Social", "Dating", "Communication"],
+  Sports: ["Sports"],
+  Tools: ["Tools", "Personalization"],
+  "Travel & Local": "Travel & Local",
+};
 const categoriesData = [
   // "Beauty",
   // "Health & Fitness",
@@ -312,58 +365,58 @@ const categoriesData = [
   // "Medical",
 
   "Beauty",
-  "Simulation",
-  "Lifestyle",
-  "Health & Fitness",
-  "Books & Reference",
-  "Tools",
-  "Business",
-  "Social",
-  "Shopping",
-  "Puzzle",
-  "Entertainment",
-  "Travel & Local",
-  "Comics",
-  "Music & Audio",
-  "Strategy",
-  "Video Players & Editors",
-  "Productivity",
-  "Finance",
-  "Education",
-  "News & Magazines",
-  "Parenting",
-  "Food & Drink",
-  "Casual",
-  "Medical",
-  "Maps & Navigation",
-  "Auto & Vehicles",
-  "Pretend Play",
-  "Communication",
-  "Sports",
-  "Word",
-  "Action",
-  "Racing",
-  "Dating",
-  "Weather",
-  "Photography",
-  "Personalization",
-  "Art & Design",
-  "Events",
-  "Action & Adventure",
-  "Adventure",
-  "House & Home",
-  "Creativity",
-  "Card",
-  "Casino",
-  "Trivia",
-  "Arcade",
-  "Role Playing",
-  "Educational",
-  "Libraries & Demo",
-  "Board",
-  "Music",
-  "Brain Games",
-  "Music & Video",
+  // "Simulation",
+  // "Lifestyle",
+  // "Health & Fitness",
+  // "Books & Reference",
+  // "Tools",
+  // "Business",
+  // "Social",
+  // "Shopping",
+  // "Puzzle",
+  // "Entertainment",
+  // "Travel & Local",
+  // "Comics",
+  // "Music & Audio",
+  // "Strategy",
+  // "Video Players & Editors",
+  // "Productivity",
+  // "Finance",
+  // "Education",
+  // "News & Magazines",
+  // "Parenting",
+  // "Food & Drink",
+  // "Casual",
+  // "Medical",
+  // "Maps & Navigation",
+  // "Auto & Vehicles",
+  // "Pretend Play",
+  // "Communication",
+  // "Sports",
+  // "Word",
+  // "Action",
+  // "Racing",
+  // "Dating",
+  // "Weather",
+  // "Photography",
+  // "Personalization",
+  // "Art & Design",
+  // "Events",
+  // "Action & Adventure",
+  // "Adventure",
+  // "House & Home",
+  // "Creativity",
+  // "Card",
+  // "Casino",
+  // "Trivia",
+  // "Arcade",
+  // "Role Playing",
+  // "Educational",
+  // "Libraries & Demo",
+  // "Board",
+  // "Music",
+  // "Brain Games",
+  // "Music & Video",
 ];
 
 function getParentCategories(childCategoryName, parents = [], categories) {
@@ -745,5 +798,91 @@ async function main() {
 
   console.log(content);
 }
+main2();
+async function main2() {
+  const keywords = ["week", "year", "day", "month", "hour", "minute", "second"];
+  let content = "";
+  let appsMatchedContent = "";
+  for (const categoryGroup in categoryGroups) {
+    console.log(1, categoryGroup);
 
-main();
+    const categoriesData = categoryGroups[categoryGroup];
+    const apps = await Models.App.find({
+      categoryName: { $in: categoriesData },
+    });
+
+    content += `Category Name: ${categoryGroup} - ${apps.length} apps \n`;
+
+    let retentionTotal = 0;
+    let noneTotal = 0;
+    let retentionMatchedNumberTotal = 0;
+    let retentionMatchedNoneNumberTotal = 0;
+
+    for (let i = 0; i < apps.length; i++) {
+      const app = apps[i];
+      let ppData;
+      try {
+        ppData = await axios.get(
+          `http://127.0.0.1:8081/beforeaccept?url_text=&policy_text=${escape(
+            app.contentPrivacyPolicy
+          )}`,
+          // `http://127.0.0.1:8081/beforeaccept?url_text=${app.privacyLink}&policy_text=`,
+          {
+            headers: { "Content-Language": "en-US" },
+            timeout: 10000,
+          }
+        );
+      } catch (err) {
+        noneTotal++;
+        continue;
+      }
+
+      if (
+        !ppData.data ||
+        !ppData.data.segments_data_retention ||
+        !ppData.data.segments_data_retention.length
+      ) {
+        noneTotal++;
+        continue;
+      }
+
+      const dataRetention = ppData.data.segments_data_retention;
+
+      // const dataRetention =
+      //   "const dataRetention = ppData.data.segments_data_retention; 30 weeks dataRetention = ppData.data.segments_data_retention;";
+
+      keywords.forEach((keyword) => {
+        const matchedNumberItems = dataRetention.match(
+          new RegExp(`[0-9]+ ${keyword}`, "g")
+        );
+        appsMatchedContent;
+        // number
+        if (matchedNumberItems) {
+          appsMatchedContent += `App name: ${app.appName} \n`;
+          appsMatchedContent += `   + ${dataRetention} \n\n`;
+          retentionMatchedNumberTotal++;
+        } else {
+          const matchedItems = dataRetention.includes(keyword);
+
+          if (matchedItems) retentionMatchedNoneNumberTotal++;
+        }
+      });
+      retentionTotal++;
+    }
+    content += ` + Có keyword và number:  ${retentionMatchedNumberTotal} (${
+      (retentionMatchedNumberTotal / retentionTotal) * 100 || 0
+    }%) \n`;
+    content += ` + Có keyword: ${retentionMatchedNoneNumberTotal} \n\n`;
+
+    console.log(appsMatchedContent);
+    fs.writeFile(
+      path.join(__dirname, `/data/${categoryGroup}.txt`),
+      appsMatchedContent,
+      { encoding: "utf8" },
+      () => {}
+    );
+  }
+
+  console.log(content);
+}
+// main();
