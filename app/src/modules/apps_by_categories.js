@@ -813,10 +813,11 @@ async function main2() {
   ];
   const unexpectedWords = ["years old"];
   let content = "";
-  let appsMatchedContent = "";
-  for (const categoryGroup in categoryGroups) {
-    console.log(1, categoryGroup);
 
+  for (const categoryGroup in categoryGroups) {
+    let appsMatchedContent = "";
+
+    console.log(1, categoryGroup);
     const categoriesData = categoryGroups[categoryGroup];
     const apps = await Models.App.find({
       categoryName: { $in: categoriesData },
@@ -832,36 +833,36 @@ async function main2() {
     for (let i = 0; i < apps.length; i++) {
       const app = apps[i];
       let ppData;
-      // try {
-      //   ppData = await axios.get(
-      //     `http://127.0.0.1:8081/beforeaccept?url_text=&policy_text=${escape(
-      //       app.contentPrivacyPolicy
-      //     )}`,
-      //     // `http://127.0.0.1:8081/beforeaccept?url_text=${app.privacyLink}&policy_text=`,
-      //     {
-      //       headers: { "Content-Language": "en-US" },
-      //       timeout: 10000,
-      //     }
-      //   );
-      // } catch (err) {
-      //   noneTotal++;
-      //   continue;
-      // }
+      try {
+        ppData = await axios.get(
+          `http://127.0.0.1:8081/beforeaccept?url_text=&policy_text=${escape(
+            app.contentPrivacyPolicy
+          )}`,
+          // `http://127.0.0.1:8081/beforeaccept?url_text=${app.privacyLink}&policy_text=`,
+          {
+            headers: { "Content-Language": "en-US" },
+            timeout: 10000,
+          }
+        );
+      } catch (err) {
+        noneTotal++;
+        continue;
+      }
 
-      // if (
-      //   !ppData.data ||
-      //   !ppData.data.segments_data_retention ||
-      //   !ppData.data.segments_data_retention.length
-      // ) {
-      //   noneTotal++;
-      //   continue;
-      // }
+      if (
+        !ppData.data ||
+        !ppData.data.segments_data_retention ||
+        !ppData.data.segments_data_retention.length
+      ) {
+        noneTotal++;
+        continue;
+      }
       retentionTotal++;
-      // const dataRetention = ppData.data.segments_data_retention;
+      const dataRetention = ppData.data.segments_data_retention;
 
-      const dataRetention = [
-        "const dataRetention = ppData.data.segments_data_retention; 30 weeks dataRetention = ppData.data.segments_data_retention; years old",
-      ];
+      // const dataRetention = [
+      //   "const dataRetention = ppData.data.segments_data_retention; 30 weeks dataRetention = ppData.data.segments_data_retention; years old",
+      // ];
       let isContinue = false;
       acceptedWords.forEach((item) => {
         if (dataRetention.join("").includes(item)) isContinue = true;
