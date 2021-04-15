@@ -885,10 +885,10 @@ async function main2() {
           const matchedContent = item.match(
             new RegExp(`[0-9]+ ${keyword}`, "g")
           );
-          if (!!matchedContent && keyword === "year") {
-            if (matchedContent.match(/[0-9]+/g) > 10) return false;
+          if (matchedContent.length && keyword === "year") {
+            if (matchedContent[0].match(/[0-9]+/g) > 10) return false;
           }
-          return !!matchedContent;
+          return !!matchedContent.length;
         });
         // number
         if (matchedNumberItems.length) {
