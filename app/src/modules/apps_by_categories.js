@@ -832,7 +832,7 @@ async function main2() {
 
     for (let i = 0; i < apps.length; i++) {
       const app = apps[i];
-      console.log(`${categoryGroup}: running ${i}/${apps.length}`)
+      console.log(`${categoryGroup}: running ${i}/${apps.length}`);
       let ppData;
       try {
         ppData = await axios.get(
@@ -844,7 +844,7 @@ async function main2() {
             headers: { "Content-Language": "en-US" },
             timeout: 10000,
           }
-        )
+        );
         //.then(() => {console.log(`Got privacy policy app ${app.appName}`)});
       } catch (err) {
         noneTotal++;
@@ -852,7 +852,8 @@ async function main2() {
       }
 
       if (
-        !ppData || !ppData.data ||
+        !ppData ||
+        !ppData.data ||
         !ppData.data.segments_data_retention ||
         !ppData.data.segments_data_retention.length
       ) {
@@ -869,7 +870,7 @@ async function main2() {
       //acceptedWords.forEach((item) => {
       //  if (dataRetention.join("").includes(item)) isContinue = true;
       //});
-     // if (!isContinue) continue;
+      // if (!isContinue) continue;
 
       //isContinue = false;
       unexpectedWords.forEach((item) => {
@@ -881,7 +882,13 @@ async function main2() {
         const keyword = keywords[j];
 
         const matchedNumberItems = dataRetention.filter((item) => {
-          return !!item.match(new RegExp(`[0-9]+ ${keyword}`, "g"));
+          const matchedContent = item.match(
+            new RegExp(`[0-9]+ ${keyword}`, "g")
+          );
+          if (!!matchedContent && keyword === "year") {
+            if (matchedContent.match(/[0-9]+/g) > 10) return false;
+          }
+          return !!matchedContent;
         });
         // number
         if (matchedNumberItems.length) {
