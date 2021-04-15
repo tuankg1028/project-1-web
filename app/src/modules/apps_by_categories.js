@@ -801,7 +801,7 @@ async function main() {
 main2();
 async function main2() {
   const { execSync } = require("child_process");
-  execSync(`mkdir ${path.join(__dirname, "/data")}`);
+  //execSync(`mkdir ${path.join(__dirname, "/data")}`);
   const keywords = ["week", "year", "day", "month", "hour", "minute", "second"];
   const acceptedWords = [
     "retain",
@@ -832,6 +832,7 @@ async function main2() {
 
     for (let i = 0; i < apps.length; i++) {
       const app = apps[i];
+      console.log(`${categoryGroup}: running ${i}/${apps.length}`)
       let ppData;
       try {
         ppData = await axios.get(
@@ -843,14 +844,15 @@ async function main2() {
             headers: { "Content-Language": "en-US" },
             timeout: 10000,
           }
-        );
+        )
+        //.then(() => {console.log(`Got privacy policy app ${app.appName}`)});
       } catch (err) {
         noneTotal++;
         continue;
       }
 
       if (
-        !ppData.data ||
+        !ppData || !ppData.data ||
         !ppData.data.segments_data_retention ||
         !ppData.data.segments_data_retention.length
       ) {
@@ -864,12 +866,12 @@ async function main2() {
       //   "const dataRetention = ppData.data.segments_data_retention; 30 weeks dataRetention = ppData.data.segments_data_retention; years old",
       // ];
       let isContinue = false;
-      acceptedWords.forEach((item) => {
-        if (dataRetention.join("").includes(item)) isContinue = true;
-      });
-      if (!isContinue) continue;
+      //acceptedWords.forEach((item) => {
+      //  if (dataRetention.join("").includes(item)) isContinue = true;
+      //});
+     // if (!isContinue) continue;
 
-      isContinue = false;
+      //isContinue = false;
       unexpectedWords.forEach((item) => {
         if (!dataRetention.join("").includes(item)) isContinue = true;
       });
@@ -900,7 +902,7 @@ async function main2() {
     }%) \n`;
     content += ` + Có keyword: ${retentionMatchedNoneNumberTotal} \n\n`;
 
-    fs.writeFile(
+    fs.writeFileSync(
       path.join(__dirname, `/data/${categoryGroup}.txt`),
       appsMatchedContent,
       { encoding: "utf8" },
