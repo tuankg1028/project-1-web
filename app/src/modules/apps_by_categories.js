@@ -848,25 +848,29 @@ async function main2() {
 
       const dataRetention = ppData.data.segments_data_retention;
 
-      // const dataRetention =
-      //   "const dataRetention = ppData.data.segments_data_retention; 30 weeks dataRetention = ppData.data.segments_data_retention;";
+      // const dataRetention = [
+      //   "const dataRetention = ppData.data.segments_data_retention; 30 weeks dataRetention = ppData.data.segments_data_retention;",
+      // ];
+      for (let j = 0; j < keywords.length; j++) {
+        const keyword = keywords[j];
 
-      keywords.forEach((keyword) => {
-        const matchedNumberItems = dataRetention.match(
-          new RegExp(`[0-9]+ ${keyword}`, "g")
-        );
-        appsMatchedContent;
+        const matchedNumberItems = dataRetention.filter((item) => {
+          return !!item.match(new RegExp(`[0-9]+ ${keyword}`, "g"));
+        });
         // number
-        if (matchedNumberItems) {
+        if (matchedNumberItems.length) {
           appsMatchedContent += `App name: ${app.appName} \n`;
-          appsMatchedContent += `   + ${dataRetention} \n\n`;
+          appsMatchedContent += `   + ${matchedNumberItems.join("")} \n\n`;
           retentionMatchedNumberTotal++;
+          break;
         } else {
-          const matchedItems = dataRetention.includes(keyword);
-
-          if (matchedItems) retentionMatchedNoneNumberTotal++;
+          const matchedItems = dataRetention.filter((item) => {
+            return item.includes(keyword);
+          });
+          if (matchedItems.length) retentionMatchedNoneNumberTotal++;
         }
-      });
+      }
+
       retentionTotal++;
     }
     content += ` + Có keyword và number:  ${retentionMatchedNumberTotal} (${
