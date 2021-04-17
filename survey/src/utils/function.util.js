@@ -9,6 +9,263 @@ import slug from "slug";
 import Models from "../models";
 const dir = bluebird.promisifyAll(require("node-dir"));
 
+const apiGroups= [
+  { groupName: 'Keyword', apis: [ 'API' ], mean: 'Mean' },
+  {
+    groupName: 'Address',
+    apis: [ 'android.location', 'com.google.android.gms.location.places' ],
+    mean: "By accessing this data, the app can determine the user's address. Moreover, the app can collect fine-grained information, including the user�s exact location (longitude, latitude), or the street, as well as coarse grained information, such as the city, or country name."
+  },
+  {
+    groupName: 'Bluetooth connection',
+    apis: [ 'android.bluetooth, android.bluetooth.le' ],
+    mean: 'By accessing this data, the app wirelessly exchange your data with other Bluetooth devices.'
+  },
+  {
+    groupName: 'Camera',
+    apis: [ 'android.hardware.camera2', 'android.hardware.camera2.params' ],
+    mean: 'By accessing this data, the app can manage image capture settings, start/stop the image preview, snap pictures, and retrieve frames that are used as the interfaces to preview the displayed pictures.'
+  },
+  {
+    groupName: 'Collection of user data based on peripherals connection via USB port',
+    apis: [ 'android.hardware.usb' ],
+    mean: 'By accessing this data, the app can access the state of the USB and communicate with connected hardware peripherals.'
+  },
+  {
+    groupName: 'Hardware features',
+    apis: [ 'android.hardware' ],
+    mean: 'By accessing this data, the app can access the hardware features, such as the screen, camera and other sensors (e.g., accelerometer, GPS, gyroscope).'
+  },
+  {
+    groupName: 'Hardware authenticatoin devices',
+    apis: [ 'android.hardware.biometrics', 'android.hardware.fingerprint' ],
+    mean: "By accessing this data, the app can access some device's sensors to execute the authentication process via fingerprint or biometric."
+  },
+  {
+    groupName: 'Hardware input devices',
+    apis: [ 'android.hardware.input' ],
+    mean: 'By accessing this data, the app can access the information about input devices and available keyboard.'
+  },
+  {
+    groupName: 'Hardware display devices',
+    apis: [ 'android.hardware.display' ],
+    mean: 'By accessing this data, the app can change available display devices.'
+  },
+  {
+    groupName: 'Health and Fitness info',
+    apis: [
+      'com.google.android.gms.fitness',
+      'com.google.android.gms.fitness.data',
+      'com.google.android.gms.fitness.request',
+      'com.google.android.gms.fitness.result',
+      'com.google.android.gms.fitness.service'
+    ],
+    mean: 'By accessing this data, the app can collect health info such as body temperature, blood glucose, blood pressure, heart rate, etc as well as the fitness info such as outdoor activity, calories burned, step count, etc.'
+  },
+  {
+    groupName: 'Establish wireless communication pair to other devices',
+    apis: [
+      'android.net',
+      'android.net.nsd',
+      'android.net.rtp',
+      'android.net.sip',
+      'android.net.ssl',
+      'android.nfc',
+      'android.nfc.cardemulation',
+      'android.nfc.tech',
+      'java.net',
+      'javax.net',
+      'javax.net.ssl',
+      'android.support.v4.net',
+      'com.google.android.gms.net'
+    ],
+    mean: 'By accessing this data, the app can find and pair to other devices though Bluetooth, or NFC connection.'
+  },
+  {
+    groupName: 'Public location',
+    apis: [
+      'com.google.android.gms.location',
+      'com.google.android.gms.maps',
+      'com.google.android.gms.maps.model',
+      'com.google.android.gms.location.places',
+      'com.google.android.gms.location.places.ui'
+    ],
+    mean: "By accessing this data, the app can collect user's location. Each data point represents the location of the user at the time of the request. Moreover, the app can save the info about the location that users have visited."
+  },
+  {
+    groupName: 'Telephony',
+    apis: [
+      'android.telephony',
+      'android.telephony.cdma',
+      'android.telephony.data',
+      'android.telephony.euicc'
+    ],
+    mean: 'By accessing this data, the app can determine the telephony states of the device, including service state, signal strength, message waiting indicator (voicemail). Moreover, the app can send or receive the call or messages.'
+  },
+  {
+    groupName: 'Wifi communication',
+    apis: [
+      'android.net.wifi',
+      'android.net.wifi.aware',
+      'android.net.wifi.hotspot2',
+      'android.net.wifi.hotspot2.omadm',
+      'android.net.wifi.p2p',
+      'android.net.wifi.p2p.nsd',
+      'android.net.wifi.rtt',
+      'android.net.http'
+    ],
+    mean: 'By accessing this data, the app can collect the state of the Internet connection (e.g., enabled, disabled). Moreover, the app can transfers and receives the data via wifi connection.'
+  },
+  {
+    groupName: 'User profile',
+    apis: [
+      'com.google.android.gms.plus',
+      'com.google.api.services.people.v1',
+      'com.google.api.services.people.v1.model'
+    ],
+    mean: 'By accessing this data, the app can collect basic user info (standard info, such as name, age, gender), or identity info, such as phone number, or user�s interests, such as sports, art, gaming, traveling.'
+  },
+  {
+    groupName: 'TV channel',
+    apis: [ 'android.media.tv' ],
+    mean: 'By accessing this data, the app can connect/manage the TV devices'
+  },
+  {
+    groupName: 'Audio, Video, Picture files',
+    apis: [
+      'android.media',
+      'android.media.audiofx',
+      'android.media.browse',
+      'android.media.effect',
+      'android.media.midi',
+      'android.media.projection',
+      'android.media.session',
+      'android.service.media',
+      'android.provider'
+    ],
+    mean: 'By accessing this data, the app can manage various audio and video interfaces. Moreover, the app can play and record media files, such as audio files (e.g., play MP3s or other music files, ringtones, game sound effects, or DTMF tones) and video files (e.g., play a video streamed over the web or from local storage).'
+  },
+  {
+    groupName: 'Play/Record the media files',
+    apis: [
+      'android.support.media',
+      'android.support.media.tv',
+      'android.support.v17.leanback.media',
+      'android.support.v4.media',
+      'android.support.v4.media.app',
+      'android.support.v4.media.session',
+      'android.support.v7.media',
+      'androidx.exifinterface.media'
+    ],
+    mean: 'By accessing this data, the app can play and record media files including audio (e.g., play MP3s or other music files, ringtones, game sound effects, or DTMF tones) and video (e.g., play a video streamed over the web or from local storage).'
+  },
+  {
+    groupName: 'Share media files',
+    apis: [
+      'androidx.media',
+      'androidx.media.session',
+      'androidx.media.app',
+      'androidx.media.utils'
+    ],
+    mean: 'By accessing this data, the app can share media contents and controls with other apps.'
+  },
+  {
+    groupName: 'Metadata of media file',
+    apis: [
+      'androidx.media2.common',
+      'androidx.media2.player',
+      'androidx.media2.session',
+      'androidx.media2.widget',
+      'androidx.mediarouter.app',
+      'androidx.mediarouter.media'
+    ],
+    mean: 'By accessing this data, the app can create/read/edit the metadata of media file (e.g., device, time, place).'
+  },
+  {
+    groupName: 'Emergency call',
+    apis: [ 'android.telephony.emergency' ],
+    mean: 'By accessing this data, the app can retrieve the information of number, service category(s) and country code for a specific emergency number.'
+  },
+  {
+    groupName: 'Global system for mobile communications',
+    apis: [ 'android.telephony.gsm', 'android.telephony.gsm' ],
+    mean: 'By accessing this data, the app can access GSM-specific telephony features, such as text/data/PDU SMS messages.'
+  },
+  {
+    groupName: 'Group call',
+    apis: [ 'android.telephony.mbms' ],
+    mean: 'By accessing this data, the app can perform a group call'
+  }
+]
+
+const personalDataTypes = [
+  {
+    name: "Connection",
+    mean: "By accessing this data, the app can manage the communication with other devices. Moreover, the app can access further info, such as connected network's link speed, IP address of other available devices / networks."
+  },
+
+  {
+    name: "Healthcare and fitness data",
+    mean: "By accessing this data, the app can capture health and fitness data. The app can store data from wearable devices or sensors and access data created by other apps."
+  },
+
+  {
+    name: "Hardware/peripherals features",
+    mean: "By accessing this data, the app can manage device hardware and peripherals, such as cameras, sensors, and USB-installed peripherals."
+  },
+
+  {
+    name: "Location",
+    mean: "By accessing this data, the app can collect user location-related information. Thanks to such data, the app is able to obtain the device�s geographical location. Moreover, the app can access to the system location services of the Android platform, so it can collect location-related data such as location tracking, geofencing, and activity recognition."
+  },
+
+  {
+    name: "Media data",
+    mean: "By accessing this data, the app can collect media data, including audios, videos, and photos. Moreover, it can create / update photos, and audio files, or record video files to support its services."
+  },
+
+  {
+    name: "Telephony",
+    mean: "By accessing this data, the app can monitor the basic phone info such as the network type and connection state, and provide additional utilities to manipulate phone number strings. "
+  },
+
+  {
+    name: "User profile",
+    mean: "The app collects basic personal data such as full name, age, gender, etc, plus information on social network (e.g., work, education, friend list, family members),  or biometric data."
+  }
+
+]
+// (async function main() {
+//   let data = await csv({
+//     noheader: true,
+//     output: "csv"
+//   }).fromFile("/Users/a1234/Downloads/API.csv");
+//   const result = []
+//   for (let i = 0; i < data.length; i++) {
+//     let [groupName, apis, mean] = data[i];
+//     apis = apis.split(";").filter(item => !!item).map(item => item.trim());
+
+//     result.push({
+//       groupName, apis, mean
+//     })
+//   }
+
+//   console.log(result)
+// }) ()
+
+function getGroupApi (api) {
+  let result 
+  apiGroups.forEach(apiGroup => {
+    apiGroup.apis.forEach(item => {
+      if(item === api.name) return result = apiGroup
+    })
+  })
+  return result
+}
+
+function getPersonalDataType(personalDataType) {
+  return personalDataTypes.find(item => item.name ===personalDataType.name)
+} 
 function getDAPFile(treeName, subFolder) {
   return (
     folderCSVBaseLineOutput +
@@ -36,7 +293,6 @@ async function getBaseLineByKey(key, firstLevelName, subFolderName) {
 }
 
 async function getAPIFromNode(node) {
-  console.log("node", node.name)
   const parent = await Models.Tree.findById(node.parent);
 
   if (
@@ -1838,5 +2094,7 @@ export default {
   creatingTreesWithGroup,
   createHeadersWithGroup,
   getLeafNodes,
-  getAPIFromNode
+  getAPIFromNode,
+  getGroupApi,
+  getPersonalDataType
 };

@@ -254,7 +254,7 @@
       startLoad();
       $.ajax({
         method: "GET",
-        url: `/question/${appId}/1`
+        url: `/question/${appId}/${index}`
       })
         .done(function(html) {
           $(".slick-active .wrap-form").html(html);
@@ -271,53 +271,53 @@
           }, 800);
         });
     }
-    // else {
-    //   const appForms = $(".slider-item form").not(".main-form");
+    else {
+      const appForms = $(".slider-item form").not(".main-form");
 
-    //   const invalidApps = [];
-    //   for (let i = 0; i < appForms.length; i++) {
-    //     const appForm = appForms[i];
+      const invalidApps = [];
+      for (let i = 0; i < appForms.length; i++) {
+        const appForm = appForms[i];
 
-    //     const predictionLevel = $(appForm).attr("predictionLevel");
-    //     const appId = $(appForm).attr("appId");
-    //     const indexQuestion = $(appForm).attr("indexQuestion");
-    //     const selectedLevel = $(appForm)
-    //       .find(".final-question:checked")
-    //       .val();
+        // const predictionLevel = $(appForm).attr("predictionLevel");
+        const appId = $(appForm).attr("appId");
+        const indexQuestion = $(appForm).attr("indexQuestion");
+        const selectedLevel = $(appForm)
+          .find(".final-question:checked")
+          .val();
 
-    //     if (predictionLevel != selectedLevel) {
-    //       invalidApps.push({
-    //         appId,
-    //         selectedLevel,
-    //         indexQuestion
-    //       });
-    //     }
-    //   }
+        // if (predictionLevel != selectedLevel) {
+          invalidApps.push({
+            appId,
+            selectedLevel,
+            indexQuestion
+          });
+        // }
+      }
 
-    //   startLoad();
-    //   $.ajax({
-    //     method: "POST",
-    //     url: "/question/app-invalid",
-    //     data: {
-    //       data: JSON.stringify(invalidApps)
-    //     }
-    //   })
-    //     .done(function(html) {
-    //       $(".wrap-comments-data").html(html);
-    //       endLoad();
-    //       // change height
-    //       $(".slick-slide").css(
-    //         "height",
-    //         $(".slick-active form").height() + 20 + "px"
-    //       );
-    //     })
-    //     .fail(err => {
-    //       endLoad();
-    //       setTimeout(() => {
-    //         $("#errorModal").modal("show");
-    //       }, 800);
-    //     });
-    // }
+      startLoad();
+      $.ajax({
+        method: "POST",
+        url: "/question/app-invalid",
+        data: {
+          data: JSON.stringify(invalidApps)
+        }
+      })
+        .done(function(html) {
+          $(".wrap-comments-data").html(html);
+          endLoad();
+          // change height
+          $(".slick-slide").css(
+            "height",
+            $(".slick-active form").height() + 20 + "px"
+          );
+        })
+        .fail(err => {
+          endLoad();
+          setTimeout(() => {
+            $("#errorModal").modal("show");
+          }, 800);
+        });
+    }
   }
 
   // setTimeout(function() {

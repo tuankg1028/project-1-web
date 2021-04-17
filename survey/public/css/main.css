@@ -909,3 +909,7 @@ b, .font-weight-bold{
 .wrap-comment-final{
   display: none;
 }
+
+.capitalizeFirst::first-letter{
+  text-transform: capitalize;
+}

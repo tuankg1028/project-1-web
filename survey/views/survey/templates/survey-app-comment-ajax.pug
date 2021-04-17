@@ -1,64 +1,93 @@
 each question, index in questions
   .wrap-app.mt-4
     h3.title.text-center
-      | Android Application #{question.indexQuestion}
+      | #{question.appName}
+    div.text-center.mt-1
+      | #{question.developer}
+    div.text-center
+      | #{question.categoryName}
     // category
-    .category.text-center.mt-2
-      span.category-label
-        | Category
-      | : #{question.categoryName}
+    //- .category.text-center.mt-2
+    //-   span.category-label
+    //-     | Category
+    //-   | : #{question.categoryName}
     .step.wizard-step.current.mt-3(style='')
-      // Description
-      .description.mt-3
-        span.description-lavel.font-weight-bold
-          | I – Description:
-        div
-          | !{question.description}
-    
-    // final
-    .question-1.mt-2
-      .title 1) Based on the fact that
-        span 
-          b Android Application 1  &nbsp
-        spann could collect the all mentioned data above, do you think this app could be risky for your personal data?
-      // anwsers
-      .anwsers.mt-2
-        label.container-radio
-          | Very low
-          input(type='radio'  name="questions[" + question.id + "][final]" value="1" checked=(question.selectedLevel == "1" ? "checked" : null) required)
-          span.checkmark
+      //- // Description
+      //- .description.mt-3
+      //-   span.description-lavel.font-weight-bold
+      //-     | I – Description:
+      //-   div
+      //-     | !{question.description}
 
-        label.container-radio
-          | Low
-          input(type='radio'  name="questions[" + question.id + "][final]" checked=(question.selectedLevel == "2" ? "checked" : null) value="2")
-          span.checkmark
 
-        label.container-radio
-          | Neutral
-          input(type='radio'  name="questions[" + question.id + "][final]" checked=(question.selectedLevel == "3" ? "checked" : null) value="3")
-          span.checkmark
+      // Collection Personal Data
+      .section1.mt-3
+        // label
+        .section1-label.font-weight-bold
+          | This app may collect #{question.personalDataTypes.length} personal data type, namely: 
+          each personalDataType, index in question.personalDataTypes
+              | #{personalDataType.name}
+              if(index != question.personalDataTypes.length - 1)
+                | #{", "}
+              else 
+                | #{"."}
+        // node data
+        .wrap-node
+          ul 
+            each personalDataType in question.personalDataTypes
+              li    
+                | #{personalDataType.name}
+                each api in personalDataType.apis
+                  div - #{api.name}
+          
+      // Collection Personal Data
+      .section2.mt-3
+        // label
+        .section2-label.font-weight-bold
+          | Data Collection Purpose:
+        // node data
+        .wrap-node
+          ul 
+            li 
+              | Admin: (Cái nào có (1) hã liệt kê nha em)
+              div - Analysis: Đưa những đoạn test liên quan vào đây giúp anh (nhưng phải ấn dấu (+) thì mới hiện ra ko thì chỉ hiện label của từng purpose thôi)
+              div - Advertisement:
 
-        label.container-radio
-          | High
-          input(type='radio'  name="questions[" + question.id+ "][final]" checked=(question.selectedLevel == "4" ? "checked" : null) value="4")
-          span.checkmark
-        
-        label.container-radio
-          | Very High
-          input(type='radio'  name="questions[" + question.id + "][final]" checked=(question.selectedLevel == "5" ? "checked" : null) value="5")
-          //- input(type='radio'  name="questions[" + question.id + "][final]" value="5")
-          span.checkmark
-    // end final
 
-    div.mt-3
-      | Can you please to give me the reason why you think the risk level of  &nbsp
-      //- b Android Application #{question.indexQuestion} &nbsp
-      | is 
-      b #{question.selectedLevelName} &nbsp
-      | ? If you have the other change which level you will choose?
-      br
-      br
-      div Please note that if you do not write the exact reason for your decision or the meaningless text, you must retake our survey.
-    // comment box
-    div.mt-2.comments-data
-      textarea(name="questions[" + question.id + "][comment]", cols="30", rows="5" value="" required)
+      div.font-weight-bold.mt-3
+        | You will install this app    
+      // comments
+      .comments-data-judgement.mt-3
+        .final-judgement
+          //- // label
+          //- .comments-data-label.font-weight-bold.text-underline
+          //-   | II - Final judgment
+          // final question
+          .question-1.mt-2
+            .title Are you satisfied with our prediction model?
+            // anwsers
+            .anwsers.mt-2
+              label.container-radio
+                | Very Unsatisfy
+                input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="1" required)
+                span.checkmark
+
+              label.container-radio
+                | Unsatisfy
+                input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="2")
+                span.checkmark
+
+              label.container-radio
+                | Neutral
+                input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="3")
+                span.checkmark
+
+              label.container-radio
+                | Satisfy
+                input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="3")
+                span.checkmark
+
+              label.container-radio
+                | Very Satisfy
+                input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="3")
+                span.checkmark

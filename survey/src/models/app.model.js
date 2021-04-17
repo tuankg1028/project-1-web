@@ -27,6 +27,23 @@ var schema = new Schema(
         parent: Schema.Types.ObjectId,
       },
     ],
+    personalDataTypes: [{
+      name: String,
+      apis: [
+        {
+          name: String,
+          left: Number,
+          right: Number,
+          parent: {
+            type: Schema.Types.ObjectId,
+            ref: "tree",
+          },
+        }
+      ]
+    }],
+    collectionData: String,
+    thirdPartyData: String,
+    retentionData: String,
   },
   {
     timestamps: true,

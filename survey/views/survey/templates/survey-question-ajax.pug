@@ -1,14 +1,14 @@
-form(action="/main-action", method="POST", predictionLevel=question.predictionLevel appId=question.appId indexQuestion=indexQuestion descLength=question.descLength style="padding: 0 15px") 
+form(action="/main-action", method="POST", predictionLevel=question.predictionLevel appId=question.id indexQuestion=indexQuestion descLength=question.descLength style="padding: 0 15px") 
   input(type="hidden" name="questions[" + question.id + "][time]" value=1 class="count-time")
   
   button(type="submit" style="display='none';")
   // app name
-  h3.title.text-center
-    | Android Application #{indexQuestion}
+  h3.title.text-center(style="text-transform: capitalize;")
+    | #{question.appName}
   div.text-center.mt-1
-    | Developer
+    | #{question.developer}
   div.text-center
-    | Category name
+    | #{question.categoryName}
   // category
   //- .category.text-center.mt-2
   //-   span.category-label
@@ -27,14 +27,22 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
     .section1.mt-3
       // label
       .section1-label.font-weight-bold
-        | This app may collect X (số lượng các personal data type của ứng dụng đó thu thập mình có tổng cộng là 7) personal data type, namely:Location, Media, …
+        | This app may collect #{question.personalDataTypes.length} personal data type, namely: 
+        each personalDataType, index in question.personalDataTypes
+            | #{personalDataType.name}
+            if(index != question.personalDataTypes.length - 1)
+              | #{", "}
+            else 
+              | #{"."}
       // node data
       .wrap-node
         ul 
-          li 
-            | kaka
-            div - API1
-            div - API2
+          each personalDataType in question.personalDataTypes
+            li
+              | #{personalDataType.name}: #{personalDataType.mean}
+              each api in personalDataType.apis
+                div.mt-2 - #{api.groupName}: 
+                  div.pl-3  + #{api.mean}
         
     // Collection Personal Data
     .section2.mt-3
@@ -44,10 +52,74 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
       // node data
       .wrap-node
         ul 
-          li 
-            | Admin: (Cái nào có (1) hã liệt kê nha em)
-            div - Analysis: Đưa những đoạn test liên quan vào đây giúp anh (nhưng phải ấn dấu (+) thì mới hiện ra ko thì chỉ hiện label của từng purpose thôi)
-            div - Advertisement:
+          each category in question.collectionData
+               
+            li #{category.name}: 
+              ul
+                each sub1 in category.children
+                   li #{sub1.name}: 
+                    ul
+                      if(sub1.children && sub1.children.length > 0)
+                        each sub2 in sub1.children
+                          li #{sub2.name}: 
+                      if((!sub1.children || sub1.children.length == 0) && sub1.contents.length) 
+                        each content in sub1.contents
+                          li.capitalizeFirst #{content.trim()}
+                if(category.children.length == 0 && category.contents.length > 0) 
+                  each content in category.contents
+                    li.capitalizeFirst #{content.trim()}
+
+
+    // Collection Personal Data
+    .section2.mt-3
+      // label
+      .section2-label.font-weight-bold
+        | Third Party:
+      // node data
+      .wrap-node
+        ul 
+          each category in question.thirdPartyData
+               
+            li #{category.name}: 
+              ul
+                each sub1 in category.children
+                   li #{sub1.name}: 
+                    ul
+                      if(sub1.children && sub1.children.length > 0)
+                        each sub2 in sub1.children
+                          li #{sub2.name}: 
+                      if((!sub1.children || sub1.children.length == 0) && sub1.contents.length) 
+                        each content in sub1.contents
+                          li.capitalizeFirst #{content.trim()}
+                if(category.children.length == 0 && category.contents.length > 0) 
+                  each content in category.contents
+                    li.capitalizeFirst #{content.trim()}
+
+      // Collection Personal Data
+      .section2.mt-3
+        // label
+        .section2-label.font-weight-bold
+          | Retention:
+        // node data
+        .wrap-node
+          ul 
+            each category in question.retentionData
+                
+              li #{category.name}: 
+                ul
+                  each sub1 in category.children
+                    li #{sub1.name}: 
+                      ul
+                        if(sub1.children && sub1.children.length > 0)
+                          each sub2 in sub1.children
+                            li #{sub2.name}: 
+                        if((!sub1.children || sub1.children.length == 0) && sub1.contents.length) 
+                          each content in sub1.contents
+                            li.capitalizeFirst #{content.trim()}
+                  if(category.children.length == 0 && category.contents.length > 0) 
+                    each content in category.contents
+                      li.capitalizeFirst #{content.trim()}
+
 
   
     // comments

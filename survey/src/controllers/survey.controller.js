@@ -130,16 +130,14 @@ class SurveyController {
 
   async getQuestions(req, res, next) {
     try {
-     
       // const { id: userId, isAnswerd, groupSurvey } = req.user;
 
-      let questions = await Models.App.find().limit(20)
-        .select("_id")
-        .cache(60 * 60 * 24 * 30); // 1 month;
-
-
-      
-
+      let questions = await Models.App.find({
+        appName: {
+          $in: ["incredible health", "microsoft teams"],
+        }
+    })
+     
       const token = req.session.token;
 
       res.render("survey/templates/survey-question", {
@@ -155,17 +153,55 @@ class SurveyController {
     try {
       const { id, index } = req.params;
       let question = await Models.App.findById(id)
-        .cache(60 * 60 * 24 * 30); // 1 month;
-
+        // .cache(60 * 60 * 24 * 30); // 1 month;
       question = question.toJSON();
 
-      if(!question.apis) {
+      
+      if(!question.personalDataTypes || !question.personalDataTypes.length) {
         let apis = await Promise.all(question.nodes.map(Utils.Function.getAPIFromNode));
         apis = _.uniqBy(apis, "name")
 
-        question.apis = apis
+        const groupApis = _.groupBy(apis, "parent");
+
+        let personalDataTypes = []
+        for (const personalDataTypeId in groupApis) {
+          const parent = await Models.Tree.findById(personalDataTypeId)
+
+          const personalDataTypeApiIds = groupApis[personalDataTypeId];
+          
+          const personalDataTypeApis = await Promise.all(personalDataTypeApiIds.map(id => Models.Tree.findById(id)));
+
+          personalDataTypes.push({
+            name: parent.name,
+            apis: personalDataTypeApis
+          })
+        }
+
+       
+        question.personalDataTypes = personalDataTypes
+        await Models.App.updateOne(
+          {_id: id}, 
+          { $set: { personalDataTypes }}
+        ).then(console.log)
       }
       
+      question.personalDataTypes = question.personalDataTypes.map(personalDataType => {
+        const apis = personalDataType.apis.reduce((acc, item) => {
+           acc.push(Utils.Function.getGroupApi(item))
+           return acc
+          }, []);
+        
+        
+        return {
+          ...personalDataType,
+          ...(Utils.Function.getPersonalDataType(personalDataType) || {}),
+          apis: _.uniqBy(apis, "groupName")
+        }
+      })
+
+      question.collectionData = JSON.parse(question.collectionData)
+      question.thirdPartyData = JSON.parse(question.thirdPartyData)
+      question.retentionData = JSON.parse(question.retentionData)
 
       res.render("survey/templates/survey-question-ajax", {
         question,
@@ -184,39 +220,46 @@ class SurveyController {
       const questions = [];
       for (let i = 0; i < apps.length; i++) {
         const app = apps[i];
-        let question = await Models.App.findOne({
-          appId: app.appId
-        })
-          .populate({
-            path: "nodes",
-            match: { name: { $nin: ["Storage", "Time"] } }
-          })
-          .cache(60 * 60 * 24 * 30); // 1 month;
-
+        let question = await Models.App.findById(app.appId)
+        .cache(60 * 60 * 24 * 30); // 1 month;
         question = question.toJSON();
 
-        question.description = replaceall("/n", "</br>", question.description);
-        question.indexQuestion = app.indexQuestion;
-        question.selectedLevel = app.selectedLevel;
-        question.selectedLevelName =
-          app.selectedLevel == 1
-            ? "Very Low"
-            : app.selectedLevel == 2
-            ? "Low"
-            : app.selectedLevel == 3
-            ? "Neutral"
-            : app.selectedLevel == 4
-            ? "High"
-            : app.selectedLevel == 5
-            ? "Very High"
-            : "";
-        questions.push(question);
+      
+        if(!question.personalDataTypes || !question.personalDataTypes.length) {
+          let apis = await Promise.all(question.nodes.map(Utils.Function.getAPIFromNode));
+          apis = _.uniqBy(apis, "name")
+
+          const groupApis = _.groupBy(apis, "parent");
+
+          let personalDataTypes = []
+          for (const personalDataTypeId in groupApis) {
+            const parent = await Models.Tree.findById(personalDataTypeId)
+
+            const personalDataTypeApiIds = groupApis[personalDataTypeId];
+            
+            const personalDataTypeApis = await Promise.all(personalDataTypeApiIds.map(id => Models.Tree.findById(id)));
+
+            personalDataTypes.push({
+              name: parent.name,
+              apis: personalDataTypeApis
+            })
+          }
+          
+          question.personalDataTypes = personalDataTypes
+          await Models.App.updateOne(
+            {_id: id}, 
+            { $set: { personalDataTypes }}
+          ).then(console.log)
+        }
+        
+        questions.push({
+          ...question,
+          ...app
+        })
       }
       res.render("survey/templates/survey-app-comment-ajax", {
         questions
       });
-      // res.json(data);
-      // throw new Error();
     } catch (error) {
       next(error);
     }
