@@ -184,7 +184,7 @@ class SurveyController {
           { $set: { personalDataTypes }}
         ).then(console.log)
       }
-      
+
       question.personalDataTypes = question.personalDataTypes.map(personalDataType => {
         const apis = personalDataType.apis.reduce((acc, item) => {
            acc.push(Utils.Function.getGroupApi(item))
@@ -195,9 +195,12 @@ class SurveyController {
         return {
           ...personalDataType,
           ...(Utils.Function.getPersonalDataType(personalDataType) || {}),
-          apis: _.uniqBy(apis, "groupName")
+          apis: _.uniqBy(apis, "groupName"),
+          originalApis: personalDataType.apis
         }
       })
+      console.log(question.personalDataTypes)
+
 
       question.collectionData = JSON.parse(question.collectionData)
       question.thirdPartyData = JSON.parse(question.thirdPartyData)

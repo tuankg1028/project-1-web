@@ -14,7 +14,7 @@ const apiGroups= [
   {
     groupName: 'Address',
     apis: [ 'android.location', 'com.google.android.gms.location.places' ],
-    mean: "By accessing this data, the app can determine the user's address. Moreover, the app can collect fine-grained information, including the user�s exact location (longitude, latitude), or the street, as well as coarse grained information, such as the city, or country name."
+    mean: "By accessing this data, the app can determine the user's address. Moreover, the app can collect fine-grained information, including the user's exact location (longitude, latitude), or the street, as well as coarse grained information, such as the city, or country name."
   },
   {
     groupName: 'Bluetooth connection',
@@ -210,17 +210,17 @@ const personalDataTypes = [
   },
 
   {
-    name: "Hardware/peripherals features",
+    name: "Hardware",
     mean: "By accessing this data, the app can manage device hardware and peripherals, such as cameras, sensors, and USB-installed peripherals."
   },
 
   {
     name: "Location",
-    mean: "By accessing this data, the app can collect user location-related information. Thanks to such data, the app is able to obtain the device�s geographical location. Moreover, the app can access to the system location services of the Android platform, so it can collect location-related data such as location tracking, geofencing, and activity recognition."
+    mean: "By accessing this data, the app can collect user location-related information. Thanks to such data, the app is able to obtain the device's geographical location. Moreover, the app can access to the system location services of the Android platform, so it can collect location-related data such as location tracking, geofencing, and activity recognition."
   },
 
   {
-    name: "Media data",
+    name: "Media",
     mean: "By accessing this data, the app can collect media data, including audios, videos, and photos. Moreover, it can create / update photos, and audio files, or record video files to support its services."
   },
 
@@ -234,19 +234,21 @@ const personalDataTypes = [
     mean: "The app collects basic personal data such as full name, age, gender, etc, plus information on social network (e.g., work, education, friend list, family members),  or biometric data."
   }
 
-]
+];
 // (async function main() {
 //   let data = await csv({
 //     noheader: true,
 //     output: "csv"
-//   }).fromFile("/Users/a1234/Downloads/API.csv");
+//   }).fromFile("/Users/a1234/Downloads/KeyWorkSearch_New_1_.csv");
+
+//   // console.log(data)
 //   const result = []
-//   for (let i = 0; i < data.length; i++) {
-//     let [groupName, apis, mean] = data[i];
-//     apis = apis.split(";").filter(item => !!item).map(item => item.trim());
+//   for (let i = 1; i < data.length; i++) {
+//     let [id, name, level, parent, keywords] = data[i];
+    
 
 //     result.push({
-//       groupName, apis, mean
+//       id, name, level, parent, keywords: keywords ? keywords.split(",").map(item => item.trim()).filter(item => !!item) : 'null'
 //     })
 //   }
 

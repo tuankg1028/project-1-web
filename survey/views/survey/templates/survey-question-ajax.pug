@@ -40,86 +40,102 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
           each personalDataType in question.personalDataTypes
             li
               | #{personalDataType.name}: #{personalDataType.mean}
+              div 
+                | * Apis: 
+                each api, index in personalDataType.originalApis
+                  | #{api.name}
+                  if(index != personalDataType.originalApis.length - 1)
+                    | #{", "}
+                  else 
+                    | #{"."}
+            
+              
+
               each api in personalDataType.apis
                 div.mt-2 - #{api.groupName}: 
                   div.pl-3  + #{api.mean}
-        
-    // Collection Personal Data
-    .section2.mt-3
-      // label
-      .section2-label.font-weight-bold
-        | Data Collection Purpose:
-      // node data
-      .wrap-node
-        ul 
-          each category in question.collectionData
-               
-            li #{category.name}: 
-              ul
-                each sub1 in category.children
-                   li #{sub1.name}: 
-                    ul
-                      if(sub1.children && sub1.children.length > 0)
-                        each sub2 in sub1.children
-                          li #{sub2.name}: 
-                      if((!sub1.children || sub1.children.length == 0) && sub1.contents.length) 
-                        each content in sub1.contents
-                          li.capitalizeFirst #{content.trim()}
-                if(category.children.length == 0 && category.contents.length > 0) 
-                  each content in category.contents
-                    li.capitalizeFirst #{content.trim()}
-
 
     // Collection Personal Data
-    .section2.mt-3
-      // label
-      .section2-label.font-weight-bold
-        | Third Party:
-      // node data
-      .wrap-node
-        ul 
-          each category in question.thirdPartyData
-               
-            li #{category.name}: 
-              ul
-                each sub1 in category.children
-                   li #{sub1.name}: 
-                    ul
-                      if(sub1.children && sub1.children.length > 0)
-                        each sub2 in sub1.children
-                          li #{sub2.name}: 
-                      if((!sub1.children || sub1.children.length == 0) && sub1.contents.length) 
-                        each content in sub1.contents
-                          li.capitalizeFirst #{content.trim()}
-                if(category.children.length == 0 && category.contents.length > 0) 
-                  each content in category.contents
-                    li.capitalizeFirst #{content.trim()}
-
-      // Collection Personal Data
+    if(question.collectionData.length)
       .section2.mt-3
         // label
         .section2-label.font-weight-bold
-          | Retention:
+          | Data Collection Purpose:
         // node data
         .wrap-node
           ul 
-            each category in question.retentionData
+            each category in question.collectionData
                 
               li #{category.name}: 
-                ul
+                ul.more
                   each sub1 in category.children
-                    li #{sub1.name}: 
-                      ul
+                    li(style="list-style-type: circle;") #{sub1.name}: 
+                      ul.more
                         if(sub1.children && sub1.children.length > 0)
                           each sub2 in sub1.children
-                            li #{sub2.name}: 
+                            li(style="list-style-type: square;") #{sub2.name}: 
                         if((!sub1.children || sub1.children.length == 0) && sub1.contents.length) 
                           each content in sub1.contents
-                            li.capitalizeFirst #{content.trim()}
+                            li.capitalizeFirst(style="list-style-type: square;") #{content.trim()}
+                      div.see-more-btn() Read more
                   if(category.children.length == 0 && category.contents.length > 0) 
                     each content in category.contents
-                      li.capitalizeFirst #{content.trim()}
+                      li.capitalizeFirst(style="list-style-type: circle;") #{content.trim()}
+                div.see-more-btn() Read more
 
+    // Third party Data
+    if(question.thirdPartyData.length)
+      .section2.mt-3
+        // label
+        .section2-label.font-weight-bold
+          | Third Party:
+        // node data
+        .wrap-node
+          ul 
+            each category in question.thirdPartyData
+                
+              li #{category.name}: 
+                ul.more
+                  each sub1 in category.children
+                    li(style="list-style-type: circle;") #{sub1.name}: 
+                      ul.more
+                        if(sub1.children && sub1.children.length > 0)
+                          each sub2 in sub1.children
+                            li(style="list-style-type: square;") #{sub2.name}: 
+                        if((!sub1.children || sub1.children.length == 0) && sub1.contents.length) 
+                          each content in sub1.contents
+                            li.capitalizeFirst(style="list-style-type: square;") #{content.trim()}
+                      div.see-more-btn() Read more
+                  if(category.children.length == 0 && category.contents.length > 0) 
+                    each content in category.contents
+                      li.capitalizeFirst(style="list-style-type: circle;") #{content.trim()}      
+                div.see-more-btn() Read more
+
+      // Retention Data
+      if(question.retentionData.length)
+        .section2.mt-3
+          // label
+          .section2-label.font-weight-bold
+            | Retention:
+          // node data
+          .wrap-node
+            ul 
+              each category in question.retentionData
+                  
+                li #{category.name}: 
+                  ul.more
+                    each sub1 in category.children
+                      li(style="list-style-type: circle;") #{sub1.isShowKey ? sub1.name : sub1.name + ":"} 
+
+                        if(!sub1.isShowKey && sub1.contents.length) 
+                          ul.more
+                            each content in sub1.contents
+                              li.capitalizeFirst #{content.trim()}
+                          div.see-more-btn() Read more
+                    if(category.children.length == 0 && category.contents.length > 0) 
+                      each content in category.contents
+                        li.capitalizeFirst(style="list-style-type: circle;") #{content.trim()}
+                  div.see-more-btn() Read more
 
   
     // comments
