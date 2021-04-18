@@ -9,6 +9,9 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
     | #{question.developer}
   div.text-center
     | #{question.categoryName}
+  div
+    span.font-weight-bold Description: 
+    | !{question.description}
   // category
   //- .category.text-center.mt-2
   //-   span.category-label
