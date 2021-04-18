@@ -187,11 +187,12 @@ class SurveyController {
 
       question.personalDataTypes = question.personalDataTypes.map(personalDataType => {
         const apis = personalDataType.apis.reduce((acc, item) => {
-           acc.push(Utils.Function.getGroupApi(item))
+            const newAPi = Utils.Function.getGroupApi(item)
+            if(newAPi) acc.push(newAPi)
+           
            return acc
           }, []);
-        
-        
+         
         return {
           ...personalDataType,
           ...(Utils.Function.getPersonalDataType(personalDataType) || {}),
@@ -199,7 +200,7 @@ class SurveyController {
           originalApis: personalDataType.apis
         }
       })
-      console.log(question.personalDataTypes)
+      
 
 
       question.collectionData = JSON.parse(question.collectionData)
