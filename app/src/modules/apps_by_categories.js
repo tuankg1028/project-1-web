@@ -12,48 +12,93 @@ const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 const categoriesCollection = [
   {
     id: "1",
-    keywords: [],
-    level: "1",
     name: "Admin",
+    level: "1",
     parent: "null",
+    keywords: [],
+  },
+  {
+    id: "2",
+    name: "Purchase",
+    level: "1",
+    parent: "null",
+    keywords: ["business", "commercial", "businesses", "purchase"],
+  },
+  {
+    id: "3",
+    name: "Education",
+    level: "1",
+    parent: "null",
+    keywords: [],
+  },
+  {
+    id: "4",
+    name: "Medical",
+    level: "1",
+    parent: "null",
+    keywords: ["medical", "healthcare", "health care", "disease"],
+  },
+  {
+    id: "5",
+    name: "Booking",
+    level: "1",
+    parent: "null",
+    keywords: ["booking"],
+  },
+  {
+    id: "6",
+    name: "Services",
+    level: "1",
+    parent: "null",
+    keywords: [],
+  },
+  {
+    id: "7",
+    name: "Marketing",
+    level: "1",
+    parent: "null",
+    keywords: [],
   },
   {
     id: "8",
-    keywords: ["profile", "profiling"],
-    level: "2",
     name: "Profiling",
+    level: "2",
     parent: "1",
+    keywords: ["profile", "profiling"],
   },
   {
     id: "9",
-    keywords: ["analytics", "analysis", "analyze", "analyse", "analyzing"],
-    level: "2",
     name: "Analysis",
+    level: "2",
     parent: "1",
+    keywords: ["Analytics", "analysis", "analyze", "analyse", "analyzing"],
   },
   {
     id: "10",
-    keywords: ["statistical", "statistics"],
-    level: "2",
     name: "Statistical",
+    level: "2",
     parent: "1",
+    keywords: ["Statistical", "statistics"],
   },
   {
     id: "11",
-    keywords: ["ads", "advertising", "advertisement", "advertisers"],
-    level: "2",
     name: "Advertisements",
+    level: "2",
     parent: "1",
+    keywords: ["ads", "advertising", "advertisement", "advertisers"],
   },
   {
     id: "12",
-    keywords: ["maintain", "maintenance", "maintained"],
-    level: "2",
     name: "Maintenance",
+    level: "2",
     parent: "1",
+    keywords: ["maintain", "maintenance", "maintained"],
   },
   {
     id: "13",
+    name: "Identifying",
+    level: "2",
+    parent: "1",
     keywords: [
       "identifier",
       "identifying",
@@ -65,187 +110,353 @@ const categoriesCollection = [
       "identifiable",
       "identifies",
     ],
-    level: "2",
-    name: "Identifying",
-    parent: "1",
   },
   {
     id: "14",
-    keywords: ["troubleshooting", "tests", "testing", "troubleshoot"],
-    level: "2",
     name: "Testing/Troubleshooting",
+    level: "2",
     parent: "1",
-  },
-  {
-    id: "2",
-    keywords: ["business", "commercial", "businesses", "purchase"],
-    level: "1",
-    name: "Purchase",
-    parent: "null",
+    keywords: ["Troubleshooting", "tests", "testing", "troubleshoot"],
   },
   {
     id: "15",
-    keywords: ["purchase", "purchasing", "payment"],
-    level: "2",
     name: "Payment",
+    level: "2",
     parent: "2",
+    keywords: ["purchase", "purchasing", "payment"],
   },
   {
     id: "16",
-    keywords: ["delivery", "shipping", "delivering"],
-    level: "2",
     name: "Delivery",
+    level: "2",
     parent: "2",
+    keywords: ["delivery", "shipping", "delivering"],
   },
   {
     id: "17",
-    keywords: ["contacting", "contacts", "contacted", "communications"],
-    level: "2",
     name: "Contacting",
+    level: "2",
     parent: "2",
-  },
-  {
-    id: "3",
-    keywords: [],
-    level: "1",
-    name: "Education",
-    parent: "null",
+    keywords: ["Contacting", "contacts", "contacted", "communications"],
   },
   {
     id: "18",
-    keywords: ["research", "researching"],
-    level: "2",
     name: "Research",
+    level: "2",
     parent: "3",
+    keywords: ["research", "researching"],
   },
   {
     id: "19",
-    keywords: ["survey"],
-    level: "2",
     name: "Survey",
+    level: "2",
     parent: "3",
-  },
-  {
-    id: "4",
-    keywords: ["medical", "healthcare", "health care", "disease"],
-    level: "1",
-    name: "Medical",
-    parent: "null",
+    keywords: ["survey"],
   },
   {
     id: "20",
-    keywords: ["treatment"],
-    level: "2",
     name: "Treatment",
+    level: "2",
     parent: "4",
+    keywords: ["Treatment"],
   },
   {
     id: "21",
-    keywords: ["diagnostics", "diagnosis"],
-    level: "2",
     name: "Diagnosis",
+    level: "2",
     parent: "4",
-  },
-  {
-    id: "5",
-    keywords: ["booking"],
-    level: "1",
-    name: "Booking",
-    parent: "null",
-  },
-  {
-    id: "6",
-    keywords: [],
-    level: "1",
-    name: "Services",
-    parent: "null",
+    keywords: ["diagnostics", "diagnosis"],
   },
   {
     id: "22",
-    keywords: ["improve", "improving", "improvement"],
-    level: "2",
     name: "Improving quality",
+    level: "2",
     parent: "6",
+    keywords: ["improve", "improving", "improvement"],
   },
   {
     id: "23",
-    keywords: ["new service", "new product", "new feature", "new functions"],
-    level: "2",
     name: "Developing the new services",
-    parent: "6",
-  },
-  {
-    id: "7",
-    keywords: [],
-    level: "1",
-    name: "Marketing",
-    parent: "null",
-  },
-
-  {
-    id: "24",
-    keywords: ["direct"],
     level: "2",
-    name: "Direct",
-    parent: "7",
+    parent: "6",
+    keywords: ["new service", "new product", "new feature", "new functions"],
   },
   {
     id: "25",
-    keywords: ["direct &amp;amp;&amp;amp; email"],
-    level: "3",
     name: "Direct Email",
-    parent: "24",
+    level: "2",
+    parent: "7",
+    keywords: ["direct && email"],
   },
   {
     id: "26",
-    keywords: ["direct &amp;amp;&amp;amp; phone"],
-    level: "3",
     name: "Direct Phone",
-    parent: "24",
+    level: "2",
+    parent: "7",
+    keywords: ["direct && phone"],
   },
-  // {
-  //   id: "27",
-  //   keywords: [
-  //     "third-party",
-  //     "3rd parties",
-  //     "third party",
-  //     "third parties",
-  //     "3rd party",
-  //   ],
-  //   level: "2",
-  //   name: "Third-party",
-  //   parent: "7",
-  // },
-  // {
-  //   id: "28",
-  //   keywords: [
-  //     "third-party",
-  //     "3rd parties",
-  //     "third party",
-  //     "third parties",
-  //     "3rd party &amp;amp;&amp;amp; email",
-  //   ],
-  //   level: "3",
-  //   name: "Third-party Email",
-  //   parent: "27",
-  // },
-  // {
-  //   id: "29",
-  //   keywords: [
-  //     "third-party",
-  //     "3rd parties",
-  //     "third party",
-  //     "third parties",
-  //     "3rd party &amp;amp;&amp;amp; postal",
-  //   ],
-  //   level: "3",
-  //   name: "Third-party Postal",
-  //   parent: "27",
-  // },
+  {
+    id: "27",
+    name: "Booking",
+    level: "2",
+    parent: "5",
+    keywords: ["booking"],
+  },
 ];
+
+// [
+//   {
+//     id: "1",
+//     keywords: [],
+//     level: "1",
+//     name: "Admin",
+//     parent: "null",
+//   },
+//   {
+//     id: "8",
+//     keywords: ["profile", "profiling"],
+//     level: "2",
+//     name: "Profiling",
+//     parent: "1",
+//   },
+//   {
+//     id: "9",
+//     keywords: ["analytics", "analysis", "analyze", "analyse", "analyzing"],
+//     level: "2",
+//     name: "Analysis",
+//     parent: "1",
+//   },
+//   {
+//     id: "10",
+//     keywords: ["statistical", "statistics"],
+//     level: "2",
+//     name: "Statistical",
+//     parent: "1",
+//   },
+//   {
+//     id: "11",
+//     keywords: ["ads", "advertising", "advertisement", "advertisers"],
+//     level: "2",
+//     name: "Advertisements",
+//     parent: "1",
+//   },
+//   {
+//     id: "12",
+//     keywords: ["maintain", "maintenance", "maintained"],
+//     level: "2",
+//     name: "Maintenance",
+//     parent: "1",
+//   },
+//   {
+//     id: "13",
+//     keywords: [
+//       "identifier",
+//       "identifying",
+//       "authentication",
+//       "authenticate",
+//       "authenticates",
+//       "identity",
+//       "identities",
+//       "identifiable",
+//       "identifies",
+//     ],
+//     level: "2",
+//     name: "Identifying",
+//     parent: "1",
+//   },
+//   {
+//     id: "14",
+//     keywords: ["troubleshooting", "tests", "testing", "troubleshoot"],
+//     level: "2",
+//     name: "Testing/Troubleshooting",
+//     parent: "1",
+//   },
+//   {
+//     id: "2",
+//     keywords: ["business", "commercial", "businesses", "purchase"],
+//     level: "1",
+//     name: "Purchase",
+//     parent: "null",
+//   },
+//   {
+//     id: "15",
+//     keywords: ["purchase", "purchasing", "payment"],
+//     level: "2",
+//     name: "Payment",
+//     parent: "2",
+//   },
+//   {
+//     id: "16",
+//     keywords: ["delivery", "shipping", "delivering"],
+//     level: "2",
+//     name: "Delivery",
+//     parent: "2",
+//   },
+//   {
+//     id: "17",
+//     keywords: ["contacting", "contacts", "contacted", "communications"],
+//     level: "2",
+//     name: "Contacting",
+//     parent: "2",
+//   },
+//   {
+//     id: "3",
+//     keywords: [],
+//     level: "1",
+//     name: "Education",
+//     parent: "null",
+//   },
+//   {
+//     id: "18",
+//     keywords: ["research", "researching"],
+//     level: "2",
+//     name: "Research",
+//     parent: "3",
+//   },
+//   {
+//     id: "19",
+//     keywords: ["survey"],
+//     level: "2",
+//     name: "Survey",
+//     parent: "3",
+//   },
+//   {
+//     id: "4",
+//     keywords: ["medical", "healthcare", "health care", "disease"],
+//     level: "1",
+//     name: "Medical",
+//     parent: "null",
+//   },
+//   {
+//     id: "20",
+//     keywords: ["treatment"],
+//     level: "2",
+//     name: "Treatment",
+//     parent: "4",
+//   },
+//   {
+//     id: "21",
+//     keywords: ["diagnostics", "diagnosis"],
+//     level: "2",
+//     name: "Diagnosis",
+//     parent: "4",
+//   },
+//   {
+//     id: "5",
+//     keywords: ["booking"],
+//     level: "1",
+//     name: "Booking",
+//     parent: "null",
+//   },
+//   {
+//     id: "6",
+//     keywords: [],
+//     level: "1",
+//     name: "Services",
+//     parent: "null",
+//   },
+//   {
+//     id: "22",
+//     keywords: ["improve", "improving", "improvement"],
+//     level: "2",
+//     name: "Improving quality",
+//     parent: "6",
+//   },
+//   {
+//     id: "23",
+//     keywords: ["new service", "new product", "new feature", "new functions"],
+//     level: "2",
+//     name: "Developing the new services",
+//     parent: "6",
+//   },
+//   {
+//     id: "7",
+//     keywords: [],
+//     level: "1",
+//     name: "Marketing",
+//     parent: "null",
+//   },
+
+//   {
+//     id: "24",
+//     keywords: ["direct"],
+//     level: "2",
+//     name: "Direct",
+//     parent: "7",
+//   },
+//   {
+//     id: "25",
+//     keywords: ["direct &amp;amp;&amp;amp; email"],
+//     level: "3",
+//     name: "Direct Email",
+//     parent: "24",
+//   },
+//   {
+//     id: "26",
+//     keywords: ["direct &amp;amp;&amp;amp; phone"],
+//     level: "3",
+//     name: "Direct Phone",
+//     parent: "24",
+//   },
+// {
+//   id: "27",
+//   keywords: [
+//     "third-party",
+//     "3rd parties",
+//     "third party",
+//     "third parties",
+//     "3rd party",
+//   ],
+//   level: "2",
+//   name: "Third-party",
+//   parent: "7",
+// },
+// {
+//   id: "28",
+//   keywords: [
+//     "third-party",
+//     "3rd parties",
+//     "third party",
+//     "third parties",
+//     "3rd party &amp;amp;&amp;amp; email",
+//   ],
+//   level: "3",
+//   name: "Third-party Email",
+//   parent: "27",
+// },
+// {
+//   id: "29",
+//   keywords: [
+//     "third-party",
+//     "3rd parties",
+//     "third party",
+//     "third parties",
+//     "3rd party &amp;amp;&amp;amp; postal",
+//   ],
+//   level: "3",
+//   name: "Third-party Postal",
+//   parent: "27",
+// },
+// ];
 const categoriesThirdParty = [
   {
     id: "1",
+    name: "Contact",
+    level: "1",
+    parent: "null",
+    keywords: [
+      // "Third-party",
+      // "3rd parties",
+      // "third party",
+      // "third parties",
+      // "3rd party",
+    ],
+  },
+  {
+    id: "2",
+    name: "T-Email",
+    level: "2",
+    parent: "1",
     keywords: [
       "Third-party",
       "3rd parties",
@@ -253,47 +464,346 @@ const categoriesThirdParty = [
       "third parties",
       "3rd party",
     ],
-    level: "1",
-    name: "Third-party",
-    parent: "null",
-  },
-  {
-    id: "2",
-    keywords: [
-      "Third-party",
-      "3rd parties",
-      "third party",
-      "third parties",
-      "3rd party && email",
-    ],
-    level: "2",
-    name: "Third-party Email",
-    parent: "1",
+    requiredKeyword: "email",
   },
   {
     id: "3",
+    name: "T-Postal",
+    level: "2",
+    parent: "1",
     keywords: [
       "Third-party",
       "3rd parties",
       "third party",
       "third parties",
-      "3rd party && postal",
+      "postal",
     ],
+    requiredKeyword: "postal",
+  },
+  {
+    id: "4",
+    name: "Data",
+    level: "1",
+    parent: "null",
+    keywords: [
+      // "Third-party",
+      // "3rd parties",
+      // "third party",
+      // "third parties",
+      // "3rd party",
+    ],
+  },
+  {
+    id: "5",
+    name: "Purpose",
+    level: "1",
+    parent: "null",
+    keywords: [
+      // "Third-party",
+      // "3rd parties",
+      // "third party",
+      // "third parties",
+      // "3rd party",
+    ],
+  },
+  {
+    id: "6",
+    name: "User Profile",
     level: "2",
-    name: "Third-party Postal",
-    parent: "1",
+    parent: "4",
+    keywords: [
+      "name; contact information; your email; user email; account; password; private chats; identifiable; identity; social network; behavioral; behavior; about you; personal information",
+    ],
+  },
+  {
+    id: "7",
+    name: "Location",
+    level: "2",
+    parent: "4",
+    keywords: ["location; address"],
+  },
+  {
+    id: "8",
+    name: "Media",
+    level: "2",
+    parent: "4",
+    keywords: ["media; video; audio; picture; image"],
+  },
+  {
+    id: "9",
+    name: "Health & Fitness",
+    level: "2",
+    parent: "4",
+    keywords: ["health; fitness; blood; step; activity; activities"],
+  },
+  {
+    id: "10",
+    name: "Hardware",
+    level: "2",
+    parent: "4",
+    keywords: [
+      "camera; IP address; MAC address; sensor; accelerometer; gyroscope; microphone; volumn",
+    ],
+  },
+  {
+    id: "11",
+    name: "Connection",
+    level: "2",
+    parent: "4",
+    keywords: ["Wifi; Bluetooth; NFC; Cookie; connections; beacons"],
+  },
+  {
+    id: "12",
+    name: "Telephony",
+    level: "2",
+    parent: "4",
+    keywords: ["call; messager; phone number; phone calls"],
+  },
+  {
+    id: "13",
+    name: "Payment",
+    level: "2",
+    parent: "5",
+    keywords: ["payment; purchase; order; credit card"],
+  },
+  {
+    id: "14",
+    name: "Delivery",
+    level: "2",
+    parent: "5",
+    keywords: ["diliver; delivery; deliverer"],
+  },
+  {
+    id: "15",
+    name: "Marketing",
+    level: "2",
+    parent: "5",
+    keywords: ["marketing"],
+  },
+  {
+    id: "16",
+    name: "Advertisement",
+    level: "2",
+    parent: "5",
+    keywords: ["Advertising; ads; advertisement; advertiser;"],
+  },
+  {
+    id: "17",
+    name: "Analysis",
+    level: "2",
+    parent: "5",
+    keywords: [
+      "Analysis; analytical; analysed; analyzed; analytics; market research",
+    ],
   },
 ];
+
+// [
+//   {
+//     id: "1",
+//     keywords: [
+//       "Third-party",
+//       "3rd parties",
+//       "third party",
+//       "third parties",
+//       "3rd party",
+//     ],
+//     level: "1",
+//     name: "Third-party",
+//     parent: "null",
+//   },
+//   {
+//     id: "2",
+//     keywords: [
+//       "Third-party",
+//       "3rd parties",
+//       "third party",
+//       "third parties",
+//       "3rd party && email",
+//     ],
+//     level: "2",
+//     name: "Third-party Email",
+//     parent: "1",
+//   },
+//   {
+//     id: "3",
+//     keywords: [
+//       "Third-party",
+//       "3rd parties",
+//       "third party",
+//       "third parties",
+//       "3rd party && postal",
+//     ],
+//     level: "2",
+//     name: "Third-party Postal",
+//     parent: "1",
+//   },
+// ];
 
 const categoriesRetention = [
   {
     id: "1",
-    keywords: ["data retention", "retain"],
+    name: "Data",
     level: "1",
-    name: "Data retention",
     parent: "null",
+    keywords: [
+      // "retain", "retention"
+    ],
+  },
+  {
+    id: "2",
+    name: "Period",
+    level: "1",
+    parent: "null",
+    keywords: [
+      // "retain", "retention"
+    ],
+  },
+  {
+    id: "3",
+    name: "less than a day (<24 hours)",
+    level: "2",
+    parent: "2",
+    keywords: ["< 24 hours"],
+    isTime: true,
+    isShowKey: true,
+  },
+  {
+    id: "4",
+    name: "1 day (24 hours) - 14 days (two week)",
+    level: "2",
+    parent: "2",
+    keywords: ["> 24 hours && < 14 days"],
+    isTime: true,
+    isShowKey: true,
+  },
+  {
+    id: "5",
+    name: "15 days - 1 month (30 day)",
+    level: "2",
+    parent: "2",
+    keywords: [">14 days && < 30 days"],
+    isTime: true,
+    isShowKey: true,
+  },
+  {
+    id: "6",
+    name: "1 month - 3 months (90 day)",
+    level: "2",
+    parent: "2",
+    keywords: ["> 1 month && < 3 months"],
+    isTime: true,
+    isShowKey: true,
+  },
+  {
+    id: "7",
+    name: "3 months - 6 months (185 days)",
+    level: "2",
+    parent: "2",
+    keywords: ["> 3 months && < 6 months"],
+    isTime: true,
+    isShowKey: true,
+  },
+  {
+    id: "8",
+    name: "6 months - 1 year (12 months)",
+    level: "2",
+    parent: "2",
+    keywords: ["> 6 months && < 1 year"],
+    isTime: true,
+    isShowKey: true,
+  },
+  {
+    id: "9",
+    name: "1 year - 2 years (24 months)",
+    level: "2",
+    parent: "2",
+    keywords: ["> 1 year && < 2 years"],
+    isTime: true,
+    isShowKey: true,
+  },
+  {
+    id: "10",
+    name: "2 years - several years (> 24 months)",
+    level: "2",
+    parent: "2",
+    keywords: ["> 2 years"],
+    isTime: true,
+    isShowKey: true,
+  },
+  {
+    id: "11",
+    name: "User Profile",
+    level: "2",
+    parent: "1",
+    keywords: [
+      "name; contact information; your email; user email; account; password; private chats; identifiable; identity; social network; behavioral; behavior; about you; personal information",
+    ],
+  },
+  {
+    id: "12",
+    name: "Location",
+    level: "2",
+    parent: "1",
+    keywords: ["location; address"],
+  },
+  {
+    id: "13",
+    name: "Media",
+    level: "2",
+    parent: "1",
+    keywords: ["media; video; audio; picture; image"],
+  },
+  {
+    id: "14",
+    name: "Health & Fitness",
+    level: "2",
+    parent: "1",
+    keywords: ["health; fitness; blood; step; activity; activities"],
+  },
+  {
+    id: "15",
+    name: "Hardware",
+    level: "2",
+    parent: "1",
+    keywords: [
+      "camera; IP address; MAC address; sensor; accelerometer; gyroscope; microphone; volumn",
+    ],
+  },
+  {
+    id: "16",
+    name: "Connection",
+    level: "2",
+    parent: "1",
+    keywords: ["Wifi; Bluetooth; NFC; Cookie; connections; beacons"],
+  },
+  {
+    id: "17",
+    name: "Telephony",
+    level: "2",
+    parent: "1",
+    keywords: ["call; messager; phone number; phone calls"],
   },
 ];
+
+const keywordsRequiredRetention = ["retain", "retention"];
+const keywordsRequiredThirdParty = [
+  "Third-party",
+  "3rd parties",
+  "third party",
+  "third parties",
+  "3rd party",
+];
+
+// [
+//   {
+//     id: "1",
+//     keywords: ["data retention", "retain"],
+//     level: "1",
+//     name: "Data retention",
+//     parent: "null",
+//   },
+// ];
 const categoryGroups = {
   Beauty: ["Beauty", "Lifestyle"],
   Business: ["Business"],
@@ -482,25 +992,50 @@ function checkParentHasContent(childCategoryName, ppCategories, categories) {
   }
 }
 
-async function getPPCategories(privacyLink) {
+async function getPPCategories(contentPrivacyPolicy) {
   const result = {};
 
   try {
-    if (!privacyLink) return null;
+    if (!contentPrivacyPolicy) return null;
 
     const ppData = await axios.get(
-      `http://127.0.0.1:8081/beforeaccept?url_text=${privacyLink}&policy_text=`,
+      `http://127.0.0.1:8081/beforeaccept?url_text=&policy_text=${escape(
+        contentPrivacyPolicy
+      )}`,
       {
         headers: { "Content-Language": "en-US" },
-        timeout: 10000,
+        timeout: 20000,
       }
     );
+    // .then(console.log);
     if (!_.isObject(ppData.data)) return null;
 
     const contentTypes = {
-      collection: ppData.data.segments_first_party_collection,
-      thirdParty: ppData.data.segments_third_party_sharing,
-      retention: ppData.data.segments_data_retention,
+      collection: (
+        [
+          ...ppData.data.segments_third_party_sharing,
+          ...ppData.data.segments_first_party_collection,
+        ] || []
+      ).reduce((acc, item) => {
+        const items = item.split(/([\.\?!])(?= )/);
+        return [...acc, ...items];
+      }, []),
+      thirdParty: (
+        [
+          ...ppData.data.segments_third_party_sharing,
+          ...ppData.data.segments_first_party_collection,
+        ] || []
+      ).reduce((acc, item) => {
+        const items = item.split(/([\.\?!])(?= )/);
+        return [...acc, ...items];
+      }, []),
+      retention: (ppData.data.segments_data_retention || []).reduce(
+        (acc, item) => {
+          const items = item.split(/([\.\?!])(?= )/);
+          return [...acc, ...items];
+        },
+        []
+      ),
     };
 
     for (const contentType in contentTypes) {
@@ -526,33 +1061,157 @@ async function getPPCategories(privacyLink) {
           result[contentType][category.name] = [];
       });
       // loop contents
-      contents.forEach((content) => {
+      for (let i = 0; i < contents.length; i++) {
+        let content = contents[i];
         content = content.toLowerCase();
+
+        // check keywords required for "retention", "thirdParty"
+        if (["retention", "thirdParty"].includes(contentType)) {
+          let isContinue = false;
+          (contentType === "thirdParty"
+            ? keywordsRequiredThirdParty
+            : keywordsRequiredRetention
+          ).forEach((item) => {
+            if (~content.indexOf(item.toLowerCase())) isContinue = true;
+          });
+          if (!isContinue) continue;
+        }
+
         // loop categories
         categories.forEach((category) => {
-          const { keywords } = category;
+          const { keywords, requiredKeyword, isTime } = category;
 
           // loop keywords
-          for (let i = 0; i < keywords.length; i++) {
-            let keyword = keywords[i];
+          for (let j = 0; j < keywords.length; j++) {
+            let keyword = keywords[j];
             keyword = keyword.toLowerCase();
             // find keyword in content
-            if (~content.indexOf(keyword)) {
-              if (!_.includes(result[contentType][category.name], content)) {
-                result[contentType][category.name].push(content);
+            // is time
+            if (isTime) {
+              const hours = getTimeInContent("hour", content);
+              const days = getTimeInContent("day", content);
+              const months = getTimeInContent("month", content);
+              const years = getTimeInContent("year", content);
+              switch (keyword) {
+                case "< 24 hours": {
+                  if (
+                    hours &&
+                    hours.length &&
+                    hours.some((hour) => hour < 24)
+                  ) {
+                    result[contentType][category.name].push(content);
+                  }
+                  break;
+                }
+                case "> 24 hours && < 14 days": {
+                  if (
+                    hours &&
+                    hours.length &&
+                    hours.some((hour) => hour > 24) &&
+                    days.some((day) => day < 14)
+                  ) {
+                    result[contentType][category.name].push(content);
+                  }
+                  break;
+                }
+
+                case ">14 days && < 30 days": {
+                  if (
+                    hours &&
+                    hours.length &&
+                    days.some((day) => day > 14 && day < 30)
+                  ) {
+                    result[contentType][category.name].push(content);
+                  }
+                  break;
+                }
+
+                case "> 1 month && < 3 months": {
+                  if (
+                    hours &&
+                    hours.length &&
+                    months.some((month) => month > 1 && month < 3)
+                  ) {
+                    result[contentType][category.name].push(content);
+                  }
+                  break;
+                }
+
+                case "> 3 months && < 6 months": {
+                  if (
+                    hours &&
+                    hours.length &&
+                    months.some((month) => month > 3 && month < 6)
+                  ) {
+                    result[contentType][category.name].push(content);
+                  }
+                  break;
+                }
+
+                case "> 6 months && < 1 year": {
+                  if (
+                    hours &&
+                    hours.length &&
+                    months.some((month) => month > 6 && month < 12)
+                  ) {
+                    result[contentType][category.name].push(content);
+                  }
+                  break;
+                }
+
+                case "> 1 year && < 2 years": {
+                  if (
+                    hours &&
+                    hours.length &&
+                    (years.some((year) => year > 1 && year < 2) ||
+                      months.some((month) => month > 12 && month < 24))
+                  ) {
+                    result[contentType][category.name].push(content);
+                  }
+                  break;
+                }
+
+                case "> 2 years": {
+                  if (
+                    hours &&
+                    hours.length &&
+                    (years.some((year) => year > 2) ||
+                      months.some((month) => month > 24))
+                  ) {
+                    result[contentType][category.name].push(content);
+                  }
+                  break;
+                }
               }
-              break;
+              // console.log(hours, days, months, years);
+            } else {
+              if (
+                (~content.indexOf(keyword) && !requiredKeyword) ||
+                (~content.indexOf(keyword) &&
+                  requiredKeyword &&
+                  ~content.indexOf(requiredKeyword))
+              ) {
+                result[contentType][category.name].push(content);
+                // break;
+              }
             }
           }
         });
-      });
+      }
     }
 
     return result;
   } catch (e) {
-    console.log(e.message);
+    console.log(`ERROR getPPCategories: ${e.message}`);
     return null;
   }
+}
+function getTimeInContent(keyword, content) {
+  const matchedContent = content.match(new RegExp(`[0-9]+ ${keyword}`, "g"));
+  if (matchedContent && matchedContent.length) {
+    return matchedContent[0].match(/[0-9]+/g);
+  }
+  return;
 }
 async function getParent(node) {
   const parent = await Models.Tree.findById(node.parent);
@@ -574,13 +1233,16 @@ async function getParent(node) {
   return getParent(parent);
 }
 
-// updateAppsPrivacyPolicy();
+updateAppsPrivacyPolicy();
 async function updateAppsPrivacyPolicy() {
   const apps = await Models.App.find({
-    isCompleted: true,
-  })
-    .select("id")
-    .limit(1);
+    // isCompleted: true,
+    appName: {
+      $in: ["incredible health", "microsoft teams"],
+    },
+  }).select("id");
+
+  // .limit(1);
   const appIds = _.map(apps, "id");
 
   Promise.all(appIds.map(updateAppPrivacyPolicy));
@@ -592,13 +1254,15 @@ async function updateAppPrivacyPolicy(appId) {
   const app = await Models.App.findById(appId);
 
   let ppCategoriesAPP = {};
+  let ppCategoriesAPPContent = {};
   // pp
-  const ppCategorieTypes = await getPPCategories(app.privacyLink);
-
+  const ppCategorieTypes = await getPPCategories(app.contentPrivacyPolicy);
+  return;
   for (const dataType in ppCategorieTypes) {
     const ppCategories = ppCategorieTypes[dataType];
 
     ppCategoriesAPP[dataType] = [];
+    ppCategoriesAPPContent[dataType] = [];
     let categories;
     switch (dataType) {
       case "collection":
@@ -613,7 +1277,7 @@ async function updateAppPrivacyPolicy(appId) {
         categories = categoriesRetention;
         break;
     }
-    console.log(categories);
+
     if (ppCategories) {
       for (const category in ppCategories) {
         const contents = ppCategories[category];
@@ -627,14 +1291,18 @@ async function updateAppPrivacyPolicy(appId) {
         if (isParentHasContent && contents && contents.length > 0) {
           let childCategories = getChildCategories(category, categories);
           childCategories = _.map(childCategories, "name");
-          if (childCategories.length === 0)
+          if (childCategories.length === 0) {
             ppCategoriesAPP[dataType].push(category);
+            ppCategoriesAPPContent[dataType].push(contents);
+          }
 
           if (
             _.difference(ppCategoriesAPP[dataType], childCategories).lenth ===
             childCategories.lenth
-          )
+          ) {
+            ppCategoriesAPPContent[dataType][category] = contents;
             ppCategoriesAPP[dataType].push(category);
+          }
         }
       }
     }
@@ -642,42 +1310,116 @@ async function updateAppPrivacyPolicy(appId) {
     ppCategoriesAPP[dataType] = _.uniq(ppCategoriesAPP[dataType]);
   }
 
-  // console.log(1, ppCategoriesAPP);
+  console.log(1, !!ppCategoriesAPP, ppCategoriesAPP);
+  const collectionData = [];
+  for (let i = 0; i < ppCategoriesAPP.collection.length; i++) {
+    const element = ppCategoriesAPP.collection[i];
+    await createTreeDataByNode(element, collectionData, categoriesCollection);
+  }
+  // map CONTENT
+  for (const categoryName in ppCategoriesAPPContent.collection) {
+    const contents = ppCategoriesAPPContent.collection[categoryName];
+
+    mapContentWithCategory(categoryName, contents, collectionData);
+  }
+
+  const thirdPartyData = [];
+  for (let i = 0; i < ppCategoriesAPP.thirdParty.length; i++) {
+    const element = ppCategoriesAPP.thirdParty[i];
+    await createTreeDataByNode(element, thirdPartyData, categoriesThirdParty);
+  }
+  // map CONTENT
+  for (const categoryName in ppCategoriesAPPContent.thirdParty) {
+    const contents = ppCategoriesAPPContent.thirdParty[categoryName];
+
+    mapContentWithCategory(categoryName, contents, thirdPartyData);
+  }
+
+  const retentionData = [];
+  for (let i = 0; i < ppCategoriesAPP.retention.length; i++) {
+    const element = ppCategoriesAPP.retention[i];
+    await createTreeDataByNode(element, retentionData, categoriesRetention);
+  }
+  // map CONTENT
+  for (const categoryName in ppCategoriesAPPContent.retention) {
+    const contents = ppCategoriesAPPContent.retention[categoryName];
+
+    mapContentWithCategory(categoryName, contents, retentionData);
+  }
+
+  // console.log(1, app._id, {
+  //   collectionData: JSON.stringify(collectionData),
+  //   thirdPartyData: JSON.stringify(thirdPartyData),
+  //   retentionData: JSON.stringify(retentionData),
+  // });
+  await Models.App.updateOne(
+    {
+      _id: app._id,
+    },
+    {
+      $set: {
+        collectionData: JSON.stringify(collectionData),
+        thirdPartyData: JSON.stringify(thirdPartyData),
+        retentionData: JSON.stringify(retentionData),
+      },
+    },
+    {},
+    (err, data) =>
+      Helpers.Logger.info(`Data saved1: ${JSON.stringify(data, null, 2)}`)
+  );
 }
 
-async function createTreeDataByNode(categoryName, result = []) {
-  const category = categoriesCollection.find(
-    (item) => item.name === categoryName
-  );
+const mapContentWithCategory = (categoryName, contents, originalData) => {
+  for (let i = 0; i < originalData.length; i++) {
+    const element = originalData[i];
 
-  const pathString = getNodePath(category.id);
+    if (element.name === categoryName) return (element.contents = contents);
+
+    if (element.children && element.children.length) {
+      mapContentWithCategory(categoryName, contents, element.children);
+    }
+  }
+  return;
+};
+
+const parseCollectionData = (item) => {
+  if (!item) return;
+  return {
+    id: item.id,
+    name: item.name,
+    parent: item.parent === "null" ? null : item.parent,
+  };
+};
+async function createTreeDataByNode(categoryName, result = [], categoriesData) {
+  const category = categoriesData.find((item) => item.name === categoryName);
+
+  const pathString = getNodePath(category.id, categoriesData);
   let pathArray = pathString.split(".");
   pathArray = pathArray.filter((item) => {
-    console.log(1, !!item);
     return !!item;
   });
   _.reverse(pathArray);
 
-  console.log(pathArray);
-
-  const data = await buildTree(pathArray, result);
-  // console.log(1, JSON.stringify(data, null, 2));
+  await buildTree(pathArray, result, categoriesData);
 }
 
-async function buildTree(pathArray, result) {
+async function buildTree(pathArray, result, categoriesData) {
   if (!pathArray || !pathArray.length) return result;
   let lv1, lv2, lv3;
 
   if (pathArray[0]) {
-    lv1 = categoriesCollection.find((item) => item.id === pathArray[0]);
+    lv1 = categoriesData.find((item) => item.id === pathArray[0]);
+    lv1 = parseCollectionData(lv1);
   }
 
   if (pathArray[1]) {
-    lv2 = categoriesCollection.find((item) => item.id === pathArray[1]);
+    lv2 = categoriesData.find((item) => item.id === pathArray[1]);
+    lv2 = parseCollectionData(lv2);
   }
 
   if (pathArray[2]) {
-    lv3 = categoriesCollection.find((item) => item.id === pathArray[2]);
+    lv3 = categoriesData.find((item) => item.id === pathArray[2]);
+    lv3 = parseCollectionData(lv3);
   }
 
   if (lv1) {
@@ -702,17 +1444,18 @@ async function buildTree(pathArray, result) {
   return result;
 }
 
-const getNodePath = (categoryId, pathString = "") => {
-  const category = categoriesCollection.find((item) => item.id === categoryId);
+const getNodePath = (categoryId, categoriesData, pathString = "") => {
+  const category = categoriesData.find((item) => item.id === categoryId);
 
   pathString += `${category.id}.`;
 
   if (category.parent && category.parent != "null")
-    return getNodePath(category.parent, pathString);
+    return getNodePath(category.parent, categoriesData, pathString);
 
   return pathString;
 };
 // createTreeDataByNode("Contacting");
+
 const serialize = function (obj) {
   var str = [];
   for (var p in obj)
@@ -798,7 +1541,7 @@ async function main() {
 
   console.log(content);
 }
-main2();
+// main2();
 async function main2() {
   const { execSync } = require("child_process");
   //execSync(`mkdir ${path.join(__dirname, "/data")}`);
