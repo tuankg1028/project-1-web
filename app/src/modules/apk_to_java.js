@@ -32,14 +32,21 @@ async function main() {
     apkFiles = apkFiles.filter((filename) => filename.endsWith("apk"));
 
     apkFiles.forEach((apkFile) => {
-      const outputPath = path.join(outputFolderPath, path.basename(apkFile));
+      try {
+        const outputPath = path.join(outputFolderPath, path.basename(apkFile));
 
-      const jadxFolder = path.join(__dirname, "../../jadx/build/jadx/bin/jadx");
-      const apkFileFullPath = `${apkFolder}/${apkFile}`;
-      execSync(`sh ${jadxFolder} -d "${outputPath}" "${apkFileFullPath}"`);
-      console.log(
-        `DONE ${path.basename(apkFile)} in ${path.basename(apkFolder)} folder`
-      );
+        const jadxFolder = path.join(
+          __dirname,
+          "../../jadx/build/jadx/bin/jadx"
+        );
+        const apkFileFullPath = `${apkFolder}/${apkFile}`;
+        execSync(`sh ${jadxFolder} -d "${outputPath}" "${apkFileFullPath}"`);
+        console.log(
+          `DONE ${path.basename(apkFile)} in ${path.basename(apkFolder)} folder`
+        );
+      } catch (err) {
+        console.log(err);
+      }
     });
   }
 }
