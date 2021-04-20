@@ -35,7 +35,7 @@ async function main() {
       const outputPath = path.join(outputFolderPath, path.basename(apkFile));
 
       const jadxFolder = path.join(__dirname, "../../jadx/build/jadx/bin/jadx");
-      const apkFileFullPath = `${path.dirname(apkFolder)}/${apkFile}`;
+      const apkFileFullPath = `${apkFolder}/${apkFile}`;
       execSync(`sh ${jadxFolder} -d "${outputPath}" "${apkFileFullPath}"`);
       console.log(
         `DONE ${path.basename(apkFile)} in ${path.basename(apkFolder)} folder`
