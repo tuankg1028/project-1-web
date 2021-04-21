@@ -1189,12 +1189,8 @@ async function createRow(stt, link) {
 }
 // main3();
 
+const outputFolder = path.join(__dirname, "../../../../", "APKSources-malware");
 async function main4() {
-  const outputFolder = path.join(
-    __dirname,
-    "../../../../",
-    "APKSources-malware"
-  );
   try {
     execSync(`mkdir ${outputFolder}`);
   } catch (err) {
@@ -1202,28 +1198,29 @@ async function main4() {
   }
   const listInValidAppIds = [];
   for (let i = 0; i < appIds.length; i++) {
-    try {
-      const appId = appIds[i];
+    const appId = appIds[i];
 
-      const downloadLink = await Services.default.APKSupport.downloadLink(
-        appId
-      );
-      const pathFile = path.join(outputFolder, `${appId}.apk`);
-
-      const isSuccess = await Services.default.APKSupport.download(
-        downloadLink,
-        pathFile
-      );
-      if (!isSuccess) {
-        listInValidAppIds.push(appId);
-      }
-    } catch (err) {
-      console.log("ERROR: DOWNLOAD APK FILE FOR APP ${appId}: " + err.message);
-      listInValidAppIds.push(appId);
-    }
-    console.log("DONE APP STT", i + 1);
+    downloadApp(appId);
   }
   console.log("list cannot download", listInValidAppIds);
   console.log("DONE");
+}
+async function downloadApp(appId) {
+  try {
+    const downloadLink = await Services.default.APKSupport.downloadLink(appId);
+    const pathFile = path.join(outputFolder, `${appId}.apk`);
+
+    const isSuccess = await Services.default.APKSupport.download(
+      downloadLink,
+      pathFile
+    );
+    if (!isSuccess) {
+      listInValidAppIds.push(appId);
+    }
+  } catch (err) {
+    console.log("ERROR: DOWNLOAD APK FILE FOR APP ${appId}: " + err.message);
+    listInValidAppIds.push(appId);
+  }
+  console.log("DONE APP", appId);
 }
 main4();
