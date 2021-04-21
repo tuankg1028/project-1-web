@@ -1,6 +1,9 @@
+require("dotenv").config();
+import "../configs/mongoose.config";
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+import Models from "../models";
 const apkFolders = [
   "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/benign500",
   "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/StormDroid_KuafuDet_2082/Malware2082",
@@ -13,6 +16,59 @@ const Helpers = require("../helpers");
 const Services = require("../services");
 const slug = require("slug");
 
+const categoryGroups = {
+  Beauty: ["Beauty", "Lifestyle"],
+  Business: ["Business"],
+  Education: ["Education", "Educational"],
+  Entertainment: ["Entertainment", "Photography"],
+  Finance: [
+    "Finance",
+    "Events",
+    "Action",
+    "Action & Adventure",
+    "Adventure",
+    "Arcade",
+    "Art & Design",
+    "Auto & Vehicles",
+    "Board",
+    "Books & Reference",
+    "Brain Games",
+    "Card",
+    "Casino",
+    "Casual",
+    "Comics",
+    "Creativity",
+    "House & Home",
+    "Libraries & Demo",
+    "News & Magazines",
+    "Parenting",
+    "Pretend Play",
+    "Productivity",
+    "Puzzle",
+    "Racing",
+    "Role Playing",
+    "Simulation",
+    "Strategy",
+    "Trivia",
+    "Weather",
+    "Word",
+  ],
+  "Food & Drink": ["Food & Drink"],
+  "Health & Fitness": ["Health & Fitness"],
+  "Maps & Navigation": ["Maps & Navigation"],
+  Medical: ["Medical"],
+  "Music & Audio": [
+    "Music & Audio",
+    "Video Players & Editors",
+    "Music & Video",
+    "Music",
+  ],
+  Shopping: ["Shopping"],
+  Social: ["Social", "Dating", "Communication"],
+  Sports: ["Sports"],
+  Tools: ["Tools", "Personalization"],
+  "Travel & Local": "Travel & Local",
+};
 const appIds = [
   "com.adventuregame.inforestisland",
   "com.adventuresofchipmunks.rescuerangers",
@@ -1223,4 +1279,42 @@ async function downloadApp(appId, listInValidAppIds) {
   }
   console.log("DONE APP", appId);
 }
-main4();
+// main4();
+
+async function main5() {
+  for (const categoryGroup in categoryGroups) {
+    let appsMatchedContent = "";
+
+    const categoriesData = categoryGroups[categoryGroup];
+    const apps = await Models.App.find({
+      categoryName: { $in: categoriesData },
+    });
+    console.log(apps.length);
+    const categoryKeywords = apps.reduce((acc, app) => {
+      const keywords = _.map(app.nodes, "name");
+      keywords.forEach((keyword) => {
+        if (!acc[keyword]) acc[keyword] = 1;
+        else acc[keyword]++;
+      });
+
+      return acc;
+    }, {});
+
+    const result = [];
+    for (const keyword in categoryKeywords) {
+      const value = categoryKeywords[keyword];
+      if (value / apps.length > 0.5) {
+        const node = await Models.Tree.findOne({
+          name: keyword,
+        });
+        result.push(node);
+      }
+    }
+
+    await Models.CategoryNode.create({
+      categoryName: categoryGroup,
+      nodes: result,
+    });
+  }
+}
+main5();
