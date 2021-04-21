@@ -1159,6 +1159,10 @@ async function main3() {
       id: "active",
       title: "Active",
     },
+    {
+      id: "link",
+      title: "Link",
+    },
   ];
 
   const rows = await Promise.all(
@@ -1181,6 +1185,6 @@ async function createRow(stt, link) {
   } catch (err) {
     console.log(err.message);
   }
-  return { ...appInfo, stt: stt + 1, active: appInfo ? 1 : 0 };
+  return { ...appInfo, stt: stt + 1, active: appInfo.category ? 1 : 0, link };
 }
 main3();
