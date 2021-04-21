@@ -36,36 +36,9 @@ var schema = new Schema(
         parent: Schema.Types.ObjectId,
       },
     ],
-    collectionData: [
-      {
-        id: Schema.Types.ObjectId,
-        name: String,
-        left: Number,
-        right: Number,
-        parent: Schema.Types.ObjectId,
-        children: Schema.Types.Map,
-      },
-    ],
-    thirdPartyData: [
-      {
-        id: Schema.Types.ObjectId,
-        name: String,
-        left: Number,
-        right: Number,
-        parent: Schema.Types.ObjectId,
-        children: Schema.Types.Map,
-      },
-    ],
-    retentionData: [
-      {
-        id: Schema.Types.ObjectId,
-        name: String,
-        left: Number,
-        right: Number,
-        parent: Schema.Types.ObjectId,
-        children: Schema.Types.Map,
-      },
-    ],
+    collectionData: String,
+    thirdPartyData: String,
+    retentionData: String,
   },
   {
     timestamps: true,
