@@ -1208,11 +1208,13 @@ async function main4() {
       const downloadLink = await Services.default.APKSupport.downloadLink(
         appId
       );
-      if (downloadLink) {
-        const pathFile = path.join(outputFolder, `${appId}.apk`);
+      const pathFile = path.join(outputFolder, `${appId}.apk`);
 
-        await Services.default.APKSupport.download(downloadLink, pathFile);
-      } else {
+      const isSuccess = await Services.default.APKSupport.download(
+        downloadLink,
+        pathFile
+      );
+      if (!isSuccess) {
         listInValidAppIds.push(appId);
       }
     } catch (err) {

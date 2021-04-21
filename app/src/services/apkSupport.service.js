@@ -15,7 +15,8 @@ const API = axios.create({
 
 const download = async (downloadLink, pathFile) => {
   try {
-    await new Promise(function (resolve, reject) {
+    if (!downloadLink) return null;
+    return await new Promise(function (resolve, reject) {
       axios
         .get(downloadLink, {
           responseType: "stream",
@@ -27,17 +28,18 @@ const download = async (downloadLink, pathFile) => {
             setTimeout(() => {
               console.log(chalk.green("Dowloaded APK file successfully"));
 
-              resolve();
+              resolve(true);
             }, 3000);
           });
+        })
+        .catch((err) => {
+          resolve(null);
         });
     });
-
-    return pathFile;
   } catch (err) {
     console.log(err.message);
     Helpers.Logger.error("ERROR: download APK");
-    throw err;
+    return null;
   }
 };
 
