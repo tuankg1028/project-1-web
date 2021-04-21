@@ -1202,7 +1202,7 @@ async function main4() {
     appIds.map((appId) => downloadApp(appId, listInValidAppIds))
   );
 
-  console.log("list cannot download", listInValidAppIds);
+  console.log("list cannot download", JSON.stringify(listInValidAppIds));
   console.log("DONE");
 }
 async function downloadApp(appId, listInValidAppIds) {
