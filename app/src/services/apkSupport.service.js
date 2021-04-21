@@ -15,7 +15,6 @@ const API = axios.create({
 
 const download = async (downloadLink, pathFile) => {
   try {
-    console.log(1, downloadLink);
     await new Promise(function (resolve, reject) {
       axios
         .get(downloadLink, {

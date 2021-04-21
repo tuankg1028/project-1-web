@@ -1202,16 +1202,24 @@ async function main4() {
   }
   const listInValidAppIds = [];
   for (let i = 0; i < appIds.length; i++) {
-    const appId = appIds[i];
+    try {
+      const appId = appIds[i];
 
-    const downloadLink = await Services.default.APKSupport.downloadLink(appId);
-    if (downloadLink) {
-      const pathFile = path.join(outputFolder, `${appId}.apk`);
+      const downloadLink = await Services.default.APKSupport.downloadLink(
+        appId
+      );
+      if (downloadLink) {
+        const pathFile = path.join(outputFolder, `${appId}.apk`);
 
-      await Services.default.APKSupport.download(downloadLink, pathFile);
-    } else {
+        await Services.default.APKSupport.download(downloadLink, pathFile);
+      } else {
+        listInValidAppIds.push(appId);
+      }
+    } catch (err) {
+      console.log("ERROR: DOWNLOAD APK FILE FOR APP ${appId}: " + err.message);
       listInValidAppIds.push(appId);
     }
+    console.log("DONE APP STT", i + 1);
   }
   console.log("list cannot download", listInValidAppIds);
   console.log("DONE");
