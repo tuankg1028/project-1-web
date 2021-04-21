@@ -1197,15 +1197,15 @@ async function main4() {
     console.error(err.message);
   }
   const listInValidAppIds = [];
-  for (let i = 0; i < appIds.length; i++) {
-    const appId = appIds[i];
 
-    downloadApp(appId);
-  }
+  await Promise.all(
+    appIds.map((appId) => downloadApp(appId, listInValidAppIds))
+  );
+
   console.log("list cannot download", listInValidAppIds);
   console.log("DONE");
 }
-async function downloadApp(appId) {
+async function downloadApp(appId, listInValidAppIds) {
   try {
     const downloadLink = await Services.default.APKSupport.downloadLink(appId);
     const pathFile = path.join(outputFolder, `${appId}.apk`);
