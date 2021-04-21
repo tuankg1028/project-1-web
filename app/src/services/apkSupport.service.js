@@ -134,7 +134,7 @@ const getInfoApp = async (appId) => {
 const getInfoAppLink = async (link) => {
   try {
     const response = await axios.get(`${link}`, {
-      timeout: 20000,
+      timeout: 50000,
     });
     const $ = cheerio.load(response.data);
 
