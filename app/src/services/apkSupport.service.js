@@ -13,60 +13,9 @@ const API = axios.create({
   timeout: 20000,
 });
 
-const download = async (appName, appIdFromAPKPure, id) => {
+const download = async (downloadLink, pathFile) => {
   try {
-    let pathFile = path.join(__dirname, "../../", "apkTemp/" + id + ".apk");
-    // STEP 1: GET Link to download
-    const response = await API.get(`${appIdFromAPKPure}/versions`);
-
-    const $ = cheerio.load(response.data);
-    let downloadLink;
-    $(".ver-wrap li").each(function () {
-      const type = $(this).find(".ver-item-t.ver-apk").text();
-
-      switch (type) {
-        case "APK":
-          if (!downloadLink) {
-            downloadLink = $(this).find("a").attr("href");
-          }
-
-          break;
-      }
-    });
-
-    // get download link
-    const downloadPageResponse = await API.get(downloadLink);
-    const $DownloadLink = cheerio.load(downloadPageResponse.data);
-    const downloadLinkTmp = $DownloadLink("#download_link").attr("href");
-
-    // case table
-    if (!downloadLinkTmp) {
-      // go to list of download page (ex: https://apkpure.com/facebook/com.facebook.katana/variant/304.0.0.39.118-APK#variants)
-      const downloadListResponse = await API.get(downloadLink);
-      const $DownloadList = cheerio.load(downloadListResponse.data);
-      const downloadPageLink = $DownloadList(".table .table-row")
-        .last()
-        .find(".down a")
-        .attr("href");
-      downloadLink = downloadPageLink;
-
-      // get link on "click here" button
-      const downloadPageResponse1 = await API.get(downloadLink);
-      const $DownloadLink1 = cheerio.load(downloadPageResponse1.data);
-      const downloadLinkTmp1 = $DownloadLink1("#download_link").attr("href");
-
-      downloadLink = downloadLinkTmp1;
-    } else {
-      downloadLink = downloadLinkTmp;
-    }
-
-    if (!downloadLink) return null;
-
-    // add https
-    if (!downloadLink.includes("http")) {
-      downloadLink = APK_PURE_API + downloadLink;
-    }
-
+    console.log(1, downloadLink);
     await new Promise(function (resolve, reject) {
       axios
         .get(downloadLink, {
@@ -77,9 +26,7 @@ const download = async (appName, appIdFromAPKPure, id) => {
 
           response.data.on("end", () => {
             setTimeout(() => {
-              console.log(
-                chalk.green("Dowloaded file from APK Pure successfully")
-              );
+              console.log(chalk.green("Dowloaded APK file successfully"));
 
               resolve();
             }, 3000);
@@ -95,36 +42,15 @@ const download = async (appName, appIdFromAPKPure, id) => {
   }
 };
 
-const getInfoApp = async (appId) => {
+const downloadLink = async (appId) => {
   try {
-    const result = [];
-    const response = await API.get(`${appId}`);
+    const response = await axios.get(
+      `https://apk.support/old-apk-from-google-play/${appId}/`
+    );
     const $ = cheerio.load(response.data);
+    const downloadLink = $(".browser_a").last().find("ul li a").attr("href");
 
-    let category;
-    $(".napkinfo").each(function (i, elem) {
-      const type = $(this).find(".bnapkinfo").text();
-
-      switch (type) {
-        case "Category":
-          category = $(this).find(".htlgb a").text();
-
-          break;
-      }
-    });
-    const downloadLink = $(".godownbox").html();
-
-    console.log(1, downloadLink);
-    // if (CHPlayLink) {
-    //   var urlParts = url.parse(CHPlayLink, true);
-    //   var query = urlParts.query;
-    //   AppId = query.id;
-    // }
-
-    return {
-      category,
-      downloadLink,
-    };
+    return downloadLink;
   } catch (err) {
     console.log(err);
     Helpers.Logger.error("ERROR: APKPURE getInfoApp");
@@ -159,7 +85,7 @@ const getInfoAppLink = async (link) => {
   }
 };
 export default {
-  getInfoApp,
   download,
   getInfoAppLink,
+  downloadLink,
 };

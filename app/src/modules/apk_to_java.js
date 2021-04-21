@@ -1187,4 +1187,33 @@ async function createRow(stt, link) {
   }
   return { ...appInfo, stt: stt + 1, active: appInfo.category ? 1 : 0, link };
 }
-main3();
+// main3();
+
+async function main4() {
+  const outputFolder = path.join(
+    __dirname,
+    "../../../../",
+    "APKSources-malware"
+  );
+  try {
+    execSync(`mkdir ${outputFolder}`);
+  } catch (err) {
+    console.error(err.message);
+  }
+  const listInValidAppIds = [];
+  for (let i = 0; i < appIds.length; i++) {
+    const appId = appIds[i];
+
+    const downloadLink = await Services.default.APKSupport.downloadLink(appId);
+    if (downloadLink) {
+      const pathFile = path.join(outputFolder, `${appId}.apk`);
+
+      await Services.default.APKSupport.download(downloadLink, pathFile);
+    } else {
+      listInValidAppIds.push(appId);
+    }
+  }
+  console.log("list cannot download", listInValidAppIds);
+  console.log("DONE");
+}
+main4();
