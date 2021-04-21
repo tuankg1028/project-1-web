@@ -99,7 +99,7 @@ const getInfoApp = async (appId) => {
       contentPrivacyPolicy,
     };
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     Helpers.Logger.error("ERROR: getInfoApp");
   }
 };
