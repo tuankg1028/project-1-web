@@ -9,6 +9,7 @@ const apkFolders = [
   "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/StormDroid_KuafuDet_2082/Malware2082",
   // "/Users/a1234/individual/abc/project-1-web/app/sourceTemp",
 ];
+const csv = require("csvtojson");
 const _ = require("lodash");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 const permissions = require("../../data/apktojava/System permissions.json");
@@ -1281,10 +1282,9 @@ async function downloadApp(appId, listInValidAppIds) {
 }
 // main4();
 
+// DAP BY Group
 async function main5() {
   for (const categoryGroup in categoryGroups) {
-    let appsMatchedContent = "";
-
     const categoriesData = categoryGroups[categoryGroup];
     const apps = await Models.App.find({
       categoryName: { $in: categoriesData },
@@ -1318,3 +1318,50 @@ async function main5() {
   }
 }
 main5();
+
+// create malicious apps on db
+async function main6() {
+  const fileData = await csv({
+    noheader: true,
+    output: "csv",
+  }).fromFile(path.join(__dirname, "../../data/apktojava/MaliciousApp.csv"));
+
+  const [, ...rows] = fileData;
+  const apps = rows.filter((item) => item[3] == 1 && item[5] == "MPDroid");
+
+  for (let i = 0; i < apps.length; i++) {
+    const element = array[i];
+  }
+}
+
+// main6();
+
+async function main7() {
+  const fileData = await csv({
+    noheader: true,
+    output: "csv",
+  }).fromFile(path.join(__dirname, "../../data/apktojava/MaliciousApp.csv"));
+
+  const [, ...rows] = fileData;
+  const apps = rows.filter((item) => item[3] == 1 && item[5] == "Our Dataset");
+
+  for (let i = 0; i < apps.length; i++) {
+    const [, appName, , , link] = apps[i];
+
+    const outpathPath = path.join(__dirname, `data1/${appName}.txt`);
+    if (!fs.existsSync(outpathPath)) {
+      console.log(2, appName);
+      await Services.default.APKSupport.getInfoAppLink(link).then((appInfo) => {
+        fs.writeFile(
+          path.join(__dirname, `data1/${appName}.txt`),
+          appInfo.description,
+          { encoding: "utf8" },
+          () => {}
+        );
+      });
+    }
+  }
+  console.log("DONE");
+}
+
+// main7();
