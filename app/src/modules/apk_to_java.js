@@ -1264,7 +1264,7 @@ async function main4() {
 
   await Promise.all(
     rows.map((row) => {
-      const appIds = _.last(row[4].split("/"));
+      const appId = _.last(row[4].split("/"));
 
       return downloadApp(appId, listInValidAppIds);
     })
