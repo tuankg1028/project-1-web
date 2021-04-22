@@ -1398,7 +1398,7 @@ async function main8() {
         }
       }
 
-      await Models.CategoryNode.create({
+      await Models.CategoryMDroid.create({
         categoryName: categoryGroup,
         nodes: result,
       });
