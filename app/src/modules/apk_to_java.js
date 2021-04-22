@@ -1317,7 +1317,7 @@ async function main5() {
     });
   }
 }
-// main5();
+main5();
 
 // create malicious apps on db
 async function main6() {
