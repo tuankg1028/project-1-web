@@ -1294,7 +1294,7 @@ async function downloadApp(appId, listInValidAppIds) {
   }
   console.log("DONE APP", appId);
 }
-main4();
+// main4();
 
 // DAP BY Group
 async function main5() {
@@ -1428,20 +1428,65 @@ async function main9() {
     output: "csv",
   }).fromFile(path.join(__dirname, "../../data/apktojava/MaliciousApp.csv"));
 
-  const [, ...rows] = fileData;
-  const appsInMPDroid = rows.filter(
-    (item) => item[3] == 1 && item[5] == "MPDroid"
+  let [, ...rows] = fileData;
+  rows = rows.filter((item) => item[3] == 1);
+
+  await Promise.all(rows.map((row) => createDataSetApps(row)));
+}
+async function createDataSetApps(item) {
+  const [, appName, categoryName, , link, type] = item;
+  const appId = _.last(link.split("/"));
+
+  const sourceFolder = path.join(
+    __dirname,
+    "../../../../",
+    "APKSources-malware"
+  );
+  const outputPath = path.join(__dirname, `../sourceTemp/${appId}`);
+
+  const jadxFolder = path.join(__dirname, "../../jadx/build/jadx/bin/jadx");
+  execSync(
+    `sh ${jadxFolder} -d "${outputPath}" "${
+      sourceFolder + "/" + appId + ".apk"
+    }}"`
   );
 
-  const appsInOurDataSet = rows.filter(
-    (item) => item[3] == 1 && item[5] == "Our Dataset"
+  const contents = await Helpers.default.File.getContentOfFolder(
+    `${outputPath}/sources`
   );
 
-  console.log(appsInMPDroid.length, appsInOurDataSet.length);
-  for (let i = 0; i < appsInMPDroid.length; i++) {
-    const appsInMPDroidItem = appsInMPDroid[i];
+  const leafNodeBaseLines = await Services.default.BaseLine.initBaseLineForTree(
+    contents
+  );
 
-    // console.log(appsInMPDroidItem);
+  const functionConstants = leafNodeBaseLines.filter((node) => {
+    return node.right - node.left === 1 && node.baseLine === 1;
+  });
+
+  const nodes = functionConstants.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      value: item.baseLine,
+      parent: item.parent._id,
+    };
+  });
+  if (type === "Our Dataset") {
+    await Models.OurMaliciousDataset.create({
+      appName,
+      categoryName,
+      appId,
+      link,
+      nodes,
+    });
+  } else {
+    await Models.MPDroidDataset.create({
+      appName,
+      categoryName,
+      appId,
+      link,
+      nodes,
+    });
   }
 }
-// main9();
+main9();
