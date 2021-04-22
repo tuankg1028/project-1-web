@@ -1254,10 +1254,24 @@ async function main4() {
     console.error(err.message);
   }
   const listInValidAppIds = [];
+  const fileData = await csv({
+    noheader: true,
+    output: "csv",
+  }).fromFile(path.join(__dirname, "../../data/apktojava/MaliciousApp.csv"));
+  let [, ...rows] = fileData;
+
+  rows = rows.filter((item) => item[3] == 1);
 
   await Promise.all(
-    appIds.map((appId) => downloadApp(appId, listInValidAppIds))
+    rows.map((row) => {
+      const appIds = _.last(row[4].split("/"));
+
+      return downloadApp(appId, listInValidAppIds);
+    })
   );
+  // await Promise.all(
+  //   appIds.map((appId) => )
+  // );
 
   console.log("list cannot download", JSON.stringify(listInValidAppIds));
   console.log("DONE");
@@ -1280,7 +1294,7 @@ async function downloadApp(appId, listInValidAppIds) {
   }
   console.log("DONE APP", appId);
 }
-// main4();
+main4();
 
 // DAP BY Group
 async function main5() {
@@ -1317,7 +1331,7 @@ async function main5() {
     });
   }
 }
-main5();
+// main5();
 
 // create malicious apps on db
 async function main6() {
@@ -1405,4 +1419,29 @@ async function main8() {
     }
   }
 }
-main8();
+// main8();
+
+// create ourMaliciousDataset and MPDroidDataset on db
+async function main9() {
+  const fileData = await csv({
+    noheader: true,
+    output: "csv",
+  }).fromFile(path.join(__dirname, "../../data/apktojava/MaliciousApp.csv"));
+
+  const [, ...rows] = fileData;
+  const appsInMPDroid = rows.filter(
+    (item) => item[3] == 1 && item[5] == "MPDroid"
+  );
+
+  const appsInOurDataSet = rows.filter(
+    (item) => item[3] == 1 && item[5] == "Our Dataset"
+  );
+
+  console.log(appsInMPDroid.length, appsInOurDataSet.length);
+  for (let i = 0; i < appsInMPDroid.length; i++) {
+    const appsInMPDroidItem = appsInMPDroid[i];
+
+    // console.log(appsInMPDroidItem);
+  }
+}
+// main9();

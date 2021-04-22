@@ -77,9 +77,12 @@ const getInfoAppLink = async (link) => {
       }
     });
     const appName = $(".apkinfo h1").text().replace("APK", "").trim();
+
+    const description = $(".description .fullmtx").text();
     return {
       category,
       appName,
+      description,
     };
   } catch (err) {
     throw Error(err);
