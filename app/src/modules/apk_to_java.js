@@ -1317,7 +1317,7 @@ async function main5() {
     });
   }
 }
-main5();
+// main5();
 
 // create malicious apps on db
 async function main6() {
@@ -1365,3 +1365,44 @@ async function main7() {
 }
 
 // main7();
+
+// DAP BY sub Group
+async function main8() {
+  for (const categoryGroup in categoryGroups) {
+    const categoriesData = categoryGroups[categoryGroup];
+    for (let i = 0; i < categoriesData.length; i++) {
+      const category = categoriesData[i];
+
+      const apps = await Models.App.find({
+        categoryName: category,
+      });
+
+      const categoryKeywords = apps.reduce((acc, app) => {
+        const keywords = _.map(app.nodes, "name");
+        keywords.forEach((keyword) => {
+          if (!acc[keyword]) acc[keyword] = 1;
+          else acc[keyword]++;
+        });
+
+        return acc;
+      }, {});
+
+      const result = [];
+      for (const keyword in categoryKeywords) {
+        const value = categoryKeywords[keyword];
+        if (value / apps.length > 0.5) {
+          const node = await Models.Tree.findOne({
+            name: keyword,
+          });
+          result.push(node);
+        }
+      }
+
+      await Models.CategoryNode.create({
+        categoryName: categoryGroup,
+        nodes: result,
+      });
+    }
+  }
+}
+main8();
