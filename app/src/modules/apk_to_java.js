@@ -1434,57 +1434,63 @@ async function main9() {
   await Promise.all(rows.map((row) => createDataSetApps(row)));
 }
 async function createDataSetApps(item) {
-  const [, appName, categoryName, , link, type] = item;
+  try {
+    const [, appName, categoryName, , link, type] = item;
 
-  const Model =
-    type === "Our Dataset" ? Models.OurMaliciousDataset : Models.MPDroidDataset;
-  const appDB = await Model.findOne({
-    appName,
-  });
+    const Model =
+      type === "Our Dataset"
+        ? Models.OurMaliciousDataset
+        : Models.MPDroidDataset;
+    const appDB = await Model.findOne({
+      appName,
+    });
 
-  if (appDB) return;
-  const appId = _.last(link.split("/"));
+    if (appDB) return;
+    const appId = _.last(link.split("/"));
 
-  const sourceFolder = path.join(
-    __dirname,
-    "../../../../",
-    "APKSources-malware"
-  );
-  const outputPath = path.join(__dirname, `../sourceTemp/${appId}`);
+    const sourceFolder = path.join(
+      __dirname,
+      "../../../../",
+      "APKSources-malware"
+    );
+    const outputPath = path.join(__dirname, `../sourceTemp/${appId}`);
 
-  const jadxFolder = path.join(__dirname, "../../jadx/build/jadx/bin/jadx");
-  execSync(
-    `sh ${jadxFolder} -d "${outputPath}" "${
-      sourceFolder + "/" + appId + ".apk"
-    }}"`
-  );
+    const jadxFolder = path.join(__dirname, "../../jadx/build/jadx/bin/jadx");
+    execSync(
+      `sh ${jadxFolder} -d "${outputPath}" "${
+        sourceFolder + "/" + appId + ".apk"
+      }}"`
+    );
 
-  const contents = await Helpers.default.File.getContentOfFolder(
-    `${outputPath}/sources`
-  );
+    const contents = await Helpers.default.File.getContentOfFolder(
+      `${outputPath}/sources`
+    );
 
-  const leafNodeBaseLines = await Services.default.BaseLine.initBaseLineForTree(
-    contents
-  );
+    const leafNodeBaseLines = await Services.default.BaseLine.initBaseLineForTree(
+      contents
+    );
 
-  const functionConstants = leafNodeBaseLines.filter((node) => {
-    return node.right - node.left === 1 && node.baseLine === 1;
-  });
+    const functionConstants = leafNodeBaseLines.filter((node) => {
+      return node.right - node.left === 1 && node.baseLine === 1;
+    });
 
-  const nodes = functionConstants.map((item) => {
-    return {
-      id: item._id,
-      name: item.name,
-      value: item.baseLine,
-      parent: item.parent._id,
-    };
-  });
-  await Model.create({
-    appName,
-    categoryName,
-    appId,
-    link,
-    nodes,
-  });
+    const nodes = functionConstants.map((item) => {
+      return {
+        id: item._id,
+        name: item.name,
+        value: item.baseLine,
+        parent: item.parent._id,
+      };
+    });
+    await Model.create({
+      appName,
+      categoryName,
+      appId,
+      link,
+      nodes,
+    });
+  } catch (err) {
+    console.log("ERROR: createDataSetApps", err.message);
+  }
 }
 main9();
