@@ -1459,7 +1459,7 @@ async function createDataSetApps(item) {
     execSync(
       `sh ${jadxFolder} -d "${outputPath}" "${
         sourceFolder + "/" + appId + ".apk"
-      }}"`
+      }"`
     );
 
     const contents = await Helpers.default.File.getContentOfFolder(
