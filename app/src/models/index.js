@@ -13,7 +13,7 @@ class Model {
     this.CategoryNode = CategoryNode;
     this.CategoryMDroid = CategoryMDroid;
     this.MPDroidDataset = MPDroidDataset;
-    this.OurMaliciousDataset = ourMaliciousDataset;
+    this.OurMaliciousDataset = OurMaliciousDataset;
   }
 }
 export default new Model();
