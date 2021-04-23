@@ -1435,6 +1435,14 @@ async function main9() {
 }
 async function createDataSetApps(item) {
   const [, appName, categoryName, , link, type] = item;
+
+  const Model =
+    type === "Our Dataset" ? Models.OurMaliciousDataset : Models.MPDroidDataset;
+  const appDB = await Model.findOne({
+    appName,
+  });
+
+  if (appDB) return;
   const appId = _.last(link.split("/"));
 
   const sourceFolder = path.join(
@@ -1471,22 +1479,12 @@ async function createDataSetApps(item) {
       parent: item.parent._id,
     };
   });
-  if (type === "Our Dataset") {
-    await Models.OurMaliciousDataset.create({
-      appName,
-      categoryName,
-      appId,
-      link,
-      nodes,
-    });
-  } else {
-    await Models.MPDroidDataset.create({
-      appName,
-      categoryName,
-      appId,
-      link,
-      nodes,
-    });
-  }
+  await Model.create({
+    appName,
+    categoryName,
+    appId,
+    link,
+    nodes,
+  });
 }
 main9();
