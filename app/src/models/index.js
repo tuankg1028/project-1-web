@@ -4,7 +4,7 @@ import AppTemp from "./app-temp.model";
 import CategoryNode from "./category-node.model";
 import CategoryMDroid from "./categoryMDroid";
 import MPDroidDataset from "./MPDroidDataset";
-import ourMaliciousDataset from "./ourMaliciousDataset.model";
+import OurMaliciousDataset from "./ourMaliciousDataset.model";
 class Model {
   constructor() {
     this.Tree = Tree;
@@ -13,7 +13,7 @@ class Model {
     this.CategoryNode = CategoryNode;
     this.CategoryMDroid = CategoryMDroid;
     this.MPDroidDataset = MPDroidDataset;
-    this.ourMaliciousDataset = ourMaliciousDataset;
+    this.OurMaliciousDataset = ourMaliciousDataset;
   }
 }
 export default new Model();
