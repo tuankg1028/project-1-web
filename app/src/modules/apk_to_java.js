@@ -1348,12 +1348,12 @@ async function downloadApp(appId, listInValidAppIds) {
       listInValidAppIds.push(appId);
     }
   } catch (err) {
-    console.log("ERROR: DOWNLOAD APK FILE FOR APP ${appId}: " + err.message);
+    console.log(`ERROR: DOWNLOAD APK FILE FOR APP ${appId}: ` + err.message);
     listInValidAppIds.push(appId);
   }
-  console.log("DONE APP", appId);
+  console.log(`DONE APP ${appId}`, appId);
 }
-// main4();
+main4();
 
 // DAP BY Group
 async function main5() {
@@ -1477,7 +1477,7 @@ async function computeDAPForSubCategory(category) {
     nodes: result,
   });
 }
-main8();
+// main8();
 
 // create ourMaliciousDataset and MPDroidDataset on db
 async function main9() {
