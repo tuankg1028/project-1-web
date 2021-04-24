@@ -1246,6 +1246,7 @@ async function createRow(stt, link) {
 }
 // main3();
 
+// download apk malware apps into APKSources-malware folder
 const outputFolder = path.join(__dirname, "../../../../", "APKSources-malware");
 async function main4() {
   try {
@@ -1383,6 +1384,7 @@ async function main7() {
 
 // DAP BY sub Group
 async function main8() {
+  console.log("RUNNING DAP BY sub Group");
   const promises = [];
   for (const categoryGroup in categoryGroups) {
     const categoriesData = categoryGroups[categoryGroup];
