@@ -70,6 +70,62 @@ const categoryGroups = {
   Tools: ["Tools", "Personalization"],
   "Travel & Local": ["Travel & Local"],
 };
+
+const categories = [
+  "Beauty",
+  "Lifestyle",
+  "Business",
+  "Education",
+  "Educational",
+  "Entertainment",
+  "Photography",
+  "Finance",
+  "Events",
+  "Action",
+  "Action & Adventure",
+  "Adventure",
+  "Arcade",
+  "Art & Design",
+  "Auto & Vehicles",
+  "Board",
+  "Books & Reference",
+  "Brain Games",
+  "Card",
+  "Casino",
+  "Casual",
+  "Comics",
+  "Creativity",
+  "House & Home",
+  "Libraries & Demo",
+  "News & Magazines",
+  "Parenting",
+  "Pretend Play",
+  "Productivity",
+  "Puzzle",
+  "Racing",
+  "Role Playing",
+  "Simulation",
+  "Strategy",
+  "Trivia",
+  "Weather",
+  "Word",
+  "Food & Drink",
+  "Health & Fitness",
+  "Maps & Navigation",
+  "Medical",
+  "Music & Audio",
+  "Video Players & Editors",
+  "Music & Video",
+  "Music",
+  "Shopping",
+  "Social",
+  "Dating",
+  "Communication",
+  "Sports",
+  "Tools",
+  "Personalization",
+  "Travel & Local",
+];
 const appIds = [
   "com.adventuregame.inforestisland",
   "com.adventuresofchipmunks.rescuerangers",
@@ -1385,16 +1441,8 @@ async function main7() {
 // DAP BY sub Group
 async function main8() {
   console.log("RUNNING DAP BY sub Group");
-  const promises = [];
-  for (const categoryGroup in categoryGroups) {
-    const categoriesData = categoryGroups[categoryGroup];
-    for (let i = 0; i < categoriesData.length; i++) {
-      const category = categoriesData[i];
-      console.log(1, category);
-      promises.push(computeDAPForSubCategory(category));
-    }
-  }
-  await Promise.all(promises);
+
+  await Promise.all(categories.map(computeDAPForSubCategory));
 }
 async function computeDAPForSubCategory(category) {
   const apps = await Models.App.find({
