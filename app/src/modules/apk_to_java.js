@@ -1489,8 +1489,13 @@ async function main9() {
 
   let [, ...rows] = fileData;
   rows = rows.filter((item) => item[3] == 1);
+  //
 
-  await Promise.all(rows.map((row) => createDataSetApps(row)));
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    await createDataSetApps(row);
+  }
+  // await Promise.all(rows.map((row) => createDataSetApps(row)));
 }
 async function createDataSetApps(item) {
   try {
