@@ -68,7 +68,7 @@ const categoryGroups = {
   Social: ["Social", "Dating", "Communication"],
   Sports: ["Sports"],
   Tools: ["Tools", "Personalization"],
-  "Travel & Local": "Travel & Local",
+  "Travel & Local": ["Travel & Local"],
 };
 const appIds = [
   "com.adventuregame.inforestisland",
@@ -1333,6 +1333,7 @@ async function main5() {
 }
 // main5();
 
+// no use
 // create malicious apps on db
 async function main6() {
   const fileData = await csv({
@@ -1382,44 +1383,49 @@ async function main7() {
 
 // DAP BY sub Group
 async function main8() {
+  const promises = [];
   for (const categoryGroup in categoryGroups) {
     const categoriesData = categoryGroups[categoryGroup];
     for (let i = 0; i < categoriesData.length; i++) {
       const category = categoriesData[i];
-
-      const apps = await Models.App.find({
-        categoryName: category,
-      });
-
-      const categoryKeywords = apps.reduce((acc, app) => {
-        const keywords = _.map(app.nodes, "name");
-        keywords.forEach((keyword) => {
-          if (!acc[keyword]) acc[keyword] = 1;
-          else acc[keyword]++;
-        });
-
-        return acc;
-      }, {});
-
-      const result = [];
-      for (const keyword in categoryKeywords) {
-        const value = categoryKeywords[keyword];
-        if (value / apps.length > 0.5) {
-          const node = await Models.Tree.findOne({
-            name: keyword,
-          });
-          result.push(node);
-        }
-      }
-
-      await Models.CategoryMDroid.create({
-        categoryName: categoryGroup,
-        nodes: result,
-      });
+      console.log(1, category);
+      promises.push(computeDAPForSubCategory(category));
     }
   }
+  await Promise.all(promises);
 }
-// main8();
+async function computeDAPForSubCategory(category) {
+  const apps = await Models.App.find({
+    categoryName: category,
+  });
+
+  const categoryKeywords = apps.reduce((acc, app) => {
+    const keywords = _.map(app.nodes, "name");
+    keywords.forEach((keyword) => {
+      if (!acc[keyword]) acc[keyword] = 1;
+      else acc[keyword]++;
+    });
+
+    return acc;
+  }, {});
+
+  const result = [];
+  for (const keyword in categoryKeywords) {
+    const value = categoryKeywords[keyword];
+    if (value / apps.length > 0.5) {
+      const node = await Models.Tree.findOne({
+        name: keyword,
+      });
+      result.push(node);
+    }
+  }
+
+  await Models.CategoryMDroid.create({
+    categoryName: category,
+    nodes: result,
+  });
+}
+main8();
 
 // create ourMaliciousDataset and MPDroidDataset on db
 async function main9() {
@@ -1493,4 +1499,4 @@ async function createDataSetApps(item) {
     console.log("ERROR: createDataSetApps", err.message);
   }
 }
-main9();
+// main9();
