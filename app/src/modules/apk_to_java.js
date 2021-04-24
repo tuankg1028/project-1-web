@@ -1305,6 +1305,7 @@ async function createRow(stt, link) {
 // download apk malware apps into APKSources-malware folder
 const outputFolder = path.join(__dirname, "../../../../", "APKSources-malware");
 async function main4() {
+  console.log("RUNNING apk malware apps into APKSources-malware folder");
   try {
     execSync(`mkdir ${outputFolder}`);
   } catch (err) {
@@ -1335,9 +1336,10 @@ async function main4() {
 }
 async function downloadApp(appId, listInValidAppIds) {
   try {
-    const downloadLink = await Services.default.APKSupport.downloadLink(appId);
     const pathFile = path.join(outputFolder, `${appId}.apk`);
+    if (fs.existsSync(pathFile)) return;
 
+    const downloadLink = await Services.default.APKSupport.downloadLink(appId);
     const isSuccess = await Services.default.APKSupport.download(
       downloadLink,
       pathFile
@@ -1465,7 +1467,7 @@ async function computeDAPForSubCategory(category) {
     if (value / apps.length > 0.5) {
       const node = await Models.Tree.findOne({
         name: keyword,
-      });
+      }).cache(60 * 60 * 24 * 30);
       result.push(node);
     }
   }
