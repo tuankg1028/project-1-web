@@ -1352,8 +1352,9 @@ async function downloadApp(appId, listInValidAppIds) {
     listInValidAppIds.push(appId);
   }
   console.log(`DONE APP ${appId}`, appId);
+  return;
 }
-main4();
+// main4();
 
 // DAP BY Group
 async function main5() {
@@ -1551,4 +1552,4 @@ async function createDataSetApps(item) {
     console.log("ERROR: createDataSetApps", err.message);
   }
 }
-// main9();
+main9();
