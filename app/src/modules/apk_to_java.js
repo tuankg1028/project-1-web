@@ -1445,9 +1445,19 @@ async function main7() {
 async function main8() {
   console.log("RUNNING DAP BY sub Group");
 
-  await Promise.all(categories.map(computeDAPForSubCategory));
+  for (let i = 0; i < categories.length; i++) {
+    const category = categories[i];
+
+    await computeDAPForSubCategory(category);
+  }
+  // await Promise.all(categories.map(computeDAPForSubCategory));
 }
 async function computeDAPForSubCategory(category) {
+  const categoryExisted = await Models.CategoryMDroid.findOne({
+    categoryName: category,
+  });
+  if (categoryExisted) return;
+  console.log(1, category);
   const apps = await Models.App.find({
     categoryName: category,
   });
@@ -1478,7 +1488,7 @@ async function computeDAPForSubCategory(category) {
     nodes: result,
   });
 }
-// main8();
+main8();
 
 // create ourMaliciousDataset and MPDroidDataset on db
 async function main9() {
@@ -1557,4 +1567,4 @@ async function createDataSetApps(item) {
     console.log("ERROR: createDataSetApps", err.message);
   }
 }
-main9();
+// main9();
