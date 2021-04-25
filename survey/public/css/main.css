@@ -572,7 +572,7 @@ b {
 }
 
 .container-survey .wrap-survey #questions .more, .see-less-btn {display: none;}
-.container-survey .wrap-survey #questions .see-more-btn, .see-less-btn{
+.container-survey .wrap-survey #questions .see-more-btn, .see-less-btn, .see-next-btn{
   cursor: pointer;
   color: #007bff;
 }

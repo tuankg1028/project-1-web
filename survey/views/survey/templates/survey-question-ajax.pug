@@ -9,7 +9,7 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
     | #{question.developer}
   div.text-center
     | #{question.categoryName}
-  div
+  div.section
     span.font-weight-bold Description: 
     | !{question.description}
   // category
@@ -27,122 +27,124 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
 
 
     // Collection Personal Data
-    .section1.mt-3
-      // label
-      .section1-label.font-weight-bold
-        | This app may collect #{question.personalDataTypes.length} personal data type, namely: 
-        each personalDataType, index in question.personalDataTypes
-            | #{personalDataType.name}
-            if(index != question.personalDataTypes.length - 1)
-              | #{", "}
-            else 
-              | #{"."}
-      // node data
-      .wrap-node
-        ul 
-          each personalDataType in question.personalDataTypes
-            li
-              | #{personalDataType.name}: #{personalDataType.mean}
-              div 
-                | * Apis: 
-                each api, index in personalDataType.originalApis
-                  | #{api.name}
-                  if(index != personalDataType.originalApis.length - 1)
-                    | #{", "}
-                  else 
-                    | #{"."}
-            
+    section(style="display: none").section
+      .section1.mt-3
+        // label
+        .section1-label.font-weight-bold
+          | This app may collect #{question.personalDataTypes.length} personal data type, namely: 
+          each personalDataType, index in question.personalDataTypes
+              | #{personalDataType.name}
+              if(index != question.personalDataTypes.length - 1)
+                | #{", "}
+              else 
+                | #{"."}
+        // node data
+        .wrap-node
+          ul 
+            each personalDataType in question.personalDataTypes
+              li
+                | #{personalDataType.name}: #{personalDataType.mean}
+                div 
+                  | * Apis: 
+                  each api, index in personalDataType.originalApis
+                    | #{api.name}
+                    if(index != personalDataType.originalApis.length - 1)
+                      | #{", "}
+                    else 
+                      | #{"."}
               
-
-              each api in personalDataType.apis
-                div.mt-2 - #{api.groupName}: 
-                  div.pl-3  + #{api.mean}
-
-    // Collection Personal Data
-    if(question.collectionData.length)
-      .section2.mt-3
-        // label
-        .section2-label.font-weight-bold
-          | Data Collection Purpose:
-        // node data
-        .wrap-node
-          ul 
-            each category in question.collectionData
                 
-              li #{category.name}: 
-                ul.more
-                  each sub1 in category.children
-                    li(style="list-style-type: circle;") #{sub1.name}: 
-                      ul.more
-                        if(sub1.children && sub1.children.length > 0)
-                          each sub2 in sub1.children
-                            li(style="list-style-type: square;") #{sub2.name}: 
-                        if((!sub1.children || sub1.children.length == 0) && sub1.contents.length) 
-                          each content in sub1.contents
-                            li.capitalizeFirst(style="list-style-type: square;") #{content.trim()}
-                      div.see-more-btn() Read more
-                  if(category.children.length == 0 && category.contents.length > 0) 
-                    each content in category.contents
-                      li.capitalizeFirst(style="list-style-type: circle;") #{content.trim()}
-                div.see-more-btn() Read more
 
-    // Third party Data
-    if(question.thirdPartyData.length)
-      .section2.mt-3
-        // label
-        .section2-label.font-weight-bold
-          | Third Party:
-        // node data
-        .wrap-node
-          ul 
-            each category in question.thirdPartyData
-                
-              li #{category.name}: 
-                ul.more
-                  each sub1 in category.children
-                    li(style="list-style-type: circle;") #{sub1.name}: 
-                      ul.more
-                        if(sub1.children && sub1.children.length > 0)
-                          each sub2 in sub1.children
-                            li(style="list-style-type: square;") #{sub2.name}: 
-                        if((!sub1.children || sub1.children.length == 0) && sub1.contents.length) 
-                          each content in sub1.contents
-                            li.capitalizeFirst(style="list-style-type: square;") #{content.trim()}
-                      div.see-more-btn() Read more
-                  if(category.children.length == 0 && category.contents.length > 0) 
-                    each content in category.contents
-                      li.capitalizeFirst(style="list-style-type: circle;") #{content.trim()}      
-                div.see-more-btn() Read more
+                each api in personalDataType.apis
+                  div.mt-2 - #{api.groupName}: 
+                    div.pl-3  + #{api.mean}
 
-      // Retention Data
-      if(question.retentionData.length)
+    section(style="display: none").section
+      // Collection Personal Data
+      if(question.collectionData.length)
         .section2.mt-3
           // label
           .section2-label.font-weight-bold
-            | Retention:
+            | Data Collection Purpose:
           // node data
           .wrap-node
             ul 
-              each category in question.retentionData
+              each category in question.collectionData
                   
-                li #{category.name}: 
-                  ul.more
-                    each sub1 in category.children
-                      li(style="list-style-type: circle;") #{sub1.isShowKey ? sub1.name : sub1.name + ":"} 
+                li #{category.name}
+                //-   ul.more
+                //-     each sub1 in category.children
+                //-       li(style="list-style-type: circle;") #{sub1.name}: 
+                //-         ul.more
+                //-           if(sub1.children && sub1.children.length > 0)
+                //-             each sub2 in sub1.children
+                //-               li(style="list-style-type: square;") #{sub2.name}: 
+                //-           if((!sub1.children || sub1.children.length == 0) && sub1.contents.length) 
+                //-             each content in sub1.contents
+                //-               li.capitalizeFirst(style="list-style-type: square;") #{content.trim()}
+                //-         div.see-more-btn() Read more
+                //-     if(category.children.length == 0 && category.contents.length > 0) 
+                //-       each content in category.contents
+                //-         li.capitalizeFirst(style="list-style-type: circle;") #{content.trim()}
+                //-   div.see-more-btn() Read more
 
-                        if(!sub1.isShowKey && sub1.contents.length) 
-                          ul.more
-                            each content in sub1.contents
-                              li.capitalizeFirst #{content.trim()}
-                          div.see-more-btn() Read more
-                    if(category.children.length == 0 && category.contents.length > 0) 
-                      each content in category.contents
-                        li.capitalizeFirst(style="list-style-type: circle;") #{content.trim()}
-                  div.see-more-btn() Read more
+      // Third party Data
+      if(question.thirdPartyData.length)
+        .section2.mt-3
+          // label
+          .section2-label.font-weight-bold
+            | Third Party:
+          // node data
+          .wrap-node
+            ul 
+              each category in question.thirdPartyData
+                  
+                li #{category.name}
+                //-   ul.more
+                //-     each sub1 in category.children
+                //-       li(style="list-style-type: circle;") #{sub1.name}: 
+                //-         ul.more
+                //-           if(sub1.children && sub1.children.length > 0)
+                //-             each sub2 in sub1.children
+                //-               li(style="list-style-type: square;") #{sub2.name}: 
+                //-           if((!sub1.children || sub1.children.length == 0) && sub1.contents.length) 
+                //-             each content in sub1.contents
+                //-               li.capitalizeFirst(style="list-style-type: square;") #{content.trim()}
+                //-         div.see-more-btn() Read more
+                //-     if(category.children.length == 0 && category.contents.length > 0) 
+                //-       each content in category.contents
+                //-         li.capitalizeFirst(style="list-style-type: circle;") #{content.trim()}      
+                //-   div.see-more-btn() Read more
+
+      //- // Retention Data
+      //- if(question.retentionData.length)
+      //-   .section2.mt-3
+      //-     // label
+      //-     .section2-label.font-weight-bold
+      //-       | Retention:
+      //-     // node data
+      //-     .wrap-node
+      //-       ul 
+      //-         each category in question.retentionData
+                  
+      //-           li #{category.name}: 
+      //-             ul.more
+      //-               each sub1 in category.children
+      //-                 li(style="list-style-type: circle;") #{sub1.isShowKey ? sub1.name : sub1.name + ":"} 
+
+      //-                   if(!sub1.isShowKey && sub1.contents.length) 
+      //-                     ul.more
+      //-                       each content in sub1.contents
+      //-                         li.capitalizeFirst #{content.trim()}
+      //-                     div.see-more-btn() Read more
+      //-               if(category.children.length == 0 && category.contents.length > 0) 
+      //-                 each content in category.contents
+      //-                   li.capitalizeFirst(style="list-style-type: circle;") #{content.trim()}
+      //-             div.see-more-btn() Read more
 
   
     // comments
-    .comments-data-judgement.mt-3
+    .comments-data-judgement.mt-3.section(style="display: none")
       .final-judgement
         //- // label
         //- .comments-data-label.font-weight-bold.text-underline
@@ -166,4 +168,4 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
               | Maybe
               input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="3")
               span.checkmark
-
+    div.see-next-btn() Next

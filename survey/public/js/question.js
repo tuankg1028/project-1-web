@@ -32,7 +32,31 @@
     // change height
     $(".slick-slide").css(
       "height",
-      $(".slick-active form").height() + 20 + "px"
+      $(".slick-active form").height() + 50 + "px"
+    );
+  });
+
+  let timeNext = {}
+  $("body").on("click", ".see-next-btn", function() {
+    const appId = $(".slick-active .app-id").val();
+    if(!timeNext[appId]) timeNext[appId] = 1;
+
+    let currentSection = $(".slick-active .section")[timeNext[appId]];
+    $(currentSection).css("display", "inline");
+    timeNext[appId]++
+
+    // check next section next
+    let nextSection = $(".slick-active .section")[timeNext[appId]];
+    if(!nextSection) {$(this).css("display", "none"); $(".wrap-btn-next .button-next").css("display","block");}
+    
+    
+    console.log(1, timeNext)
+   
+
+    // change height
+    $(".slick-slide").css(
+      "height",
+      $(".slick-active form").height() + 50 + "px"
     );
   });
 
@@ -124,7 +148,7 @@
     setTimeout(() => {
       $(".slick-slide").css(
         "height",
-        $(".slick-active form").height() + 20 + "px"
+        $(".slick-active form").height() + 50 + "px"
       );
     }, 500);
 
@@ -178,7 +202,7 @@
     // change height
     $(".slick-slide").css(
       "height",
-      $(".slick-active form").height() + 20 + "px"
+      $(".slick-active form").height() + 50 + "px"
     );
   });
 
@@ -263,6 +287,9 @@
           $(".slick-active .status").val(1);
           appTimer();
           // capitalizeFLetter();
+
+          $(".wrap-btn-next .button-next").css("display","none");
+          
         })
         .fail(err => {
           endLoad();
@@ -331,10 +358,11 @@
 
   function appTimer() {
     $(".slick-active .colec-data").hide();
+    
     // change height
     $(".slick-slide").css(
       "height",
-      $(".slick-active form").height() + 20 + "px"
+      $(".slick-active form").height() + 50 + "px"
     );
     // show collect
     setTimeout(() => {
@@ -342,7 +370,7 @@
       // change height
       $(".slick-slide").css(
         "height",
-        $(".slick-active form").height() + 20 + "px"
+        $(".slick-active form").height() + 50 + "px"
       );
     }, 0);
   }
@@ -385,7 +413,7 @@
 
     $(".slick-slide").css(
       "height",
-      $(".slick-active form").height() + 20 + "px"
+      $(".slick-active form").height() + 50 + "px"
     );
   });
 })(jQuery);
