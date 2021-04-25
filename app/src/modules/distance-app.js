@@ -117,9 +117,7 @@ async function createTree(data, parent = null, path = "") {
   let result = [];
   const nodes = await Models.Tree.find({
     parent,
-  })
-    .limit(1)
-    .cache(60 * 60 * 24 * 30);
+  }).cache(60 * 60 * 24 * 30);
   if (nodes && nodes.length === 0) return result;
 
   for (let i = 0; i < nodes.length; i++) {
@@ -138,13 +136,15 @@ async function createTree(data, parent = null, path = "") {
 }
 
 function initBaseLineForTree(treeChild, nodeNameData) {
-  if (~nodeNameData.indexOf(treeChild.name)) treeChild.baseLine = 1;
-  else treeChild.baseLine = 0;
+  if (~nodeNameData.indexOf(treeChild.name)) {
+    treeChild.baseLine = 1;
+  } else treeChild.baseLine = 0;
 
-  if (treeChild.children && treeChild.children.length)
+  if (treeChild.children && treeChild.children.length) {
     treeChild.children.forEach((item) =>
       initBaseLineForTree(item, nodeNameData)
     );
+  }
 }
 function getComparedNodes(comparingNode, tree) {
   const { name: nodeName, path: nodePath } = comparingNode;
@@ -276,6 +276,7 @@ function getDistanceFromNodeToCommonNode(node, commonNode) {
 
 async function computingDistance() {
   try {
+    console.log("Running computingDistance");
     for (let i = 0; i < categories.length; i++) {
       const category = categories[i];
       // GET DAP
@@ -284,28 +285,28 @@ async function computingDistance() {
       }).cache(60 * 60 * 24 * 30);
       const trees = (await createTree(_.map(dapCategory.nodes, "name")))[0];
 
-      // ============ LOOP TREES =============
-      for (let j = 0; j < trees.children.length; j++) {
-        const treeChild = trees.children[j];
-        let flattenTree = [];
-        getFlattenTrees({ ...treeChild }, flattenTree);
-
-        const apps = await Models.App.find({
-          categoryName: category,
-          isCompleted: true,
-        }).cache(60 * 60 * 24 * 30);
-        for (let k = 0; apps.length < 1; k++) {
-          const app = apps[k];
-          const appNodes = app.nodes;
+      const apps = await Models.App.find({
+        categoryName: category,
+        isCompleted: true,
+      }).cache(60 * 60 * 24 * 30);
+      for (let k = 0; k < apps.length; k++) {
+        const app = apps[k];
+        const appNodes = app.nodes;
+        // ============ LOOP TREES =============
+        for (let j = 0; j < trees.children.length; j++) {
+          const treeChild = trees.children[j];
+          let flattenTree = [];
+          let totalDistance = 0;
+          let totalLeafNode = 0;
+          getFlattenTrees(JSON.parse(JSON.stringify(treeChild)), flattenTree);
           initBaseLineForTree(treeChild, _.map(appNodes, "name"));
 
           // compareing nodes
           let comparingNodes = flattenTree.filter(
-            (item) =>
-              item.mappingFunction === 1 &&
-              _.map(appNodes, "name").includes(item.name)
+            (item) => item.baseLine === 1
           );
-
+          console.log(comparingNodes);
+          totalLeafNode += comparingNodes.length;
           for (let g = 0; g < comparingNodes.length; g++) {
             const comparingNode = comparingNodes[g];
             const comparedNode = getComparedNodes(comparingNode, treeChild);
@@ -362,12 +363,28 @@ async function computingDistance() {
             else {
               result = 1; // khong co nut de so sanh
             }
-
-            console.log(`App Id ${app.id}: ${result}`);
+            totalDistance += result;
           }
+          const distance = totalDistance / totalLeafNode;
+          // await Models.App.updateOne(
+          //   {
+          //     _id: app.id,
+          //   },
+          //   {
+          //     $set: {
+          //       distance,
+          //     },
+          //   }
+          // );
+          console.log(
+            `App Id ${app.id}: ${distance}`,
+            totalDistance,
+            comparingNodes.length
+          );
         }
       }
     }
+    console.log("Done computingDistance");
   } catch (err) {
     console.log("MAIN", err);
   }
