@@ -305,7 +305,7 @@ async function computingDistance() {
       }).cache(60 * 60 * 24 * 30);
       const trees = (await createTree(_.map(dapCategory.nodes, "name")))[0];
 
-      const apps = await Models.App.find({
+      const apps = await Models.OurMaliciousDataset.find({
         categoryName: category,
         isCompleted: true,
       }).cache(60 * 60 * 24 * 30);
@@ -390,7 +390,7 @@ async function computingDistance() {
             }
           }
           const distance = totalDistance / totalLeafNode;
-          await Models.App.updateOne(
+          await Models.OurMaliciousDataset.updateOne(
             {
               _id: app.id,
             },
