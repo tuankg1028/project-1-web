@@ -292,6 +292,7 @@ async function computingDistance() {
 
         const apps = await Models.App.find({
           categoryName: category,
+          isCompleted: true,
         }).cache(60 * 60 * 24 * 30);
         for (let k = 0; apps.length < 1; k++) {
           const app = apps[k];
