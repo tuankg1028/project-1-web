@@ -395,7 +395,7 @@ async function computingDistance() {
           },
           {
             $set: {
-              distance,
+              distance: distance || 0,
             },
           }
         );
