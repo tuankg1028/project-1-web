@@ -113,7 +113,7 @@ const categories = [
   "Personalization",
   "Travel & Local",
 ];
-async function createTree(data, parent = null) {
+async function createTree(data, parent = null, path = "") {
   let result = [];
   const nodes = await Models.Tree.find({
     parent,
@@ -125,66 +125,195 @@ async function createTree(data, parent = null) {
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
 
-    const children = await createTree(data, node.id);
+    const children = await createTree(data, node.id, path + `${i}.`);
     result.push({
       ...JSON.parse(JSON.stringify(node)),
+      mappingFunction: _.includes(data, node.name),
       children: children.length ? children : null,
+      path,
     });
   }
 
   return result;
 }
+
+function initBaseLineForTree(treeChild, nodeNameData) {
+  if (~nodeNameData.indexOf(treeChild.name)) treeChild.baseLine = 1;
+  else treeChild.baseLine = 0;
+
+  if (treeChild.children && treeChild.children.length)
+    treeChild.children.forEach((item) =>
+      initBaseLineForTree(item, nodeNameData)
+    );
+}
+function getComparedNodes(comparingNode, tree) {
+  const { name: nodeName, path: nodePath } = comparingNode;
+
+  let arrayPaths = nodePath.split(".");
+
+  let node = tree;
+
+  for (let j = 0; j < arrayPaths.length; j++) {
+    const arrayPath = arrayPaths[j];
+
+    node = node.children[arrayPath];
+  }
+
+  // if (node.baseLine == 1) return { name: node.name, path: nodePath };
+
+  return getComparedNodesBigValue(comparingNode, tree);
+}
+function getComparedNodesBigValue(comparingNode, tree) {
+  const { path: nodePath } = comparingNode;
+
+  if (nodePath !== undefined) {
+    let arrayPaths = nodePath.split(".");
+
+    let node = tree;
+
+    for (let j = 0; j < arrayPaths.length - 1; j++) {
+      const arrayPath = arrayPaths[j];
+
+      node = node.children[arrayPath];
+    }
+
+    const childrenNodeValues = node.children.map((item) =>
+      parseFloat(item.baseLine)
+    );
+
+    const bigValue = Math.max(...childrenNodeValues);
+
+    if (bigValue != 0) {
+      const indexOfBigValue = _.indexOf(childrenNodeValues, bigValue);
+
+      const parentPath = arrayPaths.slice(0, arrayPaths.length - 1);
+      parentPath.push(indexOfBigValue);
+
+      return {
+        name: node.children[indexOfBigValue].name,
+        path: _.join(parentPath, "."),
+      };
+    } else {
+      return getComparedNodesBigValue(node, tree);
+    }
+  }
+}
+
+function getFlattenTrees(trees, result) {
+  if (trees.children) {
+    trees.children.forEach((item) => getFlattenTrees(item, result));
+  }
+  delete trees.children;
+  result.push(trees);
+}
+
+function getCommonNode(comparingNode, comparedNode, tree) {
+  const { path: comparingPath } = comparingNode;
+  const { path: comparedPath } = comparedNode;
+
+  const comparingPathArray = comparingPath.split("."); // path
+  const comparedPathArray = comparedPath.split("."); // path
+
+  let deepLevelOfCommonNode;
+
+  for (let i = 0; i < comparingPathArray.length; i++) {
+    if (comparingPathArray[i] == comparedPathArray[i])
+      deepLevelOfCommonNode = ++i;
+    else break;
+  }
+
+  if (!deepLevelOfCommonNode) {
+    return {
+      name: tree.name,
+      path: -1,
+    };
+  }
+
+  // get common node by deep
+  let commonNode = tree;
+  for (let i = 0; i < deepLevelOfCommonNode; i++) {
+    commonNode = commonNode.children[comparingPathArray[i]];
+  }
+
+  return {
+    name: commonNode.name,
+    path: commonNode.path,
+  };
+}
+
+function getBaseLineVaLueOfNode(searchedNode, tree) {
+  const { path: nodePath } = searchedNode;
+
+  // node root
+  if (nodePath == "" || nodePath == -1) return tree.baseLine;
+
+  let arrayPaths = nodePath.split(".");
+
+  let node = tree;
+
+  for (let j = 0; j < arrayPaths.length; j++) {
+    const arrayPath = arrayPaths[j];
+
+    node = node.children[arrayPath];
+  }
+
+  return node.baseLine;
+}
+
+function getDistanceToCommonNode(node) {
+  const { path } = node;
+
+  if (path == -1) return 0;
+
+  return path.split(".").length;
+}
+
+function getDistanceFromNodeToCommonNode(node, commonNode) {
+  if (commonNode.path === -1) return node.path.split(".").length;
+
+  return node.path.split(".").length - commonNode.path.split(".").length;
+}
+
 async function computingDistance() {
   try {
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < categories.length; i++) {
       const category = categories[i];
       // GET DAP
       const dapCategory = await Models.CategoryMDroid.find({
         categoryName: category,
-      });
+      }).cache(60 * 60 * 24 * 30);
       const trees = (await createTree(_.map(dapCategory.nodes, "name")))[0];
 
       // ============ LOOP TREES =============
       for (let j = 0; j < trees.children.length; j++) {
         const treeChild = trees.children[j];
-        console.log(1, treeChild);
-        return;
-
-        const recordsForTree = [];
-
-        // recordsForTree
-        let buildTreeData = await csv({
-          noheader: true,
-          output: "csv",
-        }).fromFile(getBuildTreeFile(treeChild.name, subFolderName));
+        let flattenTree = [];
+        getFlattenTrees({ ...treeChild }, flattenTree);
 
         const apps = await Models.App.find({
           categoryName: category,
-        });
-        const [buildTreeHeaders, ...buildTreeRows] = buildTreeData;
-        for (let k = 0; k < buildTreeRows.length; k++) {
-          const buildTreeRow = buildTreeRows[k];
-
-          // console.log(buildTreeRow);
-          const recordForTree = {};
-
-          recordForTree["AppID"] = buildTreeRow[0];
-          // recordForTree["categories"] = subFolderName;
-
-          initDistanceValueForTree(treeChild, buildTreeRow, buildTreeHeaders);
+        }).cache(60 * 60 * 24 * 30);
+        for (let k = 0; apps.length < 1; k++) {
+          const app = apps[k];
+          const appNodes = app.nodes;
+          initBaseLineForTree(treeChild, _.map(appNodes, "name"));
 
           // compareing nodes
-          let comparingNodes = getComparingNodes(treeChild);
-          comparingNodes = _.flattenDeep(comparingNodes);
+          let comparingNodes = flattenTree.filter(
+            (item) =>
+              item.mappingFunction === 1 &&
+              _.map(appNodes, "name").includes(item.name)
+          );
 
           for (let g = 0; g < comparingNodes.length; g++) {
             const comparingNode = comparingNodes[g];
             const comparedNode = getComparedNodes(comparingNode, treeChild);
 
+            let result;
             // if comparedNode exist
             if (comparedNode) {
               if (comparingNode.path === comparedNode.path) {
-                recordForTree[comparingNode.name] = 0;
+                result = 0;
               } else {
                 const commonNode = getCommonNode(
                   comparingNode,
@@ -211,7 +340,7 @@ async function computingDistance() {
                   commonNode
                 );
 
-                const result =
+                result =
                   1 -
                   ((2 * (1 - vCaa) * depthCaa) /
                     ((1 - vN1) * disN1 * (1 - vCaa) +
@@ -225,79 +354,19 @@ async function computingDistance() {
                 //   ((1 - vN1) * disN1 * (1 - vCaa) +
                 //     (1 - vN2) * disN2 * (1 - vCaa) +
                 //     2 * (1 - vRoot) * (1 - vCaa) * depthCaa) || 0);
-
-                if (!test[buildTreeRow[0]]) test[buildTreeRow[0]] = [];
-                test[buildTreeRow[0]].push({
-                  name: `${comparingNode.name}-${comparedNode.name}`,
-                  distance: result,
-                });
-
-                recordForTree[slug(comparingNode.name)] = result;
               }
               // console.log(vRoot, vCaa, depthCaa, vN1, vN2, disN1, disN2, result);
             }
             // not exist
             else {
-              recordForTree[slug(comparingNode.name)] = 1; // khong co nut de so sanh
+              result = 1; // khong co nut de so sanh
             }
-          }
 
-          // record for big
-          if (!recordsTemp[recordForTree["AppID"]]) {
-            recordsTemp[recordForTree["AppID"]] = [];
+            console.log(`App Id ${app.id}: ${result}`);
           }
-          recordsTemp[recordForTree["AppID"]].push(recordForTree);
-
-          recordsForTree.push(recordForTree);
         }
-
-        // ============== CREATING FILE ==============
-
-        await makeDir(folderDistance);
-        await makeDir(folderDistance + "/" + subFolderName);
-        const pathOutputDistance =
-          folderDistance +
-          "/" +
-          subFolderName +
-          "/" +
-          `${treeChild.name}` +
-          "_" +
-          folderName +
-          ".csv";
-
-        const csvWriter = createCsvWriter({
-          path: pathOutputDistance,
-          header: headersForTree,
-        });
-
-        await csvWriter.writeRecords(recordsForTree); // returns a promise
-      }
-
-      records.push(...creatingRecordsByObject(recordsTemp, i + 1));
-    }
-
-    const csvWriter = createCsvWriter({
-      path: folderDistance + "/" + "distance_categories.csv",
-      header: headers,
-    });
-
-    await csvWriter.writeRecords(records); // returns a promise
-    // }
-
-    let content = "";
-    for (const appId in test) {
-      const value = test[appId];
-
-      content += `APP ID: ${appId} \n`;
-
-      for (let i = 0; i < value.length; i++) {
-        const item = value[i];
-
-        content += `  + ${item.name}: ${item.distance} \n`;
       }
     }
-
-    writeFileSync("./3apps.txt", content);
   } catch (err) {
     console.log("MAIN", err);
   }
