@@ -113,22 +113,49 @@ const categories = [
   "Personalization",
   "Travel & Local",
 ];
-async function createTree(data, parent = null, path = "") {
+async function createTree(data, parent = null, pathNode = "") {
+  // let result = [];
+  // const nodes = await Models.Tree.find({
+  //   parent,
+  // }).cache(60 * 60 * 24 * 30);
+  // if (nodes && nodes.length === 0) return result;
+
+  // for (let i = 0; i < nodes.length; i++) {
+  //   const node = nodes[i];
+
+  //   if(!["Connection", "Hardware", "Health&Fitness", "Location", "Media", "Telephony", "UserInfo"].includes(node.name))  {
+  //     path = path + `${i}.`
+
+  //   }
+  //   const children = await createTree(data, node.id, path);
+
+  //   result.push({
+  //     ...JSON.parse(JSON.stringify(node)),
+  //     mappingFunction: _.includes(data, node.name) ? 1 : 0,
+  //     children: children.length ? children : null,
+  //     path,
+  //   });
+  // }
+
+  // return result;
+
   let result = [];
   const nodes = await Models.Tree.find({
     parent,
   }).cache(60 * 60 * 24 * 30);
   if (nodes && nodes.length === 0) return result;
 
+  const pathData = pathNode;
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
 
-    const children = await createTree(data, node.id, path + `${i}.`);
+    const children = await createTree(data, node.id, `${pathNode}.${i}`);
+
     result.push({
       ...JSON.parse(JSON.stringify(node)),
-      mappingFunction: _.includes(data, node.name),
+      mappingFunction: _.includes(data, node.name) ? 1 : 0,
       children: children.length ? children : null,
-      path,
+      path: `${pathData}.${i}`.trim("."),
     });
   }
 
@@ -136,6 +163,8 @@ async function createTree(data, parent = null, path = "") {
 }
 
 function initBaseLineForTree(treeChild, nodeNameData) {
+  // console.log(treeChild.name);
+
   if (~nodeNameData.indexOf(treeChild.name)) {
     treeChild.baseLine = 1;
   } else treeChild.baseLine = 0;
@@ -149,11 +178,16 @@ function initBaseLineForTree(treeChild, nodeNameData) {
 function getComparedNodes(comparingNode, tree) {
   const { name: nodeName, path: nodePath } = comparingNode;
 
-  let arrayPaths = nodePath.split(".");
-
+  let arrayPaths = nodePath.split(".").filter((item) => !!item);
+  console.log(
+    1,
+    arrayPaths,
+    comparingNode,
+    tree.children[0].children[3].children[42]
+  );
   let node = tree;
 
-  for (let j = 0; j < arrayPaths.length; j++) {
+  for (let j = 2; j < arrayPaths.length; j++) {
     const arrayPath = arrayPaths[j];
 
     node = node.children[arrayPath];
@@ -167,18 +201,17 @@ function getComparedNodesBigValue(comparingNode, tree) {
   const { path: nodePath } = comparingNode;
 
   if (nodePath !== undefined) {
-    let arrayPaths = nodePath.split(".");
+    let arrayPaths = nodePath.split(".").filter((item) => !!item);
 
     let node = tree;
 
-    for (let j = 0; j < arrayPaths.length - 1; j++) {
+    for (let j = 2; j < arrayPaths.length - 1; j++) {
       const arrayPath = arrayPaths[j];
-
       node = node.children[arrayPath];
     }
 
     const childrenNodeValues = node.children.map((item) =>
-      parseFloat(item.baseLine)
+      parseFloat(item.mappingFunction)
     );
 
     const bigValue = Math.max(...childrenNodeValues);
@@ -231,7 +264,7 @@ function getCommonNode(comparingNode, comparedNode, tree) {
 
   // get common node by deep
   let commonNode = tree;
-  for (let i = 0; i < deepLevelOfCommonNode; i++) {
+  for (let i = 2; i < deepLevelOfCommonNode; i++) {
     commonNode = commonNode.children[comparingPathArray[i]];
   }
 
@@ -251,7 +284,7 @@ function getBaseLineVaLueOfNode(searchedNode, tree) {
 
   let node = tree;
 
-  for (let j = 0; j < arrayPaths.length; j++) {
+  for (let j = 2; j < arrayPaths.length; j++) {
     const arrayPath = arrayPaths[j];
 
     node = node.children[arrayPath];
@@ -265,7 +298,7 @@ function getDistanceToCommonNode(node) {
 
   if (path == -1) return 0;
 
-  return path.split(".").length;
+  return path.split(".").length - 2;
 }
 
 function getDistanceFromNodeToCommonNode(node, commonNode) {
@@ -279,6 +312,7 @@ async function computingDistance() {
     console.log("Running computingDistance");
     for (let i = 0; i < categories.length; i++) {
       const category = categories[i];
+      console.log(`Running on ${category} category`);
       // GET DAP
       const dapCategory = await Models.CategoryMDroid.find({
         categoryName: category,
@@ -291,21 +325,23 @@ async function computingDistance() {
       }).cache(60 * 60 * 24 * 30);
       for (let k = 0; k < apps.length; k++) {
         const app = apps[k];
+        console.log(`app ${app.appName}`);
         const appNodes = app.nodes;
         // ============ LOOP TREES =============
         for (let j = 0; j < trees.children.length; j++) {
           const treeChild = trees.children[j];
+
           let flattenTree = [];
           let totalDistance = 0;
           let totalLeafNode = 0;
-          getFlattenTrees(JSON.parse(JSON.stringify(treeChild)), flattenTree);
           initBaseLineForTree(treeChild, _.map(appNodes, "name"));
+          getFlattenTrees(JSON.parse(JSON.stringify(treeChild)), flattenTree);
 
           // compareing nodes
           let comparingNodes = flattenTree.filter(
             (item) => item.baseLine === 1
           );
-          console.log(comparingNodes);
+
           totalLeafNode += comparingNodes.length;
           for (let g = 0; g < comparingNodes.length; g++) {
             const comparingNode = comparingNodes[g];
