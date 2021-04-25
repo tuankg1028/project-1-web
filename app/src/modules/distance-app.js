@@ -311,7 +311,7 @@ async function computingDistance() {
       }).cache(60 * 60 * 24 * 30);
       for (let k = 0; k < apps.length; k++) {
         const app = apps[k];
-        console.log(`app ${app.appName}`);
+        console.log(`app ${k}.${app.appName}`);
         const appNodes = app.nodes;
         let totalDistance = 0;
         let totalLeafNode = 0;
@@ -389,16 +389,16 @@ async function computingDistance() {
           }
         }
         const distance = totalDistance / totalLeafNode;
-        // await Models.App.updateOne(
-        //   {
-        //     _id: app.id,
-        //   },
-        //   {
-        //     $set: {
-        //       distance,
-        //     },
-        //   }
-        // );
+        await Models.App.updateOne(
+          {
+            _id: app.id,
+          },
+          {
+            $set: {
+              distance,
+            },
+          }
+        );
         console.log(
           `App Id ${app.id}: ${distance}`,
           totalDistance,
