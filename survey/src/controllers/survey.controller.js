@@ -134,16 +134,18 @@ class SurveyController {
 
       let questions = await Models.App.find({
         appName: {
-          $in: ["wish - shopping made fun",
+          $in: [
+            "truecaller: phone caller id, spam blocking & chat",
           "mi music",
-          "smart diagnosis",
-          "picsart photo editor: pic, video & collage maker",
+          "huawei backup",
+          "file manager : free and easily",
           "my talking tom",
           "linkedin: jobs, business news & social networking",
           "hicare",
           "my talking angela",
           "spotify: listen to podcasts & find music you love",
-          "zoom cloud meetings"]
+          "zoom cloud meetings",
+        ]
           // ["incredible health", "microsoft teams"],
         }
     })
