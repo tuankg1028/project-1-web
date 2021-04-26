@@ -33,7 +33,8 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
         .section1-label.font-weight-bold
           | This app may collect #{question.personalDataTypes.length} personal data type, namely: 
           each personalDataType, index in question.personalDataTypes
-              | #{personalDataType.name}
+              b
+                | #{personalDataType.name}
               if(index != question.personalDataTypes.length - 1)
                 | #{", "}
               else 
@@ -61,60 +62,63 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
 
     section(style="display: none").section
       // Collection Personal Data
-      if(question.collectionData.length)
-        .section2.mt-3
-          // label
-          .section2-label.font-weight-bold
-            | Data Collection Purpose:
-          // node data
-          .wrap-node
+      .section2.mt-3
+        // label
+        .section2-label.font-weight-bold
+          | Data Collection Purpose:
+        // node data
+        .wrap-node
+          if(question.collectionData.length > 0)
             ul 
               each category in question.collectionData
                   
                 li #{category.name}
-                //-   ul.more
-                //-     each sub1 in category.children
-                //-       li(style="list-style-type: circle;") #{sub1.name}: 
-                //-         ul.more
-                //-           if(sub1.children && sub1.children.length > 0)
-                //-             each sub2 in sub1.children
-                //-               li(style="list-style-type: square;") #{sub2.name}: 
-                //-           if((!sub1.children || sub1.children.length == 0) && sub1.contents.length) 
-                //-             each content in sub1.contents
-                //-               li.capitalizeFirst(style="list-style-type: square;") #{content.trim()}
-                //-         div.see-more-btn() Read more
-                //-     if(category.children.length == 0 && category.contents.length > 0) 
-                //-       each content in category.contents
-                //-         li.capitalizeFirst(style="list-style-type: circle;") #{content.trim()}
-                //-   div.see-more-btn() Read more
+          else 
+            | &nbsp Do not mention
+          //-   ul.more
+          //-     each sub1 in category.children
+          //-       li(style="list-style-type: circle;") #{sub1.name}: 
+          //-         ul.more
+          //-           if(sub1.children && sub1.children.length > 0)
+          //-             each sub2 in sub1.children
+          //-               li(style="list-style-type: square;") #{sub2.name}: 
+          //-           if((!sub1.children || sub1.children.length == 0) && sub1.contents.length) 
+          //-             each content in sub1.contents
+          //-               li.capitalizeFirst(style="list-style-type: square;") #{content.trim()}
+          //-         div.see-more-btn() Read more
+          //-     if(category.children.length == 0 && category.contents.length > 0) 
+          //-       each content in category.contents
+          //-         li.capitalizeFirst(style="list-style-type: circle;") #{content.trim()}
+          //-   div.see-more-btn() Read more
 
       // Third party Data
-      if(question.thirdPartyData.length)
-        .section2.mt-3
-          // label
-          .section2-label.font-weight-bold
-            | Third Party:
-          // node data
-          .wrap-node
+      .section2.mt-3
+        // label
+        .section2-label.font-weight-bold
+          | Third Party:
+        // node data
+        .wrap-node
+          if(question.thirdPartyData.length > 0)
             ul 
               each category in question.thirdPartyData
-                  
                 li #{category.name}
-                //-   ul.more
-                //-     each sub1 in category.children
-                //-       li(style="list-style-type: circle;") #{sub1.name}: 
-                //-         ul.more
-                //-           if(sub1.children && sub1.children.length > 0)
-                //-             each sub2 in sub1.children
-                //-               li(style="list-style-type: square;") #{sub2.name}: 
-                //-           if((!sub1.children || sub1.children.length == 0) && sub1.contents.length) 
-                //-             each content in sub1.contents
-                //-               li.capitalizeFirst(style="list-style-type: square;") #{content.trim()}
-                //-         div.see-more-btn() Read more
-                //-     if(category.children.length == 0 && category.contents.length > 0) 
-                //-       each content in category.contents
-                //-         li.capitalizeFirst(style="list-style-type: circle;") #{content.trim()}      
-                //-   div.see-more-btn() Read more
+          else 
+            | &nbsp Do not mention
+          //-   ul.more
+          //-     each sub1 in category.children
+          //-       li(style="list-style-type: circle;") #{sub1.name}: 
+          //-         ul.more
+          //-           if(sub1.children && sub1.children.length > 0)
+          //-             each sub2 in sub1.children
+          //-               li(style="list-style-type: square;") #{sub2.name}: 
+          //-           if((!sub1.children || sub1.children.length == 0) && sub1.contents.length) 
+          //-             each content in sub1.contents
+          //-               li.capitalizeFirst(style="list-style-type: square;") #{content.trim()}
+          //-         div.see-more-btn() Read more
+          //-     if(category.children.length == 0 && category.contents.length > 0) 
+          //-       each content in category.contents
+          //-         li.capitalizeFirst(style="list-style-type: circle;") #{content.trim()}      
+          //-   div.see-more-btn() Read more
 
       //- // Retention Data
       //- if(question.retentionData.length)
