@@ -47,11 +47,7 @@
 
     // check next section next
     let nextSection = $(".slick-active .section")[timeNext[appId]];
-    if(!nextSection) {$(this).css("display", "none"); $(".wrap-btn-next .button-next").css("display","block");}
-    
-    
-    console.log(1, timeNext)
-   
+    if(!nextSection) {$(this).css("display", "none"); $(".wrap-btn-next .button-next").css("visibility", "visible");}
 
     // change height
     $(".slick-slide").css(
@@ -288,7 +284,7 @@
           appTimer();
           // capitalizeFLetter();
 
-          $(".wrap-btn-next .button-next").css("display","none");
+          $(".wrap-btn-next .button-next").css("visibility", "hidden");
           
         })
         .fail(err => {
