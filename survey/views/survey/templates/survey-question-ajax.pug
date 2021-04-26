@@ -4,7 +4,7 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
   button(type="submit" style="display='none';")
   // app name
   h3.title.text-center(style="text-transform: capitalize;")
-    | #{question.appName}
+    | #{indexQuestion + ". " +question.appName}
   div.text-center.mt-1
     | #{question.developer}
   div.text-center
@@ -44,7 +44,9 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
           ul 
             each personalDataType in question.personalDataTypes
               li
-                | #{personalDataType.name}: #{personalDataType.mean}
+                span 
+                  b #{personalDataType.name}: 
+                  | #{personalDataType.mean}
                 div 
                   | * Apis: 
                   each api, index in personalDataType.originalApis
@@ -71,8 +73,10 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
           if(question.collectionData.length > 0)
             ul 
               each category in question.collectionData
-                  
                 li #{category.name}
+                  ul
+                    each sub1 in category.children
+                      li(style="list-style-type: circle;") #{sub1.name}
           else 
             | &nbsp Do not mention
           //-   ul.more
@@ -102,6 +106,9 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
             ul 
               each category in question.thirdPartyData
                 li #{category.name}
+                  ul
+                    each sub1 in category.children
+                      li(style="list-style-type: circle;") #{sub1.name}
           else 
             | &nbsp Do not mention
           //-   ul.more
