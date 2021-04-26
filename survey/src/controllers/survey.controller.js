@@ -136,15 +136,15 @@ class SurveyController {
         appName: {
           $in: [
             "truecaller: phone caller id, spam blocking & chat",
-          "mi music",
-          "huawei backup",
-          "file manager : free and easily",
-          "my talking tom",
-          "linkedin: jobs, business news & social networking",
-          "hicare",
-          "my talking angela",
-          "spotify: listen to podcasts & find music you love",
-          "zoom cloud meetings",
+            "mi music",
+            "huawei backup",
+            "file manager : free and easily",
+            "tiktok",
+            "linkedin: jobs, business news & social networking",
+            "hicare",
+            "microsoft teams",
+            "spotify: listen to podcasts & find music you love",
+            "zoom cloud meetings",
         ]
           // ["incredible health", "microsoft teams"],
         }
@@ -216,7 +216,10 @@ class SurveyController {
 
 
       question.collectionData = JSON.parse(question.collectionData)
+      question.collectionData = question.collectionData.filter(item => item.children.length > 0)
       question.thirdPartyData = JSON.parse(question.thirdPartyData)
+      question.thirdPartyData = question.thirdPartyData.filter(item => item.children.length > 0)
+
       question.retentionData = JSON.parse(question.retentionData)
 
       res.render("survey/templates/survey-question-ajax", {
