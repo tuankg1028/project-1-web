@@ -10,7 +10,7 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
   div.text-center
     | #{question.categoryName}
   div.section
-    span.font-weight-bold Description: 
+    span.font-weight-bold 1. Description: 
     | !{question.description}
   // category
   //- .category.text-center.mt-2
@@ -31,7 +31,7 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
       .section1.mt-3
         // label
         .section1-label.font-weight-bold
-          | This app may collect #{question.personalDataTypes.length} personal data type, namely: 
+          | 2. This app may collect #{question.personalDataTypes.length} personal data type, namely: 
           each personalDataType, index in question.personalDataTypes
               b
                 | #{personalDataType.name}
@@ -67,7 +67,7 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
       .section2.mt-3
         // label
         .section2-label.font-weight-bold
-          | Data Collection Purpose:
+          | 3. Data Collection Purpose:
         // node data
         .wrap-node
           if(question.collectionData.length > 0)
@@ -99,7 +99,7 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
       .section2.mt-3
         // label
         .section2-label.font-weight-bold
-          | Third Party:
+          | 4. Third Party:
         // node data
         .wrap-node
           if(question.thirdPartyData.length > 0)
@@ -162,7 +162,7 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
         //-   | II - Final judgment
         // final question
         .question-1.mt-2
-          .title Do you want to install this app?
+          .title.font-weight-bold 5. Do you want to install this app?
           // anwsers
           .anwsers.mt-2
             label.container-radio
