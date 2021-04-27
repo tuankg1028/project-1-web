@@ -1670,26 +1670,26 @@ async function buildCSVDataset(dataset, type) {
         ]
       : [];
 
-    if (predict === 0) {
-      apps.forEach((app) => {
-        const predict = ranges[categoryName]
-          ? _.inRange(app.distance, ...beginRange)
-            ? 0
-            : 1
-          : "-";
-        if (predict === 0) {
-          X++;
-          rows.push({
-            stt: sttInOurMalicious++,
-            appName: app.appName,
-            category: categoryName,
-            predict,
-            distance: app.distance,
-            risk: 0,
-          });
-        }
-      });
-    }
+    apps.forEach((app) => {
+      const predict = ranges[categoryName]
+        ? _.inRange(app.distance, ...beginRange)
+          ? 0
+          : 1
+        : "-";
+      if (predict === 0) {
+        rows.push({
+          stt: sttInOurMalicious++,
+          appName: app.appName,
+          category: categoryName,
+          predict,
+          distance: app.distance,
+          risk: 0,
+        });
+      }
+
+      if (predict === 0) X++;
+      if (predict === 1) Y++;
+    });
     //
     if (predict === 0) X++;
   }
@@ -1721,7 +1721,8 @@ async function buildCSVDataset(dataset, type) {
         risk: 1,
       });
 
-      if (predict === 1) Y++;
+      if (predict === 0) Z++;
+      if (predict === 1) W++;
     });
   }
   const csvWriter = createCsvWriter({
@@ -1732,6 +1733,63 @@ async function buildCSVDataset(dataset, type) {
     header,
   });
   await csvWriter.writeRecords(rows);
+
+  // accuracy
+  const PrecisionBenign = X / (X + Z);
+  const PrecisionMalicious = W / (W + Y);
+  const RecallBenign = X / (X + Y);
+  const RecallMalicious = W / (Z + W);
+  const F1Benign =
+    2(PrecisionBenign * RecallBenign) / (PrecisionBenign + RecallBenign);
+  const F1Malicious =
+    2(PrecisionMalicious * RecallMalicious) /
+    (PrecisionMalicious + RecallMalicious);
+  const Accuracy = (X + W) / (X + Y + Z + W);
+
+  const headerAccuracy = [
+    {
+      id: "name",
+      title: "",
+    },
+    {
+      id: "begin",
+      title: "Begin",
+    },
+    {
+      id: "malicious",
+      title: "Malicious",
+    },
+  ];
+  const rowsAccuracy = [
+    {
+      name: "Percision",
+      begin: PrecisionBenign,
+      malicious: PrecisionMalicious,
+    },
+    {
+      name: "Recall",
+      begin: RecallBenign,
+      malicious: RecallMalicious,
+    },
+    {
+      name: "F1",
+      begin: F1Benign,
+      malicious: F1Malicious,
+    },
+    {
+      name: "Accuracy",
+      begin: Accuracy,
+    },
+  ];
+
+  const csvWriterAccuracy = createCsvWriter({
+    path:
+      type === "our"
+        ? "ourMaliciousDatasetAccuracy.csv"
+        : "MPDroidDatasetAccuracy.csv",
+    header: headerAccuracy,
+  });
+  await csvWriterAccuracy.writeRecords(rowsAccuracy);
 }
 main10();
 
