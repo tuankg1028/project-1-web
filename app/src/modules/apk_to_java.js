@@ -1589,6 +1589,10 @@ async function main10() {
   console.log("DONE");
 }
 async function buildCSVDataset(dataset, type) {
+  let X = 0,
+    Y = 0,
+    Z = 0,
+    W = 0;
   const appsIn24K = {};
   for (let i = 0; i < categories.length; i++) {
     const category = categories[i];
@@ -1666,27 +1670,28 @@ async function buildCSVDataset(dataset, type) {
         ]
       : [];
 
-    const predict = ranges[categoryName]
-      ? _.inRange(app.distance, ...beginRange)
-        ? 0
-        : 1
-      : "-";
     if (predict === 0) {
       apps.forEach((app) => {
-        rows.push({
-          stt: sttInOurMalicious++,
-          appName: app.appName,
-          category: categoryName,
-          predict: ranges[categoryName]
-            ? _.inRange(app.distance, ...beginRange)
-              ? 0
-              : 1
-            : "-",
-          distance: app.distance,
-          risk: 0,
-        });
+        const predict = ranges[categoryName]
+          ? _.inRange(app.distance, ...beginRange)
+            ? 0
+            : 1
+          : "-";
+        if (predict === 0) {
+          X++;
+          rows.push({
+            stt: sttInOurMalicious++,
+            appName: app.appName,
+            category: categoryName,
+            predict,
+            distance: app.distance,
+            risk: 0,
+          });
+        }
       });
     }
+    //
+    if (predict === 0) X++;
   }
   // loop dataset
   for (const categoryName in dataset) {
@@ -1702,18 +1707,21 @@ async function buildCSVDataset(dataset, type) {
       : [];
 
     apps.forEach((app) => {
+      const predict = ranges[categoryName]
+        ? _.inRange(app.distance, ...beginRange)
+          ? 0
+          : 1
+        : "-";
       rows.push({
         stt: sttInOurMalicious++,
         appName: app.appName,
         category: categoryName,
-        predict: ranges[categoryName]
-          ? _.inRange(app.distance, ...beginRange)
-            ? 0
-            : 1
-          : "-",
+        predict,
         distance: app.distance,
         risk: 1,
       });
+
+      if (predict === 1) Y++;
     });
   }
   const csvWriter = createCsvWriter({
