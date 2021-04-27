@@ -1690,8 +1690,6 @@ async function buildCSVDataset(dataset, type) {
       if (predict === 0) X++;
       if (predict === 1) Y++;
     });
-    //
-    if (predict === 0) X++;
   }
   // loop dataset
   for (const categoryName in dataset) {
