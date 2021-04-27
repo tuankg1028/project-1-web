@@ -1599,12 +1599,12 @@ async function buildCSVDataset(dataset, type) {
 
     appsIn24K[category] = await Models.App.aggregate([
       { $match: { isCompleted: true, categoryName: category } },
-    ])
-      .sort({
-        distance: "asc",
-      })
-      // .allowDiskUse(true)
-      .limit(91);
+    ]);
+    // .sort({
+    //   distance: "asc",
+    // });
+    // .allowDiskUse(true)
+    // .limit(91);
   }
 
   const header = [
