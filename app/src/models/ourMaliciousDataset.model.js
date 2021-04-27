@@ -16,6 +16,7 @@ var schema = new Schema(
         parent: Schema.Types.ObjectId,
       },
     ],
+    distance: Number,
     collectionData: String,
     thirdPartyData: String,
     retentionData: String,

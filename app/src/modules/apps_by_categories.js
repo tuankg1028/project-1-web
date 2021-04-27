@@ -7,15 +7,38 @@ import axios from "axios";
 import slug from "slug";
 import Helpers from "../helpers";
 import path from "path";
+import csv from "csvtojson";
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
+async function parseCsvtoCollections() {
+  let data = await csv({
+    noheader: true,
+    output: "csv",
+  }).fromFile("/Users/a1234/Downloads/KeyWorkSearch_New.csv");
+
+  const result = [];
+  for (let i = 1; i < data.length; i++) {
+    const [id, name, level, parent, keyword] = data[i];
+
+    result.push({
+      id,
+      name,
+      level,
+      parent,
+      keywords: keyword.split(",").map((item) => item.trim()),
+    });
+  }
+
+  console.log(result);
+}
+// parseCsvtoCollections();
 const categoriesCollection = [
   {
     id: "1",
     name: "Admin",
     level: "1",
     parent: "null",
-    keywords: [],
+    keywords: [""],
   },
   {
     id: "2",
@@ -29,14 +52,14 @@ const categoriesCollection = [
     name: "Education",
     level: "1",
     parent: "null",
-    keywords: [],
+    keywords: [""],
   },
   {
     id: "4",
-    name: "Medical",
+    name: "Healthcare",
     level: "1",
     parent: "null",
-    keywords: ["medical", "healthcare", "health care", "disease"],
+    keywords: [""],
   },
   {
     id: "5",
@@ -50,14 +73,14 @@ const categoriesCollection = [
     name: "Services",
     level: "1",
     parent: "null",
-    keywords: [],
+    keywords: [""],
   },
   {
     id: "7",
     name: "Marketing",
     level: "1",
     parent: "null",
-    keywords: [],
+    keywords: [""],
   },
   {
     id: "8",
@@ -169,34 +192,41 @@ const categoriesCollection = [
   },
   {
     id: "22",
+    name: "Medical",
+    level: "2",
+    parent: "4",
+    keywords: ["medical", "healthcare", "health care", "disease"],
+  },
+  {
+    id: "23",
     name: "Improving quality",
     level: "2",
     parent: "6",
     keywords: ["improve", "improving", "improvement"],
   },
   {
-    id: "23",
+    id: "25",
     name: "Developing the new services",
     level: "2",
     parent: "6",
     keywords: ["new service", "new product", "new feature", "new functions"],
   },
   {
-    id: "25",
+    id: "26",
     name: "Direct Email",
     level: "2",
     parent: "7",
     keywords: ["direct && email"],
   },
   {
-    id: "26",
+    id: "27",
     name: "Direct Phone",
     level: "2",
     parent: "7",
     keywords: ["direct && phone"],
   },
   {
-    id: "27",
+    id: "28",
     name: "Booking",
     level: "2",
     parent: "5",
@@ -440,23 +470,11 @@ const categoriesCollection = [
 // ];
 const categoriesThirdParty = [
   {
-    id: "1",
-    name: "Contact",
-    level: "1",
+    id: "0",
+    name: "Third party",
+    level: "0",
     parent: "null",
-    keywords: [
-      // "Third-party",
-      // "3rd parties",
-      // "third party",
-      // "third parties",
-      // "3rd party",
-    ],
-  },
-  {
-    id: "2",
-    name: "T-Email",
-    level: "2",
-    parent: "1",
+    requiredKeyword: true,
     keywords: [
       "Third-party",
       "3rd parties",
@@ -464,134 +482,107 @@ const categoriesThirdParty = [
       "third parties",
       "3rd party",
     ],
-    requiredKeyword: "email",
   },
   {
-    id: "3",
-    name: "T-Postal",
-    level: "2",
-    parent: "1",
-    keywords: [
-      "Third-party",
-      "3rd parties",
-      "third party",
-      "third parties",
-      "postal",
-    ],
-    requiredKeyword: "postal",
-  },
-  {
-    id: "4",
+    id: "1",
     name: "Data",
     level: "1",
     parent: "null",
-    keywords: [
-      // "Third-party",
-      // "3rd parties",
-      // "third party",
-      // "third parties",
-      // "3rd party",
-    ],
+    keywords: [""],
   },
   {
-    id: "5",
+    id: "2",
     name: "Purpose",
     level: "1",
     parent: "null",
-    keywords: [
-      // "Third-party",
-      // "3rd parties",
-      // "third party",
-      // "third parties",
-      // "3rd party",
-    ],
+    keywords: [""],
   },
   {
-    id: "6",
+    id: "3",
     name: "User Profile",
     level: "2",
-    parent: "4",
+    parent: "1",
     keywords: [
       "name; contact information; your email; user email; account; password; private chats; identifiable; identity; social network; behavioral; behavior; about you; personal information",
     ],
   },
   {
-    id: "7",
+    id: "4",
     name: "Location",
     level: "2",
-    parent: "4",
+    parent: "1",
     keywords: ["location; address"],
   },
   {
-    id: "8",
+    id: "5",
     name: "Media",
     level: "2",
-    parent: "4",
+    parent: "1",
     keywords: ["media; video; audio; picture; image"],
   },
   {
-    id: "9",
+    id: "6",
     name: "Health & Fitness",
     level: "2",
-    parent: "4",
+    parent: "1",
     keywords: ["health; fitness; blood; step; activity; activities"],
   },
   {
-    id: "10",
+    id: "7",
     name: "Hardware",
     level: "2",
-    parent: "4",
+    parent: "1",
     keywords: [
       "camera; IP address; MAC address; sensor; accelerometer; gyroscope; microphone; volumn",
     ],
   },
   {
-    id: "11",
+    id: "8",
     name: "Connection",
     level: "2",
-    parent: "4",
+    parent: "1",
     keywords: ["Wifi; Bluetooth; NFC; Cookie; connections; beacons"],
   },
   {
-    id: "12",
+    id: "9",
     name: "Telephony",
     level: "2",
-    parent: "4",
+    parent: "1",
     keywords: ["call; messager; phone number; phone calls"],
   },
   {
-    id: "13",
+    id: "10",
     name: "Payment",
     level: "2",
-    parent: "5",
+    parent: "2",
     keywords: ["payment; purchase; order; credit card"],
   },
   {
-    id: "14",
+    id: "11",
     name: "Delivery",
     level: "2",
-    parent: "5",
+    parent: "2",
     keywords: ["diliver; delivery; deliverer"],
   },
   {
-    id: "15",
+    id: "12",
     name: "Marketing",
     level: "2",
-    parent: "5",
+    parent: "2",
     keywords: ["marketing"],
   },
   {
-    id: "16",
+    id: "13",
     name: "Advertisement",
     level: "2",
-    parent: "5",
+    parent: "2",
     keywords: ["Advertising; ads; advertisement; advertiser;"],
   },
   {
-    id: "17",
+    id: "14",
     name: "Analysis",
     level: "2",
-    parent: "5",
+    parent: "2",
     keywords: [
       "Analysis; analytical; analysed; analyzed; analytics; market research",
     ],
@@ -1238,135 +1229,155 @@ async function updateAppsPrivacyPolicy() {
   const apps = await Models.App.find({
     // isCompleted: true,
     appName: {
-      $in: ["incredible health", "microsoft teams"],
+      $in: [
+        "truecaller: phone caller id, spam blocking & chat",
+        "mi music",
+        "huawei backup",
+        "file manager : free and easily",
+        "tiktok",
+        "linkedin: jobs, business news & social networking",
+        "hicare",
+        "microsoft teams",
+        "spotify: listen to podcasts & find music you love",
+        "zoom cloud meetings",
+      ],
     },
   }).select("id");
 
   // .limit(1);
   const appIds = _.map(apps, "id");
 
-  Promise.all(appIds.map(updateAppPrivacyPolicy));
+  for (let i = 0; i < appIds.length; i++) {
+    const appId = appIds[i];
+    await updateAppPrivacyPolicy(appId);
+  }
+  // Promise.all(appIds.map(updateAppPrivacyPolicy));
 
   // await Helpers.Tree.getTreeFromNode("602951a8163e554ddd9a1274");
 }
 
 async function updateAppPrivacyPolicy(appId) {
-  const app = await Models.App.findById(appId);
+  try {
+    const app = await Models.App.findById(appId);
 
-  let ppCategoriesAPP = {};
-  let ppCategoriesAPPContent = {};
-  // pp
-  const ppCategorieTypes = await getPPCategories(app.contentPrivacyPolicy);
-  return;
-  for (const dataType in ppCategorieTypes) {
-    const ppCategories = ppCategorieTypes[dataType];
+    let ppCategoriesAPP = {};
+    let ppCategoriesAPPContent = {};
+    // pp
+    const ppCategorieTypes = await getPPCategories(app.contentPrivacyPolicy);
 
-    ppCategoriesAPP[dataType] = [];
-    ppCategoriesAPPContent[dataType] = [];
-    let categories;
-    switch (dataType) {
-      case "collection":
-        categories = categoriesCollection;
-        break;
+    for (const dataType in ppCategorieTypes) {
+      const ppCategories = ppCategorieTypes[dataType];
 
-      case "thirdParty":
-        categories = categoriesThirdParty;
-        break;
+      ppCategoriesAPP[dataType] = [];
+      ppCategoriesAPPContent[dataType] = [];
+      let categories;
+      switch (dataType) {
+        case "collection":
+          categories = categoriesCollection;
+          break;
 
-      default:
-        categories = categoriesRetention;
-        break;
-    }
+        case "thirdParty":
+          categories = categoriesThirdParty;
+          break;
 
-    if (ppCategories) {
-      for (const category in ppCategories) {
-        const contents = ppCategories[category];
+        default:
+          categories = categoriesRetention;
+          break;
+      }
 
-        const isParentHasContent = checkParentHasContent(
-          category,
-          ppCategories,
-          categories
-        );
+      if (ppCategories) {
+        for (const category in ppCategories) {
+          const contents = ppCategories[category];
 
-        if (isParentHasContent && contents && contents.length > 0) {
-          let childCategories = getChildCategories(category, categories);
-          childCategories = _.map(childCategories, "name");
-          if (childCategories.length === 0) {
-            ppCategoriesAPP[dataType].push(category);
-            ppCategoriesAPPContent[dataType].push(contents);
-          }
+          const isParentHasContent = checkParentHasContent(
+            category,
+            ppCategories,
+            categories
+          );
 
-          if (
-            _.difference(ppCategoriesAPP[dataType], childCategories).lenth ===
-            childCategories.lenth
-          ) {
-            ppCategoriesAPPContent[dataType][category] = contents;
-            ppCategoriesAPP[dataType].push(category);
+          if (isParentHasContent && contents && contents.length > 0) {
+            let childCategories = getChildCategories(category, categories);
+            childCategories = _.map(childCategories, "name");
+            if (childCategories.length === 0) {
+              ppCategoriesAPP[dataType].push(category);
+              ppCategoriesAPPContent[dataType].push(contents);
+            }
+
+            if (
+              _.difference(ppCategoriesAPP[dataType], childCategories).lenth ===
+              childCategories.lenth
+            ) {
+              ppCategoriesAPPContent[dataType][category] = contents;
+              ppCategoriesAPP[dataType].push(category);
+            }
           }
         }
       }
+
+      ppCategoriesAPP[dataType] = _.uniq(ppCategoriesAPP[dataType]);
     }
 
-    ppCategoriesAPP[dataType] = _.uniq(ppCategoriesAPP[dataType]);
-  }
+    console.log(1, !!ppCategoriesAPP, ppCategoriesAPP);
+    const collectionData = [];
+    for (let i = 0; i < ppCategoriesAPP.collection.length; i++) {
+      const element = ppCategoriesAPP.collection[i];
+      await createTreeDataByNode(element, collectionData, categoriesCollection);
+    }
+    // map CONTENT
+    for (const categoryName in ppCategoriesAPPContent.collection) {
+      const contents = ppCategoriesAPPContent.collection[categoryName];
 
-  console.log(1, !!ppCategoriesAPP, ppCategoriesAPP);
-  const collectionData = [];
-  for (let i = 0; i < ppCategoriesAPP.collection.length; i++) {
-    const element = ppCategoriesAPP.collection[i];
-    await createTreeDataByNode(element, collectionData, categoriesCollection);
-  }
-  // map CONTENT
-  for (const categoryName in ppCategoriesAPPContent.collection) {
-    const contents = ppCategoriesAPPContent.collection[categoryName];
+      mapContentWithCategory(categoryName, contents, collectionData);
+    }
 
-    mapContentWithCategory(categoryName, contents, collectionData);
-  }
+    const thirdPartyData = [];
+    for (let i = 0; i < ppCategoriesAPP.thirdParty.length; i++) {
+      const element = ppCategoriesAPP.thirdParty[i];
+      await createTreeDataByNode(element, thirdPartyData, categoriesThirdParty);
+    }
+    // map CONTENT
+    for (const categoryName in ppCategoriesAPPContent.thirdParty) {
+      const contents = ppCategoriesAPPContent.thirdParty[categoryName];
 
-  const thirdPartyData = [];
-  for (let i = 0; i < ppCategoriesAPP.thirdParty.length; i++) {
-    const element = ppCategoriesAPP.thirdParty[i];
-    await createTreeDataByNode(element, thirdPartyData, categoriesThirdParty);
-  }
-  // map CONTENT
-  for (const categoryName in ppCategoriesAPPContent.thirdParty) {
-    const contents = ppCategoriesAPPContent.thirdParty[categoryName];
+      mapContentWithCategory(categoryName, contents, thirdPartyData);
+    }
 
-    mapContentWithCategory(categoryName, contents, thirdPartyData);
-  }
+    const retentionData = [];
+    for (let i = 0; i < ppCategoriesAPP.retention.length; i++) {
+      const element = ppCategoriesAPP.retention[i];
+      await createTreeDataByNode(element, retentionData, categoriesRetention);
+    }
+    // map CONTENT
+    for (const categoryName in ppCategoriesAPPContent.retention) {
+      const contents = ppCategoriesAPPContent.retention[categoryName];
 
-  const retentionData = [];
-  for (let i = 0; i < ppCategoriesAPP.retention.length; i++) {
-    const element = ppCategoriesAPP.retention[i];
-    await createTreeDataByNode(element, retentionData, categoriesRetention);
-  }
-  // map CONTENT
-  for (const categoryName in ppCategoriesAPPContent.retention) {
-    const contents = ppCategoriesAPPContent.retention[categoryName];
+      mapContentWithCategory(categoryName, contents, retentionData);
+    }
 
-    mapContentWithCategory(categoryName, contents, retentionData);
-  }
-
-  // console.log(1, app._id, {
-  //   collectionData: JSON.stringify(collectionData),
-  //   thirdPartyData: JSON.stringify(thirdPartyData),
-  //   retentionData: JSON.stringify(retentionData),
-  // });
-  await Models.App.updateOne(
-    {
-      _id: app._id,
-    },
-    {
-      $set: {
-        collectionData: JSON.stringify(collectionData),
-        thirdPartyData: JSON.stringify(thirdPartyData),
-        retentionData: JSON.stringify(retentionData),
+    // console.log(1, app._id, {
+    //   collectionData: JSON.stringify(collectionData),
+    //   thirdPartyData: JSON.stringify(thirdPartyData),
+    //   retentionData: JSON.stringify(retentionData),
+    // });
+    await Models.App.updateOne(
+      {
+        _id: app._id,
       },
-    },
-    {},
-    (err, data) =>
-      Helpers.Logger.info(`Data saved1: ${JSON.stringify(data, null, 2)}`)
-  );
+      {
+        $set: {
+          collectionData: JSON.stringify(collectionData),
+          thirdPartyData: JSON.stringify(thirdPartyData),
+          retentionData: JSON.stringify(retentionData),
+        },
+      },
+      {},
+      (err, data) => {
+        // Helpers.Logger.info(`Data saved1: ${JSON.stringify(data, null, 2)}`)
+      }
+    );
+  } catch (err) {
+    console.log(`ERROR: ${appId} ${err.message}`);
+  }
 }
 
 const mapContentWithCategory = (categoryName, contents, originalData) => {

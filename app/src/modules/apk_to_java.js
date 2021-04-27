@@ -1488,7 +1488,7 @@ async function computeDAPForSubCategory(category) {
     nodes: result,
   });
 }
-main8();
+// main8();
 
 // create ourMaliciousDataset and MPDroidDataset on db
 async function main9() {
@@ -1568,3 +1568,163 @@ async function createDataSetApps(item) {
   }
 }
 // main9();
+
+// Xây dựng file csv có tên là ourMaliciousDatasetMatrix.csv và MPDroidDatasetMatrix.csv
+4840;
+async function main10() {
+  console.log(
+    "RUNNING ourMaliciousDatasetMatrix.csv và MPDroidDatasetMatrix.csv"
+  );
+  // build ourMaliciousDatasetMatrix.csv
+  let ourMaliciousApps = await Models.OurMaliciousDataset.find();
+  ourMaliciousApps = _.groupBy(ourMaliciousApps, "categoryName");
+
+  await buildCSVDataset(ourMaliciousApps, "our");
+
+  // build ourMaliciousDatasetMatrix.csv
+  let MDroidApps = await Models.MPDroidDataset.find();
+  MDroidApps = _.groupBy(MDroidApps, "categoryName");
+  await buildCSVDataset(MDroidApps, "mdroid");
+
+  console.log("DONE");
+}
+async function buildCSVDataset(dataset, type) {
+  const appsIn24K = {};
+  for (let i = 0; i < categories.length; i++) {
+    const category = categories[i];
+
+    appsIn24K[category] = await Models.App.aggregate([
+      { $match: { isCompleted: true, categoryName: category } },
+    ])
+      .sort({
+        distance: "asc",
+      })
+      // .allowDiskUse(true)
+      .limit(91);
+  }
+
+  const header = [
+    {
+      id: "stt",
+      title: "#",
+    },
+    {
+      id: "appName",
+      title: "App name",
+    },
+    {
+      id: "category",
+      title: "Category",
+    },
+    {
+      id: "distance",
+      title: "Distance value",
+    },
+    {
+      id: "predict",
+      title: "Predict",
+    },
+    {
+      id: "risk",
+      title: "Risk",
+    },
+  ];
+  const rows = [];
+  // const rowsOurMaliciousApps = [];
+
+  // get ranges
+  const ranges = {};
+  for (const categoryName in dataset) {
+    const apps = dataset[categoryName];
+
+    const bigestDistance = _.max([
+      ..._.map(apps, "distance"),
+      ..._.map(appsIn24K[categoryName], "distance"),
+    ]);
+    const smallestDistance = _.min([
+      ..._.map(apps, "distance"),
+      ..._.map(appsIn24K[categoryName], "distance"),
+    ]);
+
+    if (
+      typeof smallestDistance !== "undefined" &&
+      typeof bigestDistance !== "undefined"
+    ) {
+      ranges[categoryName] = [smallestDistance, bigestDistance];
+    }
+  }
+
+  let sttInOurMalicious = 1;
+  // loop 24k
+  for (const categoryName in appsIn24K) {
+    const apps = appsIn24K[categoryName];
+    const beginRange = ranges[categoryName]
+      ? [
+          ranges[categoryName][0],
+          ranges[categoryName][0] +
+            (ranges[categoryName][1] - ranges[categoryName][0]) / 2,
+        ]
+      : [];
+
+    const predict = ranges[categoryName]
+      ? _.inRange(app.distance, ...beginRange)
+        ? 0
+        : 1
+      : "-";
+    if (predict === 0) {
+      apps.forEach((app) => {
+        rows.push({
+          stt: sttInOurMalicious++,
+          appName: app.appName,
+          category: categoryName,
+          predict: ranges[categoryName]
+            ? _.inRange(app.distance, ...beginRange)
+              ? 0
+              : 1
+            : "-",
+          distance: app.distance,
+          risk: 0,
+        });
+      });
+    }
+  }
+  // loop dataset
+  for (const categoryName in dataset) {
+    const apps = dataset[categoryName];
+    if (!_.includes(categories, categoryName)) continue;
+
+    const beginRange = ranges[categoryName]
+      ? [
+          ranges[categoryName][0],
+          ranges[categoryName][0] +
+            (ranges[categoryName][1] - ranges[categoryName][0]) / 2,
+        ]
+      : [];
+
+    apps.forEach((app) => {
+      rows.push({
+        stt: sttInOurMalicious++,
+        appName: app.appName,
+        category: categoryName,
+        predict: ranges[categoryName]
+          ? _.inRange(app.distance, ...beginRange)
+            ? 0
+            : 1
+          : "-",
+        distance: app.distance,
+        risk: 1,
+      });
+    });
+  }
+  const csvWriter = createCsvWriter({
+    path:
+      type === "our"
+        ? "ourMaliciousDatasetMatrix.csv"
+        : "MPDroidDatasetMatrix.csv",
+    header,
+  });
+  await csvWriter.writeRecords(rows);
+}
+main10();
+
+async function main11() {}
