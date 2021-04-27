@@ -1738,9 +1738,9 @@ async function buildCSVDataset(dataset, type) {
   const RecallBenign = X / (X + Y);
   const RecallMalicious = W / (Z + W);
   const F1Benign =
-    2(PrecisionBenign * RecallBenign) / (PrecisionBenign + RecallBenign);
+    (2 * (PrecisionBenign * RecallBenign)) / (PrecisionBenign + RecallBenign);
   const F1Malicious =
-    2(PrecisionMalicious * RecallMalicious) /
+    (2 * (PrecisionMalicious * RecallMalicious)) /
     (PrecisionMalicious + RecallMalicious);
   const Accuracy = (X + W) / (X + Y + Z + W);
 
