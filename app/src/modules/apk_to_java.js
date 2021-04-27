@@ -1638,6 +1638,7 @@ async function buildCSVDataset(dataset, type) {
 
   // get ranges
   const ranges = {};
+  const rangesTest = {};
   for (const categoryName in dataset) {
     const apps = dataset[categoryName];
 
@@ -1655,9 +1656,25 @@ async function buildCSVDataset(dataset, type) {
       typeof bigestDistance !== "undefined"
     ) {
       ranges[categoryName] = [smallestDistance, bigestDistance];
+
+      rangesTest[categoryName] = {};
+      rangesTest[categoryName]["begin"] = {
+        start: ranges[categoryName][0],
+        end:
+          ranges[categoryName][0] +
+          (ranges[categoryName][1] - ranges[categoryName][0]) / 2,
+      };
+
+      rangesTest[categoryName]["malicious"] = {
+        start:
+          ranges[categoryName][0] +
+          (ranges[categoryName][1] - ranges[categoryName][0]) / 2,
+        end: ranges[categoryName][1],
+      };
     }
   }
 
+  console.log(rangesTest);
   let sttInOurMalicious = 1;
   // loop 24k
   for (const categoryName in appsIn24K) {
