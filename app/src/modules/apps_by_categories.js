@@ -319,7 +319,7 @@ const categoriesCollection = [
 const keywordAndMeaningsCollection = [
   {
     id: "1",
-    keyword: "name",
+    keyword: "communications",
     meaning: "User name",
     ids: ["8", "11", "13", "15", "16", "17", "19", "25", "27"],
   },
@@ -353,12 +353,7 @@ const keywordAndMeaningsCollection = [
     meaning: "Private chats",
     ids: ["9"],
   },
-  {
-    id: "7",
-    keyword: "identifiable",
-    meaning: "User ID",
-    ids: ["8", "10", "13", "15", "16", "17", "19", "25", "26", "27"],
-  },
+
   {
     id: "8",
     keyword: "identity",
@@ -1896,7 +1891,7 @@ async function updateAppPrivacyPolicy(appId) {
     }
 
     // get meanings
-    let meanings = [];
+    let meanings = {};
     for (const categoryName in ppCategoriesAPPContent.collection) {
       getMeaningWithCategory(
         categoryName,
@@ -1923,7 +1918,7 @@ async function updateAppPrivacyPolicy(appId) {
     }
 
     // get meanings
-    meanings = [];
+    meanings = {};
     for (const categoryName in ppCategoriesAPPContent.thirdParty) {
       getMeaningWithCategory(
         categoryName,
@@ -2031,8 +2026,12 @@ const getMeaningWithCategory = (
 
         if (isExistedInContent) {
           categoriesMeaning.forEach((categoryMeaning) => {
+            console.log(3, keyword);
+
             if (categoryMeaning.keyword.toLowerCase().trim() === keyword) {
-              result.push(categoryMeaning);
+              console.log(1);
+              if (!result[categoryName]) result[categoryName] = [];
+              result[categoryName].push(categoryMeaning);
             }
           });
         }
@@ -2048,13 +2047,28 @@ const getMeaningWithCategory = (
 const mapMeaningWithCategory = (categoryName, originalData, meanings) => {
   for (let i = 0; i < originalData.length; i++) {
     const element = originalData[i];
-    const meaningsData = [];
-    meanings.forEach((meaning) => {
-      if (meaning.ids.includes(element.id)) {
-        meaningsData.push(meaning.keyword);
-      }
-    });
-    element.meanings = meaningsData;
+    element.meanings = [];
+
+    for (const groupKeyword in meanings) {
+      const meaningData = meanings[groupKeyword];
+
+      meaningData.forEach((meaning) => {
+        if (meaning.ids.includes(element.id)) {
+          const index = element.meanings.findIndex(
+            (item) => item.groupKeyword === groupKeyword
+          );
+
+          if (~index) {
+            element.meanings[index].meanings.push(meaning.meaning);
+          } else {
+            element.meanings.push({
+              groupKeyword,
+              meanings: meaning.meaning,
+            });
+          }
+        }
+      });
+    }
 
     if (element.children && element.children.length) {
       mapMeaningWithCategory(categoryName, element.children, meanings);
