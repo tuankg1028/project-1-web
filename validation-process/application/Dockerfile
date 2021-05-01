@@ -1,4 +1,5 @@
-FROM node:10-alpine
+#FROM node:10-alpine
+FROM registry.scontain.com:5050/sconecuratedimages/apps:node-10.14-alpine
 
 # Create app directory
 WORKDIR /usr/src/app
