@@ -77,6 +77,10 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
                   ul
                     each sub1 in category.children
                       li(style="list-style-type: circle;") #{sub1.name}
+                        ul
+                          if(sub1.meanings && sub1.meanings.length > 0)
+                            each meaning in sub1.meanings
+                              li.capitalizeFirst(style="list-style-type: square;") #{meaning}
           else 
             | &nbsp Do not mention
           //-   ul.more
@@ -109,6 +113,10 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
                   ul
                     each sub1 in category.children
                       li(style="list-style-type: circle;") #{sub1.name}
+                        ul
+                          if(sub1.meanings && sub1.meanings.length > 0)
+                            each meaning in sub1.meanings
+                              li.capitalizeFirst(style="list-style-type: square;") #{meaning}
           else 
             | &nbsp Do not mention
           //-   ul.more

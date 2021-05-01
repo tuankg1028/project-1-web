@@ -213,7 +213,7 @@ class SurveyController {
         }
       })
       
-
+      question.personalDataTypes
 
       question.collectionData = JSON.parse(question.collectionData)
       question.collectionData = question.collectionData.filter(item => item.children.length > 0)
@@ -222,6 +222,28 @@ class SurveyController {
 
       question.retentionData = JSON.parse(question.retentionData)
 
+
+      // add "Profile info"
+      if((question.collectionData.length > 0 && question.thirdPartyData.length === 0 ) || (question.collectionData.length === 0 && question.thirdPartyData.length > 0 )) {
+        question.personalDataTypes.push({
+          name: "Profile info",
+          mean: "By accessing this data, the app can collect basic user info (standard info, such as name, age, gender), or identity info, such as phone number, or user’s interests, such as sports, art, gaming, traveling.",
+          originalApis: [ {
+            name: "com.google.android.gms.plus"
+          },
+          {
+            name: "com.google.api.services.people.v1"
+          },
+          {
+            name: "com.google.api.services.people.v1.model"
+          }
+        ],
+          apis: [{
+            groupName: "Account information",
+            mean: "The app collects basic personal data such as full name, age, gender, etc, plus information on social network (e.g., work, education, friend list, family members),  or biometric data."
+          }]
+        })
+      }
       res.render("survey/templates/survey-question-ajax", {
         question,
         indexQuestion: index

@@ -32,6 +32,29 @@ async function parseCsvtoCollections() {
   console.log(result);
 }
 // parseCsvtoCollections();
+
+async function parseCsvtoCollectionMeanings() {
+  let data = await csv({
+    noheader: true,
+    output: "csv",
+  }).fromFile("/Users/a1234/Downloads/KeyWorkSearch_New.csv");
+
+  const result = [];
+  for (let i = 1; i < data.length; i++) {
+    const [id, keyword, meaning, ids] = data[i];
+
+    result.push({
+      id,
+      keyword,
+      meaning,
+      ids,
+      ids: ids.split(",").map((item) => item.trim()),
+    });
+  }
+
+  console.log(result);
+}
+// parseCsvtoCollectionMeanings();
 const categoriesCollection = [
   {
     id: "1",
@@ -205,35 +228,375 @@ const categoriesCollection = [
     keywords: ["improve", "improving", "improvement"],
   },
   {
-    id: "25",
+    id: "24",
     name: "Developing the new services",
     level: "2",
     parent: "6",
     keywords: ["new service", "new product", "new feature", "new functions"],
   },
   {
-    id: "26",
+    id: "25",
     name: "Direct Email",
     level: "2",
     parent: "7",
     keywords: ["direct && email"],
   },
   {
-    id: "27",
+    id: "26",
     name: "Direct Phone",
     level: "2",
     parent: "7",
     keywords: ["direct && phone"],
   },
   {
-    id: "28",
+    id: "27",
     name: "Booking",
     level: "2",
     parent: "5",
     keywords: ["booking"],
   },
+  {
+    id: "28",
+    name: "Collected Data",
+    level: "1",
+    parent: "null",
+    keywords: [""],
+  },
+  {
+    id: "29",
+    name: "User Profile",
+    level: "2",
+    parent: "28",
+    keywords: [
+      "name; contact; email; account; identifiable; identity; social network; behavioral; behavior; about you; card",
+    ],
+  },
+  {
+    id: "30",
+    name: "Location",
+    level: "2",
+    parent: "28",
+    keywords: ["location; address"],
+  },
+  {
+    id: "31",
+    name: "Media",
+    level: "2",
+    parent: "28",
+    keywords: ["media; video; audio; picture; image"],
+  },
+  {
+    id: "32",
+    name: "Health & Fitness",
+    level: "2",
+    parent: "28",
+    keywords: ["health; fitness; blood; step; activity; activities"],
+  },
+  {
+    id: "33",
+    name: "Hardware",
+    level: "2",
+    parent: "28",
+    keywords: [
+      "camera; IP address; MAC address; sensor; accelerometer; gyroscope; microphone; volumn",
+    ],
+  },
+  {
+    id: "34",
+    name: "Connection",
+    level: "2",
+    parent: "28",
+    keywords: ["Wifi; Bluetooth; NFC; Cookie; connections; beacons"],
+  },
+  {
+    id: "35",
+    name: "Telephony",
+    level: "2",
+    parent: "28",
+    keywords: ["call; messager; phone number; phone calls"],
+  },
 ];
-
+const keywordAndMeaningsCollection = [
+  {
+    id: "1",
+    keyword: "name",
+    meaning: "User name",
+    ids: ["8", "11", "13", "15", "16", "17", "19", "25", "27"],
+  },
+  {
+    id: "2",
+    keyword: "contact",
+    meaning: "Contact information",
+    ids: ["8", "11", "13", "15", "16", "17", "19", "25", "26", "27"],
+  },
+  {
+    id: "3",
+    keyword: "email",
+    meaning: "User Email",
+    ids: ["8", "11", "13", "15", "16", "17", "19", "25", "27"],
+  },
+  {
+    id: "4",
+    keyword: "account",
+    meaning: "Account info",
+    ids: ["8", "11", "13", "15", "16", "17", "19", "25", "26", "27"],
+  },
+  {
+    id: "5",
+    keyword: "password",
+    meaning: "Password (Encryption)",
+    ids: ["8", "13"],
+  },
+  {
+    id: "6",
+    keyword: "private chats",
+    meaning: "Private chats",
+    ids: ["9"],
+  },
+  {
+    id: "7",
+    keyword: "identifiable",
+    meaning: "User ID",
+    ids: ["8", "10", "13", "15", "16", "17", "19", "25", "26", "27"],
+  },
+  {
+    id: "8",
+    keyword: "identity",
+    meaning: "User Identity",
+    ids: ["8", "10", "13", "17", "19", "25", "26", "27"],
+  },
+  {
+    id: "9",
+    keyword: "social network",
+    meaning: "Social info",
+    ids: ["8", "9", "10", "11", "13", "16", "17", "19", "25", "26", "27"],
+  },
+  {
+    id: "10",
+    keyword: "behavioral",
+    meaning: "User interaction",
+    ids: ["8", "9", "10", "11", "13", "18", "19"],
+  },
+  {
+    id: "11",
+    keyword: "behavior",
+    meaning: "User behavior",
+    ids: ["8", "9", "10", "11", "13", "18", "19"],
+  },
+  {
+    id: "12",
+    keyword: "about you",
+    meaning: "User profile",
+    ids: [
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "16",
+      "17",
+      "18",
+      "19",
+      "25",
+      "26",
+      "27",
+    ],
+  },
+  {
+    id: "13",
+    keyword: "personal information",
+    meaning: "Personal info",
+    ids: ["10", "11", "13", "16", "19", "27"],
+  },
+  {
+    id: "14",
+    keyword: "location",
+    meaning: "Location info",
+    ids: ["9", "10", "11", "16", "17"],
+  },
+  {
+    id: "15",
+    keyword: "address",
+    meaning: "User address",
+    ids: ["9", "10", "11", "16", "17"],
+  },
+  {
+    id: "16",
+    keyword: "media",
+    meaning: "Media files",
+    ids: ["9", "10"],
+  },
+  {
+    id: "17",
+    keyword: "video",
+    meaning: "Video files",
+    ids: ["9", "11"],
+  },
+  {
+    id: "18",
+    keyword: "audio",
+    meaning: "Audio files",
+    ids: ["9", "12"],
+  },
+  {
+    id: "19",
+    keyword: "picture",
+    meaning: "Picture files",
+    ids: ["9", "13"],
+  },
+  {
+    id: "20",
+    keyword: "image",
+    meaning: "Image files",
+    ids: ["9", "14"],
+  },
+  {
+    id: "21",
+    keyword: "health",
+    meaning: "Health info",
+    ids: ["9", "10", "20", "21", "22"],
+  },
+  {
+    id: "22",
+    keyword: "fitness",
+    meaning: "Fitness info",
+    ids: ["9", "10", "20", "21", "23"],
+  },
+  {
+    id: "23",
+    keyword: "blood",
+    meaning: "Blood info",
+    ids: ["9", "10", "20", "21", "24"],
+  },
+  {
+    id: "24",
+    keyword: "step",
+    meaning: "Step count",
+    ids: ["9", "10", "20", "21", "25"],
+  },
+  {
+    id: "25",
+    keyword: "activity",
+    meaning: "User activity",
+    ids: ["9", "10", "20", "21", "26"],
+  },
+  {
+    id: "26",
+    keyword: "activities",
+    meaning: "User activities",
+    ids: ["9", "10", "20", "21", "27"],
+  },
+  {
+    id: "27",
+    keyword: "camera",
+    meaning: "Camera info",
+    ids: ["9", "12", "14", "23", "24"],
+  },
+  {
+    id: "28",
+    keyword: "IP address",
+    meaning: "IP Address",
+    ids: ["9", "14", "23", "24"],
+  },
+  {
+    id: "29",
+    keyword: "MAC address",
+    meaning: "MAC Address",
+    ids: ["9", "14", "23", "25"],
+  },
+  {
+    id: "30",
+    keyword: "sensor",
+    meaning: "Sensor info",
+    ids: ["9", "14", "23", "26"],
+  },
+  {
+    id: "31",
+    keyword: "accelerometer",
+    meaning: "Accelerometer output",
+    ids: ["9", "14", "23", "27"],
+  },
+  {
+    id: "32",
+    keyword: "gyroscope",
+    meaning: "Gyroscope output",
+    ids: ["9", "14", "23", "28"],
+  },
+  {
+    id: "33",
+    keyword: "microphone",
+    meaning: "Microphone state",
+    ids: ["9", "14", "23", "29"],
+  },
+  {
+    id: "34",
+    keyword: "volumn",
+    meaning: "Volumn setting",
+    ids: ["9"],
+  },
+  {
+    id: "35",
+    keyword: "Wifi",
+    meaning: "Wifi connection state",
+    ids: ["9", "14", "23", "24"],
+  },
+  {
+    id: "36",
+    keyword: "Bluetooth",
+    meaning: "Bluetooth info",
+    ids: ["14", "23"],
+  },
+  {
+    id: "37",
+    keyword: "NFC",
+    meaning: "NFC state",
+    ids: ["14", "23"],
+  },
+  {
+    id: "38",
+    keyword: "Cookie",
+    meaning: "Cookie info",
+    ids: ["9", "14", "23", "24"],
+  },
+  {
+    id: "39",
+    keyword: "connections",
+    meaning: "Connection info",
+    ids: ["9", "14", "23", "24"],
+  },
+  {
+    id: "40",
+    keyword: "beacons",
+    meaning: "Beacons info",
+    ids: ["9", "14", "23", "24"],
+  },
+  {
+    id: "41",
+    keyword: "call",
+    meaning: "Call info",
+    ids: ["14", "16", "17", "23", "24"],
+  },
+  {
+    id: "42",
+    keyword: "messager",
+    meaning: "Messager",
+    ids: ["11", "14", "16", "17", "23", "24"],
+  },
+  {
+    id: "43",
+    keyword: "phone number",
+    meaning: "Phone number",
+    ids: ["11", "16", "17"],
+  },
+  {
+    id: "44",
+    keyword: "phone calls",
+    meaning: "Phone calls",
+    ids: ["14", "16", "17", "23", "24"],
+  },
+  { id: "45", keyword: "card", meaning: "Card Info", ids: ["15"] },
+];
 // [
 //   {
 //     id: "1",
@@ -474,7 +837,6 @@ const categoriesThirdParty = [
     name: "Third party",
     level: "0",
     parent: "null",
-    requiredKeyword: true,
     keywords: [
       "Third-party",
       "3rd parties",
@@ -503,7 +865,7 @@ const categoriesThirdParty = [
     level: "2",
     parent: "1",
     keywords: [
-      "name; contact information; your email; user email; account; password; private chats; identifiable; identity; social network; behavioral; behavior; about you; personal information",
+      "name; contact; email; account; identifiable; identity; social network; behavioral; behavior; about you; card",
     ],
   },
   {
@@ -588,7 +950,210 @@ const categoriesThirdParty = [
     ],
   },
 ];
-
+const keywordAndMeaningsThirdParty = [
+  {
+    id: "1",
+    keyword: "name",
+    meaning: "User name",
+    ids: ["10", "11", "12", "13"],
+  },
+  {
+    id: "2",
+    keyword: "contact",
+    meaning: "Contact information",
+    ids: ["10", "11", "12", "14"],
+  },
+  {
+    id: "3",
+    keyword: "email",
+    meaning: "User Email",
+    ids: ["10", "11", "12", "15"],
+  },
+  {
+    id: "4",
+    keyword: "account",
+    meaning: "Account info",
+    ids: ["10", "11", "12", "16"],
+  },
+  {
+    id: "7",
+    keyword: "identifiable",
+    meaning: "User ID",
+    ids: ["10", "11", "12", "13"],
+  },
+  {
+    id: "8",
+    keyword: "identity",
+    meaning: "User Identity",
+    ids: ["10", "11", "12", "13"],
+  },
+  {
+    id: "9",
+    keyword: "social network",
+    meaning: "Social info",
+    ids: ["12"],
+  },
+  {
+    id: "10",
+    keyword: "behavioral",
+    meaning: "User interaction",
+    ids: ["13"],
+  },
+  {
+    id: "11",
+    keyword: "behavior",
+    meaning: "User behavior",
+    ids: ["13"],
+  },
+  {
+    id: "12",
+    keyword: "about you",
+    meaning: "User profile",
+    ids: ["10", "11", "12", "13"],
+  },
+  {
+    id: "14",
+    keyword: "location",
+    meaning: "Location info",
+    ids: ["14"],
+  },
+  {
+    id: "15",
+    keyword: "address",
+    meaning: "User address",
+    ids: ["14"],
+  },
+  { id: "16", keyword: "media", meaning: "Media files", ids: ["14"] },
+  { id: "17", keyword: "video", meaning: "Video files", ids: ["14"] },
+  { id: "18", keyword: "audio", meaning: "Audio files", ids: ["14"] },
+  {
+    id: "19",
+    keyword: "picture",
+    meaning: "Picture files",
+    ids: ["14"],
+  },
+  { id: "20", keyword: "image", meaning: "Image files", ids: ["14"] },
+  {
+    id: "21",
+    keyword: "health",
+    meaning: "Health info",
+    ids: ["14"],
+  },
+  {
+    id: "22",
+    keyword: "fitness",
+    meaning: "Fitness info",
+    ids: ["14"],
+  },
+  { id: "23", keyword: "blood", meaning: "Blood info", ids: ["14"] },
+  { id: "24", keyword: "step", meaning: "Step count", ids: ["14"] },
+  {
+    id: "25",
+    keyword: "activity",
+    meaning: "User activity",
+    ids: ["14"],
+  },
+  {
+    id: "26",
+    keyword: "activities",
+    meaning: "User activities",
+    ids: ["14"],
+  },
+  {
+    id: "27",
+    keyword: "camera",
+    meaning: "Camera info",
+    ids: ["14"],
+  },
+  {
+    id: "28",
+    keyword: "IP address",
+    meaning: "IP Address",
+    ids: ["14"],
+  },
+  {
+    id: "29",
+    keyword: "MAC address",
+    meaning: "MAC Address",
+    ids: ["14"],
+  },
+  {
+    id: "30",
+    keyword: "sensor",
+    meaning: "Sensor info",
+    ids: ["14"],
+  },
+  {
+    id: "31",
+    keyword: "accelerometer",
+    meaning: "Accelerometer output",
+    ids: ["14"],
+  },
+  {
+    id: "32",
+    keyword: "gyroscope",
+    meaning: "Gyroscope output",
+    ids: ["14"],
+  },
+  {
+    id: "33",
+    keyword: "microphone",
+    meaning: "Microphone state",
+    ids: ["14"],
+  },
+  {
+    id: "34",
+    keyword: "volumn",
+    meaning: "Volumn setting",
+    ids: ["14"],
+  },
+  {
+    id: "35",
+    keyword: "Wifi",
+    meaning: "Wifi connection state",
+    ids: ["14"],
+  },
+  {
+    id: "36",
+    keyword: "Bluetooth",
+    meaning: "Bluetooth info",
+    ids: ["14"],
+  },
+  { id: "37", keyword: "NFC", meaning: "NFC state", ids: ["14"] },
+  {
+    id: "38",
+    keyword: "Cookie",
+    meaning: "Cookie info",
+    ids: ["14"],
+  },
+  {
+    id: "39",
+    keyword: "connections",
+    meaning: "Connection info",
+    ids: ["14"],
+  },
+  {
+    id: "40",
+    keyword: "beacons",
+    meaning: "Beacons info",
+    ids: ["14"],
+  },
+  { id: "41", keyword: "call", meaning: "Call info", ids: ["14"] },
+  { id: "42", keyword: "messager", meaning: "Messager", ids: ["14"] },
+  {
+    id: "43",
+    keyword: "phone number",
+    meaning: "Phone number",
+    ids: ["14"],
+  },
+  {
+    id: "44",
+    keyword: "phone calls",
+    meaning: "Phone calls",
+    ids: ["14"],
+  },
+  { id: "45", keyword: "card", meaning: "Card Info", ids: ["10"] },
+];
 // [
 //   {
 //     id: "1",
@@ -1317,7 +1882,7 @@ async function updateAppPrivacyPolicy(appId) {
       ppCategoriesAPP[dataType] = _.uniq(ppCategoriesAPP[dataType]);
     }
 
-    console.log(1, !!ppCategoriesAPP, ppCategoriesAPP);
+    // console.log(1, ppCategoriesAPP, ppCategoriesAPPContent);
     const collectionData = [];
     for (let i = 0; i < ppCategoriesAPP.collection.length; i++) {
       const element = ppCategoriesAPP.collection[i];
@@ -1330,6 +1895,21 @@ async function updateAppPrivacyPolicy(appId) {
       mapContentWithCategory(categoryName, contents, collectionData);
     }
 
+    // get meanings
+    let meanings = [];
+    for (const categoryName in ppCategoriesAPPContent.collection) {
+      getMeaningWithCategory(
+        categoryName,
+        collectionData,
+        "collection",
+        meanings
+      );
+    }
+    //  map meanings
+    for (const categoryName in ppCategoriesAPPContent.collection) {
+      mapMeaningWithCategory(categoryName, collectionData, meanings);
+    }
+
     const thirdPartyData = [];
     for (let i = 0; i < ppCategoriesAPP.thirdParty.length; i++) {
       const element = ppCategoriesAPP.thirdParty[i];
@@ -1340,6 +1920,21 @@ async function updateAppPrivacyPolicy(appId) {
       const contents = ppCategoriesAPPContent.thirdParty[categoryName];
 
       mapContentWithCategory(categoryName, contents, thirdPartyData);
+    }
+
+    // get meanings
+    meanings = [];
+    for (const categoryName in ppCategoriesAPPContent.thirdParty) {
+      getMeaningWithCategory(
+        categoryName,
+        thirdPartyData,
+        "thirdParty",
+        meanings
+      );
+    }
+    //  map meanings
+    for (const categoryName in ppCategoriesAPPContent.collection) {
+      mapMeaningWithCategory(categoryName, thirdPartyData, meanings);
     }
 
     const retentionData = [];
@@ -1376,6 +1971,7 @@ async function updateAppPrivacyPolicy(appId) {
       }
     );
   } catch (err) {
+    console.log(err);
     console.log(`ERROR: ${appId} ${err.message}`);
   }
 }
@@ -1388,6 +1984,80 @@ const mapContentWithCategory = (categoryName, contents, originalData) => {
 
     if (element.children && element.children.length) {
       mapContentWithCategory(categoryName, contents, element.children);
+    }
+  }
+  return;
+};
+
+const getMeaningWithCategory = (
+  categoryName,
+  originalData,
+  dataType,
+  result
+) => {
+  let categories;
+  let categoriesMeaning;
+  switch (dataType) {
+    case "collection":
+      categories = categoriesCollection;
+      categoriesMeaning = keywordAndMeaningsCollection;
+      break;
+
+    case "thirdParty":
+      categories = categoriesThirdParty;
+      categoriesMeaning = keywordAndMeaningsThirdParty;
+      break;
+
+    default:
+      categories = categoriesRetention;
+      break;
+  }
+
+  for (let i = 0; i < originalData.length; i++) {
+    const element = originalData[i];
+
+    if (element.name === categoryName) {
+      const keywords = categories.find(
+        (category) => category.name === categoryName
+      ).keywords;
+
+      keywords.forEach((keyword) => {
+        keyword = keyword.toLowerCase();
+        let isExistedInContent = false;
+        element.contents.forEach((content) => {
+          content = content.toLowerCase();
+          if (~content.indexOf(keyword)) isExistedInContent = true;
+        });
+
+        if (isExistedInContent) {
+          categoriesMeaning.forEach((categoryMeaning) => {
+            if (categoryMeaning.keyword.toLowerCase().trim() === keyword) {
+              result.push(categoryMeaning);
+            }
+          });
+        }
+      });
+    }
+
+    if (element.children && element.children.length) {
+      getMeaningWithCategory(categoryName, element.children, dataType, result);
+    }
+  }
+};
+
+const mapMeaningWithCategory = (categoryName, originalData, meanings) => {
+  for (let i = 0; i < originalData.length; i++) {
+    const element = originalData[i];
+    const meaningsData = [];
+    meanings.forEach((meaning) => {
+      if (meaning.ids.includes(element.id)) {
+        meaningsData.push(meaning.keyword);
+      }
+    });
+    element.meanings = meaningsData;
+
+    if (element.children && element.children.length) {
+      mapMeaningWithCategory(categoryName, element.children, meanings);
     }
   }
   return;

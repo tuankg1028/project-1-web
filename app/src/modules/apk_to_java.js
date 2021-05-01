@@ -1576,10 +1576,10 @@ async function main10() {
     "RUNNING ourMaliciousDatasetMatrix.csv và MPDroidDatasetMatrix.csv"
   );
   // build ourMaliciousDatasetMatrix.csv
-  let ourMaliciousApps = await Models.OurMaliciousDataset.find();
-  ourMaliciousApps = _.groupBy(ourMaliciousApps, "categoryName");
+  // let ourMaliciousApps = await Models.OurMaliciousDataset.find();
+  // ourMaliciousApps = _.groupBy(ourMaliciousApps, "categoryName");
 
-  await buildCSVDataset(ourMaliciousApps, "our");
+  // await buildCSVDataset(ourMaliciousApps, "our");
 
   // build ourMaliciousDatasetMatrix.csv
   let MDroidApps = await Models.MPDroidDataset.find();
@@ -1637,44 +1637,70 @@ async function buildCSVDataset(dataset, type) {
   // const rowsOurMaliciousApps = [];
 
   // get ranges
-  const ranges = {};
-  const rangesTest = {};
-  for (const categoryName in dataset) {
-    const apps = dataset[categoryName];
+  // const ranges = {};
+  // const rangesTest = {};
+  // for (const categoryName in dataset) {
+  //   const apps = dataset[categoryName];
 
-    const bigestDistance = _.max([
-      ..._.map(apps, "distance"),
-      ..._.map(appsIn24K[categoryName], "distance"),
-    ]);
-    const smallestDistance = _.min([
-      ..._.map(apps, "distance"),
-      ..._.map(appsIn24K[categoryName], "distance"),
-    ]);
+  //   const bigestDistance = _.max([
+  //     ..._.map(apps, "distance"),
+  //     ..._.map(appsIn24K[categoryName], "distance"),
+  //   ]);
+  //   const smallestDistance = _.min([
+  //     ..._.map(apps, "distance"),
+  //     ..._.map(appsIn24K[categoryName], "distance"),
+  //   ]);
 
-    if (
-      typeof smallestDistance !== "undefined" &&
-      typeof bigestDistance !== "undefined"
-    ) {
-      ranges[categoryName] = [smallestDistance, bigestDistance];
+  //   if (
+  //     typeof smallestDistance !== "undefined" &&
+  //     typeof bigestDistance !== "undefined"
+  //   ) {
+  //     ranges[categoryName] = [smallestDistance, bigestDistance];
 
-      rangesTest[categoryName] = {};
-      rangesTest[categoryName]["begin"] = {
-        start: ranges[categoryName][0],
-        end:
-          ranges[categoryName][0] +
-          (ranges[categoryName][1] - ranges[categoryName][0]) / 2,
-      };
+  //     rangesTest[categoryName] = {};
+  //     rangesTest[categoryName]["begin"] = {
+  //       start: ranges[categoryName][0],
+  //       end:
+  //         ranges[categoryName][0] +
+  //         (ranges[categoryName][1] - ranges[categoryName][0]) / 2,
+  //     };
 
-      rangesTest[categoryName]["malicious"] = {
-        start:
-          ranges[categoryName][0] +
-          (ranges[categoryName][1] - ranges[categoryName][0]) / 2,
-        end: ranges[categoryName][1],
-      };
-    }
-  }
+  //     rangesTest[categoryName]["malicious"] = {
+  //       start:
+  //         ranges[categoryName][0] +
+  //         (ranges[categoryName][1] - ranges[categoryName][0]) / 2,
+  //       end: ranges[categoryName][1],
+  //     };
+  //   }
+  // }
 
-  console.log(rangesTest);
+  // console.log(rangesTest);
+
+  const ranges = {
+    Entertainment: [0, 0.04955044955044956],
+    Photography: [0.01501373626373627, 0.05524846477052358],
+    Personalization: [0, 0.043695717280622895],
+    "Travel & Local": [0, 0.0568627450980392],
+    "Music & Audio": [0, 0.06],
+    "Video Players & Editors": [0.011241217798594973, 0.05056598298],
+    Tools: [0, 0.032034631],
+    Beauty: [0.049523809523809526, 0.09619047619047619],
+    Productivity: [0, 0.04990842490842497],
+    Communication: [0.018571428571428565, 0.06757142857],
+    Medical: [0, 0.06716366],
+    "Books & Reference": [0, 0.05903790087463557],
+    Education: [0, 0.064037331],
+    Social: [0, 0.063334177],
+    Business: [0, 0.05902964959568733],
+    "Auto & Vehicles": [0, 0.07142857142],
+    "News & Magazines": [0, 0.046153846153846205],
+    Sports: [0, 0.05797503467406379],
+    Shopping: [0, 0.060908082],
+    "Libraries & Demo": [0, 0.05408583186360964],
+    Weather: [0, 0.068207281],
+    "Maps & Navigation": [0, 0.07142857142857142],
+  };
+
   let sttInOurMalicious = 1;
   // loop 24k
   for (const categoryName in appsIn24K) {
