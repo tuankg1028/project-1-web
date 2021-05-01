@@ -223,10 +223,10 @@ class SurveyController {
       question.retentionData = JSON.parse(question.retentionData)
 
 
-      // add "Profile info"
-      if(question.thirdPartyData.length && question.thirdPartyData.length) {
+      // add "User profile"
+      if(question.thirdPartyData.length || question.thirdPartyData.length) {
         question.personalDataTypes.push({
-          name: "Profile info",
+          name: "User profile",
           mean: "By accessing this data, the app can collect basic user info (standard info, such as name, age, gender), or identity info, such as phone number, or user’s interests, such as sports, art, gaming, traveling.",
           originalApis: [ {
             name: "com.google.android.gms.plus"

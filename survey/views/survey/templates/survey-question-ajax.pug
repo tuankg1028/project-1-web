@@ -79,7 +79,7 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
                       li(style="list-style-type: circle;") #{sub1.name}
                         ul
                           if(sub1.meanings && sub1.meanings.length > 0)
-                            li.capitalizeFirst(style="list-style-type: square;") Data: 
+                            li.capitalizeFirst(style="list-style-type: square;") Collected data: 
                               each meaning in sub1.meanings
                                 div - #{meaning.groupKeyword}: 
                                   each meaningText, indexMeaning in meaning.meanings
@@ -122,7 +122,7 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
                       li(style="list-style-type: circle;") #{sub1.name}
                         ul
                           if(sub1.meanings && sub1.meanings.length > 0)
-                            li.capitalizeFirst(style="list-style-type: square;") Data: 
+                            li.capitalizeFirst(style="list-style-type: square;") Collected data: 
                               each meaning in sub1.meanings
                                 div - #{meaning.groupKeyword}: 
                                   each meaningText, indexMeaning in meaning.meanings

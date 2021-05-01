@@ -255,13 +255,9 @@ const categoriesCollection = [
     parent: "5",
     keywords: ["booking"],
   },
-  {
-    id: "28",
-    name: "Collected Data",
-    level: "1",
-    parent: "null",
-    keywords: [""],
-  },
+];
+
+const collectedDataCollection = [
   {
     id: "29",
     name: "User Profile",
@@ -319,7 +315,7 @@ const categoriesCollection = [
 const keywordAndMeaningsCollection = [
   {
     id: "1",
-    keyword: "communications",
+    keyword: "name",
     meaning: "User name",
     ids: ["8", "11", "13", "15", "16", "17", "19", "25", "27"],
   },
@@ -841,19 +837,51 @@ const categoriesThirdParty = [
     ],
   },
   {
-    id: "1",
-    name: "Data",
-    level: "1",
-    parent: "null",
-    keywords: [""],
-  },
-  {
     id: "2",
     name: "Purpose",
     level: "1",
     parent: "null",
     keywords: [""],
   },
+  {
+    id: "10",
+    name: "Payment",
+    level: "2",
+    parent: "2",
+    keywords: ["payment; purchase; order; credit card"],
+  },
+  {
+    id: "11",
+    name: "Delivery",
+    level: "2",
+    parent: "2",
+    keywords: ["diliver; delivery; deliverer"],
+  },
+  {
+    id: "12",
+    name: "Marketing",
+    level: "2",
+    parent: "2",
+    keywords: ["marketing"],
+  },
+  {
+    id: "13",
+    name: "Advertisement",
+    level: "2",
+    parent: "2",
+    keywords: ["Advertising; ads; advertisement; advertiser;"],
+  },
+  {
+    id: "14",
+    name: "Analysis",
+    level: "2",
+    parent: "2",
+    keywords: [
+      "Analysis; analytical; analysed; analyzed; analytics; market research",
+    ],
+  },
+];
+const collectedDataThirdParty = [
   {
     id: "3",
     name: "User Profile",
@@ -906,43 +934,6 @@ const categoriesThirdParty = [
     level: "2",
     parent: "1",
     keywords: ["call; messager; phone number; phone calls"],
-  },
-  {
-    id: "10",
-    name: "Payment",
-    level: "2",
-    parent: "2",
-    keywords: ["payment; purchase; order; credit card"],
-  },
-  {
-    id: "11",
-    name: "Delivery",
-    level: "2",
-    parent: "2",
-    keywords: ["diliver; delivery; deliverer"],
-  },
-  {
-    id: "12",
-    name: "Marketing",
-    level: "2",
-    parent: "2",
-    keywords: ["marketing"],
-  },
-  {
-    id: "13",
-    name: "Advertisement",
-    level: "2",
-    parent: "2",
-    keywords: ["Advertising; ads; advertisement; advertiser;"],
-  },
-  {
-    id: "14",
-    name: "Analysis",
-    level: "2",
-    parent: "2",
-    keywords: [
-      "Analysis; analytical; analysed; analyzed; analytics; market research",
-    ],
   },
 ];
 const keywordAndMeaningsThirdParty = [
@@ -1877,7 +1868,6 @@ async function updateAppPrivacyPolicy(appId) {
       ppCategoriesAPP[dataType] = _.uniq(ppCategoriesAPP[dataType]);
     }
 
-    // console.log(1, ppCategoriesAPP, ppCategoriesAPPContent);
     const collectionData = [];
     for (let i = 0; i < ppCategoriesAPP.collection.length; i++) {
       const element = ppCategoriesAPP.collection[i];
@@ -1891,19 +1881,7 @@ async function updateAppPrivacyPolicy(appId) {
     }
 
     // get meanings
-    let meanings = {};
-    for (const categoryName in ppCategoriesAPPContent.collection) {
-      getMeaningWithCategory(
-        categoryName,
-        collectionData,
-        "collection",
-        meanings
-      );
-    }
-    //  map meanings
-    for (const categoryName in ppCategoriesAPPContent.collection) {
-      mapMeaningWithCategory(categoryName, collectionData, meanings);
-    }
+    getMeaningWithCategory(collectionData, "collection");
 
     const thirdPartyData = [];
     for (let i = 0; i < ppCategoriesAPP.thirdParty.length; i++) {
@@ -1916,21 +1894,8 @@ async function updateAppPrivacyPolicy(appId) {
 
       mapContentWithCategory(categoryName, contents, thirdPartyData);
     }
-
     // get meanings
-    meanings = {};
-    for (const categoryName in ppCategoriesAPPContent.thirdParty) {
-      getMeaningWithCategory(
-        categoryName,
-        thirdPartyData,
-        "thirdParty",
-        meanings
-      );
-    }
-    //  map meanings
-    for (const categoryName in ppCategoriesAPPContent.collection) {
-      mapMeaningWithCategory(categoryName, thirdPartyData, meanings);
-    }
+    getMeaningWithCategory(thirdPartyData, "thirdParty");
 
     const retentionData = [];
     for (let i = 0; i < ppCategoriesAPP.retention.length; i++) {
@@ -1968,6 +1933,7 @@ async function updateAppPrivacyPolicy(appId) {
   } catch (err) {
     console.log(err);
     console.log(`ERROR: ${appId} ${err.message}`);
+    throw err;
   }
 }
 
@@ -1984,23 +1950,21 @@ const mapContentWithCategory = (categoryName, contents, originalData) => {
   return;
 };
 
-const getMeaningWithCategory = (
-  categoryName,
-  originalData,
-  dataType,
-  result
-) => {
+const getMeaningWithCategory = (originalData, dataType) => {
   let categories;
   let categoriesMeaning;
+  let collectionData;
   switch (dataType) {
     case "collection":
       categories = categoriesCollection;
       categoriesMeaning = keywordAndMeaningsCollection;
+      collectionData = collectedDataCollection;
       break;
 
     case "thirdParty":
       categories = categoriesThirdParty;
       categoriesMeaning = keywordAndMeaningsThirdParty;
+      collectionData = collectedDataThirdParty;
       break;
 
     default:
@@ -2010,71 +1974,43 @@ const getMeaningWithCategory = (
 
   for (let i = 0; i < originalData.length; i++) {
     const element = originalData[i];
+    element.meanings = [];
 
-    if (element.name === categoryName) {
-      const keywords = categories.find(
-        (category) => category.name === categoryName
-      ).keywords;
+    const contents = element.contents.join(",");
+    collectionData.forEach((collectedItem) => {
+      let { keywords, name: groupKeyword } = collectedItem;
+      keywords = keywords[0].split(";").map((item) => item.trim());
 
       keywords.forEach((keyword) => {
-        keyword = keyword.toLowerCase();
-        let isExistedInContent = false;
-        element.contents.forEach((content) => {
-          content = content.toLowerCase();
-          if (~content.indexOf(keyword)) isExistedInContent = true;
-        });
-
-        if (isExistedInContent) {
+        // check in cateogory's content
+        if (~contents.indexOf(keyword)) {
           categoriesMeaning.forEach((categoryMeaning) => {
-            console.log(3, keyword);
-
-            if (categoryMeaning.keyword.toLowerCase().trim() === keyword) {
-              console.log(1);
-              if (!result[categoryName]) result[categoryName] = [];
-              result[categoryName].push(categoryMeaning);
+            if (
+              categoryMeaning.keyword.toLowerCase().trim() === keyword &&
+              categoryMeaning.ids.includes(element.id)
+            ) {
+              // handle
+              const index = element.meanings.findIndex(
+                (item) => item.groupKeyword === groupKeyword
+              );
+              if (~index) {
+                element.meanings[index].meanings.push(categoryMeaning.meaning);
+              } else {
+                element.meanings.push({
+                  groupKeyword,
+                  meanings: [categoryMeaning.meaning],
+                });
+              }
             }
           });
         }
       });
-    }
-
+    });
+    console.log(1, element.name, element.meanings);
     if (element.children && element.children.length) {
-      getMeaningWithCategory(categoryName, element.children, dataType, result);
+      getMeaningWithCategory(element.children, dataType);
     }
   }
-};
-
-const mapMeaningWithCategory = (categoryName, originalData, meanings) => {
-  for (let i = 0; i < originalData.length; i++) {
-    const element = originalData[i];
-    element.meanings = [];
-
-    for (const groupKeyword in meanings) {
-      const meaningData = meanings[groupKeyword];
-
-      meaningData.forEach((meaning) => {
-        if (meaning.ids.includes(element.id)) {
-          const index = element.meanings.findIndex(
-            (item) => item.groupKeyword === groupKeyword
-          );
-
-          if (~index) {
-            element.meanings[index].meanings.push(meaning.meaning);
-          } else {
-            element.meanings.push({
-              groupKeyword,
-              meanings: meaning.meaning,
-            });
-          }
-        }
-      });
-    }
-
-    if (element.children && element.children.length) {
-      mapMeaningWithCategory(categoryName, element.children, meanings);
-    }
-  }
-  return;
 };
 
 const parseCollectionData = (item) => {
@@ -2141,7 +2077,6 @@ async function buildTree(pathArray, result, categoriesData) {
 
 const getNodePath = (categoryId, categoriesData, pathString = "") => {
   const category = categoriesData.find((item) => item.id === categoryId);
-
   pathString += `${category.id}.`;
 
   if (category.parent && category.parent != "null")
