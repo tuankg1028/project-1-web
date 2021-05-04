@@ -144,12 +144,12 @@ class SurveyController {
             "hicare",
             "microsoft teams",
             "spotify: listen to podcasts & find music you love",
-            "zoom cloud meetings",
-        ]
+            "zoom cloud meetings"
+          ]
           // ["incredible health", "microsoft teams"],
         }
-    })
-     
+      });
+
       const token = req.session.token;
 
       res.render("survey/templates/survey-question", {
@@ -164,85 +164,145 @@ class SurveyController {
   async getQuestion(req, res, next) {
     try {
       const { id, index } = req.params;
-      let question = await Models.App.findById(id)
-        // .cache(60 * 60 * 24 * 30); // 1 month;
+      let question = await Models.App.findById(id);
+      // .cache(60 * 60 * 24 * 30); // 1 month;
       question = question.toJSON();
 
-      
-      if(!question.personalDataTypes || !question.personalDataTypes.length) {
-        let apis = await Promise.all(question.nodes.map(Utils.Function.getAPIFromNode));
-        apis = _.uniqBy(apis, "name")
+      if (!question.personalDataTypes || !question.personalDataTypes.length) {
+        let apis = await Promise.all(
+          question.nodes.map(Utils.Function.getAPIFromNode)
+        );
+        apis = _.uniqBy(apis, "name");
 
         const groupApis = _.groupBy(apis, "parent");
 
-        let personalDataTypes = []
+        let personalDataTypes = [];
         for (const personalDataTypeId in groupApis) {
-          const parent = await Models.Tree.findById(personalDataTypeId)
+          const parent = await Models.Tree.findById(personalDataTypeId);
 
           const personalDataTypeApiIds = groupApis[personalDataTypeId];
-          
-          const personalDataTypeApis = await Promise.all(personalDataTypeApiIds.map(id => Models.Tree.findById(id)));
+
+          const personalDataTypeApis = await Promise.all(
+            personalDataTypeApiIds.map(id => Models.Tree.findById(id))
+          );
 
           personalDataTypes.push({
             name: parent.name,
             apis: personalDataTypeApis
-          })
+          });
         }
 
-       
-        question.personalDataTypes = personalDataTypes
+        question.personalDataTypes = personalDataTypes;
         await Models.App.updateOne(
-          {_id: id}, 
-          { $set: { personalDataTypes }}
-        ).then(console.log)
+          { _id: id },
+          { $set: { personalDataTypes } }
+        ).then(console.log);
       }
 
-      question.personalDataTypes = question.personalDataTypes.map(personalDataType => {
-        const apis = personalDataType.apis.reduce((acc, item) => {
-            const newAPi = Utils.Function.getGroupApi(item)
-            if(newAPi) acc.push(newAPi)
-           
-           return acc
+      question.personalDataTypes = question.personalDataTypes.map(
+        personalDataType => {
+          const apis = personalDataType.apis.reduce((acc, item) => {
+            const newAPi = Utils.Function.getGroupApi(item);
+            if (newAPi) acc.push(newAPi);
+
+            return acc;
           }, []);
-         
-        return {
-          ...personalDataType,
-          ...(Utils.Function.getPersonalDataType(personalDataType) || {}),
-          apis: _.uniqBy(apis, "groupName"),
-          originalApis: personalDataType.apis
+
+          return {
+            ...personalDataType,
+            ...(Utils.Function.getPersonalDataType(personalDataType) || {}),
+            apis: _.uniqBy(apis, "groupName"),
+            originalApis: personalDataType.apis
+          };
         }
-      })
-      
-      question.personalDataTypes
+      );
 
-      question.collectionData = JSON.parse(question.collectionData)
-      question.collectionData = question.collectionData.filter(item => item.children.length > 0)
-      question.thirdPartyData = JSON.parse(question.thirdPartyData)
-      question.thirdPartyData = question.thirdPartyData.filter(item => item.children.length > 0)
+      question.personalDataTypes;
 
-      question.retentionData = JSON.parse(question.retentionData)
+      question.collectionData = JSON.parse(question.collectionData);
+      question.collectionData = question.collectionData.filter(
+        item => item.children.length > 0
+      );
+      question.thirdPartyData = JSON.parse(question.thirdPartyData);
+      question.thirdPartyData = question.thirdPartyData.filter(
+        item => item.children.length > 0
+      );
 
+      question.retentionData = JSON.parse(question.retentionData);
 
-      // add "User profile"
-      if(question.collectionData.length || question.thirdPartyData.length) {
+      // Using all collected data to collection
+      let collectionCollectedData = {
+        name: "Using all collected data",
+        children: []
+      };
+      question.collectionData.map(category => {
+        category.children = category.children.filter(child => {
+          if (child.meanings.length === 0) {
+            collectionCollectedData.children.push({
+              name: `${child.name} (${category.name})`,
+              meanings: []
+            });
+            return false;
+          }
+          return true;
+        });
+      });
+      question.collectionData = question.collectionData.filter(
+        category => category.children.length
+      );
+      if (collectionCollectedData.children.length) {
+        question.collectionData.push(collectionCollectedData);
+      }
+
+      // Using all collected data to third party
+      let thirdPartyCollectedData = {
+        name: "Using all collected data",
+        children: []
+      };
+      question.thirdPartyData.map(category => {
+        category.children = category.children.filter(child => {
+          if (child.meanings.length === 0) {
+            thirdPartyCollectedData.children.push({
+              name: `${child.name} (${category.name})`,
+              meanings: []
+            });
+            return false;
+          }
+          return true;
+        });
+      });
+      question.thirdPartyData = question.thirdPartyData.filter(
+        category => category.children.length
+      );
+      if (thirdPartyCollectedData.children.length) {
+        question.thirdPartyData.push(thirdPartyCollectedData);
+      }
+
+      // add "User profile" to personalDataTypes
+      if (question.collectionData.length || question.thirdPartyData.length) {
         question.personalDataTypes.push({
           name: "User profile",
-          mean: "By accessing this data, the app can collect basic user info (standard info, such as name, age, gender), or identity info, such as phone number, or user’s interests, such as sports, art, gaming, traveling.",
-          originalApis: [ {
-            name: "com.google.android.gms.plus"
-          },
-          {
-            name: "com.google.api.services.people.v1"
-          },
-          {
-            name: "com.google.api.services.people.v1.model"
-          }
-        ],
-          apis: [{
-            groupName: "Account information",
-            mean: "The app collects basic personal data such as full name, age, gender, etc, plus information on social network (e.g., work, education, friend list, family members),  or biometric data."
-          }]
-        })
+          mean:
+            "By accessing this data, the app can collect basic user info (standard info, such as name, age, gender), or identity info, such as phone number, or user’s interests, such as sports, art, gaming, traveling.",
+          originalApis: [
+            {
+              name: "com.google.android.gms.plus"
+            },
+            {
+              name: "com.google.api.services.people.v1"
+            },
+            {
+              name: "com.google.api.services.people.v1.model"
+            }
+          ],
+          apis: [
+            {
+              groupName: "Account information",
+              mean:
+                "The app collects basic personal data such as full name, age, gender, etc, plus information on social network (e.g., work, education, friend list, family members),  or biometric data."
+            }
+          ]
+        });
       }
       res.render("survey/templates/survey-question-ajax", {
         question,
@@ -261,42 +321,46 @@ class SurveyController {
       const questions = [];
       for (let i = 0; i < apps.length; i++) {
         const app = apps[i];
-        let question = await Models.App.findById(app.appId)
-        .cache(60 * 60 * 24 * 30); // 1 month;
+        let question = await Models.App.findById(app.appId).cache(
+          60 * 60 * 24 * 30
+        ); // 1 month;
         question = question.toJSON();
 
-      
-        if(!question.personalDataTypes || !question.personalDataTypes.length) {
-          let apis = await Promise.all(question.nodes.map(Utils.Function.getAPIFromNode));
-          apis = _.uniqBy(apis, "name")
+        if (!question.personalDataTypes || !question.personalDataTypes.length) {
+          let apis = await Promise.all(
+            question.nodes.map(Utils.Function.getAPIFromNode)
+          );
+          apis = _.uniqBy(apis, "name");
 
           const groupApis = _.groupBy(apis, "parent");
 
-          let personalDataTypes = []
+          let personalDataTypes = [];
           for (const personalDataTypeId in groupApis) {
-            const parent = await Models.Tree.findById(personalDataTypeId)
+            const parent = await Models.Tree.findById(personalDataTypeId);
 
             const personalDataTypeApiIds = groupApis[personalDataTypeId];
-            
-            const personalDataTypeApis = await Promise.all(personalDataTypeApiIds.map(id => Models.Tree.findById(id)));
+
+            const personalDataTypeApis = await Promise.all(
+              personalDataTypeApiIds.map(id => Models.Tree.findById(id))
+            );
 
             personalDataTypes.push({
               name: parent.name,
               apis: personalDataTypeApis
-            })
+            });
           }
-          
-          question.personalDataTypes = personalDataTypes
+
+          question.personalDataTypes = personalDataTypes;
           await Models.App.updateOne(
-            {_id: id}, 
-            { $set: { personalDataTypes }}
-          ).then(console.log)
+            { _id: id },
+            { $set: { personalDataTypes } }
+          ).then(console.log);
         }
-        
+
         questions.push({
           ...question,
           ...app
-        })
+        });
       }
       res.render("survey/templates/survey-app-comment-ajax", {
         questions
