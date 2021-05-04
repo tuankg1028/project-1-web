@@ -377,7 +377,7 @@ const keywordAndMeaningsCollection = [
   {
     id: "12",
     keyword: "about you",
-    meaning: "User profile",
+    meaning: "Your profile",
     ids: [
       "8",
       "9",
@@ -994,7 +994,7 @@ const keywordAndMeaningsThirdParty = [
   {
     id: "12",
     keyword: "about you",
-    meaning: "User profile",
+    meaning: "Your profile",
     ids: ["10", "11", "12", "13"],
   },
   {
