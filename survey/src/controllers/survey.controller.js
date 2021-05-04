@@ -232,8 +232,9 @@ class SurveyController {
 
       // Using all collected data to collection
       let collectionCollectedData = {
-        name: "Using all collected data",
-        children: []
+        name: "Purposed that apply to all the collected data:",
+        children: [],
+        type: "all"
       };
       question.collectionData.map(category => {
         category.children = category.children.filter(child => {
@@ -244,15 +245,13 @@ class SurveyController {
             if (~indexChild) {
               collectionCollectedData.children[indexChild].meanings.push({
                 groupKeyword: child.name,
-                type: "all",
                 meanings: []
               });
             } else {
               collectionCollectedData.children.push({
-                type: "all",
                 name: `${category.name}`,
                 meanings: [
-                  { groupKeyword: child.name, meanings: [], type: "all" }
+                  { groupKeyword: child.name, meanings: [], }
                 ]
               });
             }
@@ -271,7 +270,7 @@ class SurveyController {
 
       // Using all collected data to third party
       let thirdPartyCollectedData = {
-        name: "Sharing all collected data",
+        name: "Purposed that apply to all the collected data:",
         children: []
       };
       question.thirdPartyData.map(category => {
