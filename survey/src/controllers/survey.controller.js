@@ -238,10 +238,25 @@ class SurveyController {
       question.collectionData.map(category => {
         category.children = category.children.filter(child => {
           if (child.meanings.length === 0) {
-            collectionCollectedData.children.push({
-              name: `${child.name}`,
-              meanings: []
-            });
+            const indexChild = collectionCollectedData.children.findIndex(
+              item => item.name === category.name
+            );
+            if (~indexChild) {
+              collectionCollectedData.children[indexChild].meanings.push({
+                groupKeyword: child.name,
+                type: "all",
+                meanings: []
+              });
+            } else {
+              collectionCollectedData.children.push({
+                type: "all",
+                name: `${category.name}`,
+                meanings: [
+                  { groupKeyword: child.name, meanings: [], type: "all" }
+                ]
+              });
+            }
+
             return false;
           }
           return true;
@@ -262,10 +277,23 @@ class SurveyController {
       question.thirdPartyData.map(category => {
         category.children = category.children.filter(child => {
           if (child.meanings.length === 0) {
-            thirdPartyCollectedData.children.push({
-              name: `${child.name}`,
-              meanings: []
-            });
+            const indexChild = thirdPartyCollectedData.children.findIndex(
+              item => item.name === category.name
+            );
+            if (~indexChild) {
+              thirdPartyCollectedData.children[indexChild].meanings.push({
+                groupKeyword: child.name,
+                type: "all",
+                meanings: []
+              });
+            } else {
+              thirdPartyCollectedData.children.push({
+                name: `${category.name}`,
+                meanings: [
+                  { groupKeyword: child.name, meanings: [], type: "all" }
+                ]
+              });
+            }
             return false;
           }
           return true;
