@@ -271,7 +271,8 @@ class SurveyController {
       // Using all collected data to third party
       let thirdPartyCollectedData = {
         name: "Purposed that apply to all the collected data:",
-        children: []
+        children: [],
+        type: "all",
       };
       question.thirdPartyData.map(category => {
         category.children = category.children.filter(child => {
@@ -282,14 +283,13 @@ class SurveyController {
             if (~indexChild) {
               thirdPartyCollectedData.children[indexChild].meanings.push({
                 groupKeyword: child.name,
-                type: "all",
                 meanings: []
               });
             } else {
               thirdPartyCollectedData.children.push({
                 name: `${category.name}`,
                 meanings: [
-                  { groupKeyword: child.name, meanings: [], type: "all" }
+                  { groupKeyword: child.name, meanings: [] }
                 ]
               });
             }

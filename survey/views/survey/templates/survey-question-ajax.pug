@@ -144,7 +144,7 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
                             ul
                               li.capitalizeFirst(style="list-style-type: square;") Collected data: 
                                 each meaning in sub1.meanings
-                                  div - #{meaning.groupKeyword}: #{meaning.type} 
+                                  div - #{meaning.groupKeyword}: 
                                     each meaningText, indexMeaning in meaning.meanings
                                       | #{meaningText}
                                       if(indexMeaning != meaning.meanings.length - 1)
