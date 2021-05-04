@@ -125,12 +125,12 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
                   li #{category.name}: 
                     each sub1, indexSub1 in category.children
                       | #{sub1.name}
-                          each meaning, indexMeaning in sub1.meanings
-                            span.capitalizeFirst(style="list-style-type: square;") #{meaning.groupKeyword}
-                            if(indexMeaning != sub1.meanings.length - 1)
-                              | #{", "} 
-                            else 
-                              | #{")"}
+                      each meaning, indexMeaning in sub1.meanings
+                        span.capitalizeFirst(style="list-style-type: square;") #{meaning.groupKeyword}
+                        if(indexMeaning != sub1.meanings.length - 1)
+                          | #{", "} 
+                        else 
+                          | #{")"}
                       if(indexSub1 != category.children.length - 1)
                         | #{", "} 
                       else 
