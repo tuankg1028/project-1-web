@@ -72,21 +72,31 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
         .wrap-node
           if(question.collectionData.length > 0)
             ul 
-              each category in question.collectionData
-                li #{category.name}
-                  ul
-                    each sub1 in category.children
-                      li(style="list-style-type: circle;") #{sub1.name}
-                        ul
+              each category in question.thirdPartyData
+                if(category.type && category.type == "all") 
+                  li #{category.name}: &nbsp
+                    each sub1, indexSub1 in category.children
+                      | #{sub1.name} (
+                      each meaning, indexMeaning in sub1.meanings
+                        span.capitalizeFirst(style="list-style-type: square;") #{meaning.groupKeyword}
+                        if(indexMeaning != sub1.meanings.length - 1)
+                          | #{", "} 
+                        else 
+                          | #{")"}
+                      if(indexSub1 != category.children.length - 1)
+                        | #{", "} 
+                      else 
+                        | #{"."}
+                else 
+                  li #{category.name}
+                    ul
+                      each sub1 in category.children
+                        li(style="list-style-type: circle;") #{sub1.name}
                           if(sub1.meanings && sub1.meanings.length > 0)
-                            // type is all
-                            if(sub1.meanings[0].type && sub1.meanings[0].type == "all") 
-                              each meaning in sub1.meanings
-                                  li.capitalizeFirst(style="list-style-type: square;") #{meaning.groupKeyword}
-                            else 
+                            ul
                               li.capitalizeFirst(style="list-style-type: square;") Collected data: 
                                 each meaning in sub1.meanings
-                                  div - #{meaning.groupKeyword}: #{meaning.type} 
+                                  div - #{meaning.groupKeyword}: 
                                     each meaningText, indexMeaning in meaning.meanings
                                       | #{meaningText}
                                       if(indexMeaning != meaning.meanings.length - 1)
@@ -122,9 +132,9 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
             ul 
               each category in question.thirdPartyData
                 if(category.type && category.type == "all") 
-                  li #{category.name}: 
+                  li #{category.name}: &nbsp
                     each sub1, indexSub1 in category.children
-                      | #{sub1.name}
+                      | #{sub1.name} (
                       each meaning, indexMeaning in sub1.meanings
                         span.capitalizeFirst(style="list-style-type: square;") #{meaning.groupKeyword}
                         if(indexMeaning != sub1.meanings.length - 1)
