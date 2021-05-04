@@ -239,7 +239,7 @@ class SurveyController {
         category.children = category.children.filter(child => {
           if (child.meanings.length === 0) {
             collectionCollectedData.children.push({
-              name: `${child.name} (${category.name})`,
+              name: `${child.name}`,
               meanings: []
             });
             return false;
@@ -256,14 +256,14 @@ class SurveyController {
 
       // Using all collected data to third party
       let thirdPartyCollectedData = {
-        name: "Using all collected data",
+        name: "Sharing all collected data",
         children: []
       };
       question.thirdPartyData.map(category => {
         category.children = category.children.filter(child => {
           if (child.meanings.length === 0) {
             thirdPartyCollectedData.children.push({
-              name: `${child.name} (${category.name})`,
+              name: `${child.name}`,
               meanings: []
             });
             return false;
