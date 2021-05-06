@@ -88,21 +88,20 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
                       else 
                         | #{"."}
                 else 
-                  li #{category.name}
-                    ul
-                      each sub1 in category.children
-                        li(style="list-style-type: circle;") #{sub1.name}
-                          if(sub1.meanings && sub1.meanings.length > 0)
-                            ul
-                              li.capitalizeFirst(style="list-style-type: square;") Collected data: 
-                                each meaning in sub1.meanings
-                                  div - #{meaning.groupKeyword}: 
-                                    each meaningText, indexMeaning in meaning.meanings
-                                      | #{meaningText}
-                                      if(indexMeaning != meaning.meanings.length - 1)
-                                        | #{", "} 
-                                      else 
-                                        | #{"."}
+                  //- li #{category.name}
+                  each sub1 in category.children
+                    li #{sub1.name}
+                      if(sub1.meanings && sub1.meanings.length > 0)
+                        ul
+                          li.capitalizeFirst(style="list-style-type: circle;") Collected data: 
+                            each meaning in sub1.meanings
+                              div - #{meaning.groupKeyword}: 
+                                each meaningText, indexMeaning in meaning.meanings
+                                  | #{meaningText}
+                                  if(indexMeaning != meaning.meanings.length - 1)
+                                    | #{", "} 
+                                  else 
+                                    | #{"."}
           else 
             | &nbsp Do not mention
           //-   ul.more
@@ -146,21 +145,20 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
                       else 
                         | #{"."}
                 else 
-                  li #{category.name}
-                    ul
-                      each sub1 in category.children
-                        li(style="list-style-type: circle;") #{sub1.name}
-                          if(sub1.meanings && sub1.meanings.length > 0)
-                            ul
-                              li.capitalizeFirst(style="list-style-type: square;") Collected data: 
-                                each meaning in sub1.meanings
-                                  div - #{meaning.groupKeyword}: 
-                                    each meaningText, indexMeaning in meaning.meanings
-                                      | #{meaningText}
-                                      if(indexMeaning != meaning.meanings.length - 1)
-                                        | #{", "} 
-                                      else 
-                                        | #{"."}
+                  //- li #{category.name}
+                  each sub1 in category.children
+                    li #{sub1.name}
+                      if(sub1.meanings && sub1.meanings.length > 0)
+                        ul
+                          li.capitalizeFirst(style="list-style-type: circle;") Collected data: 
+                            each meaning in sub1.meanings
+                              div - #{meaning.groupKeyword}: 
+                                each meaningText, indexMeaning in meaning.meanings
+                                  | #{meaningText}
+                                  if(indexMeaning != meaning.meanings.length - 1)
+                                    | #{", "} 
+                                  else 
+                                    | #{"."}
 
                           //- // type is all
                           //- if(sub1.meanings[0].type && sub1.meanings[0].type == "all") 
