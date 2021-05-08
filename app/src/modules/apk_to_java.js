@@ -1843,15 +1843,15 @@ async function main11() {
   let folders = fs.readdirSync(pathSource);
   folders = folders.filter((item) => item.split(".")[1] === "apk");
   console.log(1, folders);
-  // for (let i = 0; i < folders.length; i++) {
-  //   const folder = folders[i];
-  //   await createDataSetApps1(`${pathSource + "/" + folder}`, "malicious");
-  // }
-  await Promise.all(
-    folders.map((folder) =>
-      createDataSetApps1(`${pathSource + "/" + folder}`, "malicious")
-    )
-  );
+  for (let i = 0; i < folders.length; i++) {
+    const folder = folders[i];
+    await createDataSetApps1(`${pathSource + "/" + folder}`, "malicious");
+  }
+  // await Promise.all(
+  //   folders.map((folder) =>
+  //     createDataSetApps1(`${pathSource + "/" + folder}`, "malicious")
+  //   )
+  // );
 
   console.log("DONE");
 }
