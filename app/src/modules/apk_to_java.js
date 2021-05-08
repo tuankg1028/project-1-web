@@ -1570,7 +1570,6 @@ async function createDataSetApps(item) {
 // main9();
 
 // Xây dựng file csv có tên là ourMaliciousDatasetMatrix.csv và MPDroidDatasetMatrix.csv
-4840;
 async function main10() {
   console.log(
     "RUNNING ourMaliciousDatasetMatrix.csv và MPDroidDatasetMatrix.csv"
@@ -1832,6 +1831,60 @@ async function buildCSVDataset(dataset, type) {
   });
   await csvWriterAccuracy.writeRecords(rowsAccuracy);
 }
-main10();
+// main10();
 
-async function main11() {}
+async function main11() {
+  console.log(1);
+  const pathSource =
+    "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/StormDroid_KuafuDet_2082/JavaSources/benign500";
+  let folders = fs.readdirSync(pathSource);
+  folders = folders.filter((item) => item.split(".")[1] === "apk");
+  console.log(1, folders);
+  for (let i = 0; i < folders.length; i++) {
+    const folder = folders[i];
+    await createDataSetApps1(`${pathSource + "/" + folder}`, "begin");
+  }
+  // await Promise.all(rows.map((row) => createDataSetApps(row)));
+}
+main11();
+async function createDataSetApps1(folterPath, type) {
+  try {
+    const [appName] = path.baseLine(folterPath).split(".");
+
+    const Model =
+      type === "begin" ? Models.BeginDataset : Models.MaliciousDataset;
+    const appDB = await Model.findOne({
+      appName,
+    });
+
+    console.log(type, appName);
+    if (appDB) return;
+
+    const contents = await Helpers.default.File.getContentOfFolder(
+      `${folterPath}/sources`
+    );
+
+    const leafNodeBaseLines = await Services.default.BaseLine.initBaseLineForTree(
+      contents
+    );
+
+    const functionConstants = leafNodeBaseLines.filter((node) => {
+      return node.right - node.left === 1 && node.baseLine === 1;
+    });
+
+    const nodes = functionConstants.map((item) => {
+      return {
+        id: item._id,
+        name: item.name,
+        value: item.baseLine,
+        parent: item.parent._id,
+      };
+    });
+    await Model.create({
+      appName,
+      nodes,
+    });
+  } catch (err) {
+    console.log("ERROR: createDataSetApps", err.message);
+  }
+}
