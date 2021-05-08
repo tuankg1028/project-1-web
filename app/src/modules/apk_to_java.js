@@ -1834,18 +1834,26 @@ async function buildCSVDataset(dataset, type) {
 // main10();
 
 // /home/ha/tuan/projects/project-1-web/malware/kuafuDet/JavaSources/benign500
+// /home/ha/tuan/projects/project-1-web/malware/kuafuDet/StormDroid_KuafuDet_2082/JavaSources/Malware2082
+
 async function main11() {
   console.log(1);
   const pathSource =
-    "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/JavaSources/benign500";
+    "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/StormDroid_KuafuDet_2082/JavaSources/Malware2082";
   let folders = fs.readdirSync(pathSource);
   folders = folders.filter((item) => item.split(".")[1] === "apk");
   console.log(1, folders);
-  for (let i = 0; i < folders.length; i++) {
-    const folder = folders[i];
-    await createDataSetApps1(`${pathSource + "/" + folder}`, "begin");
-  }
-  // await Promise.all(rows.map((row) => createDataSetApps(row)));
+  // for (let i = 0; i < folders.length; i++) {
+  //   const folder = folders[i];
+  //   await createDataSetApps1(`${pathSource + "/" + folder}`, "malicious");
+  // }
+  await Promise.all(
+    folders.map((folder) =>
+      createDataSetApps1(`${pathSource + "/" + folder}`, "malicious")
+    )
+  );
+
+  console.log("DONE");
 }
 main11();
 async function createDataSetApps1(folterPath, type) {
@@ -1890,4 +1898,141 @@ async function createDataSetApps1(folterPath, type) {
     console.log("ERROR: createDataSetApps1", err.message);
     throw err;
   }
+}
+
+// Xây dựng file csv có tên là beginDatasetMatrix.csv và maliciousDatasetMatrix.csv
+async function main12() {
+  console.log("RUNNING beginDatasetMatrix.csv và maliciousDatasetMatrix.csv");
+  // build beginDatasetMatrix.csv
+  let beginApps = await Models.BeginDataset.find();
+
+  const bigestDistance = _.max([..._.map(beginApps, "distance")]);
+  const smallestDistance = _.min([..._.map(beginApps, "distance")]);
+  const range = [smallestDistance, bigestDistance];
+
+  await buildCSVDataset1(ourMaliciousApps, "begin", range);
+
+  // build ourMaliciousDatasetMatrix.csv
+  // let MDroidApps = await Models.MaliciousDataset.find();
+  // await buildCSVDataset1(MDroidApps, "malicious", range);
+
+  console.log("DONE");
+}
+async function buildCSVDataset1(dataset, type, range) {
+  console.log("range", range);
+  let X = 0,
+    Y = 0,
+    Z = 0,
+    W = 0;
+
+  const header = [
+    {
+      id: "stt",
+      title: "#",
+    },
+    {
+      id: "appName",
+      title: "App name",
+    },
+    {
+      id: "distance",
+      title: "Distance value",
+    },
+    {
+      id: "predict",
+      title: "Predict",
+    },
+    {
+      id: "risk",
+      title: "Risk",
+    },
+  ];
+  const rows = [];
+
+  let sttInOurMalicious = 1;
+
+  // loop dataset
+
+  // get range
+  const apps = dataset;
+
+  apps.forEach((app) => {
+    const predict = range ? (_.inRange(app.distance, ...range) ? 0 : 1) : "-";
+    rows.push({
+      stt: sttInOurMalicious++,
+      appName: app.appName,
+      predict,
+      distance: app.distance,
+      risk: 1,
+    });
+
+    if (predict === 0) Z++;
+    if (predict === 1) W++;
+  });
+
+  const csvWriter = createCsvWriter({
+    path:
+      type === "begin"
+        ? "beginDatasetMatrix.csv"
+        : "maliciousDatasetMatrix.csv",
+    header,
+  });
+  await csvWriter.writeRecords(rows);
+
+  // accuracy
+  const PrecisionBenign = X / (X + Z);
+  const PrecisionMalicious = W / (W + Y);
+  const RecallBenign = X / (X + Y);
+  const RecallMalicious = W / (Z + W);
+  const F1Benign =
+    (2 * (PrecisionBenign * RecallBenign)) / (PrecisionBenign + RecallBenign);
+  const F1Malicious =
+    (2 * (PrecisionMalicious * RecallMalicious)) /
+    (PrecisionMalicious + RecallMalicious);
+  const Accuracy = (X + W) / (X + Y + Z + W);
+
+  const headerAccuracy = [
+    {
+      id: "name",
+      title: "",
+    },
+    {
+      id: "begin",
+      title: "Begin",
+    },
+    {
+      id: "malicious",
+      title: "Malicious",
+    },
+  ];
+  const rowsAccuracy = [
+    {
+      name: "Percision",
+      begin: PrecisionBenign,
+      malicious: PrecisionMalicious,
+    },
+    {
+      name: "Recall",
+      begin: RecallBenign,
+      malicious: RecallMalicious,
+    },
+    {
+      name: "F1",
+      begin: F1Benign,
+      malicious: F1Malicious,
+    },
+    {
+      name: "Accuracy",
+      begin: Accuracy,
+    },
+  ];
+
+  const csvWriterAccuracy = createCsvWriter({
+    path:
+      type === "begin"
+        ? "beginDatasetAccuracy.csv"
+        : "maliciousDatasetAccuracy.csv",
+    header: headerAccuracy,
+  });
+  await csvWriterAccuracy.writeRecords(rowsAccuracy);
 }
