@@ -1850,7 +1850,7 @@ async function main11() {
 main11();
 async function createDataSetApps1(folterPath, type) {
   try {
-    const [appName] = path.baseLine(folterPath).split(".");
+    const [appName] = path.basename(folterPath).split(".");
 
     const Model =
       type === "begin" ? Models.BeginDataset : Models.MaliciousDataset;
@@ -1886,6 +1886,8 @@ async function createDataSetApps1(folterPath, type) {
       nodes,
     });
   } catch (err) {
-    console.log("ERROR: createDataSetApps", err.message);
+    console.log(err);
+    console.log("ERROR: createDataSetApps1", err.message);
+    throw err;
   }
 }
