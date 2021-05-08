@@ -1833,10 +1833,11 @@ async function buildCSVDataset(dataset, type) {
 }
 // main10();
 
+// /home/ha/tuan/projects/project-1-web/malware/kuafuDet/JavaSources/benign500
 async function main11() {
   console.log(1);
   const pathSource =
-    "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/StormDroid_KuafuDet_2082/JavaSources/benign500";
+    "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/JavaSources/benign500";
   let folders = fs.readdirSync(pathSource);
   folders = folders.filter((item) => item.split(".")[1] === "apk");
   console.log(1, folders);
