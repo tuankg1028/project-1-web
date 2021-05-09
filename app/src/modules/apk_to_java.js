@@ -1896,7 +1896,6 @@ async function createDataSetApps1(folterPath, type) {
   } catch (err) {
     console.log(err);
     console.log("ERROR: createDataSetApps1", err.message);
-    throw err;
   }
 }
 
@@ -1908,13 +1907,13 @@ async function main12() {
 
   const bigestDistance = _.max([..._.map(beginApps, "distance")]);
   const smallestDistance = _.min([..._.map(beginApps, "distance")]);
-  const range = [smallestDistance, bigestDistance];
-
-  await buildCSVDataset1(ourMaliciousApps, "begin", range);
+  const range = [smallestDistance, 0.46756756756];
+  console.log(range);
+  await buildCSVDataset1(beginApps, "begin", range);
 
   // build ourMaliciousDatasetMatrix.csv
-  // let MDroidApps = await Models.MaliciousDataset.find();
-  // await buildCSVDataset1(MDroidApps, "malicious", range);
+  let maliciousApps = await Models.MaliciousDataset.find();
+  await buildCSVDataset1(maliciousApps, "malicious", range);
 
   console.log("DONE");
 }
@@ -2035,4 +2034,35 @@ async function buildCSVDataset1(dataset, type, range) {
     header: headerAccuracy,
   });
   await csvWriterAccuracy.writeRecords(rowsAccuracy);
+}
+// main12();
+
+async function main13() {
+  const pathSource =
+    "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/StormDroid_KuafuDet_2082/JavaSources/Malware2082";
+  let folders = fs.readdirSync(pathSource);
+
+  for (let i = 0; i < folders.length; i++) {
+    const folder = folders[i];
+    await getAPIFunctions(`${pathSource + "/" + folder}`);
+  }
+}
+async function getAPIFunctions(folderPath, result) {
+  let contents = await Helpers.default.File.getContentOfFolder(
+    `${folderPath}/sources`
+  );
+  contents = contents.split("\n");
+  const APIs = [];
+  const functions = [];
+
+  for (let i = 0; i < contents.length; i++) {
+    const line = contents[i];
+
+    if (~line.indexOf("import ")) {
+      line = line.replace("import ", "").replace(";", "");
+      line = line.split(".");
+      // const A
+    }
+  }
+  // for
 }
