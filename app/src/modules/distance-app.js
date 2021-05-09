@@ -296,334 +296,228 @@ function getDistanceFromNodeToCommonNode(node, commonNode) {
 async function computingDistance() {
   try {
     console.log("Running computingDistance");
-    for (let i = 0; i < categories.length; i++) {
-      const category = categories[i];
-      console.log(`Running on ${category} category`);
-      // GET DAP
-      const dapCategory = await Models.CategoryMDroid.findOne({
-        categoryName: category,
-      }).cache(60 * 60 * 24 * 30);
-      const trees = (await createTree(_.map(dapCategory.nodes, "name")))[0];
+    // for (let i = 0; i < categories.length; i++) {
+    //   const category = categories[i];
+    //   console.log(`Running on ${category} category`);
+    // GET DAP
+    const dapCategory = await Models.CategoryMDroid.findOne({
+      // categoryName: category,
+    }).cache(60 * 60 * 24 * 30);
+    const trees = (await createTree(_.map(dapCategory.nodes, "name")))[0];
 
-      //
-      const appsOurDataSet = await Models.OurMaliciousDataset.find({
-        categoryName: category,
-        // isCompleted: true,
-      });
-      console.log(1, appsOurDataSet.length);
-      for (let k = 0; k < appsOurDataSet.length; k++) {
-        try {
-          const app = appsOurDataSet[k];
-          console.log(`app ${k}.${app.appName}`);
-          const appNodes = app.nodes;
-          let totalDistance = 0;
-          let totalLeafNode = 0;
-          // ============ LOOP TREES =============
-          for (let j = 0; j < trees.children.length; j++) {
-            const treeChild = trees.children[j];
+    //
+    // const appsOurDataSet = await Models.BeginDataset.find({
+    //   // categoryName: category,
+    //   // isCompleted: true,
+    // });
+    // console.log(1, appsOurDataSet.length);
+    // for (let k = 0; k < appsOurDataSet.length; k++) {
+    //   try {
+    //     const app = appsOurDataSet[k];
+    //     console.log(`app ${k}.${app.appName}`);
+    //     const appNodes = app.nodes;
+    //     let totalDistance = 0;
+    //     let totalLeafNode = 0;
+    //     // ============ LOOP TREES =============
+    //     for (let j = 0; j < trees.children.length; j++) {
+    //       const treeChild = trees.children[j];
 
-            let flattenTree = [];
+    //       let flattenTree = [];
 
-            initBaseLineForTree(treeChild, _.map(appNodes, "name"));
-            getFlattenTrees(JSON.parse(JSON.stringify(treeChild)), flattenTree);
+    //       initBaseLineForTree(treeChild, _.map(appNodes, "name"));
+    //       getFlattenTrees(JSON.parse(JSON.stringify(treeChild)), flattenTree);
 
-            // compareing nodes
-            let comparingNodes = flattenTree.filter(
-              (item) => item.baseLine === 1
-            );
+    //       // compareing nodes
+    //       let comparingNodes = flattenTree.filter(
+    //         (item) => item.baseLine === 1
+    //       );
 
-            totalLeafNode += comparingNodes.length;
-            for (let g = 0; g < comparingNodes.length; g++) {
-              const comparingNode = comparingNodes[g];
-              const comparedNode = getComparedNodes(comparingNode, treeChild);
+    //       totalLeafNode += comparingNodes.length;
+    //       for (let g = 0; g < comparingNodes.length; g++) {
+    //         const comparingNode = comparingNodes[g];
+    //         const comparedNode = getComparedNodes(comparingNode, treeChild);
 
-              let result;
-              // if comparedNode exist
-              if (comparedNode) {
-                if (comparingNode.path === comparedNode.path) {
-                  result = 0;
-                } else {
-                  const commonNode = getCommonNode(
-                    comparingNode,
-                    comparedNode,
-                    treeChild
-                  );
+    //         let result;
+    //         // if comparedNode exist
+    //         if (comparedNode) {
+    //           if (comparingNode.path === comparedNode.path) {
+    //             result = 0;
+    //           } else {
+    //             const commonNode = getCommonNode(
+    //               comparingNode,
+    //               comparedNode,
+    //               treeChild
+    //             );
 
-                  const vRoot = treeChild.baseLine;
-                  const vCaa = getBaseLineVaLueOfNode(commonNode, treeChild);
-                  const depthCaa = getDistanceToCommonNode(commonNode);
+    //             const vRoot = treeChild.baseLine;
+    //             const vCaa = getBaseLineVaLueOfNode(commonNode, treeChild);
+    //             const depthCaa = getDistanceToCommonNode(commonNode);
 
-                  const vN1 = getBaseLineVaLueOfNode(comparingNode, treeChild);
+    //             const vN1 = getBaseLineVaLueOfNode(comparingNode, treeChild);
 
-                  const vN2 = getBaseLineVaLueOfNode(comparedNode, treeChild);
+    //             const vN2 = getBaseLineVaLueOfNode(comparedNode, treeChild);
 
-                  const disN1 = getDistanceFromNodeToCommonNode(
-                    comparingNode,
-                    commonNode
-                  );
+    //             const disN1 = getDistanceFromNodeToCommonNode(
+    //               comparingNode,
+    //               commonNode
+    //             );
 
-                  const disN2 = getDistanceFromNodeToCommonNode(
-                    comparedNode,
-                    commonNode
-                  );
+    //             const disN2 = getDistanceFromNodeToCommonNode(
+    //               comparedNode,
+    //               commonNode
+    //             );
 
-                  result =
-                    1 -
-                    ((2 * (1 - vCaa) * depthCaa) /
-                      ((1 - vN1) * disN1 * (1 - vCaa) +
-                        (1 - vN2) * disN2 * (1 - vCaa) +
-                        2 * (1 - vCaa) * depthCaa) || 0);
+    //             result =
+    //               1 -
+    //               ((2 * (1 - vCaa) * depthCaa) /
+    //                 ((1 - vN1) * disN1 * (1 - vCaa) +
+    //                   (1 - vN2) * disN2 * (1 - vCaa) +
+    //                   2 * (1 - vCaa) * depthCaa) || 0);
 
-                  // giai thuat ban đầu
-                  // const result =
-                  // 1 -
-                  // ((2 * (1 - vRoot) * (1 - vCaa) * depthCaa) /
-                  //   ((1 - vN1) * disN1 * (1 - vCaa) +
-                  //     (1 - vN2) * disN2 * (1 - vCaa) +
-                  //     2 * (1 - vRoot) * (1 - vCaa) * depthCaa) || 0);
-                }
-                // console.log(vRoot, vCaa, depthCaa, vN1, vN2, disN1, disN2, result);
+    //             // giai thuat ban đầu
+    //             // const result =
+    //             // 1 -
+    //             // ((2 * (1 - vRoot) * (1 - vCaa) * depthCaa) /
+    //             //   ((1 - vN1) * disN1 * (1 - vCaa) +
+    //             //     (1 - vN2) * disN2 * (1 - vCaa) +
+    //             //     2 * (1 - vRoot) * (1 - vCaa) * depthCaa) || 0);
+    //           }
+    //           // console.log(vRoot, vCaa, depthCaa, vN1, vN2, disN1, disN2, result);
+    //         }
+    //         // not exist
+    //         else {
+    //           result = 1; // khong co nut de so sanh
+    //         }
+    //         totalDistance += result;
+    //       }
+    //     }
+    //     const distance = totalDistance / totalLeafNode;
+    //     await Models.BeginDataset.updateOne(
+    //       {
+    //         _id: app.id,
+    //       },
+    //       {
+    //         $set: {
+    //           distance: distance || 0,
+    //         },
+    //       }
+    //     );
+    //     console.log(
+    //       `App Id ${app.id}: ${distance}`,
+    //       totalDistance,
+    //       totalLeafNode
+    //     );
+    //   } catch (err) {
+    //     console.log(err.message);
+    //   }
+    // }
+
+    //
+    const appsMDRoid = await Models.MaliciousDataset.find({
+      // categoryName: category,
+      // isCompleted: true,
+    });
+    for (let k = 0; k < appsMDRoid.length; k++) {
+      try {
+        const app = appsMDRoid[k];
+        console.log(`app ${k}.${app.appName}`);
+        const appNodes = app.nodes;
+        let totalDistance = 0;
+        let totalLeafNode = 0;
+        // ============ LOOP TREES =============
+        for (let j = 0; j < trees.children.length; j++) {
+          const treeChild = trees.children[j];
+
+          let flattenTree = [];
+
+          initBaseLineForTree(treeChild, _.map(appNodes, "name"));
+          getFlattenTrees(JSON.parse(JSON.stringify(treeChild)), flattenTree);
+
+          // compareing nodes
+          let comparingNodes = flattenTree.filter(
+            (item) => item.baseLine === 1
+          );
+
+          totalLeafNode += comparingNodes.length;
+          for (let g = 0; g < comparingNodes.length; g++) {
+            const comparingNode = comparingNodes[g];
+            const comparedNode = getComparedNodes(comparingNode, treeChild);
+
+            let result;
+            // if comparedNode exist
+            if (comparedNode) {
+              if (comparingNode.path === comparedNode.path) {
+                result = 0;
+              } else {
+                const commonNode = getCommonNode(
+                  comparingNode,
+                  comparedNode,
+                  treeChild
+                );
+
+                const vRoot = treeChild.baseLine;
+                const vCaa = getBaseLineVaLueOfNode(commonNode, treeChild);
+                const depthCaa = getDistanceToCommonNode(commonNode);
+
+                const vN1 = getBaseLineVaLueOfNode(comparingNode, treeChild);
+
+                const vN2 = getBaseLineVaLueOfNode(comparedNode, treeChild);
+
+                const disN1 = getDistanceFromNodeToCommonNode(
+                  comparingNode,
+                  commonNode
+                );
+
+                const disN2 = getDistanceFromNodeToCommonNode(
+                  comparedNode,
+                  commonNode
+                );
+
+                result =
+                  1 -
+                  ((2 * (1 - vCaa) * depthCaa) /
+                    ((1 - vN1) * disN1 * (1 - vCaa) +
+                      (1 - vN2) * disN2 * (1 - vCaa) +
+                      2 * (1 - vCaa) * depthCaa) || 0);
+
+                // giai thuat ban đầu
+                // const result =
+                // 1 -
+                // ((2 * (1 - vRoot) * (1 - vCaa) * depthCaa) /
+                //   ((1 - vN1) * disN1 * (1 - vCaa) +
+                //     (1 - vN2) * disN2 * (1 - vCaa) +
+                //     2 * (1 - vRoot) * (1 - vCaa) * depthCaa) || 0);
               }
-              // not exist
-              else {
-                result = 1; // khong co nut de so sanh
-              }
-              totalDistance += result;
+              // console.log(vRoot, vCaa, depthCaa, vN1, vN2, disN1, disN2, result);
             }
+            // not exist
+            else {
+              result = 1; // khong co nut de so sanh
+            }
+            totalDistance += result;
           }
-          const distance = totalDistance / totalLeafNode;
-          await Models.OurMaliciousDataset.updateOne(
-            {
-              _id: app.id,
-            },
-            {
-              $set: {
-                distance: distance || 0,
-              },
-            }
-          );
-          console.log(
-            `App Id ${app.id}: ${distance}`,
-            totalDistance,
-            totalLeafNode
-          );
-        } catch (err) {
-          console.log(err.message);
         }
-      }
-
-      //
-      const appsMDRoid = await Models.MPDroidDataset.find({
-        categoryName: category,
-        // isCompleted: true,
-      });
-      for (let k = 0; k < appsMDRoid.length; k++) {
-        try {
-          const app = appsMDRoid[k];
-          console.log(`app ${k}.${app.appName}`);
-          const appNodes = app.nodes;
-          let totalDistance = 0;
-          let totalLeafNode = 0;
-          // ============ LOOP TREES =============
-          for (let j = 0; j < trees.children.length; j++) {
-            const treeChild = trees.children[j];
-
-            let flattenTree = [];
-
-            initBaseLineForTree(treeChild, _.map(appNodes, "name"));
-            getFlattenTrees(JSON.parse(JSON.stringify(treeChild)), flattenTree);
-
-            // compareing nodes
-            let comparingNodes = flattenTree.filter(
-              (item) => item.baseLine === 1
-            );
-
-            totalLeafNode += comparingNodes.length;
-            for (let g = 0; g < comparingNodes.length; g++) {
-              const comparingNode = comparingNodes[g];
-              const comparedNode = getComparedNodes(comparingNode, treeChild);
-
-              let result;
-              // if comparedNode exist
-              if (comparedNode) {
-                if (comparingNode.path === comparedNode.path) {
-                  result = 0;
-                } else {
-                  const commonNode = getCommonNode(
-                    comparingNode,
-                    comparedNode,
-                    treeChild
-                  );
-
-                  const vRoot = treeChild.baseLine;
-                  const vCaa = getBaseLineVaLueOfNode(commonNode, treeChild);
-                  const depthCaa = getDistanceToCommonNode(commonNode);
-
-                  const vN1 = getBaseLineVaLueOfNode(comparingNode, treeChild);
-
-                  const vN2 = getBaseLineVaLueOfNode(comparedNode, treeChild);
-
-                  const disN1 = getDistanceFromNodeToCommonNode(
-                    comparingNode,
-                    commonNode
-                  );
-
-                  const disN2 = getDistanceFromNodeToCommonNode(
-                    comparedNode,
-                    commonNode
-                  );
-
-                  result =
-                    1 -
-                    ((2 * (1 - vCaa) * depthCaa) /
-                      ((1 - vN1) * disN1 * (1 - vCaa) +
-                        (1 - vN2) * disN2 * (1 - vCaa) +
-                        2 * (1 - vCaa) * depthCaa) || 0);
-
-                  // giai thuat ban đầu
-                  // const result =
-                  // 1 -
-                  // ((2 * (1 - vRoot) * (1 - vCaa) * depthCaa) /
-                  //   ((1 - vN1) * disN1 * (1 - vCaa) +
-                  //     (1 - vN2) * disN2 * (1 - vCaa) +
-                  //     2 * (1 - vRoot) * (1 - vCaa) * depthCaa) || 0);
-                }
-                // console.log(vRoot, vCaa, depthCaa, vN1, vN2, disN1, disN2, result);
-              }
-              // not exist
-              else {
-                result = 1; // khong co nut de so sanh
-              }
-              totalDistance += result;
-            }
+        const distance = totalDistance / totalLeafNode;
+        await Models.MaliciousDataset.updateOne(
+          {
+            _id: app.id,
+          },
+          {
+            $set: {
+              distance: (distance || 0) / 7,
+            },
           }
-          const distance = totalDistance / totalLeafNode;
-          await Models.MPDroidDataset.updateOne(
-            {
-              _id: app.id,
-            },
-            {
-              $set: {
-                distance: (distance || 0) / 7,
-              },
-            }
-          );
-          console.log(
-            `App Id ${app.id}: ${distance}`,
-            totalDistance,
-            totalLeafNode
-          );
-        } catch (err) {
-          console.log(err.message);
-        }
+        );
+        console.log(
+          `App Id ${app.id}: ${distance}`,
+          totalDistance,
+          totalLeafNode
+        );
+      } catch (err) {
+        console.log(err.message);
       }
-
-      //
-      // const apps = await Models.App.find({
-      //   categoryName: category,
-      //   isCompleted: true,
-      // });
-      // for (let k = 0; k < apps.length; k++) {
-      //   try {
-      //     const app = apps[k];
-      //     console.log(`app ${k}.${app.appName}`);
-      //     const appNodes = app.nodes;
-      //     let totalDistance = 0;
-      //     let totalLeafNode = 0;
-      //     // ============ LOOP TREES =============
-      //     for (let j = 0; j < trees.children.length; j++) {
-      //       const treeChild = trees.children[j];
-
-      //       let flattenTree = [];
-
-      //       initBaseLineForTree(treeChild, _.map(appNodes, "name"));
-      //       getFlattenTrees(JSON.parse(JSON.stringify(treeChild)), flattenTree);
-
-      //       // compareing nodes
-      //       let comparingNodes = flattenTree.filter(
-      //         (item) => item.baseLine === 1
-      //       );
-
-      //       totalLeafNode += comparingNodes.length;
-      //       for (let g = 0; g < comparingNodes.length; g++) {
-      //         const comparingNode = comparingNodes[g];
-      //         const comparedNode = getComparedNodes(comparingNode, treeChild);
-
-      //         let result;
-      //         // if comparedNode exist
-      //         if (comparedNode) {
-      //           if (comparingNode.path === comparedNode.path) {
-      //             result = 0;
-      //           } else {
-      //             const commonNode = getCommonNode(
-      //               comparingNode,
-      //               comparedNode,
-      //               treeChild
-      //             );
-
-      //             const vRoot = treeChild.baseLine;
-      //             const vCaa = getBaseLineVaLueOfNode(commonNode, treeChild);
-      //             const depthCaa = getDistanceToCommonNode(commonNode);
-
-      //             const vN1 = getBaseLineVaLueOfNode(comparingNode, treeChild);
-
-      //             const vN2 = getBaseLineVaLueOfNode(comparedNode, treeChild);
-
-      //             const disN1 = getDistanceFromNodeToCommonNode(
-      //               comparingNode,
-      //               commonNode
-      //             );
-
-      //             const disN2 = getDistanceFromNodeToCommonNode(
-      //               comparedNode,
-      //               commonNode
-      //             );
-
-      //             result =
-      //               1 -
-      //               ((2 * (1 - vCaa) * depthCaa) /
-      //                 ((1 - vN1) * disN1 * (1 - vCaa) +
-      //                   (1 - vN2) * disN2 * (1 - vCaa) +
-      //                   2 * (1 - vCaa) * depthCaa) || 0);
-
-      //             // giai thuat ban đầu
-      //             // const result =
-      //             // 1 -
-      //             // ((2 * (1 - vRoot) * (1 - vCaa) * depthCaa) /
-      //             //   ((1 - vN1) * disN1 * (1 - vCaa) +
-      //             //     (1 - vN2) * disN2 * (1 - vCaa) +
-      //             //     2 * (1 - vRoot) * (1 - vCaa) * depthCaa) || 0);
-      //           }
-      //           // console.log(vRoot, vCaa, depthCaa, vN1, vN2, disN1, disN2, result);
-      //         }
-      //         // not exist
-      //         else {
-      //           result = 1; // khong co nut de so sanh
-      //         }
-      //         totalDistance += result;
-      //       }
-      //     }
-      //     const distance = totalDistance / totalLeafNode;
-      //     await Models.App.updateOne(
-      //       {
-      //         _id: app.id,
-      //       },
-      //       {
-      //         $set: {
-      //           distance: (distance || 0) / 7,
-      //         },
-      //       }
-      //     );
-      //     console.log(
-      //       `App Id ${app.id}: ${distance}`,
-      //       totalDistance,
-      //       totalLeafNode
-      //     );
-      //   } catch (err) {
-      //     console.log(err.message);
-      //   }
-      // }
     }
+    // }
     console.log("Done computingDistance");
   } catch (err) {
     console.log("MAIN", err);

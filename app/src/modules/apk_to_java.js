@@ -1,4 +1,5 @@
 require("dotenv").config();
+import { title } from "process";
 import "../configs/mongoose.config";
 const { execSync } = require("child_process");
 const fs = require("fs");
@@ -1855,7 +1856,7 @@ async function main11() {
 
   console.log("DONE");
 }
-main11();
+// main11();
 async function createDataSetApps1(folterPath, type) {
   try {
     const [appName] = path.basename(folterPath).split(".");
@@ -2038,22 +2039,72 @@ async function buildCSVDataset1(dataset, type, range) {
 // main12();
 
 async function main13() {
+  console.log("RUNNING: main13 get APIs and Functions");
+  // const rows = [];
   const pathSource =
-    "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/StormDroid_KuafuDet_2082/JavaSources/Malware2082";
-  let folders = fs.readdirSync(pathSource);
+    "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/JavaSources/benign500";
+  await buildApisFunctionCSv(pathSource, "begin");
 
+  const malicuousPathSource =
+    "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/StormDroid_KuafuDet_2082/JavaSources/Malware2082";
+  await buildApisFunctionCSv(malicuousPathSource, "malicious");
+
+  console.log("DONE");
+}
+async function buildApisFunctionCSv(pathSource, type) {
+  let folders = fs.readdirSync(pathSource);
+  folders = folders.filter((item) => item.split(".")[1] === "apk");
+
+  const result = { APIs: {}, functions: {} };
   for (let i = 0; i < folders.length; i++) {
     const folder = folders[i];
-    await getAPIFunctions(`${pathSource + "/" + folder}`);
+    await getAPIFunctions(`${pathSource + "/" + folder}`, result);
   }
+
+  const APIs = result.APIs;
+  const headerAPIs = [
+    ...Object.keys(APIs).map((item) => {
+      return {
+        id: item,
+        title: item,
+      };
+    }),
+  ];
+  const rowsAPIs = [APIs];
+
+  const csvWriterApis = createCsvWriter({
+    path: `${type}DatasetAPIs.csv`,
+    header: headerAPIs,
+  });
+  await csvWriterApis.writeRecords(rowsAPIs);
+
+  // function
+  const functions = result.functions;
+  const headerFunctions = [
+    ...Object.keys(functions).map((item) => {
+      return {
+        id: item,
+        title: item,
+      };
+    }),
+  ];
+  const rowsFunctions = [functions];
+
+  const csvWriterFunctions = createCsvWriter({
+    path: `${type}DatasetFunctions.csv`,
+    header: headerFunctions,
+  });
+  await csvWriterFunctions.writeRecords(rowsFunctions);
 }
+main13();
 async function getAPIFunctions(folderPath, result) {
   let contents = await Helpers.default.File.getContentOfFolder(
     `${folderPath}/sources`
   );
   contents = contents.split("\n");
-  const APIs = [];
-  const functions = [];
+
+  let APIs = [];
+  let functions = [];
 
   for (let i = 0; i < contents.length; i++) {
     const line = contents[i];
@@ -2062,7 +2113,49 @@ async function getAPIFunctions(folderPath, result) {
       line = line.replace("import ", "").replace(";", "");
       line = line.split(".");
       // const A
+      const className = _.last(line);
+
+      APIs.push(className);
     }
   }
-  // for
+  APIs = _.uniq(APIs);
+  // get Function
+  contents.forEach((line) => {
+    // remove comment
+    const test = line;
+    if (~line.indexOf("//")) {
+      line = line.slice(0, line.indexOf("//"));
+    }
+
+    APIs.forEach((className) => {
+      if (line && ~line.indexOf(`${className}.`) && !~line.indexOf("import")) {
+        const index = line.lastIndexOf(`${className}`) + className.length;
+        line = line.replace(line.slice(0, index), "");
+
+        if (
+          line &&
+          line[0] === "." &&
+          ~line.indexOf("(") &&
+          ~line.indexOf(")")
+        ) {
+          line = line.slice(0, line.indexOf("("));
+          line = line.replace(".", "");
+
+          functions.push(line);
+        }
+      }
+    });
+  });
+  functions = _.uniq(functions);
+
+  // map to result
+  APIs.forEach((api) => {
+    if (!result.APIs[api]) result.APIs[api] = 0;
+    result.APIs[api]++;
+  });
+
+  functions.forEach((functionName) => {
+    if (!result.functions[functionName]) result.functions[functionName] = 0;
+    result.functions[functionName]++;
+  });
 }
