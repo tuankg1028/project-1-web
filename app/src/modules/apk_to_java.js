@@ -2098,64 +2098,72 @@ async function buildApisFunctionCSv(pathSource, type) {
 }
 main13();
 async function getAPIFunctions(folderPath, result) {
-  let contents = await Helpers.default.File.getContentOfFolder(
-    `${folderPath}/sources`
-  );
-  contents = contents.split("\n");
+  try {
+    let contents = await Helpers.default.File.getContentOfFolder(
+      `${folderPath}/sources`
+    );
+    contents = contents.split("\n");
 
-  let APIs = [];
-  let functions = [];
+    let APIs = [];
+    let functions = [];
 
-  for (let i = 0; i < contents.length; i++) {
-    const line = contents[i];
+    for (let i = 0; i < contents.length; i++) {
+      const line = contents[i];
 
-    if (~line.indexOf("import ")) {
-      line = line.replace("import ", "").replace(";", "");
-      line = line.split(".");
-      // const A
-      const className = _.last(line);
+      if (~line.indexOf("import ")) {
+        line = line.replace("import ", "").replace(";", "");
+        line = line.split(".");
+        // const A
+        const className = _.last(line);
 
-      APIs.push(className);
+        APIs.push(className);
+      }
     }
-  }
-  APIs = _.uniq(APIs);
-  // get Function
-  contents.forEach((line) => {
-    // remove comment
-    const test = line;
-    if (~line.indexOf("//")) {
-      line = line.slice(0, line.indexOf("//"));
-    }
+    APIs = _.uniq(APIs);
+    // get Function
+    contents.forEach((line) => {
+      // remove comment
+      const test = line;
+      if (~line.indexOf("//")) {
+        line = line.slice(0, line.indexOf("//"));
+      }
 
-    APIs.forEach((className) => {
-      if (line && ~line.indexOf(`${className}.`) && !~line.indexOf("import")) {
-        const index = line.lastIndexOf(`${className}`) + className.length;
-        line = line.replace(line.slice(0, index), "");
-
+      APIs.forEach((className) => {
         if (
           line &&
-          line[0] === "." &&
-          ~line.indexOf("(") &&
-          ~line.indexOf(")")
+          ~line.indexOf(`${className}.`) &&
+          !~line.indexOf("import")
         ) {
-          line = line.slice(0, line.indexOf("("));
-          line = line.replace(".", "");
+          const index = line.lastIndexOf(`${className}`) + className.length;
+          line = line.replace(line.slice(0, index), "");
 
-          functions.push(line);
+          if (
+            line &&
+            line[0] === "." &&
+            ~line.indexOf("(") &&
+            ~line.indexOf(")")
+          ) {
+            line = line.slice(0, line.indexOf("("));
+            line = line.replace(".", "");
+
+            functions.push(line);
+          }
         }
-      }
+      });
     });
-  });
-  functions = _.uniq(functions);
+    functions = _.uniq(functions);
 
-  // map to result
-  APIs.forEach((api) => {
-    if (!result.APIs[api]) result.APIs[api] = 0;
-    result.APIs[api]++;
-  });
+    // map to result
+    APIs.forEach((api) => {
+      if (!result.APIs[api]) result.APIs[api] = 0;
+      result.APIs[api]++;
+    });
 
-  functions.forEach((functionName) => {
-    if (!result.functions[functionName]) result.functions[functionName] = 0;
-    result.functions[functionName]++;
-  });
+    functions.forEach((functionName) => {
+      if (!result.functions[functionName]) result.functions[functionName] = 0;
+      result.functions[functionName]++;
+    });
+  } catch (err) {
+    console.log(err.message);
+  }
 }
