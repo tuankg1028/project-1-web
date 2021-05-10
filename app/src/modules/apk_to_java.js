@@ -2096,7 +2096,7 @@ async function buildApisFunctionCSv(pathSource, type) {
   });
   await csvWriterFunctions.writeRecords(rowsFunctions);
 }
-main13();
+// main13();
 async function getAPIFunctions(folderPath, result) {
   try {
     let contents = await Helpers.default.File.getContentOfFolder(
@@ -2167,3 +2167,52 @@ async function getAPIFunctions(folderPath, result) {
     console.log(err.message);
   }
 }
+
+// 500
+// 2072
+// DAP BY sub Group
+async function main14() {
+  const beginApps = await Models.BeginDataset.find()
+    .sort({
+      createdAt: "asc",
+    })
+    .limit(300);
+
+  const maliciousApps = await Models.MaliciousDataset.find()
+    .sort({
+      createdAt: "asc",
+    })
+    .limit(1243);
+  console.log("RUNNING DAP BY sub Group");
+
+  await computeDAPForSubCategory1([...beginApps, ...maliciousApps]);
+  console.log("DONE DAP BY sub Group");
+  // await Promise.all(categories.map(computeDAPForSubCategory));
+}
+async function computeDAPForSubCategory1(apps) {
+  const categoryKeywords = apps.reduce((acc, app) => {
+    const keywords = _.map(app.nodes, "name");
+    keywords.forEach((keyword) => {
+      if (!acc[keyword]) acc[keyword] = 1;
+      else acc[keyword]++;
+    });
+
+    return acc;
+  }, {});
+
+  const result = [];
+  for (const keyword in categoryKeywords) {
+    const value = categoryKeywords[keyword];
+    if (value / apps.length > 0.5) {
+      const node = await Models.Tree.findOne({
+        name: keyword,
+      }).cache(60 * 60 * 24 * 30);
+      result.push(node);
+    }
+  }
+
+  await Models.CategoryDataset.create({
+    nodes: result,
+  });
+}
+main14();

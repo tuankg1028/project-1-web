@@ -300,9 +300,9 @@ async function computingDistance() {
     //   const category = categories[i];
     //   console.log(`Running on ${category} category`);
     // GET DAP
-    const dapCategory = await Models.CategoryMDroid.findOne({
+    const dapCategory = await Models.CategoryDataset.findOne({
       // categoryName: category,
-    }).cache(60 * 60 * 24 * 30);
+    });
     const trees = (await createTree(_.map(dapCategory.nodes, "name")))[0];
 
     //
@@ -413,13 +413,33 @@ async function computingDistance() {
     // }
 
     //
-    const appsMDRoid = await Models.MaliciousDataset.find({
-      // categoryName: category,
-      // isCompleted: true,
+    // const appsMDRoid = await Models.MaliciousDataset.find({
+    //   // categoryName: category,
+    //   // isCompleted: true,
+    // });
+    let beginApps = await Models.BeginDataset.find()
+      .sort({
+        createdAt: "desc",
+      })
+      .limit(200);
+    beginApps = _.map((app) => {
+      app = app.toJSON();
+      return { ...app, type: "begin" };
     });
-    for (let k = 0; k < appsMDRoid.length; k++) {
+    const maliciousApps = await Models.MaliciousDataset.find()
+      .sort({
+        createdAt: "desc",
+      })
+      .limit(829);
+    maliciousApps = _.map((app) => {
+      app = app.toJSON();
+      return { ...app, type: "malicious" };
+    });
+    const testingApps = [...beginApps, ...maliciousApps];
+
+    for (let k = 0; k < testingApps.length; k++) {
       try {
-        const app = appsMDRoid[k];
+        const app = testingApps[k];
         console.log(`app ${k}.${app.appName}`);
         const appNodes = app.nodes;
         let totalDistance = 0;
@@ -498,7 +518,9 @@ async function computingDistance() {
           }
         }
         const distance = totalDistance / totalLeafNode;
-        await Models.MaliciousDataset.updateOne(
+        const Model =
+          app.type === "begin" ? Models.BeginDataset : Models.MaliciousDataset;
+        await Model.updateOne(
           {
             _id: app.id,
           },
