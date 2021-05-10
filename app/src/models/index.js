@@ -3,6 +3,7 @@ import App from "./app.model";
 import AppTemp from "./app-temp.model";
 import CategoryNode from "./category-node.model";
 import CategoryMDroid from "./categoryMDroid";
+import CategoryDataset from "./categoryDataset";
 import MPDroidDataset from "./MPDroidDataset";
 import OurMaliciousDataset from "./ourMaliciousDataset.model";
 import BeginDataset from "./beginDataset";
@@ -18,6 +19,7 @@ class Model {
     this.OurMaliciousDataset = OurMaliciousDataset;
     this.BeginDataset = BeginDataset;
     this.MaliciousDataset = MaliciousDataset;
+    this.CategoryDataset = CategoryDataset;
   }
 }
 export default new Model();
