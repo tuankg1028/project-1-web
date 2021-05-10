@@ -232,7 +232,7 @@ class SurveyController {
 
       // Using all collected data to collection
       let collectionCollectedData = {
-        name: "Purposed that apply to all the collected data",
+        name: "Purposes that apply to all the collected data",
         children: [],
         type: "all"
       };
@@ -270,7 +270,7 @@ class SurveyController {
 
       // Using all collected data to third party
       let thirdPartyCollectedData = {
-        name: "Purposed that apply to all the collected data",
+        name: "Purposes that apply to all the collected data",
         children: [],
         type: "all",
       };
