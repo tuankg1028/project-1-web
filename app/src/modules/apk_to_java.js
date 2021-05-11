@@ -2049,7 +2049,7 @@ async function buildCSVDataset1(dataset, range) {
   });
   await csvWriterAccuracy.writeRecords(rowsAccuracy);
 }
-main12();
+// main12();
 
 async function main13() {
   console.log("RUNNING: main13 get APIs and Functions");
@@ -2058,9 +2058,9 @@ async function main13() {
     "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/JavaSources/benign500";
   await buildApisFunctionCSv(pathSource, "begin");
 
-  const malicuousPathSource =
-    "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/StormDroid_KuafuDet_2082/JavaSources/Malware2082";
-  await buildApisFunctionCSv(malicuousPathSource, "malicious");
+  // const malicuousPathSource =
+  //   "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/StormDroid_KuafuDet_2082/JavaSources/Malware2082";
+  // await buildApisFunctionCSv(malicuousPathSource, "malicious");
 
   console.log("DONE");
 }
@@ -2068,12 +2068,13 @@ async function buildApisFunctionCSv(pathSource, type) {
   let folders = fs.readdirSync(pathSource);
   folders = folders.filter((item) => item.split(".")[1] === "apk");
 
-  const result = { APIs: {}, functions: {} };
+  const result = { APIs: {} };
   for (let i = 0; i < folders.length; i++) {
     const folder = folders[i];
     await getAPIFunctions(`${pathSource + "/" + folder}`, result);
   }
-
+  console.log(1, result);
+  return;
   const APIs = result.APIs;
   const headerAPIs = [
     ...Object.keys(APIs).map((item) => {
@@ -2109,7 +2110,7 @@ async function buildApisFunctionCSv(pathSource, type) {
   });
   await csvWriterFunctions.writeRecords(rowsFunctions);
 }
-// main13();
+main13();
 async function getAPIFunctions(folderPath, result) {
   try {
     let contents = await Helpers.default.File.getContentOfFolder(
@@ -2118,7 +2119,6 @@ async function getAPIFunctions(folderPath, result) {
     contents = contents.split("\n");
 
     let APIs = [];
-    let functions = [];
 
     for (let i = 0; i < contents.length; i++) {
       const line = contents[i];
@@ -2129,10 +2129,20 @@ async function getAPIFunctions(folderPath, result) {
         // const A
         const className = _.last(line);
 
-        APIs.push(className);
+        const apiIndex = result.APIs.indexOf((item) => item.name === className);
+
+        if (~apiIndex) {
+          result.APIs[apiIndex].times++;
+        } else {
+          result.APIs.push({
+            name: className,
+            times: 1,
+            functions: [],
+          });
+        }
       }
     }
-    APIs = _.uniq(APIs);
+
     // get Function
     contents.forEach((line) => {
       // remove comment
@@ -2141,7 +2151,8 @@ async function getAPIFunctions(folderPath, result) {
         line = line.slice(0, line.indexOf("//"));
       }
 
-      APIs.forEach((className) => {
+      result.APIs.forEach((api) => {
+        const { className, functions } = api;
         if (
           line &&
           ~line.indexOf(`${className}.`) &&
@@ -2159,22 +2170,19 @@ async function getAPIFunctions(folderPath, result) {
             line = line.slice(0, line.indexOf("("));
             line = line.replace(".", "");
 
-            functions.push(line);
+            const apiIndex = functions.indexOf((item) => item.name === line);
+
+            if (~apiIndex) {
+              functions[apiIndex].times++;
+            } else {
+              functions.push({
+                name: line,
+                times: 1,
+              });
+            }
           }
         }
       });
-    });
-    functions = _.uniq(functions);
-
-    // map to result
-    APIs.forEach((api) => {
-      if (!result.APIs[api]) result.APIs[api] = 0;
-      result.APIs[api]++;
-    });
-
-    functions.forEach((functionName) => {
-      if (!result.functions[functionName]) result.functions[functionName] = 0;
-      result.functions[functionName]++;
     });
   } catch (err) {
     console.log(err.message);
