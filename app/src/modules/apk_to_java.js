@@ -2056,11 +2056,11 @@ async function main13() {
   // const rows = [];
   const pathSource =
     "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/JavaSources/benign500";
-  await buildApisFunctionCSv(pathSource, "begin");
+  const beginResult = await buildApisFunctionCSv(pathSource, "begin");
 
   // const malicuousPathSource =
   //   "/home/ha/tuan/projects/project-1-web/malware/kuafuDet/StormDroid_KuafuDet_2082/JavaSources/Malware2082";
-  // await buildApisFunctionCSv(malicuousPathSource, "malicious");
+  // const maliciousResult =  await buildApisFunctionCSv(malicuousPathSource, "malicious");
 
   console.log("DONE");
 }
@@ -2073,18 +2073,28 @@ async function buildApisFunctionCSv(pathSource, type) {
     const folder = folders[i];
     await getAPIFunctions(`${pathSource + "/" + folder}`, result);
   }
-  console.log(1, result);
+
   return;
-  const APIs = result.APIs;
+
+  const rowsAPIs = result.APIs.reduce((acc, item) => {
+    if (item.times / folders.length > 0.5) {
+      acc.push({
+        stt: acc.length + 1,
+        api: item.name,
+      });
+    }
+    return acc;
+  }, []);
   const headerAPIs = [
-    ...Object.keys(APIs).map((item) => {
-      return {
-        id: item,
-        title: item,
-      };
-    }),
+    {
+      id: "stt",
+      title: "STT",
+    },
+    {
+      id: "api",
+      title: "API Name",
+    },
   ];
-  const rowsAPIs = [APIs];
 
   const csvWriterApis = createCsvWriter({
     path: `${type}DatasetAPIs.csv`,
@@ -2093,22 +2103,43 @@ async function buildApisFunctionCSv(pathSource, type) {
   await csvWriterApis.writeRecords(rowsAPIs);
 
   // function
-  const functions = result.functions;
   const headerFunctions = [
-    ...Object.keys(functions).map((item) => {
-      return {
-        id: item,
-        title: item,
-      };
-    }),
+    {
+      id: "stt",
+      title: "STT",
+    },
+    {
+      id: "functionName",
+      title: "Function Name",
+    },
   ];
-  const rowsFunctions = [functions];
+  const rowsFunctions = result.APIs.reduce((acc, item) => {
+    const { functions = [] } = item;
+    functions.forEach((functionItem) => {
+      if (functionItem.times / folders.length > 0.5) {
+        const isExisted = acc.some(
+          (accItem) => accItem.functionName === functionItem.name
+        );
+
+        if (!isExisted) {
+          acc.push({
+            stt: acc.length + 1,
+            functionName: functionItem.name,
+          });
+        }
+      }
+    });
+
+    return acc;
+  }, []);
 
   const csvWriterFunctions = createCsvWriter({
     path: `${type}DatasetFunctions.csv`,
     header: headerFunctions,
   });
   await csvWriterFunctions.writeRecords(rowsFunctions);
+
+  return results;
 }
 main13();
 async function getAPIFunctions(folderPath, result) {
@@ -2152,7 +2183,7 @@ async function getAPIFunctions(folderPath, result) {
       }
 
       result.APIs.forEach((api) => {
-        const { className, functions } = api;
+        const { name: className, functions } = api;
         if (
           line &&
           ~line.indexOf(`${className}.`) &&
@@ -2170,7 +2201,9 @@ async function getAPIFunctions(folderPath, result) {
             line = line.slice(0, line.indexOf("("));
             line = line.replace(".", "");
 
-            const apiIndex = functions.indexOf((item) => item.name === line);
+            const apiIndex = functions.indexOf(
+              (item) => item.name === line && item.apiName === className
+            );
 
             if (~apiIndex) {
               functions[apiIndex].times++;
@@ -2178,6 +2211,7 @@ async function getAPIFunctions(folderPath, result) {
               functions.push({
                 name: line,
                 times: 1,
+                apiName: className,
               });
             }
           }
