@@ -436,6 +436,7 @@ async function computingDistance() {
       return { ...app, type: "malicious" };
     });
     const testingApps = [...beginApps, ...maliciousApps];
+    console.log(testingApps);
 
     for (let k = 0; k < testingApps.length; k++) {
       try {
