@@ -1903,20 +1903,50 @@ async function createDataSetApps1(folterPath, type) {
 // Xây dựng file csv có tên là beginDatasetMatrix.csv và maliciousDatasetMatrix.csv
 async function main12() {
   console.log("RUNNING beginDatasetMatrix.csv và maliciousDatasetMatrix.csv");
+
+  const beginAppsTranning = await Models.BeginDataset.find()
+    .sort({
+      createdAt: "asc",
+    })
+    .limit(300);
+  console.log(1);
+  const maliciousAppsTranning = await Models.MaliciousDataset.find()
+    .sort({
+      createdAt: "asc",
+    })
+    .limit(1243);
+  const traningApps = [...beginAppsTranning, ...maliciousAppsTranning];
   // build beginDatasetMatrix.csv
-  let beginApps = await Models.BeginDataset.find();
+  console.log(1);
+  const bigestDistance = _.max([..._.map(traningApps, "distance")]);
+  const smallestDistance = _.min([..._.map(traningApps, "distance")]);
 
-  const bigestDistance = _.max([..._.map(beginApps, "distance")]);
-  const smallestDistance = _.min([..._.map(beginApps, "distance")]);
-  const range = [smallestDistance, 0.46756756756];
-  console.log(range);
-  await buildCSVDataset1(beginApps, "begin", range);
+  const range = [
+    smallestDistance,
+    smallestDistance + (bigestDistance - smallestDistance) / 2,
+  ];
+  console.log(range, bigestDistance);
 
-  // build ourMaliciousDatasetMatrix.csv
-  let maliciousApps = await Models.MaliciousDataset.find();
-  await buildCSVDataset1(maliciousApps, "malicious", range);
-
-  console.log("DONE");
+  let beginApps = await Models.BeginDataset.find()
+    .sort({
+      createdAt: "desc",
+    })
+    .limit(200);
+  beginApps = _.map(beginApps, (app) => {
+    app = app.toJSON();
+    return { ...app, type: "begin" };
+  });
+  const maliciousApps = await Models.MaliciousDataset.find()
+    .sort({
+      createdAt: "desc",
+    })
+    .limit(829);
+  maliciousApps = _.map(maliciousApps, (app) => {
+    app = app.toJSON();
+    return { ...app, type: "malicious" };
+  });
+  const testingApps = [...beginApps, ...maliciousApps];
+  await buildCSVDataset1(testingApps, range);
 }
 async function buildCSVDataset1(dataset, type, range) {
   console.log("range", range);
@@ -1955,7 +1985,7 @@ async function buildCSVDataset1(dataset, type, range) {
 
   // get range
   const apps = dataset;
-
+  const risk = app.type === "begin" ? 0 : 1;
   apps.forEach((app) => {
     const predict = range ? (_.inRange(app.distance, ...range) ? 0 : 1) : "-";
     rows.push({
@@ -1963,18 +1993,17 @@ async function buildCSVDataset1(dataset, type, range) {
       appName: app.appName,
       predict,
       distance: app.distance,
-      risk: 1,
+      risk,
     });
 
-    if (predict === 0) Z++;
-    if (predict === 1) W++;
+    if (predict === 0 && risk === 0) X++;
+    if (predict === 1 && risk === 0) Y++;
+    if (predict === 0 && risk === 1) Z++;
+    if (predict === 1 && risk === 1) W++;
   });
 
   const csvWriter = createCsvWriter({
-    path:
-      type === "begin"
-        ? "beginDatasetMatrix.csv"
-        : "maliciousDatasetMatrix.csv",
+    path: datasetMatrix.csv,
     header,
   });
   await csvWriter.writeRecords(rows);
@@ -2028,15 +2057,12 @@ async function buildCSVDataset1(dataset, type, range) {
   ];
 
   const csvWriterAccuracy = createCsvWriter({
-    path:
-      type === "begin"
-        ? "beginDatasetAccuracy.csv"
-        : "maliciousDatasetAccuracy.csv",
+    path: datasetAccuracy.csv,
     header: headerAccuracy,
   });
   await csvWriterAccuracy.writeRecords(rowsAccuracy);
 }
-// main12();
+main12();
 
 async function main13() {
   console.log("RUNNING: main13 get APIs and Functions");
@@ -2199,7 +2225,8 @@ async function computeDAPForSubCategory1(apps) {
 
     return acc;
   }, {});
-
+  console.log(categoryKeywords);
+  return;
   const result = [];
   for (const keyword in categoryKeywords) {
     const value = categoryKeywords[keyword];
@@ -2215,4 +2242,4 @@ async function computeDAPForSubCategory1(apps) {
     nodes: result,
   });
 }
-main14();
+// main14();
