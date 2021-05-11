@@ -2003,7 +2003,7 @@ async function buildCSVDataset1(dataset, type, range) {
   });
 
   const csvWriter = createCsvWriter({
-    path: datasetMatrix.csv,
+    path: "datasetMatrix.csv",
     header,
   });
   await csvWriter.writeRecords(rows);
@@ -2057,7 +2057,7 @@ async function buildCSVDataset1(dataset, type, range) {
   ];
 
   const csvWriterAccuracy = createCsvWriter({
-    path: datasetAccuracy.csv,
+    path: "datasetAccuracy.csv",
     header: headerAccuracy,
   });
   await csvWriterAccuracy.writeRecords(rowsAccuracy);
