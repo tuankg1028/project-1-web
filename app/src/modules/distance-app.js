@@ -426,7 +426,7 @@ async function computingDistance() {
       app = app.toJSON();
       return { ...app, type: "begin" };
     });
-    const maliciousApps = await Models.MaliciousDataset.find()
+    let maliciousApps = await Models.MaliciousDataset.find()
       .sort({
         createdAt: "desc",
       })
