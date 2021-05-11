@@ -1985,8 +1985,8 @@ async function buildCSVDataset1(dataset, type, range) {
 
   // get range
   const apps = dataset;
-  const risk = app.type === "begin" ? 0 : 1;
   apps.forEach((app) => {
+    const risk = app.type === "begin" ? 0 : 1;
     const predict = range ? (_.inRange(app.distance, ...range) ? 0 : 1) : "-";
     rows.push({
       stt: sttInOurMalicious++,
