@@ -1904,29 +1904,6 @@ async function createDataSetApps1(folterPath, type) {
 async function main12() {
   console.log("RUNNING beginDatasetMatrix.csv và maliciousDatasetMatrix.csv");
 
-  const beginAppsTranning = await Models.BeginDataset.find()
-    .sort({
-      createdAt: "asc",
-    })
-    .limit(300);
-  console.log(1);
-  const maliciousAppsTranning = await Models.MaliciousDataset.find()
-    .sort({
-      createdAt: "asc",
-    })
-    .limit(1243);
-  const traningApps = [...beginAppsTranning, ...maliciousAppsTranning];
-  // build beginDatasetMatrix.csv
-  console.log(1);
-  const bigestDistance = _.max([..._.map(traningApps, "distance")]);
-  const smallestDistance = _.min([..._.map(traningApps, "distance")]);
-
-  const range = [
-    smallestDistance,
-    smallestDistance + (bigestDistance - smallestDistance) / 2,
-  ];
-  console.log(range, bigestDistance);
-
   let beginApps = await Models.BeginDataset.find()
     .sort({
       createdAt: "desc",
@@ -1946,6 +1923,16 @@ async function main12() {
     return { ...app, type: "malicious" };
   });
   const testingApps = [...beginApps, ...maliciousApps];
+
+  const bigestDistance = _.max([..._.map(testingApps, "distance")]);
+  const smallestDistance = _.min([..._.map(testingApps, "distance")]);
+
+  const range = [
+    smallestDistance,
+    smallestDistance + (bigestDistance - smallestDistance) / 2,
+  ];
+  console.log(range, bigestDistance);
+
   await buildCSVDataset1(testingApps, range);
 }
 async function buildCSVDataset1(dataset, range) {
