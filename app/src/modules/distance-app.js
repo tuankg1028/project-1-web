@@ -422,7 +422,7 @@ async function computingDistance() {
         createdAt: "desc",
       })
       .limit(200);
-    beginApps = _.map((app) => {
+    beginApps = _.map(beginApps, (app) => {
       app = app.toJSON();
       return { ...app, type: "begin" };
     });
@@ -431,7 +431,7 @@ async function computingDistance() {
         createdAt: "desc",
       })
       .limit(829);
-    maliciousApps = _.map((app) => {
+    maliciousApps = _.map(maliciousApps, (app) => {
       app = app.toJSON();
       return { ...app, type: "malicious" };
     });
