@@ -1948,7 +1948,7 @@ async function main12() {
   const testingApps = [...beginApps, ...maliciousApps];
   await buildCSVDataset1(testingApps, range);
 }
-async function buildCSVDataset1(dataset, type, range) {
+async function buildCSVDataset1(dataset, range) {
   console.log("range", range);
   let X = 0,
     Y = 0,
