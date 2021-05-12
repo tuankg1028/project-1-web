@@ -1779,20 +1779,20 @@ updateAppsPrivacyPolicy();
 async function updateAppsPrivacyPolicy() {
   const apps = await Models.App.find({
     // isCompleted: true,
-    appName: {
-      $in: [
-        "truecaller: phone caller id, spam blocking & chat",
-        "mi music",
-        "huawei backup",
-        "file manager : free and easily",
-        "tiktok",
-        "linkedin: jobs, business news & social networking",
-        "hicare",
-        "microsoft teams",
-        "spotify: listen to podcasts & find music you love",
-        "zoom cloud meetings",
-      ],
-    },
+    // appName: {
+    //   $in: [
+    //     "truecaller: phone caller id, spam blocking & chat",
+    //     "mi music",
+    //     "huawei backup",
+    //     "file manager : free and easily",
+    //     "tiktok",
+    //     "linkedin: jobs, business news & social networking",
+    //     "hicare",
+    //     "microsoft teams",
+    //     "spotify: listen to podcasts & find music you love",
+    //     "zoom cloud meetings",
+    //   ],
+    // },
   }).select("id");
 
   // .limit(1);
