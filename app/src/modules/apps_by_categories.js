@@ -1933,7 +1933,6 @@ async function updateAppPrivacyPolicy(appId) {
   } catch (err) {
     console.log(err);
     console.log(`ERROR: ${appId} ${err.message}`);
-    throw err;
   }
 }
 
