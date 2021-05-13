@@ -205,19 +205,24 @@
   // predict-question
   $("body").on("change", ".predict-question[type='radio']", function() {
     const value = Number($(this).val());
-    console.log(value)
-    console.log( $(this)
-    .parents(".question-1")
-    .next())
+  
     if(value) {
-      $(this)
-      .parents(".question-1")
-      .next().css("display", "none")
+     
+
+      $(".slick-active .question-installed").remove();
+
     } else {
+      const appId = $(".slick-active form").attr("appId")
       $(this)
-      .parents(".question-1")
-      .next().css("display", "block")
-      
+      .parents(".question-1").append(
+        `
+        <div class="question-1 mt-2 question-installed">
+            <div class="title font-weight-bold">6. Do you want to install this app?</div><!-- anwsers-->
+            <div class="anwsers mt-2">
+              <label class="container-radio">Yes<input class="final-question" type="radio" name="questions[${appId}][install]" value="1" required="required" /><span class="checkmark"></span></label><label class="container-radio">No<input class="final-question" type="radio" name="questions[${appId}][install]" value="2" /><span class="checkmark"></span></label><label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[${appId}][install]" value="3" /><span class="checkmark"></span></label></div>
+        </div>
+        `
+      )
     }
 
     refreshHeight()

@@ -215,60 +215,64 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
         //- // label
         //- .comments-data-label.font-weight-bold.text-underline
         //-   | II - Final judgment
-        // final question
-        .question-1.mt-2
-          .title.font-weight-bold 5. Our classification model predicts your answer is YES
-          div Do you agree with this prediction?
-          // anwsers
-          .anwsers.mt-2
-            label.container-radio
-              | Yes
-              input(type='radio' class="predict-question" name="questions[" + question.id + "][final]" value="1" required)
-              span.checkmark
-
-            label.container-radio
-              | No
-              input(type='radio' class="predict-question" name="questions[" + question.id + "][final]" value="0")
-              span.checkmark
-              
-        // final question
-        .question-1.mt-2(style="display:none")
-          .title.font-weight-bold 6. Do you want to install this app?
-          // anwsers
-          .anwsers.mt-2
-            label.container-radio
-              | Yes
-              input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="1" required)
-              span.checkmark
-
-            label.container-radio
-              | No
-              input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="2")
-              span.checkmark
-
-            label.container-radio
-              | Maybe
-              input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="3")
-              span.checkmark
-           
-        if(indexQuestion == 1 || indexQuestion == 16 || indexQuestion == 22)
+        if(indexQuestion > 4)
           // final question
           .question-1.mt-2
-            .title.font-weight-bold What is your satisfaction level with our first classification model?
+            .title.font-weight-bold 5. Our classification model predicts your answer is YES
+            div Do you agree with this prediction?
             // anwsers
             .anwsers.mt-2
               label.container-radio
                 | Yes
-                input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="1" required)
+                input(type='radio' class="predict-question" name="questions[" + question.id + "][predict]" value="1" required)
                 span.checkmark
 
               label.container-radio
                 | No
-                input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="2")
+                input(type='radio' class="predict-question" name="questions[" + question.id + "][predict]" value="0")
+                span.checkmark
+                
+          
+            
+          if(indexQuestion == 10 || indexQuestion == 16 || indexQuestion == 22)
+            // final question
+            .question-1.mt-2
+              .title.font-weight-bold What is your satisfaction level with our first classification model?
+              // anwsers
+              .anwsers.mt-2
+                label.container-radio
+                  | Yes
+                  input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="1" required)
+                  span.checkmark
+
+                label.container-radio
+                  | No
+                  input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="2")
+                  span.checkmark
+
+                label.container-radio
+                  | Maybe
+                  input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="3")
+                  span.checkmark
+        else 
+          // final question
+          .question-1.mt-2
+            .title.font-weight-bold 5. Do you want to install this app?
+            // anwsers
+            .anwsers.mt-2
+              label.container-radio
+                | Yes
+                input(type='radio' class="final-question" name="questions[" + question.id + "][install]" value="1" required)
+                span.checkmark
+
+              label.container-radio
+                | No
+                input(type='radio' class="final-question" name="questions[" + question.id + "][install]" value="2")
                 span.checkmark
 
               label.container-radio
                 | Maybe
-                input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="3")
+                input(type='radio' class="final-question" name="questions[" + question.id + "][install]" value="3")
                 span.checkmark
+
     div.see-next-btn() Next
