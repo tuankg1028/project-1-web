@@ -250,10 +250,10 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
               | Maybe
               input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="3")
               span.checkmark
-              
-        if(indexQuestion == 10 || indexQuestion == 16 || indexQuestion == 22)
+           
+        if(indexQuestion == 1 || indexQuestion == 16 || indexQuestion == 22)
           // final question
-          .question-1.mt-2(style="display:none")
+          .question-1.mt-2
             .title.font-weight-bold What is your satisfaction level with our first classification model?
             // anwsers
             .anwsers.mt-2

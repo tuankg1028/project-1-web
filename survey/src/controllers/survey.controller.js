@@ -233,16 +233,16 @@ class SurveyController {
 
       question.personalDataTypes;
 
-      question.collectionData = JSON.parse(question.collectionData);
+      question.collectionData = JSON.parse(question.collectionData || "[]");
       question.collectionData = question.collectionData.filter(
         item => item.children.length > 0
       );
-      question.thirdPartyData = JSON.parse(question.thirdPartyData);
+      question.thirdPartyData = JSON.parse(question.thirdPartyData || "[]");
       question.thirdPartyData = question.thirdPartyData.filter(
         item => item.children.length > 0
       );
 
-      question.retentionData = JSON.parse(question.retentionData);
+      question.retentionData = JSON.parse(question.retentionData || "[]");
 
       // Using all collected data to collection
       let collectionCollectedData = {

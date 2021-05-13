@@ -212,11 +212,12 @@
     if(value) {
       $(this)
       .parents(".question-1")
-      .next().css("display", "block")
+      .next().css("display", "none")
     } else {
       $(this)
       .parents(".question-1")
-      .next().css("display", "none")
+      .next().css("display", "block")
+      
     }
 
     refreshHeight()
