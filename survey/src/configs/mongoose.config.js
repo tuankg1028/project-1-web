@@ -17,7 +17,7 @@ mongoose.connect(process.env.MONGODB_URL, {
 });
 
 mongoose.connection.on("error", err => {
-  console.log(1)
+  console.log("Connect MONDGODB ERROR")
   Utils.Logger.error(err);
 });
 
