@@ -32,10 +32,10 @@ const store = new MongoDBStore({
   uri: process.env.MONGODB_URL,
   connectionOptions: {
     useUnifiedTopology: true,
-    // auth: {
-    //   user: process.env.MONGODB_USERNAME,
-    //   password: process.env.MONGODB_PASSWORD
-    // }
+    auth: {
+      user: process.env.MONGODB_USERNAME,
+      password: process.env.MONGODB_PASSWORD
+    }
   },
   collection: "session"
 });
