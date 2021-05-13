@@ -9,13 +9,8 @@ mongoose.connect(process.env.MONGODB_URL, {
     useUnifiedTopology: true,
     useCreateIndex: true,
     useFindAndModify: false,
-    dbName: process.env.DB_DATABASE || '',
-    auth: {
-      user: process.env.MONGODB_USERNAME || '',
-      password: process.env.MONGODB_PASSWORD || '',
-    }
 });
-
+console.log(mongoose)
 mongoose.connection.on("error", err => {
   console.log("Connect MONDGODB ERROR")
   Utils.Logger.error(err);
