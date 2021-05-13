@@ -6,6 +6,15 @@ import rq from "request-promise";
 import Utils from "../utils";
 
 class SurveyController {
+  async getSurvey(req, res, next) {
+    try {
+      res.render("survey/templates/survey-intro", {
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async handleIntroSurvey(req, res, next) {
     try {
       // const { id: userId, isAnswerd } = req.user;
@@ -128,28 +137,33 @@ class SurveyController {
     }
   }
 
+
   async getQuestions(req, res, next) {
     try {
-      // const { id: userId, isAnswerd, groupSurvey } = req.user;
+      const categories = _.sampleSize(Object.keys(Utils.Constants.categoryGroups), 2);
+      let questionIds = await Promise.all([
+        Models.App.find({
+          isCompleted: true,
+          categoryName: {
+            $in: Utils.Constants.categoryGroups[categories[0]]
+          }
+        }).select("_id").limit(11),
+        Models.App.find({
+          isCompleted: true,
+          categoryName: {
+            $in: Utils.Constants.categoryGroups[categories[1]]
+          }
+        }).select("_id").limit(11),
+      ]);
 
+      questionIds = _.flatten(questionIds)
+      
+      // const { id: userId, isAnswerd, groupSurvey } = req.user;
       let questions = await Models.App.find({
-        appName: {
-          $in: [
-            "truecaller: phone caller id, spam blocking & chat",
-            "mi music",
-            "huawei backup",
-            "file manager : free and easily",
-            "tiktok",
-            "linkedin: jobs, business news & social networking",
-            "hicare",
-            "microsoft teams",
-            "spotify: listen to podcasts & find music you love",
-            "zoom cloud meetings"
-          ]
-          // ["incredible health", "microsoft teams"],
+        _id: {
+          $in: questionIds
         }
       });
-
       const token = req.session.token;
 
       res.render("survey/templates/survey-question", {
@@ -157,7 +171,7 @@ class SurveyController {
         token
       });
     } catch (error) {
-      // next(error);
+      next(error);
     }
   }
 

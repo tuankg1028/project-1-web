@@ -1,6 +1,5 @@
 const path = require("path");
 // require("child_process").spawn("node", ["app.js"]);
-
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 import Utils from "./utils";
 import "./configs/mongoose.config";
@@ -33,10 +32,10 @@ const store = new MongoDBStore({
   uri: process.env.MONGODB_URL,
   connectionOptions: {
     useUnifiedTopology: true,
-    auth: {
-      user: process.env.MONGODB_USERNAME,
-      password: process.env.MONGODB_PASSWORD
-    }
+    // auth: {
+    //   user: process.env.MONGODB_USERNAME,
+    //   password: process.env.MONGODB_PASSWORD
+    // }
   },
   collection: "session"
 });

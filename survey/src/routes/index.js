@@ -10,8 +10,7 @@ router.use("/auth", authRouter);
 router.get(
   "/",
   // [Middlewares.Auth.isUser],
-  Controllers.Survey.getQuestions
-);
+  Controllers.Survey.getSurvey);
 router.get(
   "/questions",
   // [Middlewares.Auth.isUser],

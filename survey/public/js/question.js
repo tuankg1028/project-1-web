@@ -202,6 +202,26 @@
     );
   });
 
+  // predict-question
+  $("body").on("change", ".predict-question[type='radio']", function() {
+    const value = Number($(this).val());
+    console.log(value)
+    console.log( $(this)
+    .parents(".question-1")
+    .next())
+    if(value) {
+      $(this)
+      .parents(".question-1")
+      .next().css("display", "block")
+    } else {
+      $(this)
+      .parents(".question-1")
+      .next().css("display", "none")
+    }
+
+    refreshHeight()
+  });
+
   $("body").on("change", ".wrap-anwser input[type='radio']", function() {
     const value = $(this).val();
 
@@ -364,11 +384,15 @@
     setTimeout(() => {
       $(".slick-active .colec-data").show();
       // change height
-      $(".slick-slide").css(
-        "height",
-        $(".slick-active form").height() + 50 + "px"
-      );
+      refreshHeight()
     }, 0);
+  }
+
+  function refreshHeight() {
+    $(".slick-slide").css(
+      "height",
+      $(".slick-active form").height() + 50 + "px"
+    );
   }
   // radio change
   $("body").on("change", ".final-question", function() {
