@@ -15,11 +15,11 @@
     "keyword": "babel-watch src/modules/keyword.js",
     "stas": "babel-watch src/modules/stas.js",
     "changeDesc": "node --max-old-space-size=30000 dist/modules/changeDesc.js",
-    
-    "appsByCategories": "babel-watch src/modules/apps_by_categories.js",
+    "appsByCategories": "babel-watch src/modules/apps_by_categoriescopy.js",
     "testData": "babel-watch src/modules/test.js",
     "em": "babel-watch src/modules/em.js",
-    "apktojava": "babel-watch src/modules/apk_to_java.js"
+    "apktojava": "babel-watch src/modules/apk_to_java.js",
+    "computingDistance": "babel-watch src/modules/distance-app.js"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +27,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
     "axios": "^0.21.1",
+    "bayes-classifier": "0.0.5",
     "body-parser": "^1.19.0",
     "chalk": "^4.1.0",
     "cheerio": "^1.0.0-rc.5",
@@ -40,6 +41,8 @@
     "expectation-maximization": "^1.5.0",
     "express": "^4.17.1",
     "google-play-scraper": "^8.0.2",
+    "jszip": "^3.6.0",
+    "libsvm-js": "^0.2.1",
     "linebyline": "^1.3.0",
     "lodash": "^4.17.20",
     "md5": "^2.3.0",
@@ -51,8 +54,10 @@
     "morgan": "^1.10.0",
     "node-dir": "^0.1.17",
     "node-easy-docx": "^0.1.3",
+    "node-svm": "^2.1.9",
     "p-limit": "^3.1.0",
     "promise-workers": "^2.0.2",
+    "qrcode": "^1.4.4",
     "read-excel-file": "^5.0.0",
     "request": "^2.88.2",
     "rimraf": "^3.0.2",

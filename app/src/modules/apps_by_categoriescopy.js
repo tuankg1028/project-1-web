@@ -6,7 +6,6 @@ import fs from "fs";
 import axios from "axios";
 import slug from "slug";
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
-
 const categories = [
   {
     id: "1",
@@ -242,6 +241,61 @@ const categories = [
   },
 ];
 
+const categoryGroups = {
+  Beauty: ["Beauty", "Lifestyle"],
+  Business: ["Business"],
+  Education: ["Education", "Educational"],
+  Entertainment: ["Entertainment", "Photography"],
+  Finance: [
+    "Finance",
+    "Events",
+    "Action",
+    "Action & Adventure",
+    "Adventure",
+    "Arcade",
+    "Art & Design",
+    "Auto & Vehicles",
+    "Board",
+    "Books & Reference",
+    "Brain Games",
+    "Card",
+    "Casino",
+    "Casual",
+    "Comics",
+    "Creativity",
+    "House & Home",
+    "Libraries & Demo",
+    "News & Magazines",
+    "Parenting",
+    "Pretend Play",
+    "Productivity",
+    "Puzzle",
+    "Racing",
+    "Role Playing",
+    "Simulation",
+    "Strategy",
+    "Trivia",
+    "Weather",
+    "Word",
+  ],
+  "Food & Drink": ["Food & Drink"],
+  "Health & Fitness": ["Health & Fitness"],
+  "Maps & Navigation": ["Maps & Navigation"],
+  Medical: ["Medical"],
+  "Music & Audio": [
+    "Music & Audio",
+    "Video Players & Editors",
+    "Music & Video",
+    "Music",
+  ],
+  Shopping: ["Shopping"],
+  Social: ["Social", "Dating", "Communication"],
+  Sports: ["Sports"],
+  Tools: ["Tools", "Personalization"],
+  "Travel & Local": ["Travel & Local"],
+};
+
+console.log(1);
 const categoriesData = [
   "Beauty",
   "Health & Fitness",
@@ -289,15 +343,20 @@ async function main() {
 
   const next2Data = {};
   const rows = [];
-  for (let i = 0; i < categoriesData.length; i++) {
-    const categoryName = categoriesData[i];
+  for (const categoryName in categoryGroups) {
+    const subCategories = categoryGroups[categoryName];
+
     console.log(`RUNNING ${categoryName}`);
     const apps = await Models.App.find({
-      categoryName,
-    }).limit(5);
+      categoryName: {
+        $in: subCategories,
+      },
+    });
 
     for (let j = 0; j < apps.length; j++) {
-      const { developer, categoryName, appName, nodes, privacyLink } = apps[j];
+      const { developer, categoryName, appName, nodes, privacyLink, id } = apps[
+        j
+      ];
       console.log(`RUNNING ${appName}: ${nodes.length} nodes`);
 
       let apis = await Promise.all(nodes.map((node) => getParent(node)));
@@ -339,6 +398,7 @@ async function main() {
       });
 
       next2Data[appName] = {
+        id,
         developer,
         category: categoryName,
         appName,
@@ -358,7 +418,7 @@ async function main() {
 
   console.log("DONE");
 }
-// main();
+main();
 async function main2(next2Data) {
   const getParentCategoriesDB = await Models.Tree.find({
     name: {
@@ -413,7 +473,7 @@ async function main2(next2Data) {
   const rows = [];
   let stt = 1;
   for (const appName in next2Data) {
-    const { developer, category, apis, pp } = next2Data[appName];
+    const { developer, category, apis, pp, id } = next2Data[appName];
 
     const apisCSV = {};
     apisDB.forEach((item) => {
@@ -443,13 +503,30 @@ async function main2(next2Data) {
       ...apisCSV,
       ...ppCategories,
     });
+    await Models.App.updateOne(
+      {
+        _id: id,
+      },
+      {
+        $set: {
+          apisModel: JSON.stringify(apisCSV),
+          PPModel: JSON.stringify(ppCategories),
+        },
+      },
+      {},
+      (err, data) => {
+        // Helpers.Logger.info(`Data saved1: ${JSON.stringify(data, null, 2)}`)
+      }
+    );
+
+    console.log(1, apisCSV, ppCategories);
     stt++;
   }
-  const csvWriter = createCsvWriter({
-    path: "apps_categories(ver2).csv",
-    header: headers,
-  });
-  await csvWriter.writeRecords(rows);
+  // const csvWriter = createCsvWriter({
+  //   path: "apps_categories(ver2).csv",
+  //   header: headers,
+  // });
+  // await csvWriter.writeRecords(rows);
 }
 function getParentCategories(childCategoryName, parents = []) {
   try {
@@ -582,7 +659,7 @@ async function getParent(node) {
   return getParent(parent);
 }
 
-updateAppsPrivacyPolicy();
+// updateAppsPrivacyPolicy();
 async function updateAppsPrivacyPolicy() {
   const apps = await Models.App.find({
     isCompleted: true,
