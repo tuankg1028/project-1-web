@@ -36,8 +36,7 @@ var userSchema = new Schema(
     },
     OSOfDevices: {
       type: String
-    },
-    password: String
+    }
   },
   {
     timestamps: true,

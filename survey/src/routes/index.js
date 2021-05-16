@@ -13,10 +13,17 @@ router.use("/auth", authRouter);
 //   Controllers.Survey.getSurvey
 // );
 router.get("/", [Middlewares.Auth.isUser], Controllers.Survey.getQuestions);
-router.post("/handle-questions", [Middlewares.Auth.isUser], Controllers.Survey.handleQuestions);
+router.post(
+  "/handle-questions",
+  [Middlewares.Auth.isUser],
+  Controllers.Survey.handleQuestions
+);
 
-
-router.get("/question/:id/:index", [Middlewares.Auth.isUser], Controllers.Survey.getQuestion);
+router.get(
+  "/question/:id/:index",
+  [Middlewares.Auth.isUser],
+  Controllers.Survey.getQuestion
+);
 
 router.get("/success", Controllers.Survey.getSuccess);
 
