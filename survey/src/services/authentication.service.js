@@ -6,7 +6,6 @@ class Authentication {
   }
 
   genToken(payload) {
-    delete payload.password; // delete password property in object
     return jwt.sign(payload, this.secretKey, {
       expiresIn: 24 * 60 * 60
     });

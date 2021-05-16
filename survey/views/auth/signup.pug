@@ -40,19 +40,6 @@ block content
               input#inlineRadio2.form-check-input(type='radio' name='gender' value='female')
               label.form-check-label.pl-2(for='inlineRadio2') Female
 
-          .wrap-input100.validate-input.mt-3
-            b.mr-2 The OS of devices: 
-            .form-check.form-check-inline.ml-4
-              input#inlineRadio4.form-check-input(type='radio' name='OSOfDevices' value='android' required)
-              label.form-check-label.pl-2(for='inlineRadio4') Android
-            .form-check.form-check-inline.ml-5
-              input#inlineRadio5.form-check-input(type='radio' name='OSOfDevices' value='ios')
-              label.form-check-label.pl-2(for='inlineRadio5') iOS
-            .form-check.form-check-inline.ml-5
-              input#inlineRadio6.form-check-input(type='radio' name='OSOfDevices' value='windows')
-              label.form-check-label.pl-2(for='inlineRadio6') Windows
-
-
           // The field of work: 
           .wrap-input100.validate-input(data-validate='The field of work is required')
             input.input100(type='text' name='fieldOfWork' placeholder='The field of work*')
@@ -98,18 +85,7 @@ block content
                 span.focus-input100
                 span.symbol-input100
                   i.fa.fa-globe(aria-hidden='true')
-          // password
-          .wrap-input100.validate-input(data-validate='Password is required')
-            input.input100(type='password' name='pass' placeholder='Password*')
-            span.focus-input100
-            span.symbol-input100
-              i.fa.fa-lock(aria-hidden='true')
-          // confirm password
-          .wrap-input100.validate-input(data-validate="Confirm password doesn't match")
-            input.input100(type='password' name='confirmPass' placeholder='Confirm password*')
-            span.focus-input100
-            span.symbol-input100
-              i.fa.fa-lock(aria-hidden='true')
+
           .container-login100-form-btn
             button.login100-form-btn
               | Create account

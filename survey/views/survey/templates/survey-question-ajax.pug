@@ -215,7 +215,8 @@ form(action="/main-action", method="POST", isAnswered=isAnswered, predictionLeve
         //- // label
         //- .comments-data-label.font-weight-bold.text-underline
         //-   | II - Final judgment
-        if(indexQuestion > 4)
+        // 4
+        if(indexQuestion > 4) 
           // final question
           .question-1.mt-2
             .title.font-weight-bold 5. Our classification model predicts your answer is YES
@@ -224,12 +225,12 @@ form(action="/main-action", method="POST", isAnswered=isAnswered, predictionLeve
             .anwsers.mt-2
               label.container-radio
                 | Yes
-                input(type='radio' class="predict-question" name="questions[" + question.id + "][predict]" value="1" required)
+                input(type='radio' class="predict-question" name="questions[" + question.id + "][agreePredict]" value="1" required checked=isAnswered && userAnswer.agreePredict == 1)
                 span.checkmark
 
               label.container-radio
                 | No
-                input(type='radio' class="predict-question" name="questions[" + question.id + "][predict]" value="0")
+                input(type='radio' class="predict-question" name="questions[" + question.id + "][agreePredict]" value="0" checked=isAnswered && userAnswer.agreePredict == 0)
                 span.checkmark
                 
           
@@ -242,17 +243,17 @@ form(action="/main-action", method="POST", isAnswered=isAnswered, predictionLeve
               .anwsers.mt-2
                 label.container-radio
                   | Yes
-                  input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="1" required)
+                  input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="1" required checked=isAnswered && userAnswer.satisfaction == 1)
                   span.checkmark
 
                 label.container-radio
                   | No
-                  input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="0")
+                  input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="0" checked=isAnswered && userAnswer.satisfaction == 0)
                   span.checkmark
 
                 label.container-radio
                   | Maybe
-                  input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="2")
+                  input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="2" checked=isAnswered && userAnswer.satisfaction == 2)
                   span.checkmark
         else 
           // final question

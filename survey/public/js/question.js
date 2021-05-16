@@ -36,18 +36,21 @@
     );
   });
 
-  let timeNext = {}
+  let timeNext = {};
   $("body").on("click", ".see-next-btn", function() {
     const appId = $(".slick-active .app-id").val();
-    if(!timeNext[appId]) timeNext[appId] = 1;
+    if (!timeNext[appId]) timeNext[appId] = 1;
 
     let currentSection = $(".slick-active .section")[timeNext[appId]];
     $(currentSection).css("display", "inline");
-    timeNext[appId]++
+    timeNext[appId]++;
 
     // check next section next
     let nextSection = $(".slick-active .section")[timeNext[appId]];
-    if(!nextSection) {$(this).css("display", "none"); $(".wrap-btn-next .button-next").css("visibility", "visible");}
+    if (!nextSection) {
+      $(this).css("display", "none");
+      $(".wrap-btn-next .button-next").css("visibility", "visible");
+    }
 
     // change height
     $(".slick-slide").css(
@@ -203,21 +206,22 @@
   });
 
   // predict-question
-  $("body").on("change", ".predict-question[type='radio']", function() {
-    const value = Number($(this).val());
-  
-    if(value) {
-     
+  $("body").on(
+    "change",
+    ".slick-active .predict-question[type='radio']",
+    function() {
+      const value = Number($(this).val());
 
-      $(".slick-active .question-installed").remove();
-
-    } else {
-      // check elememnt existed
-      if($(".slick-active .question-installed").length)  {
-        const appId = $(".slick-active form").attr("appId")
-        $(this)
-        .parents(".question-1").append(
-          `
+      if (value) {
+        $(".slick-active .question-installed").remove();
+      } else {
+        // check elememnt existed
+        if (!$(".slick-active .question-installed").length) {
+          const appId = $(".slick-active form").attr("appId");
+          $(this)
+            .parents(".question-1")
+            .append(
+              `
           <div class="question-1 mt-2 question-installed">
             <div class="title font-weight-bold">6. Do you want to install this app?</div>
             <!-- anwsers-->
@@ -228,13 +232,48 @@
             </div>
           </div>
           `
-        )
+            );
+        }
       }
-      
-    }
 
-    refreshHeight()
-  });
+      refreshHeight();
+    }
+  );
+
+  // agree-question
+  // $("body").on(
+  //   "change",
+  //   ".slick-active .question-installed[type='radio']",
+  //   function() {
+  //     const value = Number($(this).val());
+
+  //     if (value) {
+  //       $(".slick-active .question-agree").remove();
+  //     } else {
+  //       // check elememnt existed
+  //       if (!$(".slick-active .question-agree").length) {
+  //         const appId = $(".slick-active form").attr("appId");
+  //         $(this)
+  //           .parents(".question-1")
+  //           .append(
+  //             `
+  //         <div class="question-1 mt-2 question-agree">
+  //           <div class="title font-weight-bold">6. Do you want to install this app?</div>
+  //           <!-- anwsers-->
+  //           <div class="anwsers mt-2">
+  //               <label class="container-radio">Yes<input class="final-question" type="radio" name="questions[${appId}][install]" value="1" required="required" /><span class="checkmark"></span></label>
+  //               <label class="container-radio">No<input class="final-question" type="radio" name="questions[${appId}][install]" value="0" /><span class="checkmark"></span></label>
+  //               <label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[${appId}][install]" value="2" /><span class="checkmark"></span></label>
+  //           </div>
+  //         </div>
+  //         `
+  //           );
+  //       }
+  //     }
+
+  //     refreshHeight();
+  //   }
+  // );
 
   $("body").on("change", ".wrap-anwser input[type='radio']", function() {
     const value = $(this).val();
@@ -270,7 +309,7 @@
     const isValid = $(".slick-active form")[0].checkValidity();
 
     if (isValid) {
-      const data = Qs.parse($(".slick-active form").serialize())
+      const data = Qs.parse($(".slick-active form").serialize());
       const token = $("input[name='token']").val();
       $.ajax({
         url: "/handle-questions",
@@ -333,9 +372,8 @@
           appTimer();
           // capitalizeFLetter();
 
-          
           // check show next button
-          if(!$(".slick-active form").attr("isAnswered")) 
+          if (!$(".slick-active form").attr("isAnswered"))
             $(".wrap-btn-next .button-next").css("visibility", "hidden");
         })
         .fail(err => {
@@ -344,8 +382,7 @@
             $("#errorModal").modal("show");
           }, 800);
         });
-    }
-    else {
+    } else {
       const appForms = $(".slider-item form").not(".main-form");
 
       const invalidApps = [];
@@ -360,11 +397,11 @@
           .val();
 
         // if (predictionLevel != selectedLevel) {
-          invalidApps.push({
-            appId,
-            selectedLevel,
-            indexQuestion
-          });
+        invalidApps.push({
+          appId,
+          selectedLevel,
+          indexQuestion
+        });
         // }
       }
 
@@ -405,7 +442,7 @@
 
   function appTimer() {
     $(".slick-active .colec-data").hide();
-    
+
     // change height
     $(".slick-slide").css(
       "height",
@@ -415,7 +452,7 @@
     setTimeout(() => {
       $(".slick-active .colec-data").show();
       // change height
-      refreshHeight()
+      refreshHeight();
     }, 0);
   }
 
@@ -468,5 +505,3 @@
     );
   });
 })(jQuery);
-
-

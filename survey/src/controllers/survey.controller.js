@@ -141,9 +141,10 @@ class SurveyController {
     try {
       const user = req.user;
       let questionIdsForUser;
-      
-      const refreshUser = await Models.User.findById(user.id)
-      if(refreshUser.questionIds && refreshUser.questionIds.length) questionIdsForUser = refreshUser.questionIds
+
+      const refreshUser = await Models.User.findById(user.id);
+      if (refreshUser.questionIds && refreshUser.questionIds.length)
+        questionIdsForUser = refreshUser.questionIds;
       else {
         const categories = _.sampleSize(
           Object.keys(Utils.Constants.categoryGroups),
@@ -167,8 +168,8 @@ class SurveyController {
             .select("_id")
             .limit(11)
         ]);
-        questionIds[0] = _.map(questionIds[0], "id")
-        questionIds[1] = _.map(questionIds[1], "id")
+        questionIds[0] = _.map(questionIds[0], "id");
+        questionIds[1] = _.map(questionIds[1], "id");
 
         questionIdsForUser = [
           ...questionIds[0].splice(0, 2),
@@ -186,21 +187,23 @@ class SurveyController {
 
         await Models.User.updateOne(
           {
-            _id: user.id,
+            _id: user.id
           },
           {
             $set: {
-              questionIds: questionIdsForUser,
-            },
+              questionIds: questionIdsForUser
+            }
           },
-          {},
+          {}
         );
       }
 
-      const questions = await Promise.all(questionIdsForUser.map(id =>  Models.App.findById(id).cache(
-        60 * 60 * 24 * 30
-      )))
-     
+      const questions = await Promise.all(
+        questionIdsForUser.map(id =>
+          Models.App.findById(id).cache(60 * 60 * 24 * 30)
+        )
+      );
+
       const token = req.session.token;
       res.render("survey/templates/survey-question", {
         questions,
@@ -214,66 +217,69 @@ class SurveyController {
   async handleQuestions(req, res, next) {
     try {
       const user = req.user;
-      const {questions} = req.body
-      
+      const { questions } = req.body;
+
       let awnser = await Models.Answer.findOne({
         userId: user.id
-      })
+      });
 
-      if(!awnser) awnser = await Models.Answer.create({
-        userId: user.id,
-        questions: []
-      })
+      if (!awnser)
+        awnser = await Models.Answer.create({
+          userId: user.id,
+          questions: []
+        });
 
-      const {questions: oldQuestions} = awnser
+      const { questions: oldQuestions } = awnser;
 
       // get answers
-      const newQuestions = [...oldQuestions]
+      const newQuestions = [...oldQuestions];
       for (const questionId in questions) {
-          const responses = questions[questionId];
-          
-          const answerData = []
-          for (const questionName in responses) {
-              const answerValue = responses[questionName];
-              
-              answerData.push({
-                name: questionName,
-                value: answerValue
-              })
-          }
-          console.log(1, answerData)
-          const indexQuestion = newQuestions.findIndex(item => item.id.toString() === questionId)
-          if(~indexQuestion) {
-            newQuestions[indexQuestion].responses = answerData
-          } else {
-            newQuestions.push({
-              _id: questionId,
-              responses: answerData
-            })
-          }
+        const responses = questions[questionId];
+
+        const answerData = [];
+        for (const questionName in responses) {
+          const answerValue = responses[questionName];
+
+          answerData.push({
+            name: questionName,
+            value: answerValue
+          });
+        }
+        console.log(1, answerData);
+        const indexQuestion = newQuestions.findIndex(
+          item => item.id.toString() === questionId
+        );
+        if (~indexQuestion) {
+          newQuestions[indexQuestion].responses = answerData;
+        } else {
+          newQuestions.push({
+            _id: questionId,
+            responses: answerData
+          });
+        }
       }
-      
+
       // update anwsers
       await Models.Answer.updateOne(
         {
-          _id: awnser.id,
+          _id: awnser.id
         },
         {
           $set: {
-            questions: newQuestions,
-          },
+            questions: newQuestions
+          }
         },
-        {},
+        {}
       );
 
-      res.json({})
+      res.json({});
     } catch (error) {
       next(error);
     }
   }
   async getQuestion(req, res, next) {
     try {
-      const user = req.user
+      const user = req.user;
       const { id, index } = req.params;
       let question = await Models.App.findById(id);
       // .cache(60 * 60 * 24 * 30); // 1 month;
@@ -307,7 +313,7 @@ class SurveyController {
         await Models.App.updateOne(
           { _id: id },
           { $set: { personalDataTypes } }
-        ).then(console.log);
+        );
       }
 
       question.personalDataTypes = question.personalDataTypes.map(
@@ -439,28 +445,41 @@ class SurveyController {
         });
       }
 
-      let userAnswer
-      // get answers from user 
+      let userAnswer;
+      // get answers from user
       const answer = await Models.Answer.findOne({
-        userId: user.id,
-      })
-      if(answer && answer.questions && answer.questions.length) {
-        const questionData = answer.questions.find(questionItem => questionItem.id == question.id)
-        if(questionData) {
-          userAnswer = {}
+        userId: user.id
+      });
+      if (answer && answer.questions && answer.questions.length) {
+        const questionData = answer.questions.find(
+          questionItem => questionItem.id == question.id
+        );
+        if (questionData) {
+          userAnswer = {};
           questionData.responses.forEach(item => {
-            console.log(item)
-            userAnswer[item.name] = item.value
-          })
+            userAnswer[item.name] = item.value;
+          });
         }
-       
       }
-      console.log(1, userAnswer)
+
+      // get prediction
+      // await Services.Prediction.getPredictEM({
+      //   train: [
+      //     ["x", "x", "labeled"],
+      //     ["x", "x", "labeled"],
+      //     ["x", "x", "labeled"]
+      //   ],
+      //   test: [
+      //     ["x", "x", "label"],
+      //     ["x", "x", "label"],
+      //     ["x", "x", "label"]
+      //   ]
+      // });
       res.render("survey/templates/survey-question-ajax", {
         question,
         indexQuestion: index,
         userAnswer,
-        isAnswered: !!userAnswer,
+        isAnswered: !!userAnswer
       });
     } catch (error) {
       next(error);

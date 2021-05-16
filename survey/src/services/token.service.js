@@ -9,10 +9,9 @@ import uuidv4 from "uuid/v4";
 import moment from "moment";
 
 class Token {
-
   /**
    * Create register token
-   * @param {*} user 
+   * @param {*} user
    */
   createRegisterToken() {
     const token = uuidv4();
@@ -21,14 +20,14 @@ class Token {
 
   /**
    * Create reset token
-   * @param {*} user 
+   * @param {*} user
    */
   createResetToken(user) {
     const token = uuidv4();
     return MemberReset.create({
       token,
       member_id: user.id,
-      status: "created",
+      status: "created"
       // created_at: moment(),
       // updated_at: moment(),
       // deleted_at: null
@@ -37,7 +36,7 @@ class Token {
 
   /**
    * Create reset token
-   * @param {*} user 
+   * @param {*} user
    */
   createTokenInviteProject(user) {
     const token = uuidv4();
@@ -53,40 +52,39 @@ class Token {
 
   /**
    * Verify register token
-   * @param {*} token 
+   * @param {*} token
    */
   async verifyRegisterToken(token) {
-
     return MemberToken.findOne({
-        where: {
-          token,
-          status: "sent"
-        }
-      })
+      where: {
+        token,
+        status: "sent"
+      }
+    })
       .then(result => {
-
         if (result) {
           return true;
         } else {
           return false;
         }
       })
-      .catch((err) => {
+      .catch(err => {
         throw new Error(err);
       });
   }
 
   /**
    * Verify reset token
-   * @param {*} token 
+   * @param {*} token
    */
   verifyResetToken(token) {
     return MemberReset.findOne({
-        where: {
-          token,
-          status: "sent",
-        }
-      }).then(result => {
+      where: {
+        token,
+        status: "sent"
+      }
+    })
+      .then(result => {
         if (result) {
           const tokenDate = moment(result.get("created_at"));
           const currentDate = moment();
@@ -106,19 +104,19 @@ class Token {
 
   /**
    * Update status register token
-   * @param {*} token 
+   * @param {*} token
    * @param {*} status in ['created', 'sent', 'used']
    */
   updateStatusRegisterToken(token, status) {
     return MemberToken.findOne({
-        where: {
-          token
-        }
-      })
+      where: {
+        token
+      }
+    })
       .then(result => {
         if (result) {
-
-          return result.update({
+          return result
+            .update({
               token,
               status,
               updated_at: moment()
@@ -141,18 +139,19 @@ class Token {
 
   /**
    * Update status reset password token
-   * @param {*} token 
+   * @param {*} token
    * @param {*} status in ['created', 'sent', 'used']
    */
   updateStatusResetToken(token, status) {
     return MemberReset.findOne({
-        where: {
-          token
-        }
-      })
+      where: {
+        token
+      }
+    })
       .then(result => {
         if (result) {
-          return result.update({
+          return result
+            .update({
               token,
               status,
               updated_at: moment()
@@ -175,18 +174,19 @@ class Token {
 
   /**
    * Update status of token invite member to project
-   * @param {*} token 
+   * @param {*} token
    * @param {*} status in ['created', 'sent', 'used']
    */
   updateStatusInviteMemberToken(token, status) {
     return ProjectMemberToken.findOne({
-        where: {
-          token
-        }
-      })
+      where: {
+        token
+      }
+    })
       .then(result => {
         if (result) {
-          return result.update({
+          return result
+            .update({
               token,
               status,
               updated_at: moment()
@@ -207,7 +207,12 @@ class Token {
       });
   }
 
-  async createUnauthInvitationToken(email, space_id, project_id, space_team_id) {
+  async createUnauthInvitationToken(
+    email,
+    space_id,
+    project_id,
+    space_team_id
+  ) {
     const token = uuidv4();
 
     return await UnauthInvitationTokens.create({
@@ -220,20 +225,27 @@ class Token {
   }
 
   async updateUnauthInvitationToken(token, status, previous_status) {
-
-    let total = await UnauthInvitationTokens.update({
-      status
-    }, {
-      where: {
-        token,
-        status: previous_status
+    let total = await UnauthInvitationTokens.update(
+      {
+        status
+      },
+      {
+        where: {
+          token,
+          status: previous_status
+        }
       }
-    });
+    );
 
     return total[0];
   }
 
-  async createAuthInvitationToken(member_id, space_id, project_id, space_team_id) {
+  async createAuthInvitationToken(
+    member_id,
+    space_id,
+    project_id,
+    space_team_id
+  ) {
     const token = uuidv4();
 
     return await AuthInvitationTokens.create({
@@ -246,23 +258,23 @@ class Token {
   }
 
   async updateAuthInvitationToken(token, status, previous_status) {
-
-    let total = await AuthInvitationTokens.update({
-      status
-    }, {
-      where: {
-        token,
-        status: previous_status
+    let total = await AuthInvitationTokens.update(
+      {
+        status
+      },
+      {
+        where: {
+          token,
+          status: previous_status
+        }
       }
-    });
+    );
 
     return total[0];
   }
 
   async getInvitationToken(token) {
-
-    let invitation_token,
-      is_auth;
+    let invitation_token, is_auth;
 
     // check unauth
     invitation_token = await UnauthInvitationTokens.findOne({
@@ -300,10 +312,7 @@ class Token {
       is_auth,
       invitation_token
     };
-
   }
 }
-
-
 
 export default Token;

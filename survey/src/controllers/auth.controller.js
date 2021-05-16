@@ -36,7 +36,6 @@ class AuthController {
         return res.redirect("/auth/signup");
       }
 
-      const SALTROUNDS = process.env.SALTROUNDS;
       const {
         email,
         fullName,
@@ -44,12 +43,9 @@ class AuthController {
         country,
         age,
         gender,
-        fieldOfWork,
-        OSOfDevices,
-        pass
+        fieldOfWork
       } = req.body;
       // hash password
-      let password_hash = await bcrypt.hash(pass, parseInt(SALTROUNDS));
 
       let user = await Models.User.create({
         email,
@@ -58,9 +54,7 @@ class AuthController {
         country,
         age,
         gender,
-        fieldOfWork,
-        OSOfDevices,
-        password: password_hash
+        fieldOfWork
       });
 
       if (!user) throw Error(res, "Create account failed");
@@ -77,11 +71,11 @@ class AuthController {
       let user = await Models.User.findOne({
         email
       });
-      // check password
-      if (!user || !(await bcrypt.compare(pass, user.password))) {
+
+      if (!user) {
         req.session.errors = [
           {
-            msg: "Email or password incorrect"
+            msg: "Email is incorrect"
           }
         ];
 
