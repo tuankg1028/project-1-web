@@ -389,14 +389,14 @@ async function main() {
       }
       ppCategoriesAPP = _.uniq(ppCategoriesAPP);
 
-      rows.push({
-        stt: i + 1 + j,
-        developer,
-        category: categoryName,
-        appName,
-        apis: _.uniq(_.map(apis, "name")).join(", "),
-        pp: ppCategoriesAPP.join(", "),
-      });
+      // rows.push({
+      //   stt: i + 1 + j,
+      //   developer,
+      //   category: categoryName,
+      //   appName,
+      //   apis: _.uniq(_.map(apis, "name")).join(", "),
+      //   pp: ppCategoriesAPP.join(", "),
+      // });
 
       next2Data[appName] = {
         id,
