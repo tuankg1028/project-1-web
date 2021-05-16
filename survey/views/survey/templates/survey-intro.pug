@@ -1,12 +1,11 @@
 extends ../survey-layout
 block survey-content
   form#form-intro(action="/handle-intro" method="POST")
+    input.input100(type='hidden' name='email' value=email)
     // ============= Short desc ============
     #short-desc.mt-4
       // basic info
       .basic-info.mt-3
-        b.title Basic information
-      
         .row.mt-2
           .col-12.col-md-6
             // age
@@ -78,14 +77,14 @@ block survey-content
               span.symbol-input100
                 img(src="/images/icons/country.png", width="15")
 
-          .col-12.col-md-6
-            // Email
-            b.mr-2 Email 
-            .wrap-input100.validate-input.mt-1(data-validate='Email is required')
-              input.input100(type='text' name='email' placeholder='Email*' required)
-              span.focus-input100
-              span.symbol-input100
-                i.fa.fa-envelope(aria-hidden='true')
+          //- .col-12.col-md-6
+          //-   // Email
+          //-   b.mr-2 Email 
+          //-   .wrap-input100.validate-input.mt-1(data-validate='Email is required')
+          //-     input.input100(type='text' name='email' placeholder='Email*' required)
+          //-     span.focus-input100
+          //-     span.symbol-input100
+          //-       i.fa.fa-envelope(aria-hidden='true')
           
    
         

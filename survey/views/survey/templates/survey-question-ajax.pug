@@ -1,4 +1,4 @@
-form(action="/main-action", method="POST", predictionLevel=question.predictionLevel appId=question.id indexQuestion=indexQuestion descLength=question.descLength style="padding: 0 15px") 
+form(action="/main-action", method="POST", isAnswered=isAnswered, predictionLevel=question.predictionLevel appId=question.id indexQuestion=indexQuestion descLength=question.descLength style="padding: 0 15px") 
   input(type="hidden" name="questions[" + question.id + "][time]" value=1 class="count-time")
   
   button(type="submit" style="display='none';")
@@ -27,7 +27,7 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
 
 
     // Collection Personal Data
-    section(style="display: none").section
+    section(style= isAnswered ? "" : "display: none").section
       .section1.mt-3
         // label
         .section1-label.font-weight-bold
@@ -62,7 +62,7 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
                   div.mt-2 - #{api.groupName}: 
                     div.pl-3  + #{api.mean}
 
-    section(style="display: none").section
+    section(style= isAnswered ? "" : "display: none").section
       // Collection Personal Data
       .section2.mt-3
         // label
@@ -210,7 +210,7 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
 
   
     // comments
-    .comments-data-judgement.mt-3.section(style="display: none")
+    .comments-data-judgement.mt-3.section(style= isAnswered ? "" : "display: none")
       .final-judgement
         //- // label
         //- .comments-data-label.font-weight-bold.text-underline
@@ -247,12 +247,12 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
 
                 label.container-radio
                   | No
-                  input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="2")
+                  input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="0")
                   span.checkmark
 
                 label.container-radio
                   | Maybe
-                  input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="3")
+                  input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="2")
                   span.checkmark
         else 
           // final question
@@ -262,17 +262,17 @@ form(action="/main-action", method="POST", predictionLevel=question.predictionLe
             .anwsers.mt-2
               label.container-radio
                 | Yes
-                input(type='radio' class="final-question" name="questions[" + question.id + "][install]" value="1" required)
+                input(type='radio' class="final-question" name="questions[" + question.id + "][install]" value="1" required checked=isAnswered && userAnswer.install == 1)
                 span.checkmark
 
               label.container-radio
                 | No
-                input(type='radio' class="final-question" name="questions[" + question.id + "][install]" value="2")
+                input(type='radio' class="final-question" name="questions[" + question.id + "][install]" value="0" checked=isAnswered && userAnswer.install == 0)
                 span.checkmark
 
               label.container-radio
                 | Maybe
-                input(type='radio' class="final-question" name="questions[" + question.id + "][install]" value="3")
+                input(type='radio' class="final-question" name="questions[" + question.id + "][install]" value="2" checked=isAnswered && userAnswer.install == 2)
                 span.checkmark
-
-    div.see-next-btn() Next
+    if(!isAnswered)
+      div.see-next-btn() Next

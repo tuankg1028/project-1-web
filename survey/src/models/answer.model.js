@@ -31,11 +31,18 @@ var answerSchema = new Schema(
     },
     questions: [
       {
-        name: {
-          type: String,
-          required: true
-        },
-        response: { type: String, required: true }
+        responses: [
+          { 
+            name: {
+              type: String,
+              required: true
+            },
+            value: {
+              type: String, 
+              required: true
+            }
+         }
+        ]
       }
     ],
     basicInfo: {

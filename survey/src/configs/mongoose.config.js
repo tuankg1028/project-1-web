@@ -10,7 +10,7 @@ mongoose.connect(process.env.MONGODB_URL, {
     useCreateIndex: true,
     useFindAndModify: false,
 });
-console.log(mongoose)
+
 mongoose.connection.on("error", err => {
   console.log("Connect MONDGODB ERROR")
   Utils.Logger.error(err);

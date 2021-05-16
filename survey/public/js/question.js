@@ -212,17 +212,25 @@
       $(".slick-active .question-installed").remove();
 
     } else {
-      const appId = $(".slick-active form").attr("appId")
-      $(this)
-      .parents(".question-1").append(
-        `
-        <div class="question-1 mt-2 question-installed">
-            <div class="title font-weight-bold">6. Do you want to install this app?</div><!-- anwsers-->
+      // check elememnt existed
+      if($(".slick-active .question-installed").length)  {
+        const appId = $(".slick-active form").attr("appId")
+        $(this)
+        .parents(".question-1").append(
+          `
+          <div class="question-1 mt-2 question-installed">
+            <div class="title font-weight-bold">6. Do you want to install this app?</div>
+            <!-- anwsers-->
             <div class="anwsers mt-2">
-              <label class="container-radio">Yes<input class="final-question" type="radio" name="questions[${appId}][install]" value="1" required="required" /><span class="checkmark"></span></label><label class="container-radio">No<input class="final-question" type="radio" name="questions[${appId}][install]" value="2" /><span class="checkmark"></span></label><label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[${appId}][install]" value="3" /><span class="checkmark"></span></label></div>
-        </div>
-        `
-      )
+                <label class="container-radio">Yes<input class="final-question" type="radio" name="questions[${appId}][install]" value="1" required="required" /><span class="checkmark"></span></label>
+                <label class="container-radio">No<input class="final-question" type="radio" name="questions[${appId}][install]" value="0" /><span class="checkmark"></span></label>
+                <label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[${appId}][install]" value="2" /><span class="checkmark"></span></label>
+            </div>
+          </div>
+          `
+        )
+      }
+      
     }
 
     refreshHeight()
@@ -262,6 +270,21 @@
     const isValid = $(".slick-active form")[0].checkValidity();
 
     if (isValid) {
+      const data = Qs.parse($(".slick-active form").serialize())
+      const token = $("input[name='token']").val();
+      $.ajax({
+        url: "/handle-questions",
+        type: "post",
+        data: data,
+        headers: { Authorization: token },
+        success: function(response) {
+          endLoad();
+        }
+      }).fail(err => {
+        alert("Unfortunately something went wrong. Please submit again");
+        endLoad();
+      });
+
       origSlide(a, b);
 
       // next
@@ -310,8 +333,10 @@
           appTimer();
           // capitalizeFLetter();
 
-          $(".wrap-btn-next .button-next").css("visibility", "hidden");
           
+          // check show next button
+          if(!$(".slick-active form").attr("isAnswered")) 
+            $(".wrap-btn-next .button-next").css("visibility", "hidden");
         })
         .fail(err => {
           endLoad();
@@ -443,3 +468,5 @@
     );
   });
 })(jQuery);
+
+

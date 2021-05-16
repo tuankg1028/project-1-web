@@ -62,7 +62,7 @@ app.use(
     resave: true,
     saveUninitialized: true,
     secret: "somesecret",
-    cookie: { maxAge: 60000 * 60 * 12 }, // 12h
+    cookie: { maxAge: 60000 * 60 * 12 } // 12h
     // store
   })
 );

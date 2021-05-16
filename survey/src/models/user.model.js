@@ -13,6 +13,7 @@ var userSchema = new Schema(
     occupation: String,
     age: Number,
     groupSurvey: String,
+    questionIds: [String],
     questions: [
       {
         name: {

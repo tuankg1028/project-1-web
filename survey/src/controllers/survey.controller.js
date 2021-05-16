@@ -4,11 +4,16 @@ import replaceall from "replaceall";
 import mongoose from "mongoose";
 import rq from "request-promise";
 import Utils from "../utils";
-
+import Services from "../services";
 class SurveyController {
   async getSurvey(req, res, next) {
     try {
+      const { email } = req.session.user || {};
+      if (!email) res.redirect("/auth/login");
+
       res.render("survey/templates/survey-intro", {
+        pageName: "Basic information",
+        email
       });
     } catch (error) {
       next(error);
@@ -17,33 +22,28 @@ class SurveyController {
 
   async handleIntroSurvey(req, res, next) {
     try {
-      // const { id: userId, isAnswerd } = req.user;
-      req.session.surveyApp = req.body;
-      // const questions = [];
-      // const surveyApp = req.session.surveyApp;
-      // for (const key in surveyApp) {
-      //   const surveyAppValue = surveyApp[key];
+      const {
+        email,
+        age,
+        gender,
+        education,
+        occupation,
+        fieldOfWork,
+        country
+      } = req.body;
 
-      //   if (key !== "categories" && key !== "groupSurvey") {
-      //     questions.push({
-      //       name: key,
-      //       response: surveyAppValue
-      //     });
-      //   }
-      // }
+      const user = await Models.User.create(
+        email,
+        age,
+        gender,
+        education,
+        occupation,
+        fieldOfWork,
+        country
+      );
 
-      // await Models.User.update(
-      //   {
-      //     _id: userId
-      //   },
-      //   {
-      //     $set: {
-      //       questions,
-      //       isAnswerd: true,
-      //       groupSurvey: req.body.groupSurvey
-      //     }
-      //   }
-      // );
+      const token = Services.Authentication.genToken(user.toJSON());
+      req.session.token = token;
 
       res.redirect("/questions");
     } catch (error) {
@@ -137,35 +137,71 @@ class SurveyController {
     }
   }
 
-
   async getQuestions(req, res, next) {
     try {
-      const categories = _.sampleSize(Object.keys(Utils.Constants.categoryGroups), 2);
-      let questionIds = await Promise.all([
-        Models.App.find({
-          isCompleted: true,
-          categoryName: {
-            $in: Utils.Constants.categoryGroups[categories[0]]
-          }
-        }).select("_id").limit(11),
-        Models.App.find({
-          isCompleted: true,
-          categoryName: {
-            $in: Utils.Constants.categoryGroups[categories[1]]
-          }
-        }).select("_id").limit(11),
-      ]);
-
-      questionIds = _.flatten(questionIds)
+      const user = req.user;
+      let questionIdsForUser;
       
-      // const { id: userId, isAnswerd, groupSurvey } = req.user;
-      let questions = await Models.App.find({
-        _id: {
-          $in: questionIds
-        }
-      });
-      const token = req.session.token;
+      const refreshUser = await Models.User.findById(user.id)
+      if(refreshUser.questionIds && refreshUser.questionIds.length) questionIdsForUser = refreshUser.questionIds
+      else {
+        const categories = _.sampleSize(
+          Object.keys(Utils.Constants.categoryGroups),
+          2
+        );
+        let questionIds = await Promise.all([
+          Models.App.find({
+            isCompleted: true,
+            categoryName: {
+              $in: Utils.Constants.categoryGroups[categories[0]]
+            }
+          })
+            .select("_id")
+            .limit(11),
+          Models.App.find({
+            isCompleted: true,
+            categoryName: {
+              $in: Utils.Constants.categoryGroups[categories[1]]
+            }
+          })
+            .select("_id")
+            .limit(11)
+        ]);
+        questionIds[0] = _.map(questionIds[0], "id")
+        questionIds[1] = _.map(questionIds[1], "id")
 
+        questionIdsForUser = [
+          ...questionIds[0].splice(0, 2),
+          ...questionIds[1].splice(0, 2),
+          // approach 1
+          ...questionIds[0].splice(0, 3),
+          ...questionIds[1].splice(0, 3),
+          // approach 2
+          ...questionIds[0].splice(0, 3),
+          ...questionIds[1].splice(0, 3),
+          // approach 3
+          ...questionIds[0].splice(0, 3),
+          ...questionIds[1].splice(0, 3)
+        ];
+
+        await Models.User.updateOne(
+          {
+            _id: user.id,
+          },
+          {
+            $set: {
+              questionIds: questionIdsForUser,
+            },
+          },
+          {},
+        );
+      }
+
+      const questions = await Promise.all(questionIdsForUser.map(id =>  Models.App.findById(id).cache(
+        60 * 60 * 24 * 30
+      )))
+     
+      const token = req.session.token;
       res.render("survey/templates/survey-question", {
         questions,
         token
@@ -175,8 +211,69 @@ class SurveyController {
     }
   }
 
+  async handleQuestions(req, res, next) {
+    try {
+      const user = req.user;
+      const {questions} = req.body
+      
+      let awnser = await Models.Answer.findOne({
+        userId: user.id
+      })
+
+      if(!awnser) awnser = await Models.Answer.create({
+        userId: user.id,
+        questions: []
+      })
+
+      const {questions: oldQuestions} = awnser
+
+      // get answers
+      const newQuestions = [...oldQuestions]
+      for (const questionId in questions) {
+          const responses = questions[questionId];
+          
+          const answerData = []
+          for (const questionName in responses) {
+              const answerValue = responses[questionName];
+              
+              answerData.push({
+                name: questionName,
+                value: answerValue
+              })
+          }
+          console.log(1, answerData)
+          const indexQuestion = newQuestions.findIndex(item => item.id.toString() === questionId)
+          if(~indexQuestion) {
+            newQuestions[indexQuestion].responses = answerData
+          } else {
+            newQuestions.push({
+              _id: questionId,
+              responses: answerData
+            })
+          }
+      }
+      
+      // update anwsers
+      await Models.Answer.updateOne(
+        {
+          _id: awnser.id,
+        },
+        {
+          $set: {
+            questions: newQuestions,
+          },
+        },
+        {},
+      );
+
+      res.json({})
+    } catch (error) {
+      next(error);
+    }
+  }
   async getQuestion(req, res, next) {
     try {
+      const user = req.user
       const { id, index } = req.params;
       let question = await Models.App.findById(id);
       // .cache(60 * 60 * 24 * 30); // 1 month;
@@ -264,9 +361,7 @@ class SurveyController {
             } else {
               collectionCollectedData.children.push({
                 name: `${category.name}`,
-                meanings: [
-                  { groupKeyword: child.name, meanings: [], }
-                ]
+                meanings: [{ groupKeyword: child.name, meanings: [] }]
               });
             }
 
@@ -286,7 +381,7 @@ class SurveyController {
       let thirdPartyCollectedData = {
         name: "Purposes that apply to all the collected data",
         children: [],
-        type: "all",
+        type: "all"
       };
       question.thirdPartyData.map(category => {
         category.children = category.children.filter(child => {
@@ -302,9 +397,7 @@ class SurveyController {
             } else {
               thirdPartyCollectedData.children.push({
                 name: `${category.name}`,
-                meanings: [
-                  { groupKeyword: child.name, meanings: [] }
-                ]
+                meanings: [{ groupKeyword: child.name, meanings: [] }]
               });
             }
             return false;
@@ -345,9 +438,29 @@ class SurveyController {
           ]
         });
       }
+
+      let userAnswer
+      // get answers from user 
+      const answer = await Models.Answer.findOne({
+        userId: user.id,
+      })
+      if(answer && answer.questions && answer.questions.length) {
+        const questionData = answer.questions.find(questionItem => questionItem.id == question.id)
+        if(questionData) {
+          userAnswer = {}
+          questionData.responses.forEach(item => {
+            console.log(item)
+            userAnswer[item.name] = item.value
+          })
+        }
+       
+      }
+      console.log(1, userAnswer)
       res.render("survey/templates/survey-question-ajax", {
         question,
-        indexQuestion: index
+        indexQuestion: index,
+        userAnswer,
+        isAnswered: !!userAnswer,
       });
     } catch (error) {
       next(error);

@@ -9,6 +9,8 @@ class AuthController {
     try {
       const errors = req.session.errors;
       delete req.session.errors;
+      delete req.session.user;
+
       res.render("auth/login", { errors });
     } catch (error) {
       next(error);
