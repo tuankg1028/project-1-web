@@ -348,6 +348,7 @@ async function main() {
 
     console.log(`RUNNING ${categoryName}`);
     const apps = await Models.App.find({
+      isCompleted: true,
       categoryName: {
         $in: subCategories,
       },
