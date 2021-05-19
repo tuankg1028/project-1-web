@@ -35,3 +35,43 @@ block content
           //-     | Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.
       
         
+    //- modal final question
+  #finalQuestion.modal.fade(tabindex='-1' role='dialog' aria-labelledby='finalQuestion' aria-hidden='true')
+    .modal-dialog.modal-dialog-centered(role='document')
+      .modal-content
+        .modal-header
+          h6#finalQuestionTitle.modal-title What is your satisfaction level with our first classification model?
+          button.close(type='button' data-dismiss='modal' aria-label='Close')
+            span(aria-hidden='true') &times;
+        .modal-body
+          .anwsers.mt-2
+            label.container-radio
+              | Yes
+              input(type='radio' class="final-question" name="satisfaction" value="1" checked="checked")
+              span.checkmark
+
+            label.container-radio
+              | No
+              input(type='radio' class="final-question" name="satisfaction" value="0" )
+              span.checkmark
+
+            label.container-radio
+              | Maybe
+              input(type='radio' class="final-question" name="satisfaction" value="2")
+              span.checkmark
+        .modal-footer
+          button#final-question-button.btn.btn-primary(type='button') Continue
+
+
+
+  #descriptionQuestion.modal.fade(tabindex='-1' role='dialog' aria-labelledby='descriptionQuestion' aria-hidden='false')
+      .modal-dialog.modal-dialog-centered(role='document')
+        .modal-content
+          .modal-header
+            h6#descriptionQuestionTitle.modal-title Description
+            button.close(type='button' data-dismiss='modal' aria-label='Close')
+              span(aria-hidden='true') &times;
+          .modal-body
+            
+          .modal-footer
+            button#final-question-button.btn.btn-secondary(type='button' data-dismiss='modal') Close

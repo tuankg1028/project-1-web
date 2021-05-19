@@ -463,22 +463,17 @@ class SurveyController {
       }
 
       // get prediction
-      // await Services.Prediction.getPredictEM({
-      //   train: [
-      //     ["x", "x", "labeled"],
-      //     ["x", "x", "labeled"],
-      //     ["x", "x", "labeled"]
-      //   ],
-      //   test: [
-      //     ["x", "x", "label"],
-      //     ["x", "x", "label"],
-      //     ["x", "x", "label"]
-      //   ]
-      // });
+      const ourPrecitionResponse = await Services.Prediction.getPredictEM({
+        "train":  [["1","1","2"],["2","1", "1"],["1","2", "3"]],
+        "test": [["1","2","-1"]]
+      });
+      const ourPrecition = ourPrecitionResponse.data && ourPrecitionResponse.data.yPredict[0][0]
+      
       res.render("survey/templates/survey-question-ajax", {
         question,
         indexQuestion: index,
         userAnswer,
+        ourPrecition,
         isAnswered: !!userAnswer
       });
     } catch (error) {

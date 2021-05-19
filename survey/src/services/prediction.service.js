@@ -9,10 +9,7 @@ class Prediction {
   }
 
   async getPredictEM(payload) {
-    return await axios.post("/EM/predict", {
-      data: payload,
-      responseType: "stream"
-    });
+    return await this.API.post("/EM/predict", payload).catch(console.error);
   }
 }
 

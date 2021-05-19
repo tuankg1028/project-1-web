@@ -205,20 +205,19 @@
     );
   });
 
-  // predict-question
-  $("body").on(
-    "change",
-    ".slick-active .predict-question[type='radio']",
-    function() {
-      const value = Number($(this).val());
 
-      if (value) {
+  function showInstallationQuestion() {
+    const value = Number($(".slick-active .predict-question[type='radio']:checked").val());
+    const ourPrediction = Number($(".slick-active input[name='our-prediction']").val());
+    const installtionAnswer = Number($(".slick-active input[name='answer-installation']").val());
+
+      if (value == 1) {
         $(".slick-active .question-installed").remove();
-      } else {
+      } else if(value == 0) {
         // check elememnt existed
         if (!$(".slick-active .question-installed").length) {
           const appId = $(".slick-active form").attr("appId");
-          $(this)
+          $(".slick-active .predict-question[type='radio']")
             .parents(".question-1")
             .append(
               `
@@ -226,9 +225,9 @@
             <div class="title font-weight-bold">6. Do you want to install this app?</div>
             <!-- anwsers-->
             <div class="anwsers mt-2">
-                <label class="container-radio">Yes<input class="final-question" type="radio" name="questions[${appId}][install]" value="1" required="required" /><span class="checkmark"></span></label>
-                <label class="container-radio">No<input class="final-question" type="radio" name="questions[${appId}][install]" value="0" /><span class="checkmark"></span></label>
-                <label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[${appId}][install]" value="2" /><span class="checkmark"></span></label>
+                ${ourPrediction == 1 ? "" : `<label class="container-radio">Yes<input class="final-question" type="radio" name="questions[${appId}][install]" value="1" required="required" ${installtionAnswer == 1 ? "checked": ""} ><span class="checkmark"></span></label>`}
+                ${ourPrediction == 0 ? "" : `<label class="container-radio">No<input class="final-question" type="radio" name="questions[${appId}][install]" value="0"  ${installtionAnswer == 0 ? "checked": ""} ><span class="checkmark"></span></label>`}
+                ${ourPrediction == 2 ? "" : `<label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[${appId}][install]" value="2"  ${installtionAnswer == 2 ? "checked": ""} ><span class="checkmark"></span></label>`}
             </div>
           </div>
           `
@@ -236,6 +235,13 @@
         }
       }
 
+  }
+  // install-question
+  $("body").on(
+    "change",
+    ".slick-active .predict-question[type='radio']",
+    function() {
+      showInstallationQuestion()
       refreshHeight();
     }
   );
@@ -290,6 +296,13 @@
         .prop("checked", true);
     }
   });
+  // handle click on final question button 
+  $("#final-question-button").click(() => {
+    const value = $("input[name='satisfaction']:checked").val();
+    $(".slick-active form .final-question-in-form").attr("value", value)
+    $(".wrap-btn-next").trigger("click")
+    $("#finalQuestion").modal("hide");
+  })
   //Modifies Slick To Allow Next/Prev Trigger
   ////////////////////////////////////////////
   var slickInstance = $(".wrap-forms")[0];
@@ -307,8 +320,16 @@
     }
     // next
     const isValid = $(".slick-active form")[0].checkValidity();
-
+    const indexQuestion = $(".slick-active form").attr("indexQuestion");
+    const valueOfFinalQuestion = $(".slick-active form .final-question-in-form").attr("value")
     if (isValid) {
+      // show modal to confirm final question
+      if(indexQuestion > 4 && (valueOfFinalQuestion === undefined || valueOfFinalQuestion === "" || valueOfFinalQuestion === null)) {
+       
+        $("#finalQuestion").modal("show");
+
+        return
+      }
       const data = Qs.parse($(".slick-active form").serialize());
       const token = $("input[name='token']").val();
       $.ajax({
@@ -368,6 +389,19 @@
           $(".slick-active .wrap-form").html(html);
           endLoad();
 
+          const indexQuestion = $(".slick-active form").attr("indexQuestion");
+          // show app desc
+          if(indexQuestion == 5 || indexQuestion == 11 || indexQuestion == 17) {
+            $("#descriptionQuestion .modal-body").html(
+              `
+              <div>${indexQuestion}</div>
+              `
+            )
+            $("#descriptionQuestion").modal("show");
+          }
+          // show installtion question
+          showInstallationQuestion()
+          // 
           $(".slick-active .status").val(1);
           appTimer();
           // capitalizeFLetter();
