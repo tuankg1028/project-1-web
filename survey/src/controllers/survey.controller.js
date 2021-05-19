@@ -179,6 +179,7 @@ class SurveyController {
             .select("_id")
             .limit(8)
         ]);
+        questionIds[0] = _.map(questionIds[0], "id");
         questionIds[1] = _.map(questionIds[1], "id");
         questionIds[2] = _.map(questionIds[2], "id");
 
@@ -475,17 +476,17 @@ class SurveyController {
       }
 
       const refreshUser = await Models.User.findById(user.id);
-      const userAnswer = await Models.Answer.findOne({ userId })
       if (index > 4 && index <= 10) {
 
         const tranningAppIds = refreshUser.questionIds.slice(0, index - 1);
         const tranningApps = await Promise.all(tranningAppIds.map(appId => Models.App.findById(appId)))
         const traningSet = tranningApps.map(tranningApp => {
           let { PPModel, apisModel, id } = tranningApp
+
           PPModel = JSON.parse(PPModel)
           apisModel = JSON.parse(apisModel)
 
-          const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
+          const userAnswerQuestion = answer.questions.find(question => question.id === id)
           const questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
           if (!questionInstallation) throw Error("Answer not found")
           const label = questionInstallation.value
@@ -506,7 +507,7 @@ class SurveyController {
           tranningAppIds = [...refreshUser.questionIds.slice(0, 2), ...refreshUser.questionIds.slice(10 - 2, index - 2)];
         if (index > 13 && index <= 16)
           tranningAppIds = [...refreshUser.questionIds.slice(3, 5), ...refreshUser.questionIds.slice(14 - 2, index - 2)];
-        const traningSet = await Utils.Function.getTranningData(tranningAppIds, userAnswer)
+        const traningSet = await Utils.Function.getTranningData(tranningAppIds, answer)
 
         const testSet = [[...Object.values(question.PPModel), ...Object.values(question.apisModel)]]
 
@@ -516,7 +517,9 @@ class SurveyController {
           test: testSet
         });
       } else if (index > 16 && index <= 22) {
-        const tranningAppIds = refreshUser.questionIds.slice(0, 4);
+        const tranningAppIds = [...refreshUser.questionIds.slice(0, 4), ...refreshUser.questionIds.slice(16 - 2, index - 4)];
+
+        ourPrediction  = await  Utils.Function.getOurPredictionApproach3(tranningAppIds, answer)
       }
 
       res.render("survey/templates/survey-question-ajax", {

@@ -7,6 +7,8 @@ import readline from "linebyline";
 import qs from "qs";
 import slug from "slug";
 import Models from "../models";
+import Services from "../services";
+import constants from "./constants";
 const dir = bluebird.promisifyAll(require("node-dir"));
 
 const apiGroups= [
@@ -2091,6 +2093,93 @@ const getTranningData = async (tranningAppIds, userAnswer) => {
   })
   return traningSet
 }
+
+const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) => {
+  const tranningApps = await Promise.all(tranningAppIds.map(appId => Models.App.findById(appId)))
+
+  // app and category
+  const appAndCategoryTranning = tranningApps.map((tranningApp, index) => {
+    let { id, categoryName } = tranningApp
+    const category = Object.entries(constants.categoryGroups).find(item => {
+      const subCategories = item[1]
+
+      if(subCategories.includes(categoryName)) return true
+      return false
+    })[0]
+
+    
+    const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
+    const questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+    if (!questionInstallation) throw Error("Answer not found")
+    const label = questionInstallation.value
+
+    return [index + 1, Object.keys(constants.categoryGroups).indexOf(category) + 1, label]
+  })
+  const category = Object.entries(constants.categoryGroups).find(item => {
+    const subCategories = item[1]
+
+    if(subCategories.includes(question.categoryName)) return true
+    return false
+  })[0]
+  const appAndCategoryTest = [[appAndCategoryTranning.length + 1, Object.keys(constants.categoryGroups).indexOf(category) + 1]]
+
+  // category and pp
+  const categoryAndPPTranning = tranningApps.map((tranningApp, index) => {
+    let { id, categoryName, PPModel } = tranningApp
+    PPModel = JSON.parse(PPModel)
+
+
+    const category = Object.entries(constants.categoryGroups).find(item => {
+      const subCategories = item[1]
+
+      if(subCategories.includes(categoryName)) return true
+      return false
+    })[0]
+
+    
+    const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
+    const questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+    if (!questionInstallation) throw Error("Answer not found")
+    const label = questionInstallation.value
+
+    return [Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(PPModel), label]
+  })
+  const categoryAndPPTest = [[Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(JSON.parse(question.PPModel))]]
+
+  // pp and apis
+  const PPandApisTranning = tranningApps.map((tranningApp, index) => {
+    let { id, apisModel, PPModel } = tranningApp
+    PPModel = JSON.parse(PPModel)
+    apisModel = JSON.parse(apisModel)
+    
+    const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
+    const questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+    if (!questionInstallation) throw Error("Answer not found")
+    const label = questionInstallation.value
+
+    return [...Object.values(PPModel), ...Object.values(apisModel), label]
+  })
+  const PPandApisTranning = [[...Object.values(question.PPModel), ...Object.values(JSON.parse(question.apisModel))]]
+
+  // apis and app 
+  const apisAndApp = tranningApps.map((tranningApp, index) => {
+    let { id, apisModel } = tranningApp
+
+    apisModel = JSON.parse(apisModel)
+
+    
+    const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
+    const questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+    if (!questionInstallation) throw Error("Answer not found")
+    const label = questionInstallation.value
+
+    return [index + 1, ...Object.values(apisModel), label]
+  })
+
+  
+  
+  Services.Prediction.getPredictEM()
+}
 export default {
   getAppsCategories,
   createRows,
@@ -2116,5 +2205,6 @@ export default {
   getAPIFromNode,
   getGroupApi,
   getPersonalDataType,
-  getTranningData
+  getTranningData,
+  getOurPredictionApproach3
 };
