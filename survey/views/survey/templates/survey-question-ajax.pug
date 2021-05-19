@@ -5,6 +5,8 @@ form(action="/main-action", method="POST", isAnswered=isAnswered, predictionLeve
 
 
   button(type="submit" style="display='none';")
+  if(indexQuestion > 4) 
+    div.text-center The First Classification Model
   // app name
   h3.title.text-center(style="text-transform: capitalize;")
     | #{indexQuestion + ". " +question.appName}

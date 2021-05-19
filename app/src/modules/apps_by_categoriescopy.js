@@ -641,7 +641,7 @@ async function getPPCategories(privacyLink) {
   }
 }
 async function getParent(node) {
-  const parent = await Models.Tree.findById(node.parent);
+  const parent = await Models.Tree.findById(node.parent).cache(60 * 60 * 24 * 30);
 
   if (
     parent.name === "root" ||

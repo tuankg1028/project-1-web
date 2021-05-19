@@ -2074,6 +2074,23 @@ const getAppsCategories = async appIds => {
 
   return result;
 };
+const getTranningData = async (tranningAppIds, userAnswer) => {
+  const tranningApps = await Promise.all(tranningAppIds.map(appId => Models.App.findById(appId)))
+
+  const traningSet = tranningApps.map(tranningApp => {
+    let { PPModel, apisModel, id } = tranningApp
+    PPModel = JSON.parse(PPModel)
+    apisModel = JSON.parse(apisModel)
+
+    const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
+    const questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+    if (!questionInstallation) throw Error("Answer not found")
+    const label = questionInstallation.value
+
+    return [...Object.values(PPModel), ...Object.values(apisModel), label]
+  })
+  return traningSet
+}
 export default {
   getAppsCategories,
   createRows,
@@ -2098,5 +2115,6 @@ export default {
   getLeafNodes,
   getAPIFromNode,
   getGroupApi,
-  getPersonalDataType
+  getPersonalDataType,
+  getTranningData
 };
