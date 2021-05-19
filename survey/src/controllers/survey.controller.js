@@ -150,7 +150,18 @@ class SurveyController {
           Object.keys(Utils.Constants.categoryGroups),
           2
         );
+        const categoriesForApproach1 = Object.keys(Utils.Constants.categoryGroups).filter(item => !categories.includes(item))
+
         let questionIds = await Promise.all([
+          Models.App.find({
+            isCompleted: true,
+            categoryName: {
+              $in: categoriesForApproach1
+            }
+          })
+            .select("_id")
+            .limit(6),
+
           Models.App.find({
             isCompleted: true,
             categoryName: {
@@ -158,7 +169,7 @@ class SurveyController {
             }
           })
             .select("_id")
-            .limit(11),
+            .limit(8),
           Models.App.find({
             isCompleted: true,
             categoryName: {
@@ -166,23 +177,22 @@ class SurveyController {
             }
           })
             .select("_id")
-            .limit(11)
+            .limit(8)
         ]);
-        questionIds[0] = _.map(questionIds[0], "id");
         questionIds[1] = _.map(questionIds[1], "id");
+        questionIds[2] = _.map(questionIds[2], "id");
 
         questionIdsForUser = [
-          ...questionIds[0].splice(0, 2),
           ...questionIds[1].splice(0, 2),
+          ...questionIds[2].splice(0, 2),
           // approach 1
-          ...questionIds[0].splice(0, 3),
-          ...questionIds[1].splice(0, 3),
+          ...questionIds[0],
           // approach 2
-          ...questionIds[0].splice(0, 3),
           ...questionIds[1].splice(0, 3),
+          ...questionIds[2].splice(0, 3),
           // approach 3
-          ...questionIds[0].splice(0, 3),
-          ...questionIds[1].splice(0, 3)
+          ...questionIds[1].splice(0, 3),
+          ...questionIds[2].splice(0, 3)
         ];
 
         await Models.User.updateOne(
@@ -445,6 +455,8 @@ class SurveyController {
         });
       }
 
+
+      let ourPrediction
       let userAnswer;
       // get answers from user
       const answer = await Models.Answer.findOne({
@@ -462,24 +474,57 @@ class SurveyController {
         }
       }
 
-      // get prediction
-      // await Services.Prediction.getPredictEM({
-      //   train: [
-      //     ["x", "x", "labeled"],
-      //     ["x", "x", "labeled"],
-      //     ["x", "x", "labeled"]
-      //   ],
-      //   test: [
-      //     ["x", "x", "label"],
-      //     ["x", "x", "label"],
-      //     ["x", "x", "label"]
-      //   ]
-      // });
+      const refreshUser = await Models.User.findById(user.id);
+      const userAnswer = await Models.Answer.findOne({ userId })
+      if (index > 4 && index <= 10) {
+
+        const tranningAppIds = refreshUser.questionIds.slice(0, index - 1);
+        const tranningApps = await Promise.all(tranningAppIds.map(appId => Models.App.findById(appId)))
+        const traningSet = tranningApps.map(tranningApp => {
+          let { PPModel, apisModel, id } = tranningApp
+          PPModel = JSON.parse(PPModel)
+          apisModel = JSON.parse(apisModel)
+
+          const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
+          const questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+          if (!questionInstallation) throw Error("Answer not found")
+          const label = questionInstallation.value
+
+          return [...Object.values(PPModel), ...Object.values(apisModel), label]
+        })
+
+
+        const testSet = [[...Object.values(question.PPModel), ...Object.values(question.apisModel)]]
+        // get prediction
+        ourPrediction = await Services.Prediction.getPredictEM({
+          train: traningSet,
+          test: testSet
+        });
+      } else if (index > 10 && index <= 16) {
+        let tranningAppIds = []
+        if (index > 10 && index <= 13)
+          tranningAppIds = [...refreshUser.questionIds.slice(0, 2), ...refreshUser.questionIds.slice(10 - 2, index - 2)];
+        if (index > 13 && index <= 16)
+          tranningAppIds = [...refreshUser.questionIds.slice(3, 5), ...refreshUser.questionIds.slice(14 - 2, index - 2)];
+        const traningSet = await Utils.Function.getTranningData(tranningAppIds, userAnswer)
+
+        const testSet = [[...Object.values(question.PPModel), ...Object.values(question.apisModel)]]
+
+        // get prediction
+        ourPrediction = await Services.Prediction.getPredictEM({
+          train: traningSet,
+          test: testSet
+        });
+      } else if (index > 16 && index <= 22) {
+        const tranningAppIds = refreshUser.questionIds.slice(0, 4);
+      }
+
       res.render("survey/templates/survey-question-ajax", {
         question,
         indexQuestion: index,
         userAnswer,
-        isAnswered: !!userAnswer
+        isAnswered: !!userAnswer,
+        ourPrediction
       });
     } catch (error) {
       next(error);

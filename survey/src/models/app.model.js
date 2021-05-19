@@ -41,6 +41,8 @@ var schema = new Schema(
         }
       ]
     }],
+    PPModel: String,
+    apisModel: String,
     collectionData: String,
     thirdPartyData: String,
     retentionData: String,
