@@ -9,7 +9,10 @@ class Prediction {
   }
 
   async getPredictEM(payload) {
-    return await this.API.post("/EM/predict", payload).catch(console.error);
+    return await this.API.post("/EM/predict", payload).then(({data}) => {
+      if(data.status === "success") return data.yPredict[0][0]
+      return 
+    }).catch(console.error);
   }
 }
 

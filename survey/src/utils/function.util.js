@@ -297,7 +297,9 @@ async function getBaseLineByKey(key, firstLevelName, subFolderName) {
 }
 
 async function getAPIFromNode(node) {
-  const parent = await Models.Tree.findById(node.parent);
+  const parent = await Models.Tree.findById(node.parent).cache(
+    60 * 60 * 24 * 30
+  ); // 1 month;
 
   if (
     parent.name === "root" ||
@@ -2085,7 +2087,9 @@ const getTranningData = async (tranningAppIds, userAnswer) => {
     apisModel = JSON.parse(apisModel)
 
     const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
-    const questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+    let questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+    if(!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(item => item.name === "agreePredict")
     if (!questionInstallation) throw Error("Answer not found")
     const label = questionInstallation.value
 
@@ -2175,22 +2179,22 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
     return [index + 1, ...Object.values(apisModel), label]
   })
-  const apisAndAppTest =
+  // const apisAndAppTest =
 
   // apis and app 
-  const apisAndAppTranning = tranningApps.map((tranningApp, index) => {
-    let { id, apisModel } = tranningApp
+  // const apisAndAppTranning = tranningApps.map((tranningApp, index) => {
+  //   let { id, apisModel } = tranningApp
 
-    apisModel = JSON.parse(apisModel)
+  //   apisModel = JSON.parse(apisModel)
 
     
-    const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
-    const questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
-    if (!questionInstallation) throw Error("Answer not found")
-    const label = questionInstallation.value
+  //   const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
+  //   const questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+  //   if (!questionInstallation) throw Error("Answer not found")
+  //   const label = questionInstallation.value
 
-    return [index + 1, ...Object.values(apisModel), label]
-  })
+  //   return [index + 1, ...Object.values(apisModel), label]
+  // })
 
   
 

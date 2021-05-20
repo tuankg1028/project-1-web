@@ -222,7 +222,7 @@
             .append(
               `
           <div class="question-1 mt-2 question-installed">
-            <div class="title font-weight-bold">6. Do you want to install this app?</div>
+            <div class="title font-weight-bold">6. Do you want to install this application? Please select the following options:</div>
             <!-- anwsers-->
             <div class="anwsers mt-2">
                 ${ourPrediction == 1 ? "" : `<label class="container-radio">Yes<input class="final-question" type="radio" name="questions[${appId}][install]" value="1" required="required" ${installtionAnswer == 1 ? "checked": ""} ><span class="checkmark"></span></label>`}
@@ -375,6 +375,35 @@
     }
   }
 
+  function getDescOfApps(indexQuestion) {
+    const descs = {
+      1: `
+      <div>Training phase,</div>
+      <div>You read carefully the app description, collected data, collection purposes, and whether your data is shared with third parties of 10 apps in 2 categories (5 apps/category). Then, you make the decision whether you install these apps. You can answer with yes (install), no (non-install), or maybe (maybe install) options.</div>
+      `,
+      5: `
+      <div>The naive prediction system</div>
+      <div>According to your feedback in the training phase, the first system generates the answers (i.e., the installation decision) for four target apps. We hope to develop the prediction model based on your feedback in the training phase. You read the app description, personal data requests, collection purposes, share with the third party and the prediction answer. Then, you decide on the system prediction (i.e., satisfied by the taken decision). If the answer is “No”, please provide us with your correct answer. Finally, we ask whether you are satisfied with the system generated answer. You can answer with yes, no, or maybe options.</div>
+      `,
+      11: `
+      <div>The category-based prediction system</div>
+      <div>According to your feedback in the training phase, the second system generates the answers (i.e., the installation decision) for four target apps in the same category. We hope to develop the prediction model based on the category of the training apps. You read the app description, personal data requests, collection purposes, share with the third party and the prediction answer. Then, you decide on the system prediction (i.e., satisfied by the taken decision). If the answer is “No”, please provide us with your correct answer. Finally, we ask whether you are satisfied with the system generated answer. You can answer with yes, no, or maybe options.</div>
+      `,
+      17: `
+      <div>The ensemble-based prediction system</div>
+      <div>According to your feedback in the training phase, the third system generates the answers (i.e., the installation decision) for four target apps based on the pair of fields (e.g., app name vs category, category vs purpose, category vs the third party, etc.) in the training apps rather than consider only the category. We hope to develop the prediction model based on the relationship of the pair of fields. You read the app description, personal data requests, collection purposes, share with the third party and the prediction answer. Then, you decide on the system prediction (i.e., satisfied by the taken decision). If the answer is “No”, please provide us with your correct answer. Finally, we ask whether you are satisfied with the system generated answer. You can answer with yes, no, or maybe options.</div>
+      `
+    }
+    return descs[indexQuestion]
+  }
+  function showAppDescription(indexQuestion) {
+    $("#descriptionQuestion .modal-body").html(
+      `
+      <div>${getDescOfApps(indexQuestion)}</div>
+      `
+    )
+    $("#descriptionQuestion").modal("show");
+  }
   function loadQuestion() {
     const appId = $(".slick-active .app-id").val();
     const index = $(".slick-active .index").val();
@@ -390,14 +419,9 @@
           endLoad();
 
           const indexQuestion = $(".slick-active form").attr("indexQuestion");
-          // show app desc
-          if(indexQuestion == 5 || indexQuestion == 11 || indexQuestion == 17) {
-            $("#descriptionQuestion .modal-body").html(
-              `
-              <div>${indexQuestion}</div>
-              `
-            )
-            $("#descriptionQuestion").modal("show");
+          // === SHOW APP DESC ======
+          if(indexQuestion == 1 || indexQuestion == 5 || indexQuestion == 11 || indexQuestion == 17) {
+            showAppDescription(indexQuestion)
           }
           // show installtion question
           showInstallationQuestion()
