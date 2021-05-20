@@ -5,6 +5,8 @@ import mongoose from "mongoose";
 import rq from "request-promise";
 import Utils from "../utils";
 import Services from "../services";
+import constants from "../utils/constants";
+
 class SurveyController {
   async getSurvey(req, res, next) {
     try {
@@ -298,6 +300,13 @@ class SurveyController {
       question.PPModel = JSON.parse(question.PPModel)
       question.apisModel = JSON.parse(question.apisModel)
 
+      const category = Object.entries(constants.categoryGroups).find(item => {
+        const subCategories = item[1]
+    
+        if(subCategories.includes(question.categoryName)) return true
+        return false
+      })[0]
+
       if (!question.personalDataTypes || !question.personalDataTypes.length) {
         let apis = await Promise.all(
           question.nodes.map(Utils.Function.getAPIFromNode)
@@ -529,6 +538,7 @@ class SurveyController {
       }
 
       Utils.Logger.info(`getQuestion Step 3:: Prediction: ${ourPrediction}`, )
+      question.categoryName = category
       res.render("survey/templates/survey-question-ajax", {
         question,
         indexQuestion: index,

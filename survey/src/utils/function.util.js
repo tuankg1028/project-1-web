@@ -2113,7 +2113,9 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
     
     const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
-    const questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+    let questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+    if(!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(item => item.name === "agreePredict")
     if (!questionInstallation) throw Error("Answer not found")
     const label = questionInstallation.value
 
@@ -2125,7 +2127,7 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
     if(subCategories.includes(question.categoryName)) return true
     return false
   })[0]
-  const appAndCategoryTest = [[appAndCategoryTranning.length + 1, Object.keys(constants.categoryGroups).indexOf(category) + 1]]
+  const appAndCategoryTest = [[appAndCategoryTranning.length + 1, Object.keys(constants.categoryGroups).indexOf(category) + 1, -1]]
 
   // category and pp
   const categoryAndPPTranning = tranningApps.map((tranningApp, index) => {
@@ -2148,7 +2150,7 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
     return [Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(PPModel), label]
   })
-  const categoryAndPPTest = [[Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(JSON.parse(question.PPModel))]]
+  const categoryAndPPTest = [[Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(JSON.parse(question.PPModel)), -1]]
 
   // pp and apis
   const PPandApisTranning = tranningApps.map((tranningApp, index) => {
@@ -2163,7 +2165,7 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
     return [...Object.values(PPModel), ...Object.values(apisModel), label]
   })
-  const PPandApisTest = [[...Object.values(question.PPModel), ...Object.values(JSON.parse(question.apisModel))]]
+  const PPandApisTest = [[...Object.values(question.PPModel), ...Object.values(JSON.parse(question.apisModel)), -1]]
 
   // apis and app 
   const apisAndAppTranning = tranningApps.map((tranningApp, index) => {
@@ -2177,32 +2179,46 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
     if (!questionInstallation) throw Error("Answer not found")
     const label = questionInstallation.value
 
-    return [index + 1, ...Object.values(apisModel), label]
+    return [...Object.values(apisModel), index + 1, label]
   })
-  // const apisAndAppTest =
-
-  // apis and app 
-  // const apisAndAppTranning = tranningApps.map((tranningApp, index) => {
-  //   let { id, apisModel } = tranningApp
-
-  //   apisModel = JSON.parse(apisModel)
-
-    
-  //   const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
-  //   const questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
-  //   if (!questionInstallation) throw Error("Answer not found")
-  //   const label = questionInstallation.value
-
-  //   return [index + 1, ...Object.values(apisModel), label]
-  // })
+  const apisAndAppTest = [[...Object.values(JSON.parse(question.apisModel)), appAndCategoryTranning.length + 1, -1]]
 
   
 
 
+  
+  const [appAndCategory, categoryAndPP, PPandApis, apisAndApp] = await Promise.all([
+    // appAndCategory
+    Services.Prediction.getPredictEM({
+      train: appAndCategoryTranning,
+      test: appAndCategoryTest
+    }),
+    // categoryAndPP
+    Services.Prediction.getPredictEM({
+      train: categoryAndPPTranning,
+      test: categoryAndPPTest
+    }),
+    // PPandApis
+    Services.Prediction.getPredictEM({
+      train: PPandApisTranning,
+      test: PPandApisTest
+    }),
+    ,
+    // apisAndApp
+    Services.Prediction.getPredictEM({
+      train: apisAndAppTranning,
+      test: apisAndAppTest
+    })
+  ])
 
+  const YesGroup = [appAndCategory, categoryAndPP, PPandApis, apisAndApp].filter(item => item == 1)
+  const NoGroup = [appAndCategory, categoryAndPP, PPandApis, apisAndApp].filter(item => item == 0)
+  const MaybeGroup = [appAndCategory, categoryAndPP, PPandApis, apisAndApp].filter(item => item == 2)
 
+  if(YesGroup.length >= NoGroup.length && YesGroup.length >= MaybeGroup ) return 1;
+  if(NoGroup.length >= YesGroup.length && NoGroup.length >= YesGroup ) return 0;
 
-  Services.Prediction.getPredictEM()
+  return 2
 }
 export default {
   getAppsCategories,
