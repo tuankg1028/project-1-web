@@ -2159,10 +2159,26 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
     return [...Object.values(PPModel), ...Object.values(apisModel), label]
   })
-  const PPandApisTranning = [[...Object.values(question.PPModel), ...Object.values(JSON.parse(question.apisModel))]]
+  const PPandApisTest = [[...Object.values(question.PPModel), ...Object.values(JSON.parse(question.apisModel))]]
 
   // apis and app 
-  const apisAndApp = tranningApps.map((tranningApp, index) => {
+  const apisAndAppTranning = tranningApps.map((tranningApp, index) => {
+    let { id, apisModel } = tranningApp
+
+    apisModel = JSON.parse(apisModel)
+
+
+    const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
+    const questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+    if (!questionInstallation) throw Error("Answer not found")
+    const label = questionInstallation.value
+
+    return [index + 1, ...Object.values(apisModel), label]
+  })
+  const apisAndAppTest =
+
+  // apis and app 
+  const apisAndAppTranning = tranningApps.map((tranningApp, index) => {
     let { id, apisModel } = tranningApp
 
     apisModel = JSON.parse(apisModel)
@@ -2177,7 +2193,11 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
   })
 
   
-  
+
+
+
+
+
   Services.Prediction.getPredictEM()
 }
 export default {
