@@ -180,7 +180,8 @@
     prevArrow:
       "<div class='wrap-btn-pre'> <button class='login100-form-btn button-pre'>Back</button> </div>",
     nextArrow:
-      "<div class='wrap-btn-next'> <button class='login100-form-btn button-next'>Next</button> </div>"
+      "<div class='wrap-btn-next'> <button class='login100-form-btn button-next'>Next</button> </div>",
+      slidesToScroll: 1
   });
 
   $(".wrap-forms").on("afterChange", function(event, slick, currentSlide) {
@@ -322,33 +323,34 @@
     const isValid = $(".slick-active form")[0].checkValidity();
     const indexQuestion = $(".slick-active form").attr("indexQuestion");
     const valueOfFinalQuestion = $(".slick-active form .final-question-in-form").attr("value")
+    console.log(undefined)
     if (isValid) {
       // show modal to confirm final question
-      if(indexQuestion > 4 && (valueOfFinalQuestion === undefined || valueOfFinalQuestion === "" || valueOfFinalQuestion === null)) {
+      if((indexQuestion == 14  || indexQuestion == 18 || indexQuestion == 22) && valueOfFinalQuestion === undefined) {
        
         $("#finalQuestion").modal("show");
 
-        return
-      }
-      const data = Qs.parse($(".slick-active form").serialize());
-      const token = $("input[name='token']").val();
-      $.ajax({
-        url: "/handle-questions",
-        type: "post",
-        data: data,
-        headers: { Authorization: token },
-        success: function(response) {
+      } else {
+        const data = Qs.parse($(".slick-active form").serialize());
+        const token = $("input[name='token']").val();
+        $.ajax({
+          url: "/handle-questions",
+          type: "post",
+          data: data,
+          headers: { Authorization: token },
+          success: function(response) {
+            endLoad();
+          }
+        }).fail(err => {
+          alert("Unfortunately something went wrong. Please submit again");
           endLoad();
-        }
-      }).fail(err => {
-        alert("Unfortunately something went wrong. Please submit again");
-        endLoad();
-      });
+        });
 
-      origSlide(a, b);
+        origSlide(a, b);
 
-      // next
-      loadQuestion();
+        // next
+        loadQuestion();
+      }
     } else {
       $(".slick-active form button[type='submit']").click();
     }
@@ -381,15 +383,15 @@
       <div>Training phase,</div>
       <div>You read carefully the app description, collected data, collection purposes, and whether your data is shared with third parties of 10 apps in 2 categories (5 apps/category). Then, you make the decision whether you install these apps. You can answer with yes (install), no (non-install), or maybe (maybe install) options.</div>
       `,
-      5: `
+      11: `
       <div>The naive prediction system</div>
       <div>According to your feedback in the training phase, the first system generates the answers (i.e., the installation decision) for four target apps. We hope to develop the prediction model based on your feedback in the training phase. You read the app description, personal data requests, collection purposes, share with the third party and the prediction answer. Then, you decide on the system prediction (i.e., satisfied by the taken decision). If the answer is “No”, please provide us with your correct answer. Finally, we ask whether you are satisfied with the system generated answer. You can answer with yes, no, or maybe options.</div>
       `,
-      11: `
+      15: `
       <div>The category-based prediction system</div>
       <div>According to your feedback in the training phase, the second system generates the answers (i.e., the installation decision) for four target apps in the same category. We hope to develop the prediction model based on the category of the training apps. You read the app description, personal data requests, collection purposes, share with the third party and the prediction answer. Then, you decide on the system prediction (i.e., satisfied by the taken decision). If the answer is “No”, please provide us with your correct answer. Finally, we ask whether you are satisfied with the system generated answer. You can answer with yes, no, or maybe options.</div>
       `,
-      17: `
+      19: `
       <div>The ensemble-based prediction system</div>
       <div>According to your feedback in the training phase, the third system generates the answers (i.e., the installation decision) for four target apps based on the pair of fields (e.g., app name vs category, category vs purpose, category vs the third party, etc.) in the training apps rather than consider only the category. We hope to develop the prediction model based on the relationship of the pair of fields. You read the app description, personal data requests, collection purposes, share with the third party and the prediction answer. Then, you decide on the system prediction (i.e., satisfied by the taken decision). If the answer is “No”, please provide us with your correct answer. Finally, we ask whether you are satisfied with the system generated answer. You can answer with yes, no, or maybe options.</div>
       `
@@ -420,7 +422,7 @@
 
           const indexQuestion = $(".slick-active form").attr("indexQuestion");
           // === SHOW APP DESC ======
-          if(indexQuestion == 1 || indexQuestion == 5 || indexQuestion == 11 || indexQuestion == 17) {
+          if(indexQuestion == 1 || indexQuestion == 11 || indexQuestion == 15 || indexQuestion == 19) {
             showAppDescription(indexQuestion)
           }
           // show installtion question

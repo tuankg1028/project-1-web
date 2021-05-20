@@ -160,7 +160,7 @@ class SurveyController {
             }
           })
             .select("_id")
-            .limit(6),
+            .limit(4),
 
           Models.App.find({
             isCompleted: true,
@@ -184,16 +184,16 @@ class SurveyController {
         questionIds[2] = _.map(questionIds[2], "id");
 
         questionIdsForUser = [
-          ...questionIds[1].splice(0, 2),
-          ...questionIds[2].splice(0, 2),
+          ...questionIds[1].splice(0, 5),
+          ...questionIds[2].splice(0, 5),
           // approach 1
           ...questionIds[0],
           // approach 2
-          ...questionIds[1].splice(0, 3),
-          ...questionIds[2].splice(0, 3),
+          ...questionIds[1].splice(0, 2),
+          ...questionIds[2].splice(0, 2),
           // approach 3
-          ...questionIds[1].splice(0, 3),
-          ...questionIds[2].splice(0, 3)
+          ...questionIds[1].splice(0, 2),
+          ...questionIds[2].splice(0, 2)
         ];
 
         await Models.User.updateOne(
@@ -478,8 +478,7 @@ class SurveyController {
       }
 
       const refreshUser = await Models.User.findById(user.id);
-      console.log(refreshUser.questionIds)
-      if (index > 4 && index <= 10) {
+      if (index > 10 && index <= 14) {
 
         const tranningAppIds = refreshUser.questionIds.slice(0, index - 1);
         const tranningApps = await Promise.all(tranningAppIds.map(appId => Models.App.findById(appId)))
@@ -507,13 +506,12 @@ class SurveyController {
           train: traningSet,
           test: testSet
         });
-        console.log(3, ourPrediction)
-      } else if (index > 10 && index <= 16) {
+      } else if (index > 14 && index <= 18) {
         let tranningAppIds = []
-        if (index > 10 && index <= 13)
-          tranningAppIds = [...refreshUser.questionIds.slice(0, 2), ...refreshUser.questionIds.slice(10, index - 1)];
-        if (index > 13 && index <= 16)
-          tranningAppIds = [...refreshUser.questionIds.slice(3, 5), ...refreshUser.questionIds.slice(14, index - 1)];
+        if (index > 14 && index <= 16)
+          tranningAppIds = [...refreshUser.questionIds.slice(0, 5), ...refreshUser.questionIds.slice(14, index - 1)];
+        if (index > 16 && index <= 18)
+          tranningAppIds = [...refreshUser.questionIds.slice(5, 10), ...refreshUser.questionIds.slice(16, index - 1)];
         console.log("Get tranning apps", tranningAppIds)
         const traningSet = await Utils.Function.getTranningData(tranningAppIds, answer)
 
@@ -524,8 +522,8 @@ class SurveyController {
           train: traningSet,
           test: testSet
         });
-      } else if (index > 16 && index <= 22) {
-        const tranningAppIds = [...refreshUser.questionIds.slice(0, 4), ...refreshUser.questionIds.slice(16, index - 1)];
+      } else if (index > 18 && index <= 22) {
+        const tranningAppIds = [...refreshUser.questionIds.slice(0, 10), ...refreshUser.questionIds.slice(16, index - 1)];
         console.log("Get tranning apps", tranningAppIds)
         ourPrediction  = await  Utils.Function.getOurPredictionApproach3(tranningAppIds, answer)
       }

@@ -5,8 +5,12 @@ form(action="/main-action", method="POST", isAnswered=isAnswered, predictionLeve
 
 
   button(type="submit" style="display='none';")
-  if(indexQuestion > 4) 
-    div.text-center The First Classification Model
+  if(indexQuestion > 10 && indexQuestion <= 14) 
+    div.text-center The naive prediction system
+  else if(indexQuestion > 14 && indexQuestion <= 18) 
+    div.text-center The category-based prediction system
+  else if(indexQuestion > 18 && indexQuestion <= 22) 
+    div.text-center The ensemble-based prediction system
   // app name
   h3.title.text-center(style="text-transform: capitalize;")
     | #{indexQuestion + ". " +question.appName}
@@ -221,10 +225,10 @@ form(action="/main-action", method="POST", isAnswered=isAnswered, predictionLeve
         //- .comments-data-label.font-weight-bold.text-underline
         //-   | II - Final judgment
         // 4
-        if(indexQuestion > 4) 
+        if(indexQuestion > 10) 
           // final question
           .question-1.mt-2
-            .title.font-weight-bold 5. The system has taken the following action: #{ourPrediction == 2 ? "maybe install" : (ourPrediction == 1 ? "install" : "non install")} install the application.
+            .title.font-weight-bold 5. The system has taken the following action: #{ourPrediction == 2 ? "maybe install" : (ourPrediction == 1 ? "install" : "non install")} the application.
             div Are you satisfied by the taken decision? Please select the following options:
             // anwsers
             .anwsers.mt-2
