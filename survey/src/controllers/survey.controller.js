@@ -171,7 +171,7 @@ class SurveyController {
             }
           })
             .select("_id")
-            .limit(8),
+            .limit(10),
           Models.App.find({
             isCompleted: true,
             categoryName: {
