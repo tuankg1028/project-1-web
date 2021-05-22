@@ -297,8 +297,8 @@ class SurveyController {
       let question = await Models.App.findById(id)
       .cache(60 * 60 * 24 * 30); // 1 month;
       question = question.toJSON();
-      question.PPModel = JSON.parse(question.PPModel)
-      question.apisModel = JSON.parse(question.apisModel)
+      question.PPModel = JSON.parse(question.PPModel || "{}")
+      question.apisModel = JSON.parse(question.apisModel || "{}")
 
       const category = Object.entries(constants.categoryGroups).find(item => {
         const subCategories = item[1]
