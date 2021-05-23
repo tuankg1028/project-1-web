@@ -332,7 +332,7 @@
       } else {
         const data = Qs.parse($(".slick-active form").serialize());
         const token = $("input[name='token']").val();
-        await $.ajax({
+        $.ajax({
           url: "/handle-questions",
           type: "post",
           data: data,

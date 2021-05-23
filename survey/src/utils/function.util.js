@@ -2220,7 +2220,28 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
   return 2
 }
+
+const retry = async (func, time) => {
+  let counter = 1
+  let status = false
+  let result
+
+  do {
+    try {
+      result = await func()
+      status = true
+    } catch (error) {
+      result = error
+      counter++
+    }
+  } while (!status && counter <= time)
+
+  if (!status) throw result
+
+  return result
+}
 export default {
+  retry,
   getAppsCategories,
   createRows,
   createRowsDistanceFirstLevel,
