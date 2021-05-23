@@ -1,6 +1,6 @@
 form(action="/main-action", method="POST", isAnswered=isAnswered, predictionLevel=question.predictionLevel appId=question.id indexQuestion=indexQuestion descLength=question.descLength style="padding: 0 15px") 
   input(type="hidden" name="questions[" + question.id + "][time]" value=1 class="count-time")
-  input(type="hidden" name="our-prediction" value=ourPrecition)
+  input(type="hidden" name="our-prediction" value=ourPrediction)
   input(type="hidden" name="answer-installation" value=isAnswered && userAnswer.install)
 
 
