@@ -168,7 +168,8 @@ class SurveyController {
           Models.App.find({
             isCompleted: true,
             categoryName: {
-              $in: Utils.Constants.categoryGroups[categories[0]]
+              $in: categories[0]
+              // Utils.Constants.categoryGroups[categories[0]]
             }
           })
             .select("_id")
@@ -176,7 +177,8 @@ class SurveyController {
           Models.App.find({
             isCompleted: true,
             categoryName: {
-              $in: Utils.Constants.categoryGroups[categories[1]]
+              $in: categories[1]
+              // Utils.Constants.categoryGroups[categories[1]]
             }
           })
             .select("_id")
