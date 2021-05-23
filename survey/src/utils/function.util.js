@@ -2144,7 +2144,9 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
     
     const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
-    const questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+    let questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+    if(!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(item => item.name === "agreePredict")
     if (!questionInstallation) throw Error("Answer not found")
     const label = questionInstallation.value
 
