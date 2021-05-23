@@ -63,6 +63,7 @@ class SurveyController {
 
   async handleAnswer(req, res, next) {
     try {
+      return res.redirect("/success");
       const { _id: userId } = req.user;
       // get questions (intro)
       const data = JSON.parse(req.body.data);
