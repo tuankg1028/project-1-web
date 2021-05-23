@@ -323,7 +323,6 @@
     const isValid = $(".slick-active form")[0].checkValidity();
     const indexQuestion = $(".slick-active form").attr("indexQuestion");
     const valueOfFinalQuestion = $(".slick-active form .final-question-in-form").attr("value")
-    console.log(undefined)
     if (isValid) {
       // show modal to confirm final question
       if((indexQuestion == 14  || indexQuestion == 18 || indexQuestion == 22) && valueOfFinalQuestion === undefined) {
@@ -339,17 +338,16 @@
           data: data,
           headers: { Authorization: token },
           success: function(response) {
-            endLoad();
+            
           }
         }).fail(err => {
           alert("Unfortunately something went wrong. Please submit again");
-          endLoad();
         });
-
+        
         origSlide(a, b);
-
         // next
         loadQuestion();
+
       }
     } else {
       $(".slick-active form button[type='submit']").click();
@@ -435,52 +433,6 @@
           // check show next button
           if (!$(".slick-active form").attr("isAnswered"))
             $(".wrap-btn-next .button-next").css("visibility", "hidden");
-        })
-        .fail(err => {
-          endLoad();
-          setTimeout(() => {
-            $("#errorModal").modal("show");
-          }, 800);
-        });
-    } else {
-      const appForms = $(".slider-item form").not(".main-form");
-
-      const invalidApps = [];
-      for (let i = 0; i < appForms.length; i++) {
-        const appForm = appForms[i];
-
-        // const predictionLevel = $(appForm).attr("predictionLevel");
-        const appId = $(appForm).attr("appId");
-        const indexQuestion = $(appForm).attr("indexQuestion");
-        const selectedLevel = $(appForm)
-          .find(".final-question:checked")
-          .val();
-
-        // if (predictionLevel != selectedLevel) {
-        invalidApps.push({
-          appId,
-          selectedLevel,
-          indexQuestion
-        });
-        // }
-      }
-
-      startLoad();
-      $.ajax({
-        method: "POST",
-        url: "/question/app-invalid",
-        data: {
-          data: JSON.stringify(invalidApps)
-        }
-      })
-        .done(function(html) {
-          $(".wrap-comments-data").html(html);
-          endLoad();
-          // change height
-          $(".slick-slide").css(
-            "height",
-            $(".slick-active form").height() + 20 + "px"
-          );
         })
         .fail(err => {
           endLoad();
