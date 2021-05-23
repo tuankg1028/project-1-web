@@ -162,7 +162,7 @@ class SurveyController {
             }
           })
             .select("_id")
-            .limit(4),
+            .limit(9),
 
           Models.App.find({
             isCompleted: true,
@@ -171,7 +171,7 @@ class SurveyController {
             }
           })
             .select("_id")
-            .limit(10),
+            .limit(4),
           Models.App.find({
             isCompleted: true,
             categoryName: {
@@ -179,7 +179,7 @@ class SurveyController {
             }
           })
             .select("_id")
-            .limit(8)
+            .limit(9)
         ]);
         questionIds[0] = _.map(questionIds[0], "id");
         questionIds[1] = _.map(questionIds[1], "id");
