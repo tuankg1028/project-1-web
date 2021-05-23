@@ -2152,7 +2152,7 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
     return [Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(PPModel), label]
   })
-  const categoryAndPPTest = [[Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(JSON.parse(question.PPModel)), -1]]
+  const categoryAndPPTest = [[Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(question.PPModel), -1]]
 
   // pp and apis
   const PPandApisTranning = tranningApps.map((tranningApp, index) => {
@@ -2167,7 +2167,7 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
     return [...Object.values(PPModel), ...Object.values(apisModel), label]
   })
-  const PPandApisTest = [[...Object.values(question.PPModel), ...Object.values(JSON.parse(question.apisModel)), -1]]
+  const PPandApisTest = [[...Object.values(question.PPModel), ...Object.values(question.apisModel), -1]]
 
   // apis and app 
   const apisAndAppTranning = tranningApps.map((tranningApp, index) => {
@@ -2183,7 +2183,7 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
     return [...Object.values(apisModel), index + 1, label]
   })
-  const apisAndAppTest = [[...Object.values(JSON.parse(question.apisModel)), appAndCategoryTranning.length + 1, -1]]
+  const apisAndAppTest = [[...Object.values(question.apisModel), appAndCategoryTranning.length + 1, -1]]
 
   
 
