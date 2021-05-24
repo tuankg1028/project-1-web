@@ -361,8 +361,6 @@
 
         // next
         loadQuestion();
-        // show next button on slider 
-        showNextButton()
       }
     } else {
       $(".slick-active form button[type='submit']").click();
