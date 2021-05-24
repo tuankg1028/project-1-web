@@ -234,6 +234,9 @@
           </div>
           `
             );
+
+          // clear input
+          $('.question-installed input').attr('checked', false);
         }
       }
 
