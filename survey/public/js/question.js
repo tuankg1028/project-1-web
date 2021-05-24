@@ -211,7 +211,7 @@
   function showInstallationQuestion() {
     const value = Number($(".slick-active .predict-question[type='radio']:checked").val());
     const ourPrediction = Number($(".slick-active input[name='our-prediction']").val());
-    const installtionAnswer = Number($(".slick-active input[name='answer-installation']").val());
+    const installtionAnswer = $(".slick-active input[name='answer-installation']").val()
 
       if (value == 1) {
         $(".slick-active .question-installed").remove();
