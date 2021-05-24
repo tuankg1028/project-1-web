@@ -314,11 +314,16 @@
   var origSlide = slickInstance.slick.changeSlide;
   //function that conditions the readding of slide functionality
   slickInstance.slick.changeSlide = function(a, b) {
+    console.log(1, a.data.message)
     // previous
     if (a.data.message === "previous") {
+      // show next button on slider 
+      if ($(".slick-active form").attr("isAnswered"))
+        $(".wrap-btn-next .button-next").css("visibility", "visible");
       origSlide(a, b);
       return;
     }
+
     // next
     const isValid = $(".slick-active form")[0].checkValidity();
     const indexQuestion = $(".slick-active form").attr("indexQuestion");
@@ -344,7 +349,9 @@
         }).fail(err => {
           alert("Unfortunately something went wrong. Please submit again");
         });
-        
+
+        // marked as answered 
+        $(".slick-active form").attr("isAnswered", true)
         origSlide(a, b);
         // next
         loadQuestion();
