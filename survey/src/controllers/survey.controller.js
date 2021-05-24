@@ -164,10 +164,10 @@ class SurveyController {
                   $in: categoriesForApproach1
                 }
               }
-            }
-          ])
-            .select("_id")
-            .limit(9),
+            },
+            { $limit: 4 },
+            { $project: { _id: 1 } }
+          ]),
 
           Models.App.find({
             isCompleted: true,
@@ -177,7 +177,7 @@ class SurveyController {
             }
           })
             .select("_id")
-            .limit(4),
+            .limit(9),
           Models.App.find({
             isCompleted: true,
             categoryName: {
