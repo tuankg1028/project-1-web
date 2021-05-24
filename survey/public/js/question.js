@@ -304,6 +304,12 @@
     $(".wrap-btn-next").trigger("click")
     $("#finalQuestion").modal("hide");
   })
+  function showNextButton() {
+    if ($(".slick-active form").attr("isAnswered"))
+      $(".wrap-btn-next .button-next").css("visibility", "visible")
+    else
+      $(".wrap-btn-next .button-next").css("visibility", "hidden")
+  }
   //Modifies Slick To Allow Next/Prev Trigger
   ////////////////////////////////////////////
   var slickInstance = $(".wrap-forms")[0];
@@ -314,13 +320,15 @@
   var origSlide = slickInstance.slick.changeSlide;
   //function that conditions the readding of slide functionality
   slickInstance.slick.changeSlide = function(a, b) {
-    console.log(1, a.data.message)
+    // show next button on slider 
+    showNextButton()
+
     // previous
     if (a.data.message === "previous") {
-      // show next button on slider 
-      if ($(".slick-active form").attr("isAnswered"))
-        $(".wrap-btn-next .button-next").css("visibility", "visible");
+
       origSlide(a, b);
+      // show next button on slider 
+      showNextButton()
       return;
     }
 
