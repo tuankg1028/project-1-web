@@ -146,9 +146,9 @@ class SurveyController {
       let questionIdsForUser;
 
       const refreshUser = await Models.User.findById(user.id);
-      if (refreshUser.questionIds && refreshUser.questionIds.length)
-        questionIdsForUser = refreshUser.questionIds;
-      else {
+      // if (refreshUser.questionIds && refreshUser.questionIds.length)
+      //   questionIdsForUser = refreshUser.questionIds;
+      // else {
         const categories = _.sampleSize(
           Object.keys(Utils.Constants.categoryGroups),
           2
@@ -156,12 +156,16 @@ class SurveyController {
         const categoriesForApproach1 = Object.keys(Utils.Constants.categoryGroups).filter(item => !categories.includes(item))
 
         let questionIds = await Promise.all([
-          Models.App.find({
-            isCompleted: true,
-            categoryName: {
-              $in: categoriesForApproach1
+          Models.App.aggregate([
+            {
+              $match: {
+                isCompleted: true,
+                categoryName: {
+                  $in: categoriesForApproach1
+                }
+              }
             }
-          })
+          ])
             .select("_id")
             .limit(9),
 
@@ -212,7 +216,7 @@ class SurveyController {
           },
           {}
         );
-      }
+      // }
 
       const questions = await Promise.all(
         questionIdsForUser.map(id =>
@@ -220,6 +224,9 @@ class SurveyController {
         )
       );
 
+      questions.forEach(item => {
+        console.log(item.categoryName)
+      })
       const token = req.session.token;
       res.render("survey/templates/survey-question", {
         questions,
