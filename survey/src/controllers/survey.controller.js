@@ -165,7 +165,7 @@ class SurveyController {
                 }
               }
             },
-            { $limit: 4 },
+            { $sample: { size: 4 } },
             { $project: { _id: 1 } }
           ]),
 
