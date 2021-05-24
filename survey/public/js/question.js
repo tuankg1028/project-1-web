@@ -50,6 +50,7 @@
     if (!nextSection) {
       $(this).css("display", "none");
       $(".wrap-btn-next .button-next").css("visibility", "visible");
+      $(".slick-active form").attr("isLastSection", true)
     }
 
     // change height
@@ -305,7 +306,9 @@
     $("#finalQuestion").modal("hide");
   })
   function showNextButton() {
-    if ($(".slick-active form").attr("isAnswered"))
+    const isLastSection = $(".slick-active form").attr("isLastSection", true)
+    const isAnswered = $(".slick-active form").attr("isAnswered")
+    if (isAnswered || isLastSection)
       $(".wrap-btn-next .button-next").css("visibility", "visible")
     else
       $(".wrap-btn-next .button-next").css("visibility", "hidden")
@@ -361,6 +364,8 @@
 
         // next
         loadQuestion();
+        // show next button on slider 
+        showNextButton()
       }
     } else {
       $(".slick-active form button[type='submit']").click();
