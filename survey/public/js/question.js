@@ -49,8 +49,8 @@
     let nextSection = $(".slick-active .section")[timeNext[appId]];
     if (!nextSection) {
       $(this).css("display", "none");
-      $(".wrap-btn-next .button-next").css("visibility", "visible");
       $(".slick-active form").attr("isLastSection", true)
+      showNextButton()
     }
 
     // change height
@@ -248,41 +248,6 @@
     }
   );
 
-  // agree-question
-  // $("body").on(
-  //   "change",
-  //   ".slick-active .question-installed[type='radio']",
-  //   function() {
-  //     const value = Number($(this).val());
-
-  //     if (value) {
-  //       $(".slick-active .question-agree").remove();
-  //     } else {
-  //       // check elememnt existed
-  //       if (!$(".slick-active .question-agree").length) {
-  //         const appId = $(".slick-active form").attr("appId");
-  //         $(this)
-  //           .parents(".question-1")
-  //           .append(
-  //             `
-  //         <div class="question-1 mt-2 question-agree">
-  //           <div class="title font-weight-bold">6. Do you want to install this app?</div>
-  //           <!-- anwsers-->
-  //           <div class="anwsers mt-2">
-  //               <label class="container-radio">Yes<input class="final-question" type="radio" name="questions[${appId}][install]" value="1" required="required" /><span class="checkmark"></span></label>
-  //               <label class="container-radio">No<input class="final-question" type="radio" name="questions[${appId}][install]" value="0" /><span class="checkmark"></span></label>
-  //               <label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[${appId}][install]" value="2" /><span class="checkmark"></span></label>
-  //           </div>
-  //         </div>
-  //         `
-  //           );
-  //       }
-  //     }
-
-  //     refreshHeight();
-  //   }
-  // );
-
   $("body").on("change", ".wrap-anwser input[type='radio']", function() {
     const value = $(this).val();
 
@@ -308,6 +273,7 @@
   function showNextButton() {
     const isLastSection = $(".slick-active form").attr("isLastSection")
     const isAnswered = $(".slick-active form").attr("isAnswered")
+    console.log(1)
     if (isAnswered || isLastSection)
       $(".wrap-btn-next .button-next").css("visibility", "visible")
     else
