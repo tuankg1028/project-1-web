@@ -319,10 +319,7 @@
   //this holds the original changeSlide function
   var origSlide = slickInstance.slick.changeSlide;
   //function that conditions the readding of slide functionality
-  slickInstance.slick.changeSlide = function(a, b) {
-    // show next button on slider 
-    showNextButton()
-
+  slickInstance.slick.changeSlide = function (a, b) {
     // previous
     if (a.data.message === "previous") {
 
@@ -361,9 +358,11 @@
         // marked as answered 
         $(".slick-active form").attr("isAnswered", true)
         origSlide(a, b);
+
         // next
         loadQuestion();
-
+        // show next button on slider 
+        showNextButton()
       }
     } else {
       $(".slick-active form button[type='submit']").click();
@@ -445,10 +444,6 @@
           $(".slick-active .status").val(1);
           appTimer();
           // capitalizeFLetter();
-
-          // check show next button
-          if (!$(".slick-active form").attr("isAnswered"))
-            $(".wrap-btn-next .button-next").css("visibility", "hidden");
         })
         .fail(err => {
           endLoad();
