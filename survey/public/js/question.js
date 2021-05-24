@@ -330,7 +330,6 @@
 
         // next
         loadQuestion();
-        // show next button on slider 
         showNextButton()
       }
     } else {
@@ -413,6 +412,9 @@
           $(".slick-active .status").val(1);
           appTimer();
           // capitalizeFLetter();
+
+          // show next button on slider 
+          showNextButton()
         })
         .fail(err => {
           endLoad();
