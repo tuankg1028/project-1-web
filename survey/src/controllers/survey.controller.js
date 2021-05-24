@@ -226,7 +226,11 @@ class SurveyController {
       );
 
       questions.forEach(item => {
-        console.log(item.categoryName, item.appName)
+        try {
+          console.log(item.categoryName)
+        } catch (err) {
+          console.log(item)
+        }
       })
       const token = req.session.token;
       res.render("survey/templates/survey-question", {
