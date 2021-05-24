@@ -188,7 +188,7 @@ class SurveyController {
             .select("_id")
             .limit(9)
         ]);
-      console.log(0, questionIds[0][0])
+      console.log(0, questionIds[0][0][0])
       questionIds[0] = _.map(questionIds[0], "_id");
       questionIds[1] = _.map(questionIds[1], "_id");
       questionIds[2] = _.map(questionIds[2], "_id");
