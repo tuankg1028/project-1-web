@@ -177,7 +177,7 @@ class SurveyController {
             }
           })
             .select("_id")
-            .limit(9),
+            .limit(7),
           Models.App.find({
             isCompleted: true,
             categoryName: {
@@ -186,7 +186,7 @@ class SurveyController {
             }
           })
             .select("_id")
-            .limit(9)
+            .limit(7)
         ]);
         questionIds[0] = _.map(questionIds[0], "_id");
         questionIds[1] = _.map(questionIds[1], "_id");
@@ -195,15 +195,16 @@ class SurveyController {
           ...questionIds[1].splice(0, 5),
           ...questionIds[2].splice(0, 5),
           // approach 1
-          ...questionIds[0],
+          ...questionIds[0].splice(0, 4),
           // approach 2
           ...questionIds[1].splice(0, 2),
           ...questionIds[2].splice(0, 2),
           // approach 3
-          ...questionIds[1].splice(0, 2),
-          ...questionIds[2].splice(0, 2)
+          // approach 1
+          ...questionIds[0].splice(0, 4),
         ];
 
+        console.log(1, questionIdsForUser)
         await Models.User.updateOne(
           {
             _id: user.id
