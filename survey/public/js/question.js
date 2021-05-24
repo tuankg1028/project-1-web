@@ -215,6 +215,7 @@
 
       if (value == 1) {
         $(".slick-active .question-installed").remove();
+        $(".slick-active input[name='answer-installation']").val("")
       } else if(value == 0) {
         // check elememnt existed
         if (!$(".slick-active .question-installed").length) {
@@ -233,10 +234,7 @@
             </div>
           </div>
           `
-            );
-
-          // clear input
-          $('.question-installed input').attr('checked', false);
+          );
         }
       }
 
