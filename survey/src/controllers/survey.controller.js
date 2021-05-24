@@ -146,9 +146,9 @@ class SurveyController {
       let questionIdsForUser;
 
       const refreshUser = await Models.User.findById(user.id);
-      // if (refreshUser.questionIds && refreshUser.questionIds.length)
-      //   questionIdsForUser = refreshUser.questionIds;
-      // else {
+      if (refreshUser.questionIds && refreshUser.questionIds.length)
+        questionIdsForUser = refreshUser.questionIds;
+      else {
         const categories = _.sampleSize(
           Object.keys(Utils.Constants.categoryGroups),
           2
@@ -188,11 +188,9 @@ class SurveyController {
             .select("_id")
             .limit(9)
         ]);
-      console.log(0, questionIds[0][0][0])
-      questionIds[0] = _.map(questionIds[0], "_id");
-      questionIds[1] = _.map(questionIds[1], "_id");
-      questionIds[2] = _.map(questionIds[2], "_id");
-      console.log(1, questionIds)
+        questionIds[0] = _.map(questionIds[0], "_id");
+        questionIds[1] = _.map(questionIds[1], "_id");
+        questionIds[2] = _.map(questionIds[2], "_id");
         questionIdsForUser = [
           ...questionIds[1].splice(0, 5),
           ...questionIds[2].splice(0, 5),
@@ -217,7 +215,7 @@ class SurveyController {
           },
           {}
         );
-      // }
+      }
 
       const questions = await Promise.all(
         questionIdsForUser.map(id =>
