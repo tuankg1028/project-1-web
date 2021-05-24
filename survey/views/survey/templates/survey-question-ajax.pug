@@ -244,7 +244,7 @@ form(action="/main-action", method="POST", isAnswered=isAnswered, predictionLeve
                 
           
           
-          input(type='hidden' class="final-question-in-form" name="questions[" + question.id + "][satisfaction]" value=isAnswered &&userAnswer.satisfaction)
+          input(type='hidden' class="final-question-in-form question-satisfaction" name="questions[" + question.id + "][satisfaction]" value=isAnswered &&userAnswer.satisfaction)
           //- if(indexQuestion == 10 || indexQuestion == 16 || indexQuestion == 22)
             // final question
             //- .question-1.mt-2
