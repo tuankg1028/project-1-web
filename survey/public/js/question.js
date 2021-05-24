@@ -306,7 +306,7 @@
     $("#finalQuestion").modal("hide");
   })
   function showNextButton() {
-    const isLastSection = $(".slick-active form").attr("isLastSection", true)
+    const isLastSection = $(".slick-active form").attr("isLastSection")
     const isAnswered = $(".slick-active form").attr("isAnswered")
     if (isAnswered || isLastSection)
       $(".wrap-btn-next .button-next").css("visibility", "visible")
