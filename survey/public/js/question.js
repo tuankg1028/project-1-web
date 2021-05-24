@@ -229,8 +229,8 @@
             <!-- anwsers-->
             <div class="anwsers mt-2">
                 ${ourPrediction == 1 ? "" : `<label class="container-radio">Yes<input class="final-question" type="radio" name="questions[${appId}][install]" value="1" required="required" ${installtionAnswer == 1 ? "checked": ""} ><span class="checkmark"></span></label>`}
-                ${ourPrediction == 0 ? "" : `<label class="container-radio">No<input class="final-question" type="radio" name="questions[${appId}][install]" value="0"  ${installtionAnswer == 0 && installtionAnswer !== "" ? "checked" : ""} ><span class="checkmark"></span></label>`}
-                ${ourPrediction == 2 ? "" : `<label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[${appId}][install]" value="2"  ${installtionAnswer == 2 ? "checked": ""} ><span class="checkmark"></span></label>`}
+                ${ourPrediction == 0 ? "" : `<label class="container-radio">No<input class="final-question" type="radio" name="questions[${appId}][install]" value="0" required="required" ${installtionAnswer == 0 && installtionAnswer !== "" ? "checked" : ""} ><span class="checkmark"></span></label>`}
+                ${ourPrediction == 2 ? "" : `<label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[${appId}][install]" value="2" required="required" ${installtionAnswer == 2 ? "checked" : ""} ><span class="checkmark"></span></label>`}
             </div>
           </div>
           `
