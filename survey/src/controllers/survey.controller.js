@@ -226,7 +226,7 @@ class SurveyController {
       );
 
       questions.forEach(item => {
-        console.log(item.categoryName)
+        console.log(item.categoryName, item.appName)
       })
       const token = req.session.token;
       res.render("survey/templates/survey-question", {
