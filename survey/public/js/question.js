@@ -308,7 +308,7 @@
       if((indexQuestion == 14  || indexQuestion == 18 || indexQuestion == 22) && valueOfFinalQuestion === undefined) {
        
         $("#finalQuestion").modal("show");
-        $('input[name=satisfaction]').attr('checked', false);
+        $('input[name=satisfaction]').prop('checked', false);
         $('.slick-active form .slick-active form').val("");
       } else {
         const data = Qs.parse($(".slick-active form").serialize());
