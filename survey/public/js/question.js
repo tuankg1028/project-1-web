@@ -307,7 +307,6 @@
       // show modal to confirm final question
       if ((indexQuestion == 14 || indexQuestion == 18 || indexQuestion == 22) && valueOfFinalQuestion === undefined) {
       // if (indexQuestion == 14 || indexQuestion == 18 || indexQuestion == 22) {
-       
         $("#finalQuestion").modal("show");
         $('input[name=satisfaction]').prop('checked', false);
         $('.slick-active form .slick-active form').val("");
