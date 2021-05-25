@@ -310,9 +310,6 @@
         $("#finalQuestion").modal("show");
         $('input[name=satisfaction]').prop('checked', false);
         $('.slick-active form .slick-active form').val("");
-      } else if (indexQuestion == 23) {
-        startLoad()
-        window.location.href = "/success";
       } else {
         const data = Qs.parse($(".slick-active form").serialize());
         const token = $("input[name='token']").val();
@@ -395,6 +392,8 @@
     const appId = $(".slick-active .app-id").val();
     const index = $(".slick-active .index").val();
     const status = parseInt($(".slick-active .status").val());
+
+    const indexQuestion = $(".slick-active form").attr("indexQuestion");
     if (appId && !status) {
       startLoad();
       $.ajax({
@@ -405,7 +404,6 @@
           $(".slick-active .wrap-form").html(html);
           endLoad();
 
-          const indexQuestion = $(".slick-active form").attr("indexQuestion");
           // === SHOW APP DESC ======
           if(indexQuestion == 1 || indexQuestion == 11 || indexQuestion == 15 || indexQuestion == 19) {
             showAppDescription(indexQuestion)
@@ -426,6 +424,8 @@
             $("#errorModal").modal("show");
           }, 800);
         });
+    } else if (indexQuestion == 23) {
+      window.location.href = "/success";
     }
   }
 
