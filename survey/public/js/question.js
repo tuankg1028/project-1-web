@@ -274,7 +274,7 @@
   function showNextButton() {
     const isLastSection = $(".slick-active form").attr("isLastSection")
     const isAnswered = $(".slick-active form").attr("isAnswered")
-    console.log(1)
+
     if (isAnswered || isLastSection)
       $(".wrap-btn-next .button-next").css("visibility", "visible")
     else
@@ -305,7 +305,8 @@
     const valueOfFinalQuestion = $(".slick-active form .final-question-in-form").attr("value")
     if (isValid) {
       // show modal to confirm final question
-      if((indexQuestion == 14  || indexQuestion == 18 || indexQuestion == 22) && valueOfFinalQuestion === undefined) {
+      // if((indexQuestion == 14  || indexQuestion == 18 || indexQuestion == 22) && valueOfFinalQuestion === undefined) {
+      if (indexQuestion == 14 || indexQuestion == 18 || indexQuestion == 22) {
        
         $("#finalQuestion").modal("show");
         $('input[name=satisfaction]').prop('checked', false);
