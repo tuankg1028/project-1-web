@@ -2254,7 +2254,7 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
   // category and collection
   const categoryAndCollectionTranning = tranningApps.map((tranningApp, index) => {
-    let { id, collectionData } = tranningApp
+    let { id, collectionData, categoryName } = tranningApp
     collectionData = JSON.parse(collectionData || "[]")
 
 
@@ -2279,7 +2279,7 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
   // category and third party
   const categoryAndThirdPartyTranning = tranningApps.map((tranningApp, index) => {
-    let { id, thirdPartyData } = tranningApp
+    let { id, thirdPartyData, categoryName } = tranningApp
     thirdPartyData = JSON.parse(thirdPartyData || "[]")
 
     const category = Object.entries(constants.categoryGroups).find(item => {
