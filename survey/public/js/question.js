@@ -310,6 +310,9 @@
         $("#finalQuestion").modal("show");
         $('input[name=satisfaction]').prop('checked', false);
         $('.slick-active form .slick-active form').val("");
+      } else if (indexQuestion == 23) {
+        startLoad()
+        window.location.href = "/success";
       } else {
         const data = Qs.parse($(".slick-active form").serialize());
         const token = $("input[name='token']").val();
