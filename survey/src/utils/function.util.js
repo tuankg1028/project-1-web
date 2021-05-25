@@ -2381,7 +2381,7 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
     if (!questionInstallation) throw Error("Answer not found")
     const label = questionInstallation.value
 
-    return [...Object.values(apisModel), ...buildDataCollectionAndThirdParty(thirdPartyData, "collection"), label]
+    return [...Object.values(apisModel), ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"), label]
   })
   const apisAndThirdPartyTest = [[...Object.values(question.apisModel), ...buildDataCollectionAndThirdParty(question.thirdPartyData, "thirdParty"), -1]]
 
@@ -2485,7 +2485,7 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
     }),
   ])
 
-  console.log(1, data)
+  console.log("Result in approach 3", data)
 
 
   const YesGroup = data.filter(item => item == 1)
