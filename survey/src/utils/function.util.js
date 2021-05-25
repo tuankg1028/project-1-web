@@ -2485,6 +2485,8 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
     }),
   ])
 
+  console.log(1, data)
+
 
   const YesGroup = data.filter(item => item == 1)
   const NoGroup = data.filter(item => item == 0)
