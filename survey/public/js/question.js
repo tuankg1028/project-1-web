@@ -305,8 +305,8 @@
     const valueOfFinalQuestion = $(".slick-active form .final-question-in-form").attr("value")
     if (isValid) {
       // show modal to confirm final question
-      // if((indexQuestion == 14  || indexQuestion == 18 || indexQuestion == 22) && valueOfFinalQuestion === undefined) {
-      if (indexQuestion == 14 || indexQuestion == 18 || indexQuestion == 22) {
+      if ((indexQuestion == 14 || indexQuestion == 18 || indexQuestion == 22) && valueOfFinalQuestion === undefined) {
+      // if (indexQuestion == 14 || indexQuestion == 18 || indexQuestion == 22) {
        
         $("#finalQuestion").modal("show");
         $('input[name=satisfaction]').prop('checked', false);
