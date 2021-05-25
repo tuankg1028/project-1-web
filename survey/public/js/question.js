@@ -425,7 +425,9 @@
           }, 800);
         });
     } else if (indexQuestion == 23) {
+      startLoad();
       window.location.href = "/success";
+      endLoad();
     }
   }
 
