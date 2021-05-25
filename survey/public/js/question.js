@@ -268,8 +268,8 @@
   $("#final-question-button").click(() => {
     const value = $("input[name='satisfaction']:checked").val();
     $(".slick-active form .final-question-in-form").attr("value", value)
-    $(".wrap-btn-next").trigger("click")
     $("#finalQuestion").modal("hide");
+    $(".wrap-btn-next").trigger("click")
   })
   function showNextButton() {
     const isLastSection = $(".slick-active form").attr("isLastSection")
