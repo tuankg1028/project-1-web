@@ -394,6 +394,7 @@
     const status = parseInt($(".slick-active .status").val());
 
     const indexQuestion = $(".slick-active form").attr("indexQuestion");
+    console.log("loadQuestion with index", indexQuestion)
     if (appId && !status) {
       startLoad();
       $.ajax({
