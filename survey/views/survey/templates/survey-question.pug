@@ -15,13 +15,9 @@ block survey-content
           div.wrap-form
       .slider-item
         form(action="/handle-answer", method="POST", class="main-form", id="form-" + index indexQuestion=questions.length + 1) 
+          input(type="hidden" class="index" value=questions.length + 1)
           .wrap-comments-data
-          //- // comments
-          //- .comments-data.mt-3
-          //-   // question 
-          //-   .question-1.mt-3
-          //-     .title Do you have any other comments on this survey? Please comment below:
-          //-     textarea(name="comment", cols="30", rows="5" value="")
+         
           
           .wrap-btn-next
               button.login100-form-btn.button-next Submit

@@ -393,8 +393,6 @@
     const index = $(".slick-active .index").val();
     const status = parseInt($(".slick-active .status").val());
 
-    const indexQuestion = $(".slick-active form").attr("indexQuestion");
-    console.log("loadQuestion with index", indexQuestion)
     if (appId && !status) {
       startLoad();
       $.ajax({
@@ -406,8 +404,8 @@
           endLoad();
 
           // === SHOW APP DESC ======
-          if(indexQuestion == 1 || indexQuestion == 11 || indexQuestion == 15 || indexQuestion == 19) {
-            showAppDescription(indexQuestion)
+          if (index == 1 || index == 11 || index == 15 || index == 19) {
+            showAppDescription(index)
           }
           // show installtion question
           showInstallationQuestion()
@@ -425,7 +423,7 @@
             $("#errorModal").modal("show");
           }, 800);
         });
-    } else if (indexQuestion == 23) {
+    } else if (index == 23) {
       startLoad();
       window.location.href = "/success";
       endLoad();
