@@ -266,10 +266,19 @@
   });
   // handle click on final question button 
   $("#final-question-button").click(() => {
-    const value = $("input[name='satisfaction']:checked").val();
-    $(".slick-active form .final-question-in-form").attr("value", value)
-    $("#finalQuestion").modal("hide");
-    $(".wrap-btn-next").trigger("click")
+    const isValid = $("form#final-question")[0].checkValidity();
+    if (isValid) {
+      const value = $("input[name='satisfaction']:checked").val();
+      const comment = $("textarea[name='final-comment']").val();
+
+      $(".slick-active form .final-question-in-form").attr("value", value)
+      $(".slick-active form .final-question-in-form.question-comment").attr("value", comment)
+
+      $("#finalQuestion").modal("hide");
+      $(".wrap-btn-next").trigger("click")
+    } else {
+      $("form#final-question button[type='submit']").click();
+    }
   })
   function showNextButton() {
     const isLastSection = $(".slick-active form").attr("isLastSection")
@@ -306,9 +315,10 @@
     if (isValid) {
       // show modal to confirm final question
       if ((indexQuestion == 14 || indexQuestion == 18 || indexQuestion == 22) && valueOfFinalQuestion === undefined) {
-      // if (indexQuestion == 14 || indexQuestion == 18 || indexQuestion == 22) {
         $("#finalQuestion").modal("show");
         $('input[name=satisfaction]').prop('checked', false);
+        $("textarea[name='final-comment']").prop("value", "");
+
         $('.slick-active form .slick-active form').val("");
       } else {
         const data = Qs.parse($(".slick-active form").serialize());

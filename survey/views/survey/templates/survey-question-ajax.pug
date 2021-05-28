@@ -2,15 +2,16 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
   input(type="hidden" name="questions[" + question.id + "][time]" value=1 class="count-time")
   input(type="hidden" name="our-prediction" value=ourPrediction)
   input(type="hidden" name="answer-installation" value=isAnswered && !userAnswer.agreePredict == 0 && userAnswer.install)
-
+  input(type='hidden' class="final-question-in-form question-satisfaction" name="questions[" + question.id + "][satisfaction]" value=isAnswered &&userAnswer.satisfaction)
+  input(type='hidden' class="final-question-in-form question-comment" name="questions[" + question.id + "][comment]" value=isAnswered &&userAnswer.comment)
 
   button(type="submit" style="display='none';")
   if(indexQuestion > 10 && indexQuestion <= 14) 
-    div.text-center The naive prediction system
+    h3.text-center(style="text-transform: capitalize;") The first prediction system
   else if(indexQuestion > 14 && indexQuestion <= 18) 
-    div.text-center The category-based prediction system
+    h3.text-center(style="text-transform: capitalize;") The second prediction system
   else if(indexQuestion > 18 && indexQuestion <= 22) 
-    div.text-center The ensemble-based prediction system
+    h3.text-center(style="text-transform: capitalize;") The third prediction system
   // app name
   h3.title.text-center(style="text-transform: capitalize;")
     | #{indexQuestion + ". " +question.appName}
@@ -244,7 +245,7 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
                 
           
           
-          input(type='hidden' class="final-question-in-form question-satisfaction" name="questions[" + question.id + "][satisfaction]" value=isAnswered &&userAnswer.satisfaction)
+          
           //- if(indexQuestion == 10 || indexQuestion == 16 || indexQuestion == 22)
             // final question
             //- .question-1.mt-2

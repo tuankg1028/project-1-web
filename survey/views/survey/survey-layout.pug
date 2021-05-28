@@ -44,21 +44,29 @@ block content
           button.close(type='button' data-dismiss='modal' aria-label='Close')
             span(aria-hidden='true') &times;
         .modal-body
-          .anwsers.mt-2
-            label.container-radio
-              | Yes
-              input(type='radio' class="final-question" name="satisfaction" value="1")
-              span.checkmark
+          form#final-question
+            button(type="submit" style="display='none';")
+            .anwsers.mt-2
+              label.container-radio
+                | Yes
+                input(type='radio' class="final-question" name="satisfaction" value="1" required)
+                span.checkmark
 
-            label.container-radio
-              | No
-              input(type='radio' class="final-question" name="satisfaction" value="0" )
-              span.checkmark
+              label.container-radio
+                | No
+                input(type='radio' class="final-question" name="satisfaction" value="0" )
+                span.checkmark
 
-            label.container-radio
-              | Maybe
-              input(type='radio' class="final-question" name="satisfaction" value="2")
-              span.checkmark
+              label.container-radio
+                | Maybe
+                input(type='radio' class="final-question" name="satisfaction" value="2")
+                span.checkmark
+            .anwsers.mt-2
+              div.font-weight-bold Can you explain about your option?
+              
+              textarea(style="width:100%", name="final-comment", cols="30", rows="5" required)
+
+
         .modal-footer
           button#final-question-button.btn.btn-primary(type='button') Continue
 
