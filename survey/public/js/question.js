@@ -414,9 +414,9 @@
           endLoad();
 
           // === SHOW APP DESC ======
-          if (index == 1 || index == 11 || index == 15 || index == 19) {
-            showAppDescription(index)
-          }
+          // if (index == 1 || index == 11 || index == 15 || index == 19) {
+          //   showAppDescription(index)
+          // }
           // show installtion question
           showInstallationQuestion()
           // 
