@@ -149,7 +149,7 @@ class SurveyController {
       })
         .select("_id")
 
-        await Promise.all(allapps.map(app => getQuestion({id: app.id, index: 1})))
+        await Promise.all(allapps.map(app => this.getQuestion({id: app.id, index: 1})))
 //  trest
 
       const user = req.user;
