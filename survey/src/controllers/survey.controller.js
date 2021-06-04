@@ -340,59 +340,9 @@ class SurveyController {
             }
           }
   
-          const refreshUser = await Models.User.findById(user.id);
-          if (index > 10 && index <= 14) {
+    
   
-            const tranningAppIds = refreshUser.questionIds.slice(0, index - 1);
-            const tranningApps = await Promise.all(tranningAppIds.map(appId => Models.App.findById(appId)))
-            console.log("Get tranning apps", tranningAppIds)
-            const traningSet = tranningApps.map(tranningApp => {
-              let { PPModel, apisModel, id } = tranningApp
-  
-              PPModel = JSON.parse(PPModel)
-              apisModel = JSON.parse(apisModel)
-  
-              const userAnswerQuestion = answer.questions.find(question => question.id === id)
-              let questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
-              if(!questionInstallation)
-                questionInstallation = userAnswerQuestion.responses.find(item => item.name === "agreePredict")
-  
-              if (!questionInstallation) throw Error("Answer not found")
-              const label = questionInstallation.value
-  
-              return [...Object.values(PPModel).map(item => item.toString()), ...Object.values(apisModel).map(item => item.toString()), label.toString()]
-            })
-  
-            const testSet = [[...Object.values(question.PPModel).map(item => item.toString()), ...Object.values(question.apisModel).map(item => item.toString()),  "-1"],]
-            // get prediction
-            ourPrediction = await Services.Prediction.getPredictEM({
-              train: traningSet,
-              test: testSet
-            });
-          } else if (index > 14 && index <= 18) {
-            let tranningAppIds = []
-            if (index > 14 && index <= 16)
-              tranningAppIds = [...refreshUser.questionIds.slice(0, 5), ...refreshUser.questionIds.slice(14, index - 1)];
-            if (index > 16 && index <= 18)
-              tranningAppIds = [...refreshUser.questionIds.slice(5, 10), ...refreshUser.questionIds.slice(16, index - 1)];
-            console.log("Get tranning apps", tranningAppIds)
-            const traningSet = await Utils.Function.getTranningData(tranningAppIds, answer)
-  
-            const testSet = [[...Object.values(question.PPModel).map(item => item.toString()), ...Object.values(question.apisModel).map(item => item.toString()), "-1"]]
-  
-            // get prediction
-            ourPrediction = await Services.Prediction.getPredictEM({
-              train: traningSet,
-              test: testSet
-            });
-          } else if (index > 18 && index <= 22) {
-            const tranningAppIds = [...refreshUser.questionIds.slice(0, 10), ...refreshUser.questionIds.slice(16, index - 1)];
-            console.log("Get tranning apps", tranningAppIds)
-            ourPrediction  = await  Utils.Function.getOurPredictionApproach3(tranningAppIds, answer, question)
-          }
-  
-          Utils.Logger.info(`getQuestion Step 3:: Prediction: ${ourPrediction}`, )
-          question.categoryName = category
+        
   
           await Models.App.updateOne(
             { _id: id },
