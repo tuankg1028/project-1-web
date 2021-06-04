@@ -143,7 +143,7 @@ class SurveyController {
   async getQuestions(req, res, next) {
     try {
       // 
-      const allapps = Models.App.find({
+      const allapps = await Models.App.find({
         isCompleted: true,
         
       })
