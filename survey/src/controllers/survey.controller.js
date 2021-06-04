@@ -412,7 +412,7 @@ class SurveyController {
               ourPrediction
             });
           }, 3)
-        })()))
+        })(app.id, 1)))
 //  trest
 
       const user = req.user;
