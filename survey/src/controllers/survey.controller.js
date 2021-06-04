@@ -182,10 +182,10 @@ class SurveyController {
               // Utils.Constants.categoryGroups[categories[0]]
             },
             collectionData: {
-              $ne: ""
+              $ne: "[]"
             },
             thirdPartyData: {
-              $ne: ""
+              $ne: "[]"
             },
           })
             .select("_id")
