@@ -162,7 +162,13 @@ class SurveyController {
                 isCompleted: true,
                 categoryName: {
                   $in: categoriesForApproach1
-                }
+                },
+                collectionData: {
+                  $ne: ""
+                },
+                thirdPartyData: {
+                  $ne: ""
+                },
               }
             },
             { $sample: { size: 8 } },
@@ -174,7 +180,13 @@ class SurveyController {
             categoryName: {
               $in: categories[0]
               // Utils.Constants.categoryGroups[categories[0]]
-            }
+            },
+            collectionData: {
+              $ne: ""
+            },
+            thirdPartyData: {
+              $ne: ""
+            },
           })
             .select("_id")
             .limit(7),
@@ -183,7 +195,13 @@ class SurveyController {
             categoryName: {
               $in: categories[1]
               // Utils.Constants.categoryGroups[categories[1]]
-            }
+            },
+            collectionData: {
+              $ne: ""
+            },
+            thirdPartyData: {
+              $ne: ""
+            },
           })
             .select("_id")
             .limit(7)
