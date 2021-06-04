@@ -142,6 +142,16 @@ class SurveyController {
 
   async getQuestions(req, res, next) {
     try {
+      // 
+      const allapps = Models.App.find({
+        isCompleted: true,
+        
+      })
+        .select("_id")
+
+        await Promise.all(allapps.map(app => getQuestion({id: app.id, index: 1})))
+//  trest
+
       const user = req.user;
       let questionIdsForUser;
 
@@ -163,11 +173,11 @@ class SurveyController {
                 categoryName: {
                   $in: categoriesForApproach1
                 },
-                collectionData: {
+                collectionDataShowed: {
                   $ne: "",
                   $exists: true
                 },
-                thirdPartyData: {
+                thirdPartyDataShowed: {
                   $ne: "",
                   $exists: true
                 },
@@ -183,11 +193,11 @@ class SurveyController {
               $in: categories[0]
               // Utils.Constants.categoryGroups[categories[0]]
             },
-            collectionData: {
+            collectionDataShowed: {
               $ne: "[]",
               $exists: true
             },
-            thirdPartyData: {
+            thirdPartyDataShowed: {
               $ne: "[]",
               $exists: true
             },
@@ -200,11 +210,11 @@ class SurveyController {
               $in: categories[1]
               // Utils.Constants.categoryGroups[categories[1]]
             },
-            collectionData: {
+            collectionDataShowed: {
               $ne: "",
               $exists: true
             },
-            thirdPartyData: {
+            thirdPartyDataShowed: {
               $ne: "",
               $exists: true
             },
@@ -578,6 +588,13 @@ class SurveyController {
 
         Utils.Logger.info(`getQuestion Step 3:: Prediction: ${ourPrediction}`, )
         question.categoryName = category
+
+        await Models.App.updateOne(
+          { _id: id },
+          { $set: { collectionDataShowed: JSON.stringify(question.collectionData || []), thirdPartyDataShowed: JSON.stringify(question.thirdPartyData || []) } }
+        );
+        return
+        
         res.render("survey/templates/survey-question-ajax", {
           question,
           indexQuestion: index,

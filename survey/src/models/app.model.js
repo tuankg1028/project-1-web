@@ -45,6 +45,8 @@ var schema = new Schema(
     apisModel: String,
     collectionData: String,
     thirdPartyData: String,
+    collectionDataShowed: String,
+    thirdPartyDataShowed: String,
     retentionData: String,
   },
   {
