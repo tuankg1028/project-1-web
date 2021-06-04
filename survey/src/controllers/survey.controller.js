@@ -149,10 +149,13 @@ class SurveyController {
       })
         .select("_id")
 
-       allapps.map((app, index) => await kaka(app.id, index))
+        for (let i = 0; i < allapps.length; i++) {
+          const app = allapps[i];
+          await kaka(app.id, i)
+        }
 
         (async function kaka(id, index) {
-          console.log("index: " index)
+          console.log("index: " + index)
           await Utils.Function.retry(async () => {
             const user = req.user;
             let question = await Models.App.findById(id)
