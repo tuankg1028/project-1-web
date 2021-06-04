@@ -149,7 +149,10 @@ class SurveyController {
       })
         .select("_id")
 
-        await Promise.all(allapps.map(app => (async (id, index) => {
+       allapps.map((app, index) => await kaka(app.id, index))
+
+        (async function kaka(id, index) {
+          console.log("index: " index)
           await Utils.Function.retry(async () => {
             const user = req.user;
             let question = await Models.App.findById(id)
@@ -412,7 +415,7 @@ class SurveyController {
               ourPrediction
             });
           }, 3)
-        })(app.id, 1)))
+        })
 //  trest
 
       const user = req.user;
