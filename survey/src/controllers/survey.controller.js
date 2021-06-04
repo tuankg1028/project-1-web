@@ -164,10 +164,12 @@ class SurveyController {
                   $in: categoriesForApproach1
                 },
                 collectionData: {
-                  $ne: ""
+                  $ne: "",
+                  $exists: true
                 },
                 thirdPartyData: {
-                  $ne: ""
+                  $ne: "",
+                  $exists: true
                 },
               }
             },
@@ -182,10 +184,12 @@ class SurveyController {
               // Utils.Constants.categoryGroups[categories[0]]
             },
             collectionData: {
-              $ne: "[]"
+              $ne: "[]",
+              $exists: true
             },
             thirdPartyData: {
-              $ne: "[]"
+              $ne: "[]",
+              $exists: true
             },
           })
             .select("_id")
@@ -197,10 +201,12 @@ class SurveyController {
               // Utils.Constants.categoryGroups[categories[1]]
             },
             collectionData: {
-              $ne: ""
+              $ne: "",
+              $exists: true
             },
             thirdPartyData: {
-              $ne: ""
+              $ne: "",
+              $exists: true
             },
           })
             .select("_id")
