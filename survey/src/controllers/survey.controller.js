@@ -573,6 +573,7 @@ class SurveyController {
             train: traningSet,
             test: testSet
           });
+          ourPrediction = ourPrediction[0][0];
         } else if (index > 14 && index <= 18) {
           let tranningAppIds = [];
           if (index > 14 && index <= 16)
@@ -604,6 +605,7 @@ class SurveyController {
             train: traningSet,
             test: testSet
           });
+          ourPrediction = ourPrediction[0][0];
         } else if (index > 18 && index <= 22) {
           const tranningAppIds = [
             ...refreshUser.questionIds.slice(0, 10),
