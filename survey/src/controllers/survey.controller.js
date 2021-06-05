@@ -153,7 +153,9 @@ class SurveyController {
           Object.keys(Utils.Constants.categoryGroups),
           2
         );
-        const categoriesForApproach1 = Object.keys(Utils.Constants.categoryGroups).filter(item => !categories.includes(item))
+        const categoriesForApproach1 = Object.keys(
+          Utils.Constants.categoryGroups
+        ).filter(item => !categories.includes(item));
 
         let questionIds = await Promise.all([
           Models.App.aggregate([
@@ -225,10 +227,10 @@ class SurveyController {
           ...questionIds[2].splice(0, 2),
           // approach 3
           // approach 1
-          ...questionIds[0].splice(0, 4),
+          ...questionIds[0].splice(0, 4)
         ];
 
-        console.log(1, questionIdsForUser)
+        console.log(1, questionIdsForUser);
         await Models.User.updateOne(
           {
             _id: user.id
@@ -250,11 +252,11 @@ class SurveyController {
 
       questions.forEach(item => {
         try {
-          console.log(item.categoryName)
+          console.log(item.categoryName);
         } catch (err) {
-          console.log(item)
+          console.log(item);
         }
-      })
+      });
       const token = req.session.token;
       res.render("survey/templates/survey-question", {
         questions,
@@ -333,18 +335,17 @@ class SurveyController {
       await Utils.Function.retry(async () => {
         const user = req.user;
         const { id, index } = req.params;
-        let question = await Models.App.findById(id)
-        .cache(60 * 60 * 24 * 30); // 1 month;
+        let question = await Models.App.findById(id).cache(60 * 60 * 24 * 30); // 1 month;
         question = question.toJSON();
-        question.PPModel = JSON.parse(question.PPModel || "{}")
-        question.apisModel = JSON.parse(question.apisModel || "{}")
+        question.PPModel = JSON.parse(question.PPModel || "{}");
+        question.apisModel = JSON.parse(question.apisModel || "{}");
 
         const category = Object.entries(constants.categoryGroups).find(item => {
-          const subCategories = item[1]
-      
-          if(subCategories.includes(question.categoryName)) return true
-          return false
-        })[0]
+          const subCategories = item[1];
+
+          if (subCategories.includes(question.categoryName)) return true;
+          return false;
+        })[0];
 
         if (!question.personalDataTypes || !question.personalDataTypes.length) {
           let apis = await Promise.all(
@@ -361,7 +362,9 @@ class SurveyController {
             const personalDataTypeApiIds = groupApis[personalDataTypeId];
 
             const personalDataTypeApis = await Promise.all(
-              personalDataTypeApiIds.map(id => Models.Tree.findById(id).cache(60 * 60 * 24 * 30))
+              personalDataTypeApiIds.map(id =>
+                Models.Tree.findById(id).cache(60 * 60 * 24 * 30)
+              )
             );
 
             personalDataTypes.push({
@@ -506,8 +509,7 @@ class SurveyController {
           });
         }
 
-
-        let ourPrediction
+        let ourPrediction;
         let userAnswer;
         // get answers from user
         const answer = await Models.Answer.findOne({
@@ -527,43 +529,75 @@ class SurveyController {
 
         const refreshUser = await Models.User.findById(user.id);
         if (index > 10 && index <= 14) {
-
           const tranningAppIds = refreshUser.questionIds.slice(0, index - 1);
-          const tranningApps = await Promise.all(tranningAppIds.map(appId => Models.App.findById(appId)))
-          console.log("Get tranning apps", tranningAppIds)
+          const tranningApps = await Promise.all(
+            tranningAppIds.map(appId => Models.App.findById(appId))
+          );
+          console.log("Get tranning apps", tranningAppIds);
           const traningSet = tranningApps.map(tranningApp => {
-            let { PPModel, apisModel, id } = tranningApp
+            let { PPModel, apisModel, id } = tranningApp;
 
-            PPModel = JSON.parse(PPModel)
-            apisModel = JSON.parse(apisModel)
+            PPModel = JSON.parse(PPModel);
+            apisModel = JSON.parse(apisModel);
 
-            const userAnswerQuestion = answer.questions.find(question => question.id === id)
-            let questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
-            if(!questionInstallation)
-              questionInstallation = userAnswerQuestion.responses.find(item => item.name === "agreePredict")
+            const userAnswerQuestion = answer.questions.find(
+              question => question.id === id
+            );
+            let questionInstallation = userAnswerQuestion.responses.find(
+              item => item.name === "install"
+            );
+            if (!questionInstallation)
+              questionInstallation = userAnswerQuestion.responses.find(
+                item => item.name === "agreePredict"
+              );
 
-            if (!questionInstallation) throw Error("Answer not found")
-            const label = questionInstallation.value
+            if (!questionInstallation) throw Error("Answer not found");
+            const label = questionInstallation.value;
 
-            return [...Object.values(PPModel).map(item => item.toString()), ...Object.values(apisModel).map(item => item.toString()), label.toString()]
-          })
+            return [
+              ...Object.values(PPModel).map(item => item.toString()),
+              ...Object.values(apisModel).map(item => item.toString()),
+              label.toString()
+            ];
+          });
 
-          const testSet = [[...Object.values(question.PPModel).map(item => item.toString()), ...Object.values(question.apisModel).map(item => item.toString()),  "-1"],]
+          const testSet = [
+            [
+              ...Object.values(question.PPModel).map(item => item.toString()),
+              ...Object.values(question.apisModel).map(item => item.toString()),
+              "-1"
+            ]
+          ];
           // get prediction
           ourPrediction = await Services.Prediction.getPredictEM({
             train: traningSet,
             test: testSet
           });
         } else if (index > 14 && index <= 18) {
-          let tranningAppIds = []
+          let tranningAppIds = [];
           if (index > 14 && index <= 16)
-            tranningAppIds = [...refreshUser.questionIds.slice(0, 5), ...refreshUser.questionIds.slice(14, index - 1)];
+            tranningAppIds = [
+              ...refreshUser.questionIds.slice(0, 5),
+              ...refreshUser.questionIds.slice(14, index - 1)
+            ];
           if (index > 16 && index <= 18)
-            tranningAppIds = [...refreshUser.questionIds.slice(5, 10), ...refreshUser.questionIds.slice(16, index - 1)];
-          console.log("Get tranning apps", tranningAppIds)
-          const traningSet = await Utils.Function.getTranningData(tranningAppIds, answer)
+            tranningAppIds = [
+              ...refreshUser.questionIds.slice(5, 10),
+              ...refreshUser.questionIds.slice(16, index - 1)
+            ];
+          console.log("Get tranning apps", tranningAppIds);
+          const traningSet = await Utils.Function.getTranningData(
+            tranningAppIds,
+            answer
+          );
 
-          const testSet = [[...Object.values(question.PPModel).map(item => item.toString()), ...Object.values(question.apisModel).map(item => item.toString()), "-1"]]
+          const testSet = [
+            [
+              ...Object.values(question.PPModel).map(item => item.toString()),
+              ...Object.values(question.apisModel).map(item => item.toString()),
+              "-1"
+            ]
+          ];
 
           // get prediction
           ourPrediction = await Services.Prediction.getPredictEM({
@@ -571,13 +605,20 @@ class SurveyController {
             test: testSet
           });
         } else if (index > 18 && index <= 22) {
-          const tranningAppIds = [...refreshUser.questionIds.slice(0, 10), ...refreshUser.questionIds.slice(16, index - 1)];
-          console.log("Get tranning apps", tranningAppIds)
-          ourPrediction  = await  Utils.Function.getOurPredictionApproach3(tranningAppIds, answer, question)
+          const tranningAppIds = [
+            ...refreshUser.questionIds.slice(0, 10)
+            // ...refreshUser.questionIds.slice(16, index - 1)
+          ];
+          console.log("Get tranning apps", tranningAppIds);
+          ourPrediction = await Utils.Function.getOurPredictionApproach3(
+            tranningAppIds,
+            answer,
+            question
+          );
         }
 
-        Utils.Logger.info(`getQuestion Step 3:: Prediction: ${ourPrediction}`, )
-        question.categoryName = category
+        Utils.Logger.info(`getQuestion Step 3:: Prediction: ${ourPrediction}`);
+        question.categoryName = category;
 
         res.render("survey/templates/survey-question-ajax", {
           question,
@@ -586,7 +627,7 @@ class SurveyController {
           isAnswered: !!userAnswer,
           ourPrediction
         });
-      }, 3)
+      }, 3);
     } catch (error) {
       next(error);
     }
