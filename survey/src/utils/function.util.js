@@ -2220,18 +2220,33 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
       test: view3Test
     }),
   ])
+  console.log("Step 1 in approach 3 with data: ", data)
 
-  console.log("Result in approach 3", data)
+
+  const tranningSet = Array.from({length: tranningApps.length}, (v, i) => {
+    const { id } = tranningApps[i]
+    const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
+    let questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+    if(!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(item => item.name === "agreePredict")
+    if (!questionInstallation) throw Error("Answer not found")
+    const label = questionInstallation.value
+    
+    return [data[0][i], data[1][i], data[2][i], label]
+  });
+
+  const testSet = [_.last(data[0]), _.last(data[1]), _.last(data[2]), -1];
+  console.log("Step 2 in approach 3 with tranning and test: ", tranningSet, testSet)
 
 
-  const YesGroup = data.filter(item => item == 1)
-  const NoGroup = data.filter(item => item == 0)
-  const MaybeGroup = data.filter(item => item == 2)
+  const predict = Services.Prediction.getPredictEM({
+    train: tranningSet,
+    test: testSet
+  }),
 
-  if(YesGroup.length >= NoGroup.length && YesGroup.length >= MaybeGroup ) return 1;
-  if(NoGroup.length >= YesGroup.length && NoGroup.length >= YesGroup ) return 0;
+  console.log("Step 3 Prediction is: ", predict)
 
-  return 2
+  return predict[0]
 }
 
 const buildDataCollectionAndThirdParty = (data, type) => {
