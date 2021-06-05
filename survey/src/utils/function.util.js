@@ -11,231 +11,258 @@ import Services from "../services";
 import constants from "./constants";
 const dir = bluebird.promisifyAll(require("node-dir"));
 
-const apiGroups= [
-  { groupName: 'Keyword', apis: [ 'API' ], mean: 'Mean' },
+const apiGroups = [
+  { groupName: "Keyword", apis: ["API"], mean: "Mean" },
   {
-    groupName: 'Address',
-    apis: [ 'android.location', 'com.google.android.gms.location.places' ],
-    mean: "By accessing this data, the app can determine the user's address. Moreover, the app can collect fine-grained information, including the user's exact location (longitude, latitude), or the street, as well as coarse grained information, such as the city, or country name."
+    groupName: "Address",
+    apis: ["android.location", "com.google.android.gms.location.places"],
+    mean:
+      "By accessing this data, the app can determine the user's address. Moreover, the app can collect fine-grained information, including the user's exact location (longitude, latitude), or the street, as well as coarse grained information, such as the city, or country name."
   },
   {
-    groupName: 'Bluetooth connection',
-    apis: [ 'android.bluetooth, android.bluetooth.le' ],
-    mean: 'By accessing this data, the app wirelessly exchange your data with other Bluetooth devices.'
+    groupName: "Bluetooth connection",
+    apis: ["android.bluetooth, android.bluetooth.le"],
+    mean:
+      "By accessing this data, the app wirelessly exchange your data with other Bluetooth devices."
   },
   {
-    groupName: 'Camera',
-    apis: [ 'android.hardware.camera2', 'android.hardware.camera2.params' ],
-    mean: 'By accessing this data, the app can manage image capture settings, start/stop the image preview, snap pictures, and retrieve frames that are used as the interfaces to preview the displayed pictures.'
+    groupName: "Camera",
+    apis: ["android.hardware.camera2", "android.hardware.camera2.params"],
+    mean:
+      "By accessing this data, the app can manage image capture settings, start/stop the image preview, snap pictures, and retrieve frames that are used as the interfaces to preview the displayed pictures."
   },
   {
-    groupName: 'Collection of user data based on peripherals connection via USB port',
-    apis: [ 'android.hardware.usb' ],
-    mean: 'By accessing this data, the app can access the state of the USB and communicate with connected hardware peripherals.'
+    groupName:
+      "Collection of user data based on peripherals connection via USB port",
+    apis: ["android.hardware.usb"],
+    mean:
+      "By accessing this data, the app can access the state of the USB and communicate with connected hardware peripherals."
   },
   {
-    groupName: 'Hardware features',
-    apis: [ 'android.hardware' ],
-    mean: 'By accessing this data, the app can access the hardware features, such as the screen, camera and other sensors (e.g., accelerometer, GPS, gyroscope).'
+    groupName: "Hardware features",
+    apis: ["android.hardware"],
+    mean:
+      "By accessing this data, the app can access the hardware features, such as the screen, camera and other sensors (e.g., accelerometer, GPS, gyroscope)."
   },
   {
-    groupName: 'Hardware authenticatoin devices',
-    apis: [ 'android.hardware.biometrics', 'android.hardware.fingerprint' ],
-    mean: "By accessing this data, the app can access some device's sensors to execute the authentication process via fingerprint or biometric."
+    groupName: "Hardware authenticatoin devices",
+    apis: ["android.hardware.biometrics", "android.hardware.fingerprint"],
+    mean:
+      "By accessing this data, the app can access some device's sensors to execute the authentication process via fingerprint or biometric."
   },
   {
-    groupName: 'Hardware input devices',
-    apis: [ 'android.hardware.input' ],
-    mean: 'By accessing this data, the app can access the information about input devices and available keyboard.'
+    groupName: "Hardware input devices",
+    apis: ["android.hardware.input"],
+    mean:
+      "By accessing this data, the app can access the information about input devices and available keyboard."
   },
   {
-    groupName: 'Hardware display devices',
-    apis: [ 'android.hardware.display' ],
-    mean: 'By accessing this data, the app can change available display devices.'
+    groupName: "Hardware display devices",
+    apis: ["android.hardware.display"],
+    mean:
+      "By accessing this data, the app can change available display devices."
   },
   {
-    groupName: 'Health and Fitness info',
+    groupName: "Health and Fitness info",
     apis: [
-      'com.google.android.gms.fitness',
-      'com.google.android.gms.fitness.data',
-      'com.google.android.gms.fitness.request',
-      'com.google.android.gms.fitness.result',
-      'com.google.android.gms.fitness.service'
+      "com.google.android.gms.fitness",
+      "com.google.android.gms.fitness.data",
+      "com.google.android.gms.fitness.request",
+      "com.google.android.gms.fitness.result",
+      "com.google.android.gms.fitness.service"
     ],
-    mean: 'By accessing this data, the app can collect health info such as body temperature, blood glucose, blood pressure, heart rate, etc as well as the fitness info such as outdoor activity, calories burned, step count, etc.'
+    mean:
+      "By accessing this data, the app can collect health info such as body temperature, blood glucose, blood pressure, heart rate, etc as well as the fitness info such as outdoor activity, calories burned, step count, etc."
   },
   {
-    groupName: 'Establish wireless communication pair to other devices',
+    groupName: "Establish wireless communication pair to other devices",
     apis: [
-      'android.net',
-      'android.net.nsd',
-      'android.net.rtp',
-      'android.net.sip',
-      'android.net.ssl',
-      'android.nfc',
-      'android.nfc.cardemulation',
-      'android.nfc.tech',
-      'java.net',
-      'javax.net',
-      'javax.net.ssl',
-      'android.support.v4.net',
-      'com.google.android.gms.net'
+      "android.net",
+      "android.net.nsd",
+      "android.net.rtp",
+      "android.net.sip",
+      "android.net.ssl",
+      "android.nfc",
+      "android.nfc.cardemulation",
+      "android.nfc.tech",
+      "java.net",
+      "javax.net",
+      "javax.net.ssl",
+      "android.support.v4.net",
+      "com.google.android.gms.net"
     ],
-    mean: 'By accessing this data, the app can find and pair to other devices though Bluetooth, or NFC connection.'
+    mean:
+      "By accessing this data, the app can find and pair to other devices though Bluetooth, or NFC connection."
   },
   {
-    groupName: 'Public location',
+    groupName: "Public location",
     apis: [
-      'com.google.android.gms.location',
-      'com.google.android.gms.maps',
-      'com.google.android.gms.maps.model',
-      'com.google.android.gms.location.places',
-      'com.google.android.gms.location.places.ui'
+      "com.google.android.gms.location",
+      "com.google.android.gms.maps",
+      "com.google.android.gms.maps.model",
+      "com.google.android.gms.location.places",
+      "com.google.android.gms.location.places.ui"
     ],
-    mean: "By accessing this data, the app can collect user's location. Each data point represents the location of the user at the time of the request. Moreover, the app can save the info about the location that users have visited."
+    mean:
+      "By accessing this data, the app can collect user's location. Each data point represents the location of the user at the time of the request. Moreover, the app can save the info about the location that users have visited."
   },
   {
-    groupName: 'Telephony',
+    groupName: "Telephony",
     apis: [
-      'android.telephony',
-      'android.telephony.cdma',
-      'android.telephony.data',
-      'android.telephony.euicc'
+      "android.telephony",
+      "android.telephony.cdma",
+      "android.telephony.data",
+      "android.telephony.euicc"
     ],
-    mean: 'By accessing this data, the app can determine the telephony states of the device, including service state, signal strength, message waiting indicator (voicemail). Moreover, the app can send or receive the call or messages.'
+    mean:
+      "By accessing this data, the app can determine the telephony states of the device, including service state, signal strength, message waiting indicator (voicemail). Moreover, the app can send or receive the call or messages."
   },
   {
-    groupName: 'Wifi communication',
+    groupName: "Wifi communication",
     apis: [
-      'android.net.wifi',
-      'android.net.wifi.aware',
-      'android.net.wifi.hotspot2',
-      'android.net.wifi.hotspot2.omadm',
-      'android.net.wifi.p2p',
-      'android.net.wifi.p2p.nsd',
-      'android.net.wifi.rtt',
-      'android.net.http'
+      "android.net.wifi",
+      "android.net.wifi.aware",
+      "android.net.wifi.hotspot2",
+      "android.net.wifi.hotspot2.omadm",
+      "android.net.wifi.p2p",
+      "android.net.wifi.p2p.nsd",
+      "android.net.wifi.rtt",
+      "android.net.http"
     ],
-    mean: 'By accessing this data, the app can collect the state of the Internet connection (e.g., enabled, disabled). Moreover, the app can transfers and receives the data via wifi connection.'
+    mean:
+      "By accessing this data, the app can collect the state of the Internet connection (e.g., enabled, disabled). Moreover, the app can transfers and receives the data via wifi connection."
   },
   {
-    groupName: 'User profile',
+    groupName: "User profile",
     apis: [
-      'com.google.android.gms.plus',
-      'com.google.api.services.people.v1',
-      'com.google.api.services.people.v1.model'
+      "com.google.android.gms.plus",
+      "com.google.api.services.people.v1",
+      "com.google.api.services.people.v1.model"
     ],
-    mean: 'By accessing this data, the app can collect basic user info (standard info, such as name, age, gender), or identity info, such as phone number, or user�s interests, such as sports, art, gaming, traveling.'
+    mean:
+      "By accessing this data, the app can collect basic user info (standard info, such as name, age, gender), or identity info, such as phone number, or user�s interests, such as sports, art, gaming, traveling."
   },
   {
-    groupName: 'TV channel',
-    apis: [ 'android.media.tv' ],
-    mean: 'By accessing this data, the app can connect/manage the TV devices'
+    groupName: "TV channel",
+    apis: ["android.media.tv"],
+    mean: "By accessing this data, the app can connect/manage the TV devices"
   },
   {
-    groupName: 'Audio, Video, Picture files',
+    groupName: "Audio, Video, Picture files",
     apis: [
-      'android.media',
-      'android.media.audiofx',
-      'android.media.browse',
-      'android.media.effect',
-      'android.media.midi',
-      'android.media.projection',
-      'android.media.session',
-      'android.service.media',
-      'android.provider'
+      "android.media",
+      "android.media.audiofx",
+      "android.media.browse",
+      "android.media.effect",
+      "android.media.midi",
+      "android.media.projection",
+      "android.media.session",
+      "android.service.media",
+      "android.provider"
     ],
-    mean: 'By accessing this data, the app can manage various audio and video interfaces. Moreover, the app can play and record media files, such as audio files (e.g., play MP3s or other music files, ringtones, game sound effects, or DTMF tones) and video files (e.g., play a video streamed over the web or from local storage).'
+    mean:
+      "By accessing this data, the app can manage various audio and video interfaces. Moreover, the app can play and record media files, such as audio files (e.g., play MP3s or other music files, ringtones, game sound effects, or DTMF tones) and video files (e.g., play a video streamed over the web or from local storage)."
   },
   {
-    groupName: 'Play/Record the media files',
+    groupName: "Play/Record the media files",
     apis: [
-      'android.support.media',
-      'android.support.media.tv',
-      'android.support.v17.leanback.media',
-      'android.support.v4.media',
-      'android.support.v4.media.app',
-      'android.support.v4.media.session',
-      'android.support.v7.media',
-      'androidx.exifinterface.media'
+      "android.support.media",
+      "android.support.media.tv",
+      "android.support.v17.leanback.media",
+      "android.support.v4.media",
+      "android.support.v4.media.app",
+      "android.support.v4.media.session",
+      "android.support.v7.media",
+      "androidx.exifinterface.media"
     ],
-    mean: 'By accessing this data, the app can play and record media files including audio (e.g., play MP3s or other music files, ringtones, game sound effects, or DTMF tones) and video (e.g., play a video streamed over the web or from local storage).'
+    mean:
+      "By accessing this data, the app can play and record media files including audio (e.g., play MP3s or other music files, ringtones, game sound effects, or DTMF tones) and video (e.g., play a video streamed over the web or from local storage)."
   },
   {
-    groupName: 'Share media files',
+    groupName: "Share media files",
     apis: [
-      'androidx.media',
-      'androidx.media.session',
-      'androidx.media.app',
-      'androidx.media.utils'
+      "androidx.media",
+      "androidx.media.session",
+      "androidx.media.app",
+      "androidx.media.utils"
     ],
-    mean: 'By accessing this data, the app can share media contents and controls with other apps.'
+    mean:
+      "By accessing this data, the app can share media contents and controls with other apps."
   },
   {
-    groupName: 'Metadata of media file',
+    groupName: "Metadata of media file",
     apis: [
-      'androidx.media2.common',
-      'androidx.media2.player',
-      'androidx.media2.session',
-      'androidx.media2.widget',
-      'androidx.mediarouter.app',
-      'androidx.mediarouter.media'
+      "androidx.media2.common",
+      "androidx.media2.player",
+      "androidx.media2.session",
+      "androidx.media2.widget",
+      "androidx.mediarouter.app",
+      "androidx.mediarouter.media"
     ],
-    mean: 'By accessing this data, the app can create/read/edit the metadata of media file (e.g., device, time, place).'
+    mean:
+      "By accessing this data, the app can create/read/edit the metadata of media file (e.g., device, time, place)."
   },
   {
-    groupName: 'Emergency call',
-    apis: [ 'android.telephony.emergency' ],
-    mean: 'By accessing this data, the app can retrieve the information of number, service category(s) and country code for a specific emergency number.'
+    groupName: "Emergency call",
+    apis: ["android.telephony.emergency"],
+    mean:
+      "By accessing this data, the app can retrieve the information of number, service category(s) and country code for a specific emergency number."
   },
   {
-    groupName: 'Global system for mobile communications',
-    apis: [ 'android.telephony.gsm', 'android.telephony.gsm' ],
-    mean: 'By accessing this data, the app can access GSM-specific telephony features, such as text/data/PDU SMS messages.'
+    groupName: "Global system for mobile communications",
+    apis: ["android.telephony.gsm", "android.telephony.gsm"],
+    mean:
+      "By accessing this data, the app can access GSM-specific telephony features, such as text/data/PDU SMS messages."
   },
   {
-    groupName: 'Group call',
-    apis: [ 'android.telephony.mbms' ],
-    mean: 'By accessing this data, the app can perform a group call'
+    groupName: "Group call",
+    apis: ["android.telephony.mbms"],
+    mean: "By accessing this data, the app can perform a group call"
   }
-]
+];
 
 const personalDataTypes = [
   {
     name: "Connection",
-    mean: "By accessing this data, the app can manage the communication with other devices. Moreover, the app can access further info, such as connected network's link speed, IP address of other available devices / networks."
+    mean:
+      "By accessing this data, the app can manage the communication with other devices. Moreover, the app can access further info, such as connected network's link speed, IP address of other available devices / networks."
   },
 
   {
     name: "Healthcare and fitness data",
-    mean: "By accessing this data, the app can capture health and fitness data. The app can store data from wearable devices or sensors and access data created by other apps."
+    mean:
+      "By accessing this data, the app can capture health and fitness data. The app can store data from wearable devices or sensors and access data created by other apps."
   },
 
   {
     name: "Hardware",
-    mean: "By accessing this data, the app can manage device hardware and peripherals, such as cameras, sensors, and USB-installed peripherals."
+    mean:
+      "By accessing this data, the app can manage device hardware and peripherals, such as cameras, sensors, and USB-installed peripherals."
   },
 
   {
     name: "Location",
-    mean: "By accessing this data, the app can collect user location-related information. Thanks to such data, the app is able to obtain the device's geographical location. Moreover, the app can access to the system location services of the Android platform, so it can collect location-related data such as location tracking, geofencing, and activity recognition."
+    mean:
+      "By accessing this data, the app can collect user location-related information. Thanks to such data, the app is able to obtain the device's geographical location. Moreover, the app can access to the system location services of the Android platform, so it can collect location-related data such as location tracking, geofencing, and activity recognition."
   },
 
   {
     name: "Media",
-    mean: "By accessing this data, the app can collect media data, including audios, videos, and photos. Moreover, it can create / update photos, and audio files, or record video files to support its services."
+    mean:
+      "By accessing this data, the app can collect media data, including audios, videos, and photos. Moreover, it can create / update photos, and audio files, or record video files to support its services."
   },
 
   {
     name: "Telephony",
-    mean: "By accessing this data, the app can monitor the basic phone info such as the network type and connection state, and provide additional utilities to manipulate phone number strings. "
+    mean:
+      "By accessing this data, the app can monitor the basic phone info such as the network type and connection state, and provide additional utilities to manipulate phone number strings. "
   },
 
   {
     name: "User profile",
-    mean: "The app collects basic personal data such as full name, age, gender, etc, plus information on social network (e.g., work, education, friend list, family members),  or biometric data."
+    mean:
+      "The app collects basic personal data such as full name, age, gender, etc, plus information on social network (e.g., work, education, friend list, family members),  or biometric data."
   }
-
 ];
 // (async function main() {
 //   let data = await csv({
@@ -247,7 +274,6 @@ const personalDataTypes = [
 //   const result = []
 //   for (let i = 1; i < data.length; i++) {
 //     let [id, name, level, parent, keywords] = data[i];
-    
 
 //     result.push({
 //       id, name, level, parent, keywords: keywords ? keywords.split(",").map(item => item.trim()).filter(item => !!item) : 'null'
@@ -257,19 +283,19 @@ const personalDataTypes = [
 //   console.log(result)
 // }) ()
 
-function getGroupApi (api) {
-  let result 
+function getGroupApi(api) {
+  let result;
   apiGroups.forEach(apiGroup => {
     apiGroup.apis.forEach(item => {
-      if(item === api.name) return result = apiGroup
-    })
-  })
-  return result
+      if (item === api.name) return (result = apiGroup);
+    });
+  });
+  return result;
 }
 
 function getPersonalDataType(personalDataType) {
-  return personalDataTypes.find(item => item.name ===personalDataType.name)
-} 
+  return personalDataTypes.find(item => item.name === personalDataType.name);
+}
 function getDAPFile(treeName, subFolder) {
   return (
     folderCSVBaseLineOutput +
@@ -310,14 +336,13 @@ async function getAPIFromNode(node) {
       "Health&Fitness",
       "Location",
       "Telephony",
-      "UserInfo",
+      "UserInfo"
     ].includes(parent.name)
   ) {
     return node;
   }
   return getAPIFromNode(parent);
 }
-
 
 async function creatingTrees(rows, DAP_PATH) {
   // init trees
@@ -2079,129 +2104,203 @@ const getAppsCategories = async appIds => {
   return result;
 };
 const getTranningData = async (tranningAppIds, userAnswer) => {
-  const tranningApps = await Promise.all(tranningAppIds.map(appId => Models.App.findById(appId)))
+  const tranningApps = await Promise.all(
+    tranningAppIds.map(appId => Models.App.findById(appId))
+  );
 
   const traningSet = tranningApps.map(tranningApp => {
-    let { PPModel, apisModel, id } = tranningApp
-    PPModel = JSON.parse(PPModel)
-    apisModel = JSON.parse(apisModel)
+    let { PPModel, apisModel, id } = tranningApp;
+    PPModel = JSON.parse(PPModel);
+    apisModel = JSON.parse(apisModel);
 
-    const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
-    let questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
-    if(!questionInstallation)
-      questionInstallation = userAnswerQuestion.responses.find(item => item.name === "agreePredict")
-    if (!questionInstallation) throw Error("Answer not found")
-    const label = questionInstallation.value
+    const userAnswerQuestion = userAnswer.questions.find(
+      question => question.id === id
+    );
+    let questionInstallation = userAnswerQuestion.responses.find(
+      item => item.name === "install"
+    );
+    if (!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(
+        item => item.name === "agreePredict"
+      );
+    if (!questionInstallation) throw Error("Answer not found");
+    const label = questionInstallation.value;
 
-    return [...Object.values(PPModel), ...Object.values(apisModel), label]
-  })
-  return traningSet
-}
+    return [...Object.values(PPModel), ...Object.values(apisModel), label];
+  });
+  return traningSet;
+};
 
-const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) => {
-  const tranningApps = await Promise.all(tranningAppIds.map(appId => Models.App.findById(appId)))
+const getOurPredictionApproach3 = async (
+  tranningAppIds,
+  userAnswer,
+  question
+) => {
+  const tranningApps = await Promise.all(
+    tranningAppIds.map(appId => Models.App.findById(appId))
+  );
   const category = Object.entries(constants.categoryGroups).find(item => {
-    const subCategories = item[1]
+    const subCategories = item[1];
 
-    if(subCategories.includes(question.categoryName)) return true
-    return false
-  })[0]
+    if (subCategories.includes(question.categoryName)) return true;
+    return false;
+  })[0];
 
   // app and category and api (view 1)
   const view1Tranning = tranningApps.map((tranningApp, index) => {
-    let { id, categoryName, apisModel } = tranningApp
-    apisModel = JSON.parse(apisModel)
+    let { id, categoryName, apisModel } = tranningApp;
+    apisModel = JSON.parse(apisModel);
 
     const category = Object.entries(constants.categoryGroups).find(item => {
-      const subCategories = item[1]
+      const subCategories = item[1];
 
-      if(subCategories.includes(categoryName)) return true
-      return false
-    })[0]
+      if (subCategories.includes(categoryName)) return true;
+      return false;
+    })[0];
 
-    
-    const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
-    let questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
-    if(!questionInstallation)
-      questionInstallation = userAnswerQuestion.responses.find(item => item.name === "agreePredict")
-    if (!questionInstallation) throw Error("Answer not found")
-    const label = questionInstallation.value
+    const userAnswerQuestion = userAnswer.questions.find(
+      question => question.id === id
+    );
+    let questionInstallation = userAnswerQuestion.responses.find(
+      item => item.name === "install"
+    );
+    if (!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(
+        item => item.name === "agreePredict"
+      );
+    if (!questionInstallation) throw Error("Answer not found");
+    const label = questionInstallation.value;
 
-    return [index + 1, Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(apisModel), label]
-  })
+    return [
+      index + 1,
+      Object.keys(constants.categoryGroups).indexOf(category) + 1,
+      ...Object.values(apisModel),
+      label
+    ];
+  });
   // app and category and api (view 1)
   const view1Test = tranningApps.map((tranningApp, index) => {
-    let { id, categoryName, apisModel } = tranningApp
-    apisModel = JSON.parse(apisModel)
+    let { id, categoryName, apisModel } = tranningApp;
+    apisModel = JSON.parse(apisModel);
 
     const category = Object.entries(constants.categoryGroups).find(item => {
-      const subCategories = item[1]
+      const subCategories = item[1];
 
-      if(subCategories.includes(categoryName)) return true
-      return false
-    })[0]
- 
-    return [index + 1, Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(apisModel), -1]
-  })
-  view1Test.push([view1Test.length + 1, Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(question.apisModel), -1])
+      if (subCategories.includes(categoryName)) return true;
+      return false;
+    })[0];
+
+    return [
+      index + 1,
+      Object.keys(constants.categoryGroups).indexOf(category) + 1,
+      ...Object.values(apisModel),
+      -1
+    ];
+  });
+  view1Test.push([
+    view1Test.length + 1,
+    Object.keys(constants.categoryGroups).indexOf(category) + 1,
+    ...Object.values(question.apisModel),
+    -1
+  ]);
 
   // apis and collection and third party (view 2)
   const view2Tranning = tranningApps.map((tranningApp, index) => {
-    let { id, apisModel, thirdPartyData, collectionData } = tranningApp
+    let { id, apisModel, thirdPartyData, collectionData } = tranningApp;
 
-    apisModel = JSON.parse(apisModel)
-    collectionData = JSON.parse(collectionData || "[]")
+    apisModel = JSON.parse(apisModel);
+    collectionData = JSON.parse(collectionData || "[]");
     thirdPartyData = JSON.parse(thirdPartyData || "[]");
 
-    const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
-    let questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+    const userAnswerQuestion = userAnswer.questions.find(
+      question => question.id === id
+    );
+    let questionInstallation = userAnswerQuestion.responses.find(
+      item => item.name === "install"
+    );
     if (!questionInstallation)
-      questionInstallation = userAnswerQuestion.responses.find(item => item.name === "agreePredict")
-    if (!questionInstallation) throw Error("Answer not found")
-    const label = questionInstallation.value
+      questionInstallation = userAnswerQuestion.responses.find(
+        item => item.name === "agreePredict"
+      );
+    if (!questionInstallation) throw Error("Answer not found");
+    const label = questionInstallation.value;
 
-    return [...Object.values(apisModel), ...buildDataCollectionAndThirdParty(collectionData, "collection"), ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"), label]
-  })
+    return [
+      ...Object.values(apisModel),
+      ...buildDataCollectionAndThirdParty(collectionData, "collection"),
+      ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"),
+      label
+    ];
+  });
   const view2Test = tranningApps.map((tranningApp, index) => {
-    let { id, apisModel, thirdPartyData, collectionData } = tranningApp
+    let { id, apisModel, thirdPartyData, collectionData } = tranningApp;
 
-    apisModel = JSON.parse(apisModel)
-    collectionData = JSON.parse(collectionData || "[]")
+    apisModel = JSON.parse(apisModel);
+    collectionData = JSON.parse(collectionData || "[]");
     thirdPartyData = JSON.parse(thirdPartyData || "[]");
 
-    return [...Object.values(apisModel), ...buildDataCollectionAndThirdParty(collectionData, "collection"), ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"), -1]
-  })
-  view2Test.push([...Object.values(question.apisModel), ...buildDataCollectionAndThirdParty(question.collectionData, "collection"), ...buildDataCollectionAndThirdParty(question.thirdPartyData, "thirdParty"), -1])
-
+    return [
+      ...Object.values(apisModel),
+      ...buildDataCollectionAndThirdParty(collectionData, "collection"),
+      ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"),
+      -1
+    ];
+  });
+  view2Test.push([
+    ...Object.values(question.apisModel),
+    ...buildDataCollectionAndThirdParty(question.collectionData, "collection"),
+    ...buildDataCollectionAndThirdParty(question.thirdPartyData, "thirdParty"),
+    -1
+  ]);
 
   // collection and third party and app
   const view3Tranning = tranningApps.map((tranningApp, index) => {
-    let { id, apisModel, thirdPartyData, collectionData } = tranningApp
+    let { id, apisModel, thirdPartyData, collectionData } = tranningApp;
 
-    apisModel = JSON.parse(apisModel)
-    collectionData = JSON.parse(collectionData || "[]")
+    apisModel = JSON.parse(apisModel);
+    collectionData = JSON.parse(collectionData || "[]");
     thirdPartyData = JSON.parse(thirdPartyData || "[]");
 
-    const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
-    let questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
+    const userAnswerQuestion = userAnswer.questions.find(
+      question => question.id === id
+    );
+    let questionInstallation = userAnswerQuestion.responses.find(
+      item => item.name === "install"
+    );
     if (!questionInstallation)
-      questionInstallation = userAnswerQuestion.responses.find(item => item.name === "agreePredict")
-    if (!questionInstallation) throw Error("Answer not found")
-    const label = questionInstallation.value
+      questionInstallation = userAnswerQuestion.responses.find(
+        item => item.name === "agreePredict"
+      );
+    if (!questionInstallation) throw Error("Answer not found");
+    const label = questionInstallation.value;
 
-    return [...buildDataCollectionAndThirdParty(collectionData, "collection"), ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"), index + 1, label]
-  })
+    return [
+      ...buildDataCollectionAndThirdParty(collectionData, "collection"),
+      ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"),
+      index + 1,
+      label
+    ];
+  });
   const view3Test = tranningApps.map((tranningApp, index) => {
-    let { id, apisModel, thirdPartyData, collectionData } = tranningApp
+    let { id, apisModel, thirdPartyData, collectionData } = tranningApp;
 
-    apisModel = JSON.parse(apisModel)
-    collectionData = JSON.parse(collectionData || "[]")
+    apisModel = JSON.parse(apisModel);
+    collectionData = JSON.parse(collectionData || "[]");
     thirdPartyData = JSON.parse(thirdPartyData || "[]");
 
-    return [...buildDataCollectionAndThirdParty(collectionData, "collection"), ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"), index + 1, -1]
-  })
-  view3Test.push([...buildDataCollectionAndThirdParty(question.collectionData, "collection"), ...buildDataCollectionAndThirdParty(question.thirdPartyData, "thirdParty"), view3Test.length + 1, -1])
-
+    return [
+      ...buildDataCollectionAndThirdParty(collectionData, "collection"),
+      ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"),
+      index + 1,
+      -1
+    ];
+  });
+  view3Test.push([
+    ...buildDataCollectionAndThirdParty(question.collectionData, "collection"),
+    ...buildDataCollectionAndThirdParty(question.thirdPartyData, "thirdParty"),
+    view3Test.length + 1,
+    -1
+  ]);
 
   const data = await Promise.all([
     // view1
@@ -2218,88 +2317,96 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
     Services.Prediction.getPredictEM({
       train: view3Tranning,
       test: view3Test
-    }),
-  ])
-  console.log("Step 1 in approach 3 with data: ", data)
+    })
+  ]);
+  console.log("Step 1 in approach 3 with data: ", data);
 
+  const tranningSet = Array.from({ length: tranningApps.length }, (v, i) => {
+    const { id } = tranningApps[i];
+    const userAnswerQuestion = userAnswer.questions.find(
+      question => question.id === id
+    );
+    let questionInstallation = userAnswerQuestion.responses.find(
+      item => item.name === "install"
+    );
+    if (!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(
+        item => item.name === "agreePredict"
+      );
+    if (!questionInstallation) throw Error("Answer not found");
+    const label = questionInstallation.value;
 
-  const tranningSet = Array.from({length: tranningApps.length}, (v, i) => {
-    const { id } = tranningApps[i]
-    const userAnswerQuestion = userAnswer.questions.find(question => question.id === id)
-    let questionInstallation = userAnswerQuestion.responses.find(item => item.name === "install")
-    if(!questionInstallation)
-      questionInstallation = userAnswerQuestion.responses.find(item => item.name === "agreePredict")
-    if (!questionInstallation) throw Error("Answer not found")
-    const label = questionInstallation.value
-    
-    return [data[0][i], data[1][i], data[2][i], label]
+    return [data[0][i], data[1][i], data[2][i], label];
   });
 
   const testSet = [_.last(data[0]), _.last(data[1]), _.last(data[2]), -1];
-  console.log("Step 2 in approach 3 with tranning and test: ", tranningSet, testSet)
-
+  console.log(
+    "Step 2 in approach 3 with tranning and test: ",
+    tranningSet,
+    testSet
+  );
 
   const predict = Services.Prediction.getPredictEM({
     train: tranningSet,
     test: testSet
-  })
+  });
 
-  console.log("Step 3 Prediction is: ", predict)
+  console.log("Step 3 Prediction is: ", predict);
 
-  return predict[0]
-}
+  return predict[0];
+};
 
 const buildDataCollectionAndThirdParty = (data, type) => {
-  let flattendata = {}
-  flattenTree(data, "children", flattendata)
+  let flattendata = {};
+  flattenTree(data, "children", flattendata);
 
-  let categories = []
+  let categories = [];
   switch (type) {
     case "collection": {
-      categories = constants.categoriesCollection
-      break
+      categories = constants.categoriesCollection;
+      break;
     }
     case "thirdParty": {
-      categories = constants.categoriesThirdParty
-      break
+      categories = constants.categoriesThirdParty;
+      break;
     }
   }
 
-  const result = []
+  const result = [];
   categories.forEach(item => {
-    result.push(Object.keys(flattendata).includes(item.name) ? "1" : "0")
-  })
+    result.push(Object.keys(flattendata).includes(item.name) ? "1" : "0");
+  });
 
-  return result
-}
-const flattenTree = function (tree, key, collection) {
+  return result;
+};
+const flattenTree = function(tree, key, collection) {
   if (!tree[key] || tree[key].length === 0) return;
   for (var i = 0; i < tree[key].length; i++) {
-    var child = tree[key][i]
+    var child = tree[key][i];
     collection[child.id] = child;
     bfs(child, key, collection);
   }
   return;
-}
+};
 const retry = async (func, time) => {
-  let counter = 1
-  let status = false
-  let result
+  let counter = 1;
+  let status = false;
+  let result;
 
   do {
     try {
-      result = await func()
-      status = true
+      result = await func();
+      status = true;
     } catch (error) {
-      result = error
-      counter++
+      result = error;
+      counter++;
     }
-  } while (!status && counter <= time)
+  } while (!status && counter <= time);
 
-  if (!status) throw result
+  if (!status) throw result;
 
-  return result
-}
+  return result;
+};
 export default {
   retry,
   getAppsCategories,
