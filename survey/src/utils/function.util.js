@@ -2200,7 +2200,7 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
     return [...buildDataCollectionAndThirdParty(collectionData, "collection"), ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"), index + 1, -1]
   })
-  view3Test.push([...buildDataCollectionAndThirdParty(question.collectionData, "collection"), ...buildDataCollectionAndThirdParty(question.thirdPartyData, "thirdParty"), appAndCategoryTranning.length + 1, -1])
+  view3Test.push([...buildDataCollectionAndThirdParty(question.collectionData, "collection"), ...buildDataCollectionAndThirdParty(question.thirdPartyData, "thirdParty"), view3Test.length + 1, -1])
 
 
   const data = await Promise.all([
