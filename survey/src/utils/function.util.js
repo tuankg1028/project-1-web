@@ -2319,6 +2319,7 @@ const getOurPredictionApproach3 = async (
       test: view3Test
     })
   ]);
+  // eslint-disable-next-line no-console
   console.log("Step 1 in approach 3 with data: ", data);
 
   const tranningSet = Array.from({ length: tranningApps.length }, (v, i) => {
@@ -2336,10 +2337,21 @@ const getOurPredictionApproach3 = async (
     if (!questionInstallation) throw Error("Answer not found");
     const label = questionInstallation.value;
 
-    return [data[0][i], data[1][i], data[2][i], label];
+    return [
+      data[0][i][0].toString(),
+      data[1][i][0].toString(),
+      data[2][i][0].toString(),
+      label
+    ];
   });
 
-  const testSet = [_.last(data[0]), _.last(data[1]), _.last(data[2]), -1];
+  const testSet = [
+    _.last(data[0])[0].toString(),
+    _.last(data[1])[0].toString(),
+    _.last(data[2])[0].toString(),
+    "-1"
+  ];
+  // eslint-disable-next-line no-console
   console.log(
     "Step 2 in approach 3 with tranning and test: ",
     tranningSet,
@@ -2351,6 +2363,7 @@ const getOurPredictionApproach3 = async (
     test: testSet
   });
 
+  // eslint-disable-next-line no-console
   console.log("Step 3 Prediction is: ", predict);
 
   return predict[0];

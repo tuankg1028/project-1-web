@@ -9,11 +9,13 @@ class Prediction {
   }
 
   async getPredictEM(payload) {
-    return await this.API.post("/EM/predict", payload).then(({data}) => {
-      if(data.status === "success") return data.yPredict[0]
-      console.log(payload)
-      return 
-    }).catch(console.error);
+    return await this.API.post("/EM/predict", payload)
+      .then(({ data }) => {
+        if (data.status === "success") return data.yPredict;
+        console.log(payload);
+        return;
+      })
+      .catch(console.error);
   }
 }
 
