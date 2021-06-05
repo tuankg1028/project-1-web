@@ -438,6 +438,7 @@
       startLoad();
       $.ajax({
         method: "GET",
+        timeout: 1000 * 30, // 30s
         url: `/question/${appId}/${index}`
       })
         .done(function(html) {
