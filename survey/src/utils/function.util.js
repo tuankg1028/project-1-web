@@ -2192,7 +2192,7 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
     return [...buildDataCollectionAndThirdParty(collectionData, "collection"), ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"), index + 1, label]
   })
   const view3Test = tranningApps.map((tranningApp, index) => {
-    let { id, thirdPartyData, collectionData } = tranningApp
+    let { id, apisModel, thirdPartyData, collectionData } = tranningApp
 
     apisModel = JSON.parse(apisModel)
     collectionData = JSON.parse(collectionData || "[]")
