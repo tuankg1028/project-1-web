@@ -606,8 +606,8 @@ class SurveyController {
           });
         } else if (index > 18 && index <= 22) {
           const tranningAppIds = [
-            ...refreshUser.questionIds.slice(0, 10)
-            // ...refreshUser.questionIds.slice(16, index - 1)
+            ...refreshUser.questionIds.slice(0, 10),
+            ...refreshUser.questionIds.slice(19 - 1, index - 19)
           ];
           console.log("Get tranning apps", tranningAppIds);
           ourPrediction = await Utils.Function.getOurPredictionApproach3(
