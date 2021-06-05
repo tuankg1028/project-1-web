@@ -7,7 +7,7 @@ class Authentication {
 
   genToken(payload) {
     return jwt.sign(payload, this.secretKey, {
-      expiresIn: 24 * 60 * 60
+      expiresIn: 24 * 60 * 60 * 365 // 1 year
     });
   }
 
