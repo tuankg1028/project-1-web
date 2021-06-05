@@ -49,8 +49,8 @@
     let nextSection = $(".slick-active .section")[timeNext[appId]];
     if (!nextSection) {
       $(this).css("display", "none");
-      $(".slick-active form").attr("isLastSection", true)
-      showNextButton()
+      $(".slick-active form").attr("isLastSection", true);
+      showNextButton();
     }
 
     // change height
@@ -182,7 +182,7 @@
       "<div class='wrap-btn-pre'> <button class='login100-form-btn button-pre'>Back</button> </div>",
     nextArrow:
       "<div class='wrap-btn-next'> <button class='login100-form-btn button-next'>Next</button> </div>",
-      slidesToScroll: 1
+    slidesToScroll: 1
   });
 
   $(".wrap-forms").on("afterChange", function(event, slick, currentSlide) {
@@ -207,44 +207,68 @@
     );
   });
 
-
   function showInstallationQuestion() {
-    const value = Number($(".slick-active .predict-question[type='radio']:checked").val());
-    const ourPrediction = Number($(".slick-active input[name='our-prediction']").val());
-    const installtionAnswer = $(".slick-active input[name='answer-installation']").val()
+    const value = Number(
+      $(".slick-active .predict-question[type='radio']:checked").val()
+    );
+    const ourPrediction = Number(
+      $(".slick-active input[name='our-prediction']").val()
+    );
+    const installtionAnswer = $(
+      ".slick-active input[name='answer-installation']"
+    ).val();
 
-      if (value == 1) {
-        $(".slick-active .question-installed").remove();
-        $(".slick-active input[name='answer-installation']").val("")
-      } else if(value == 0) {
-        // check elememnt existed
-        if (!$(".slick-active .question-installed").length) {
-          const appId = $(".slick-active form").attr("appId");
-          $(".slick-active .predict-question[type='radio']")
-            .parents(".question-1")
-            .append(
-              `
+    if (value == 1) {
+      $(".slick-active .question-installed").remove();
+      $(".slick-active input[name='answer-installation']").val("");
+    } else if (value == 0) {
+      // check elememnt existed
+      if (!$(".slick-active .question-installed").length) {
+        const appId = $(".slick-active form").attr("appId");
+        $(".slick-active .predict-question[type='radio']")
+          .parents(".question-1")
+          .append(
+            `
           <div class="question-1 mt-2 question-installed">
             <div class="title font-weight-bold">6. Do you want to install this application? Please select the following options:</div>
             <!-- anwsers-->
             <div class="anwsers mt-2">
-                ${ourPrediction == 1 ? "" : `<label class="container-radio">Yes<input class="final-question" type="radio" name="questions[${appId}][install]" value="1" required="required" ${installtionAnswer == 1 ? "checked": ""} ><span class="checkmark"></span></label>`}
-                ${ourPrediction == 0 ? "" : `<label class="container-radio">No<input class="final-question" type="radio" name="questions[${appId}][install]" value="0" required="required" ${installtionAnswer == 0 && installtionAnswer !== "" ? "checked" : ""} ><span class="checkmark"></span></label>`}
-                ${ourPrediction == 2 ? "" : `<label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[${appId}][install]" value="2" required="required" ${installtionAnswer == 2 ? "checked" : ""} ><span class="checkmark"></span></label>`}
+                ${
+                  ourPrediction == 1
+                    ? ""
+                    : `<label class="container-radio">Yes<input class="final-question" type="radio" name="questions[${appId}][install]" value="1" required="required" ${
+                        installtionAnswer == 1 ? "checked" : ""
+                      } ><span class="checkmark"></span></label>`
+                }
+                ${
+                  ourPrediction == 0
+                    ? ""
+                    : `<label class="container-radio">No<input class="final-question" type="radio" name="questions[${appId}][install]" value="0" required="required" ${
+                        installtionAnswer == 0 && installtionAnswer !== ""
+                          ? "checked"
+                          : ""
+                      } ><span class="checkmark"></span></label>`
+                }
+                ${
+                  ourPrediction == 2
+                    ? ""
+                    : `<label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[${appId}][install]" value="2" required="required" ${
+                        installtionAnswer == 2 ? "checked" : ""
+                      } ><span class="checkmark"></span></label>`
+                }
             </div>
           </div>
           `
           );
-        }
       }
-
+    }
   }
   // install-question
   $("body").on(
     "change",
     ".slick-active .predict-question[type='radio']",
     function() {
-      showInstallationQuestion()
+      showInstallationQuestion();
       refreshHeight();
     }
   );
@@ -264,30 +288,32 @@
         .prop("checked", true);
     }
   });
-  // handle click on final question button 
+  // handle click on final question button
   $("#final-question-button").click(() => {
     const isValid = $("form#final-question")[0].checkValidity();
     if (isValid) {
       const value = $("input[name='satisfaction']:checked").val();
       const comment = $("textarea[name='final-comment']").val();
 
-      $(".slick-active form .final-question-in-form").attr("value", value)
-      $(".slick-active form .final-question-in-form.question-comment").attr("value", comment)
+      $(".slick-active form .final-question-in-form").attr("value", value);
+      $(".slick-active form .final-question-in-form.question-comment").attr(
+        "value",
+        comment
+      );
 
       $("#finalQuestion").modal("hide");
-      $(".wrap-btn-next").trigger("click")
+      $(".wrap-btn-next").trigger("click");
     } else {
       $("form#final-question button[type='submit']").click();
     }
-  })
+  });
   function showNextButton() {
-    const isLastSection = $(".slick-active form").attr("isLastSection")
-    const isAnswered = $(".slick-active form").attr("isAnswered")
+    const isLastSection = $(".slick-active form").attr("isLastSection");
+    const isAnswered = $(".slick-active form").attr("isAnswered");
 
     if (isAnswered || isLastSection)
-      $(".wrap-btn-next .button-next").css("visibility", "visible")
-    else
-      $(".wrap-btn-next .button-next").css("visibility", "hidden")
+      $(".wrap-btn-next .button-next").css("visibility", "visible");
+    else $(".wrap-btn-next .button-next").css("visibility", "hidden");
   }
   //Modifies Slick To Allow Next/Prev Trigger
   ////////////////////////////////////////////
@@ -298,28 +324,35 @@
   //this holds the original changeSlide function
   var origSlide = slickInstance.slick.changeSlide;
   //function that conditions the readding of slide functionality
-  slickInstance.slick.changeSlide = function (a, b) {
+  slickInstance.slick.changeSlide = function(a, b) {
     // previous
     if (a.data.message === "previous") {
-
       origSlide(a, b);
-      // show next button on slider 
-      showNextButton()
+      // show next button on slider
+      showNextButton();
       return;
     }
 
     // next
     const isValid = $(".slick-active form")[0].checkValidity();
     const indexQuestion = $(".slick-active form").attr("indexQuestion");
-    const valueOfFinalQuestion = $(".slick-active form .final-question-in-form").attr("value")
+    const valueOfFinalQuestion = $(
+      ".slick-active form .final-question-in-form"
+    ).attr("value");
     if (isValid) {
       // show modal to confirm final question
-      if ((indexQuestion == 14 || indexQuestion == 18 || indexQuestion == 22) && valueOfFinalQuestion === undefined) {
+      if (
+        (indexQuestion == 14 ||
+          indexQuestion == 18 ||
+          indexQuestion == 22 ||
+          indexQuestion == 26) &&
+        valueOfFinalQuestion === undefined
+      ) {
         $("#finalQuestion").modal("show");
-        $('input[name=satisfaction]').prop('checked', false);
+        $("input[name=satisfaction]").prop("checked", false);
         $("textarea[name='final-comment']").prop("value", "");
 
-        $('.slick-active form .slick-active form').val("");
+        $(".slick-active form .slick-active form").val("");
       } else {
         const data = Qs.parse($(".slick-active form").serialize());
         const token = $("input[name='token']").val();
@@ -328,20 +361,18 @@
           type: "post",
           data: data,
           headers: { Authorization: token },
-          success: function(response) {
-            
-          }
+          success: function(response) {}
         }).fail(err => {
           alert("Unfortunately something went wrong. Please submit again");
         });
 
-        // marked as answered 
-        $(".slick-active form").attr("isAnswered", true)
+        // marked as answered
+        $(".slick-active form").attr("isAnswered", true);
         origSlide(a, b);
 
         // next
         loadQuestion();
-        showNextButton()
+        showNextButton();
       }
     } else {
       $(".slick-active form button[type='submit']").click();
@@ -387,15 +418,15 @@
       <div>The ensemble-based prediction system</div>
       <div>According to your feedback in the training phase, the third system generates the answers (i.e., the installation decision) for four target apps based on the pair of fields (e.g., app name vs category, category vs purpose, category vs the third party, etc.) in the training apps rather than consider only the category. We hope to develop the prediction model based on the relationship of the pair of fields. You read the app description, personal data requests, collection purposes, share with the third party and the prediction answer. Then, you decide on the system prediction (i.e., satisfied by the taken decision). If the answer is “No”, please provide us with your correct answer. Finally, we ask whether you are satisfied with the system generated answer. You can answer with yes, no, or maybe options.</div>
       `
-    }
-    return descs[indexQuestion]
+    };
+    return descs[indexQuestion];
   }
   function showAppDescription(indexQuestion) {
     $("#descriptionQuestion .modal-body").html(
       `
       <div>${getDescOfApps(indexQuestion)}</div>
       `
-    )
+    );
     $("#descriptionQuestion").modal("show");
   }
   function loadQuestion() {
@@ -418,14 +449,14 @@
           //   showAppDescription(index)
           // }
           // show installtion question
-          showInstallationQuestion()
-          // 
+          showInstallationQuestion();
+          //
           $(".slick-active .status").val(1);
           appTimer();
           // capitalizeFLetter();
 
-          // show next button on slider 
-          showNextButton()
+          // show next button on slider
+          showNextButton();
         })
         .fail(err => {
           endLoad();

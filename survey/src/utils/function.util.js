@@ -2371,6 +2371,216 @@ const getOurPredictionApproach3 = async (
   return predict[0];
 };
 
+const getOurPredictionApproach4 = async (
+  tranningAppIds,
+  userAnswer,
+  question
+) => {
+  const tranningApps = await Promise.all(
+    tranningAppIds.map(appId => Models.App.findById(appId))
+  );
+  const category = Object.entries(constants.categoryGroups).find(item => {
+    const subCategories = item[1];
+
+    if (subCategories.includes(question.categoryName)) return true;
+    return false;
+  })[0];
+
+  // app (view 1)
+  const view1Tranning = tranningApps.map((tranningApp, index) => {
+    let { id, categoryName } = tranningApp;
+
+    const category = Object.entries(constants.categoryGroups).find(item => {
+      const subCategories = item[1];
+
+      if (subCategories.includes(categoryName)) return true;
+      return false;
+    })[0];
+
+    const userAnswerQuestion = userAnswer.questions.find(
+      question => question.id === id
+    );
+    let questionInstallation = userAnswerQuestion.responses.find(
+      item => item.name === "install"
+    );
+    if (!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(
+        item => item.name === "agreePredict"
+      );
+    if (!questionInstallation) throw Error("Answer not found");
+    const label = questionInstallation.value;
+
+    return [
+      index + 1,
+      Object.keys(constants.categoryGroups).indexOf(category) + 1,
+      label
+    ];
+  });
+  // app and categor(view 1)
+  const view1Test = tranningApps.map((tranningApp, index) => {
+    let { id, categoryName } = tranningApp;
+    const category = Object.entries(constants.categoryGroups).find(item => {
+      const subCategories = item[1];
+
+      if (subCategories.includes(categoryName)) return true;
+      return false;
+    })[0];
+
+    return [
+      index + 1,
+      Object.keys(constants.categoryGroups).indexOf(category) + 1,
+      -1
+    ];
+  });
+  view1Test.push([
+    view1Test.length + 1,
+    Object.keys(constants.categoryGroups).indexOf(category) + 1,
+    -1
+  ]);
+
+  // apis(view 2)
+  const view2Tranning = tranningApps.map((tranningApp, index) => {
+    let { id, apisModel } = tranningApp;
+
+    apisModel = JSON.parse(apisModel);
+
+    const userAnswerQuestion = userAnswer.questions.find(
+      question => question.id === id
+    );
+    let questionInstallation = userAnswerQuestion.responses.find(
+      item => item.name === "install"
+    );
+    if (!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(
+        item => item.name === "agreePredict"
+      );
+    if (!questionInstallation) throw Error("Answer not found");
+    const label = questionInstallation.value;
+
+    return [...Object.values(apisModel), label];
+  });
+  const view2Test = tranningApps.map((tranningApp, index) => {
+    let { id, apisModel } = tranningApp;
+
+    apisModel = JSON.parse(apisModel);
+
+    return [...Object.values(apisModel), -1];
+  });
+  view2Test.push([...Object.values(question.apisModel), -1]);
+
+  // collection and third party
+  const view3Tranning = tranningApps.map((tranningApp, index) => {
+    let { id, thirdPartyData, collectionData } = tranningApp;
+
+    collectionData = JSON.parse(collectionData || "[]");
+    thirdPartyData = JSON.parse(thirdPartyData || "[]");
+
+    const userAnswerQuestion = userAnswer.questions.find(
+      question => question.id === id
+    );
+    let questionInstallation = userAnswerQuestion.responses.find(
+      item => item.name === "install"
+    );
+    if (!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(
+        item => item.name === "agreePredict"
+      );
+    if (!questionInstallation) throw Error("Answer not found");
+    const label = questionInstallation.value;
+
+    return [
+      ...buildDataCollectionAndThirdParty(collectionData, "collection"),
+      ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"),
+      label
+    ];
+  });
+  const view3Test = tranningApps.map((tranningApp, index) => {
+    let { id, thirdPartyData, collectionData } = tranningApp;
+
+    collectionData = JSON.parse(collectionData || "[]");
+    thirdPartyData = JSON.parse(thirdPartyData || "[]");
+
+    return [
+      ...buildDataCollectionAndThirdParty(collectionData, "collection"),
+      ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"),
+      -1
+    ];
+  });
+  view3Test.push([
+    ...buildDataCollectionAndThirdParty(question.collectionData, "collection"),
+    ...buildDataCollectionAndThirdParty(question.thirdPartyData, "thirdParty"),
+    -1
+  ]);
+
+  const data = await Promise.all([
+    // view1
+    Services.Prediction.getPredictEM({
+      train: view1Tranning,
+      test: view1Test
+    }),
+    // view2
+    Services.Prediction.getPredictEM({
+      train: view2Tranning,
+      test: view2Test
+    }),
+    // appAndPP
+    Services.Prediction.getPredictEM({
+      train: view3Tranning,
+      test: view3Test
+    })
+  ]);
+  // eslint-disable-next-line no-console
+  console.log("Step 1 in approach 3 with data: ", data);
+
+  const tranningSet = Array.from({ length: tranningApps.length }, (v, i) => {
+    const { id } = tranningApps[i];
+    const userAnswerQuestion = userAnswer.questions.find(
+      question => question.id === id
+    );
+    let questionInstallation = userAnswerQuestion.responses.find(
+      item => item.name === "install"
+    );
+    if (!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(
+        item => item.name === "agreePredict"
+      );
+    if (!questionInstallation) throw Error("Answer not found");
+    const label = questionInstallation.value;
+
+    return [
+      data[0][i][0].toString(),
+      data[1][i][0].toString(),
+      data[2][i][0].toString(),
+      label
+    ];
+  });
+
+  const testSet = [
+    [
+      _.last(data[0])[0].toString(),
+      _.last(data[1])[0].toString(),
+      _.last(data[2])[0].toString(),
+      "-1"
+    ]
+  ];
+  // eslint-disable-next-line no-console
+  console.log(
+    "Step 2 in approach 3 with tranning and test: ",
+    tranningSet,
+    testSet
+  );
+
+  const predict = await Services.Prediction.getPredictEM({
+    train: tranningSet,
+    test: testSet
+  });
+
+  // eslint-disable-next-line no-console
+  console.log("Step 3 Prediction is: ", predict);
+
+  return predict[0];
+};
+
 const buildDataCollectionAndThirdParty = (data, type) => {
   let flattendata = {};
   flattenTree(data, "children", flattendata);
@@ -2449,5 +2659,6 @@ export default {
   getGroupApi,
   getPersonalDataType,
   getTranningData,
-  getOurPredictionApproach3
+  getOurPredictionApproach3,
+  getOurPredictionApproach4
 };

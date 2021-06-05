@@ -175,7 +175,7 @@ class SurveyController {
                 }
               }
             },
-            { $sample: { size: 8 } },
+            { $sample: { size: 12 } },
             { $project: { _id: 1 } }
           ]),
 
@@ -227,7 +227,7 @@ class SurveyController {
           ...questionIds[2].splice(0, 2),
           // approach 3
           // approach 1
-          ...questionIds[0].splice(0, 4)
+          ...questionIds[0].splice(0, 8)
         ];
 
         console.log(1, questionIdsForUser);
@@ -611,6 +611,17 @@ class SurveyController {
           ];
           console.log("Get tranning apps", tranningAppIds);
           ourPrediction = await Utils.Function.getOurPredictionApproach3(
+            tranningAppIds,
+            answer,
+            question
+          );
+        } else if (index > 22 && index <= 26) {
+          const tranningAppIds = [
+            ...refreshUser.questionIds.slice(0, 10),
+            ...refreshUser.questionIds.slice(23 - 1, index - 1)
+          ];
+          console.log("Get tranning apps", tranningAppIds);
+          ourPrediction = await Utils.Function.getOurPredictionApproach4(
             tranningAppIds,
             answer,
             question
