@@ -157,6 +157,28 @@ class SurveyController {
           Utils.Constants.categoryGroups
         ).filter(item => !categories.includes(item));
 
+        const requiredConditions = {
+          collectionDataShowed: {
+            $ne: "[]",
+            $exists: true
+          },
+          thirdPartyDataShowed: {
+            $ne: "[]",
+            $exists: true
+          },
+          PPModel: {
+            $exists: true
+          },
+          apisModel: {
+            $exists: true
+          },
+          collectionData: {
+            $exists: true
+          },
+          thirdPartyData: {
+            $exists: true
+          }
+        };
         let questionIds = await Promise.all([
           Models.App.aggregate([
             {
@@ -165,14 +187,7 @@ class SurveyController {
                 categoryName: {
                   $in: categoriesForApproach1
                 },
-                collectionDataShowed: {
-                  $ne: "[]",
-                  $exists: true
-                },
-                thirdPartyDataShowed: {
-                  $ne: "[]",
-                  $exists: true
-                }
+                ...requiredConditions
               }
             },
             { $sample: { size: 12 } },
@@ -185,14 +200,7 @@ class SurveyController {
               $in: categories[0]
               // Utils.Constants.categoryGroups[categories[0]]
             },
-            collectionDataShowed: {
-              $ne: "[]",
-              $exists: true
-            },
-            thirdPartyDataShowed: {
-              $ne: "[]",
-              $exists: true
-            }
+            ...requiredConditions
           })
             .select("_id")
             .limit(7),
@@ -202,14 +210,7 @@ class SurveyController {
               $in: categories[1]
               // Utils.Constants.categoryGroups[categories[1]]
             },
-            collectionDataShowed: {
-              $ne: "[]",
-              $exists: true
-            },
-            thirdPartyDataShowed: {
-              $ne: "[]",
-              $exists: true
-            }
+            ...requiredConditions
           })
             .select("_id")
             .limit(7)

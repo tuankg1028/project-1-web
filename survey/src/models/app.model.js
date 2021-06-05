@@ -24,34 +24,36 @@ var schema = new Schema(
         id: Schema.Types.ObjectId,
         name: String,
         value: Number,
-        parent: Schema.Types.ObjectId,
-      },
+        parent: Schema.Types.ObjectId
+      }
     ],
-    personalDataTypes: [{
-      name: String,
-      apis: [
-        {
-          name: String,
-          left: Number,
-          right: Number,
-          parent: {
-            type: Schema.Types.ObjectId,
-            ref: "tree",
-          },
-        }
-      ]
-    }],
+    personalDataTypes: [
+      {
+        name: String,
+        apis: [
+          {
+            name: String,
+            left: Number,
+            right: Number,
+            parent: {
+              type: Schema.Types.ObjectId,
+              ref: "tree"
+            }
+          }
+        ]
+      }
+    ],
     PPModel: String,
     apisModel: String,
     collectionData: String,
     thirdPartyData: String,
     collectionDataShowed: String,
     thirdPartyDataShowed: String,
-    retentionData: String,
+    retentionData: String
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
+    toJSON: { virtuals: true }
   }
 );
 schema.plugin(findOrCreate);
