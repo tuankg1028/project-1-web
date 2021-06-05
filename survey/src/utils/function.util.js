@@ -2100,6 +2100,12 @@ const getTranningData = async (tranningAppIds, userAnswer) => {
 
 const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) => {
   const tranningApps = await Promise.all(tranningAppIds.map(appId => Models.App.findById(appId)))
+  const category = Object.entries(constants.categoryGroups).find(item => {
+    const subCategories = item[1]
+
+    if(subCategories.includes(question.categoryName)) return true
+    return false
+  })[0]
 
   // app and category and api (view 1)
   const view1Tranning = tranningApps.map((tranningApp, index) => {
@@ -2123,13 +2129,21 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
     return [index + 1, Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(apisModel), label]
   })
-  const category = Object.entries(constants.categoryGroups).find(item => {
-    const subCategories = item[1]
+  // app and category and api (view 1)
+  const view1Test = tranningApps.map((tranningApp, index) => {
+    let { id, categoryName, apisModel } = tranningApp
+    apisModel = JSON.parse(apisModel)
 
-    if(subCategories.includes(question.categoryName)) return true
-    return false
-  })[0]
-  const view1Test = [[appAndCategoryTranning.length + 1, Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(question.apisModel), -1]]
+    const category = Object.entries(constants.categoryGroups).find(item => {
+      const subCategories = item[1]
+
+      if(subCategories.includes(categoryName)) return true
+      return false
+    })[0]
+ 
+    return [index + 1, Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(apisModel), -1]
+  })
+  view1Test.push([appAndCategoryTranning.length + 1, Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(question.apisModel), -1])
 
   // apis and collection and third party (view 2)
   const view2Tranning = tranningApps.map((tranningApp, index) => {
@@ -2148,7 +2162,17 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
     return [...Object.values(apisModel), ...buildDataCollectionAndThirdParty(collectionData, "collection"), ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"), label]
   })
-  const view2Test = [[...Object.values(question.apisModel), ...buildDataCollectionAndThirdParty(question.collectionData, "collection"), ...buildDataCollectionAndThirdParty(question.thirdPartyData, "thirdParty"), -1]]
+  const view2Test = tranningApps.map((tranningApp, index) => {
+    let { id, apisModel, thirdPartyData, collectionData } = tranningApp
+
+    apisModel = JSON.parse(apisModel)
+    collectionData = JSON.parse(collectionData || "[]")
+    thirdPartyData = JSON.parse(thirdPartyData || "[]");
+
+    return [...Object.values(apisModel), ...buildDataCollectionAndThirdParty(collectionData, "collection"), ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"), -1]
+  })
+  view2Test.push([...Object.values(question.apisModel), ...buildDataCollectionAndThirdParty(question.collectionData, "collection"), ...buildDataCollectionAndThirdParty(question.thirdPartyData, "thirdParty"), -1])
+
 
   // collection and third party and app
   const view3Tranning = tranningApps.map((tranningApp, index) => {
@@ -2167,7 +2191,16 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
 
     return [...buildDataCollectionAndThirdParty(collectionData, "collection"), ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"), index + 1, label]
   })
-  const view3Test = [[...buildDataCollectionAndThirdParty(question.collectionData, "collection"), ...buildDataCollectionAndThirdParty(question.thirdPartyData, "thirdParty"), appAndCategoryTranning.length + 1, -1]]
+  const view3Test = tranningApps.map((tranningApp, index) => {
+    let { id, thirdPartyData, collectionData } = tranningApp
+
+    apisModel = JSON.parse(apisModel)
+    collectionData = JSON.parse(collectionData || "[]")
+    thirdPartyData = JSON.parse(thirdPartyData || "[]");
+
+    return [...buildDataCollectionAndThirdParty(collectionData, "collection"), ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"), index + 1, -1]
+  })
+  view3Test.push([...buildDataCollectionAndThirdParty(question.collectionData, "collection"), ...buildDataCollectionAndThirdParty(question.thirdPartyData, "thirdParty"), appAndCategoryTranning.length + 1, -1])
 
 
   const data = await Promise.all([
