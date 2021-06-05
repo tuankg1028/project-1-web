@@ -2242,7 +2242,7 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
   const predict = Services.Prediction.getPredictEM({
     train: tranningSet,
     test: testSet
-  }),
+  })
 
   console.log("Step 3 Prediction is: ", predict)
 
