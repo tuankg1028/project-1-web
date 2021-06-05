@@ -464,7 +464,7 @@
             $("#errorModal").modal("show");
           }, 800);
         });
-    } else if (index == 23) {
+    } else if (index == 27) {
       startLoad();
       window.location.href = "/success";
       endLoad();
