@@ -2346,10 +2346,12 @@ const getOurPredictionApproach3 = async (
   });
 
   const testSet = [
-    _.last(data[0])[0].toString(),
-    _.last(data[1])[0].toString(),
-    _.last(data[2])[0].toString(),
-    "-1"
+    [
+      _.last(data[0])[0].toString(),
+      _.last(data[1])[0].toString(),
+      _.last(data[2])[0].toString(),
+      "-1"
+    ]
   ];
   // eslint-disable-next-line no-console
   console.log(
@@ -2358,7 +2360,7 @@ const getOurPredictionApproach3 = async (
     testSet
   );
 
-  const predict = Services.Prediction.getPredictEM({
+  const predict = await Services.Prediction.getPredictEM({
     train: tranningSet,
     test: testSet
   });
