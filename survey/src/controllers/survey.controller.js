@@ -163,20 +163,14 @@ class SurveyController {
                 categoryName: {
                   $in: categoriesForApproach1
                 },
-                $or: [
-                  {
-                    collectionDataShowed: {
-                      $ne: "[]",
-                      $exists: true
-                    }
-                  },
-                  {
-                    thirdPartyDataShowed: {
-                      $ne: "[]",
-                      $exists: true
-                    }
-                  }
-                ]
+                collectionDataShowed: {
+                  $ne: "[]",
+                  $exists: true
+                },
+                thirdPartyDataShowed: {
+                  $ne: "[]",
+                  $exists: true
+                }
               }
             },
             { $sample: { size: 8 } },
@@ -189,20 +183,14 @@ class SurveyController {
               $in: categories[0]
               // Utils.Constants.categoryGroups[categories[0]]
             },
-            $or: [
-              {
-                collectionDataShowed: {
-                  $ne: "[]",
-                  $exists: true
-                }
-              },
-              {
-                thirdPartyDataShowed: {
-                  $ne: "[]",
-                  $exists: true
-                }
-              }
-            ]
+            collectionDataShowed: {
+              $ne: "[]",
+              $exists: true
+            },
+            thirdPartyDataShowed: {
+              $ne: "[]",
+              $exists: true
+            }
           })
             .select("_id")
             .limit(7),
@@ -212,20 +200,14 @@ class SurveyController {
               $in: categories[1]
               // Utils.Constants.categoryGroups[categories[1]]
             },
-            $or: [
-              {
-                collectionDataShowed: {
-                  $ne: "[]",
-                  $exists: true
-                }
-              },
-              {
-                thirdPartyDataShowed: {
-                  $ne: "[]",
-                  $exists: true
-                }
-              }
-            ]
+            collectionDataShowed: {
+              $ne: "[]",
+              $exists: true
+            },
+            thirdPartyDataShowed: {
+              $ne: "[]",
+              $exists: true
+            }
           })
             .select("_id")
             .limit(7)
