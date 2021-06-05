@@ -2143,7 +2143,7 @@ const getOurPredictionApproach3 = async (tranningAppIds, userAnswer, question) =
  
     return [index + 1, Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(apisModel), -1]
   })
-  view1Test.push([appAndCategoryTranning.length + 1, Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(question.apisModel), -1])
+  view1Test.push([view1Test.length + 1, Object.keys(constants.categoryGroups).indexOf(category) + 1, ...Object.values(question.apisModel), -1])
 
   // apis and collection and third party (view 2)
   const view2Tranning = tranningApps.map((tranningApp, index) => {
