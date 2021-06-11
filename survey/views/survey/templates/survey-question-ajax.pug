@@ -12,6 +12,8 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
     h3.text-center(style="text-transform: capitalize;") The second prediction system
   else if(indexQuestion > 18 && indexQuestion <= 22) 
     h3.text-center(style="text-transform: capitalize;") The third prediction system
+  else if(indexQuestion > 22 && indexQuestion <= 26) 
+    h3.text-center(style="text-transform: capitalize;") The fourth prediction system
   // app name
   h3.title.text-center(style="text-transform: capitalize;")
     | #{indexQuestion + ". " +question.appName}
