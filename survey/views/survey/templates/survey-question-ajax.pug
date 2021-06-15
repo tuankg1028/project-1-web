@@ -45,13 +45,12 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
         .section1-label 
           span.font-weight-bold 
             | 2. Based on app source code analysis, this app might collect data of #{question.personalDataTypes.length} different data types, namely: &nbsp
-          span 
-            each personalDataType, index in question.personalDataTypes
-                | #{personalDataType.name}
-              if(index != question.personalDataTypes.length - 1)
-                | #{", "}
-              else 
-                | #{"."}
+          each personalDataType, index in question.personalDataTypes
+            | #{personalDataType.name}
+            if(index != question.personalDataTypes.length - 1)
+              | #{", "}
+            else 
+              | #{"."}
         // node data
         .wrap-node
           ul 
