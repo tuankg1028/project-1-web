@@ -42,10 +42,11 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
     section(style= isAnswered ? "" : "display: none").section
       .section1.mt-3
         // label
-        .section1-label.font-weight-bold
-          | 2. Based on app source code analysis, this app might collect data of #{question.personalDataTypes.length} different data types, namely:
-          each personalDataType, index in question.personalDataTypes
-              b
+        .section1-label 
+          span.font-weight-bold 
+            | 2. Based on app source code analysis, this app might collect data of #{question.personalDataTypes.length} different data types, namely: &nbsp
+          span 
+            each personalDataType, index in question.personalDataTypes
                 | #{personalDataType.name}
               if(index != question.personalDataTypes.length - 1)
                 | #{", "}
