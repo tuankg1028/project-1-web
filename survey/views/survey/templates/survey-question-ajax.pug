@@ -22,7 +22,7 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
   div.text-center
     | #{question.categoryName}
   div.section
-    span.font-weight-bold 1. Description: 
+    span.font-weight-bold 1. The app description as given in the app market: <br>
     | !{question.description}
   // category
   //- .category.text-center.mt-2
@@ -43,7 +43,7 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
       .section1.mt-3
         // label
         .section1-label.font-weight-bold
-          | 2. This app may collect #{question.personalDataTypes.length} personal data type, namely: 
+          | 2. Based on app source code analysis, this app might collect data of #{question.personalDataTypes.length} different data types, namely:
           each personalDataType, index in question.personalDataTypes
               b
                 | #{personalDataType.name}
@@ -60,7 +60,7 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
                   b #{personalDataType.name}: 
                   | #{personalDataType.mean}
                 div 
-                  | * Apis: 
+                  span.font-weight-bold * Exploited APIs: 
                   each api, index in personalDataType.originalApis
                     | #{api.name}
                     if(index != personalDataType.originalApis.length - 1)
@@ -79,7 +79,7 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
       .section2.mt-3
         // label
         .section2-label.font-weight-bold
-          | 3. Data Collection Purpose:
+          | 3. As declared in the app's privacy policy, in the following the purpose for data collection:
         // node data
         .wrap-node
           if(question.collectionData.length > 0)
@@ -135,7 +135,7 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
       .section2.mt-3
         // label
         .section2-label.font-weight-bold
-          | 4. Third Party:
+          | 4. As declared in the app's privacy policy, the third party service  could receive the collected data for the following purpose(s):
         // node data
         .wrap-node
           if(question.thirdPartyData.length > 0)
