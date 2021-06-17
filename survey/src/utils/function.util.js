@@ -2368,7 +2368,7 @@ const getOurPredictionApproach3 = async (
   // eslint-disable-next-line no-console
   console.log("Step 3 Prediction is: ", predict);
 
-  return predict[0];
+  return predict[0][0];
 };
 
 const getOurPredictionApproach4 = async (
@@ -2578,7 +2578,7 @@ const getOurPredictionApproach4 = async (
   // eslint-disable-next-line no-console
   console.log("Step 3 Prediction is: ", predict);
 
-  return predict[0];
+  return predict[0][0];
 };
 
 const buildDataCollectionAndThirdParty = (data, type) => {
