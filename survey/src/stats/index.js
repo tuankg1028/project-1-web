@@ -10,7 +10,7 @@ const file1 = async () => {
   answers = answers.filter(item => item.questions.length === 26);
 
   // file 1
-  const header1 = [
+  const header = [
     {
       id: "stt",
       title: "#"
@@ -20,50 +20,57 @@ const file1 = async () => {
       title: "Result"
     }
   ];
-  const rows1 = Array.from({ length: 26 }, (_, i) => {
-    const result = [0, 0, 0]; // no - yes - maybe
-    answers.forEach(answer => {
-      const { questions } = answer;
-      const responses = questions[i].responses;
-      const indexInstall = responses.findIndex(item => item.name === "install");
-      const indexAgreePredict = responses.findIndex(
-        item => item.name === "agreePredict"
+  const result = [
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0]
+  ];
+  for (let i = 0; i < answers.length; i++) {
+    const answer = answers[i];
+
+    let { questions } = answer;
+    questions = [
+      answer.questions[13],
+      answer.questions[17],
+      answer.questions[21],
+      answer.questions[25]
+    ];
+    questions.forEach((question, index) => {
+      const responses = question.responses;
+
+      const indexSatisfaction = responses.findIndex(
+        item => item.name === "satisfaction"
       );
-      const indexOurPredict = responses.findIndex(
-        item => item.name === "ourPrediction"
-      );
 
-      if (i < 10) {
-        const value = responses[indexInstall].value;
-        result[value]++;
-      } else {
-        const agreePredictValue = responses[indexAgreePredict].value;
-
-        // agree predict
-        if (agreePredictValue) {
-          const value = responses[indexOurPredict].value
-            .replace("[", "")
-            .replace("]", "");
-
-          result[value]++;
-        } else {
-          const value = responses[indexInstall].value;
-          result[value]++;
-        }
-      }
+      result[index][responses[indexSatisfaction].value]++;
     });
+  }
 
-    return {
-      stt: i + 1,
-      result: `No: ${result[0]} - Yes: ${result[1]} - Maybe: ${result[2]}`
-    };
-  });
+  const rows = [
+    {
+      stt: 1,
+      result: `No: ${result[0][0]} - Yes: ${result[0][1]} - Maybe: ${result[0][2]}`
+    },
+    {
+      stt: 2,
+      result: `No: ${result[1][0]} - Yes: ${result[1][1]} - Maybe: ${result[1][2]}`
+    },
+    {
+      stt: 3,
+      result: `No: ${result[2][0]} - Yes: ${result[2][1]} - Maybe: ${result[2][2]}`
+    },
+    {
+      stt: 4,
+      result: `No: ${result[3][0]} - Yes: ${result[3][1]} - Maybe: ${result[3][2]}`
+    }
+  ];
 
-  const csvWriter1 = createCsvWriter({
+  const csvWriter = createCsvWriter({
     path: "file-1.csv",
-    header: header1
+    header
   });
-  await csvWriter1.writeRecords(rows1);
+  await csvWriter.writeRecords(rows);
   // eslint-disable-next-line no-console
   console.log("==== DONE FILE 1 ====");
 };
@@ -325,6 +332,8 @@ const file4 = async () => {
   answers = answers.filter(item => item.questions.length === 26);
 
   let result1 = 0;
+  let resultMaybe1 = 0;
+
   for (let j = 0; j < answers.length; j++) {
     const answer = answers[j];
     let { questions } = answer;
@@ -335,12 +344,16 @@ const file4 = async () => {
       const indexAgreePredict = responses.findIndex(
         item => item.name === "agreePredict"
       );
-
+      const indexInstall = responses.findIndex(item => item.name === "install");
+      responses[indexAgreePredict].value == 0 &&
+        responses[indexInstall].value == 2 &&
+        resultMaybe1++;
       responses[indexAgreePredict].value == 1 && result1++;
     });
   }
 
   let result2 = 0;
+  let resultMaybe2 = 0;
   for (let j = 0; j < answers.length; j++) {
     const answer = answers[j];
     let { questions } = answer;
@@ -351,12 +364,17 @@ const file4 = async () => {
       const indexAgreePredict = responses.findIndex(
         item => item.name === "agreePredict"
       );
+      const indexInstall = responses.findIndex(item => item.name === "install");
+      responses[indexAgreePredict].value == 0 &&
+        responses[indexInstall].value == 2 &&
+        resultMaybe2++;
 
       responses[indexAgreePredict].value == 1 && result2++;
     });
   }
 
   let result3 = 0;
+  let resultMaybe3 = 0;
   for (let j = 0; j < answers.length; j++) {
     const answer = answers[j];
     let { questions } = answer;
@@ -367,12 +385,17 @@ const file4 = async () => {
       const indexAgreePredict = responses.findIndex(
         item => item.name === "agreePredict"
       );
+      const indexInstall = responses.findIndex(item => item.name === "install");
+      responses[indexAgreePredict].value == 0 &&
+        responses[indexInstall].value == 2 &&
+        resultMaybe3++;
 
       responses[indexAgreePredict].value == 1 && result3++;
     });
   }
 
   let result4 = 0;
+  let resultMaybe4 = 0;
   for (let j = 0; j < answers.length; j++) {
     const answer = answers[j];
     let { questions } = answer;
@@ -383,16 +406,34 @@ const file4 = async () => {
       const indexAgreePredict = responses.findIndex(
         item => item.name === "agreePredict"
       );
+      const indexInstall = responses.findIndex(item => item.name === "install");
+      responses[indexAgreePredict].value == 0 &&
+        responses[indexInstall].value == 2 &&
+        resultMaybe4++;
 
       responses[indexAgreePredict].value == 1 && result4++;
     });
   }
 
   const content = `
-    Approach 1: ${Math.round((result1 / (answers.length * 4)) * 10000) / 100} \n
-    Approach 2: ${Math.round((result2 / (answers.length * 4)) * 10000) / 100} \n
-    Approach 3: ${Math.round((result3 / (answers.length * 4)) * 10000) / 100} \n
-    Approach 4: ${Math.round((result4 / (answers.length * 4)) * 10000) / 100} \n
+  Accuracy:
+    Approach 1: ${Math.round((result1 / (answers.length * 4)) * 10000) / 100} 
+    Approach 2: ${Math.round((result2 / (answers.length * 4)) * 10000) / 100} 
+    Approach 3: ${Math.round((result3 / (answers.length * 4)) * 10000) / 100} 
+    Approach 4: ${Math.round((result4 / (answers.length * 4)) * 10000) / 100}
+  Satisfied level: 
+    Approach 1: ${Math.round(
+      ((result1 * 100 + resultMaybe1 * 50) / (answers.length * 4 * 100)) * 10000
+    ) / 100} 
+    Approach 2: ${Math.round(
+      ((result2 * 100 + resultMaybe2 * 50) / (answers.length * 4 * 100)) * 10000
+    ) / 100}  
+    Approach 3: ${Math.round(
+      ((result3 * 100 + resultMaybe3 * 50) / (answers.length * 4 * 100)) * 10000
+    ) / 100}  
+    Approach 4: ${Math.round(
+      ((result4 * 100 + resultMaybe4 * 50) / (answers.length * 4 * 100)) * 10000
+    ) / 100} 
   `;
 
   fs.writeFileSync("file-4.txt", content, { encoding: "utf-8" });
@@ -403,9 +444,9 @@ const file4 = async () => {
 // File 1 xem có bao nhiều người chọn theo từng phương án (Yes, No, Maybe)
 // File 2 chứa các comment của họ
 const main = async () => {
-  // await file1();
-  // await file2();
-  // await file3();
+  await file1();
+  await file2();
+  await file3();
   await file4();
 };
 main();
