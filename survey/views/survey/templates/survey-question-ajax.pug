@@ -22,7 +22,7 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
   div.text-center
     | #{question.categoryName}
   div.section
-    span.font-weight-bold 1. The app description as given in the app market: <br>
+    span.font-weight-bold 1. The app description, as given in the app market, is the following: <br>
     | !{question.description}
   // category
   //- .category.text-center.mt-2
@@ -79,7 +79,7 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
       .section2.mt-3
         // label
         .section2-label.font-weight-bold
-          | 3. As declared in the app's privacy policy, in the following the purpose for data collection:
+          | 3. As declared in the app's privacy policy,  the purpose for data collection are the following:
         // node data
         .wrap-node
           if(question.collectionData.length > 0)
