@@ -156,18 +156,18 @@
     loadQuestion();
   });
 
-  $(".wrap-forms").on("init reInit afterChange", function(
-    event,
-    slick,
-    currentSlide,
-    nextSlide
-  ) {
-    //currentSlide is undefined on init -- set it to 0 in this case (currentSlide is 0 based)
-    var i = (currentSlide ? currentSlide : 0) + 1;
-    $(".pagingInfo").html(
-      `<span style="color: #FF9800; font-size: 30px">${i}</span> / ${slick.slideCount}`
-    );
-  });
+  // $(".wrap-forms").on("init reInit afterChange", function(
+  //   event,
+  //   slick,
+  //   currentSlide,
+  //   nextSlide
+  // ) {
+  //   //currentSlide is undefined on init -- set it to 0 in this case (currentSlide is 0 based)
+  //   var i = (currentSlide ? currentSlide : 0) + 1;
+  //   $(".pagingInfo").html(
+  //     `<span style="color: #FF9800; font-size: 30px">${i}</span> / ${slick.slideCount}`
+  //   );
+  // });
 
   $(".wrap-forms").slick({
     dots: false,
