@@ -10,12 +10,12 @@ var schema = new Schema(
     desc: String,
     parent: {
       type: Schema.Types.ObjectId,
-      ref: "tree",
-    },
+      ref: "tree"
+    }
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
+    toJSON: { virtuals: true }
   }
 );
 schema.plugin(findOrCreate);

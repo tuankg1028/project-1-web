@@ -6,13 +6,13 @@ import MongooseCache from "mongoose-redis";
 
 mongoose.connect(process.env.MONGODB_URL, {
   useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false
 });
 
 mongoose.connection.on("error", err => {
-  console.log("Connect MONDGODB ERROR")
+  console.log("Connect MONDGODB ERROR");
   Utils.Logger.error(err);
 });
 

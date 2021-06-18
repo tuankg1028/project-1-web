@@ -6,6 +6,15 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
   input(type='hidden' class="final-question-in-form question-comment" name="questions[" + question.id + "][comment]" value=isAnswered &&userAnswer.comment)
 
   button(type="submit" style="display='none';")
+  if(indexQuestion <= 10) 
+    h5.text-center(style="text-transform: capitalize;") 
+      span.pagingInfo Training phase: 
+        <span style="color: #FF9800; font-size: 30px">#{indexQuestion}</span> / 10
+  else if(indexQuestion > 10) 
+    h5.text-center(style="text-transform: capitalize;") 
+        span.pagingInfo Test phase: 
+          <span style="color: #FF9800; font-size: 30px">#{indexQuestion - 10}</span> / 16
+    
   if(indexQuestion > 10 && indexQuestion <= 14) 
     h3.text-center(style="text-transform: capitalize;") The first prediction system
   else if(indexQuestion > 14 && indexQuestion <= 18) 
@@ -231,7 +240,9 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
         if(indexQuestion > 10) 
           // final question
           .question-1.mt-2
-            .title.font-weight-bold 5. The system has taken the following action: #{ourPrediction == 2 ? "maybe install" : (ourPrediction == 1 ? "install" : "non install")} the application.
+            .title.font-weight-bold 5. The system has taken the following action: 
+              span(style="color:#c80000") #{ourPrediction == 2 ? "maybe install" : (ourPrediction == 1 ? "install" : "non install")} 
+              span the application.
             div Are you satisfied by the taken decision? Please select the following options:
             // anwsers
             .anwsers.mt-2
