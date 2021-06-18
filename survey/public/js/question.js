@@ -211,9 +211,7 @@
     const value = Number(
       $(".slick-active .predict-question[type='radio']:checked").val()
     );
-    const ourPrediction = Number(
-      $(".slick-active input[name='our-prediction']").val()
-    );
+    const ourPrediction = Number($(".slick-active input.our-prediction").val());
     const installtionAnswer = $(
       ".slick-active input[name='answer-installation']"
     ).val();
