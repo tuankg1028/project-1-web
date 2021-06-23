@@ -1,5 +1,5 @@
 form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAnswered, predictionLevel=question.predictionLevel appId=question.id indexQuestion=indexQuestion descLength=question.descLength style="padding: 0 15px") 
-  input(type="hidden" name="questions[" + question.id + "][time]" value=isAnswered && !userAnswer.time || 0 class="count-time")
+  input(type="hidden" name="questions[" + question.id + "][time]" value=isAnswered && userAnswer.time || 0 class="count-time")
   input(type="hidden" class="our-prediction" name="questions[" + question.id + "][ourPrediction]" value=ourPrediction)
   input(type="hidden" name="answer-installation" value=isAnswered && !userAnswer.agreePredict == 0 && userAnswer.install)
   input(type='hidden' class="final-question-in-form question-satisfaction" name="questions[" + question.id + "][satisfaction]" value=isAnswered &&userAnswer.satisfaction)
