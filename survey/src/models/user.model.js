@@ -5,13 +5,13 @@ var findOrCreate = require("mongoose-findorcreate");
 var userSchema = new Schema(
   {
     email: String,
-    fullName: String,
+    // fullName: String,
     education: String,
     city: String,
     country: String,
     speciality: String,
     occupation: String,
-    age: Number,
+    age: String,
     groupSurvey: String,
     questionIds: [String],
     questions: [

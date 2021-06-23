@@ -11,12 +11,6 @@ block content
         form(action="/auth/signup" method="POST").validate-form.signup100-form
           span.login100-form-title
             | Sign Up
-          // full name
-          .wrap-input100.validate-input(data-validate='Full name is required')
-            input.input100(type='text' name='fullName' placeholder='Full name*')
-            span.focus-input100
-            span.symbol-input100
-              i.fa.fa-user(aria-hidden='true')
           // email
           .wrap-input100.validate-input(data-validate='Valid email is required: ex@gmail.com')
             input.input100(type='email' name='email' placeholder='Email*')
@@ -25,14 +19,24 @@ block content
               i.fa.fa-envelope(aria-hidden='true')
           // age
           .wrap-input100.validate-input(data-validate='Age is required')
-            input.input100(type='number' name='age' placeholder='Age*')
-            span.focus-input100
-            span.symbol-input100
-              img(src="/images/icons/hornbill-brands.svg", width="15")
+            <div style="display:flex;align-items:center">
+              b.mr-2 Age*: 
+              <select name="age" id="cars" required class="input100" style="padding: 0 10px">
+                <option value="">None</option>
+                <option value="[0;20]">[0;20]</option>
+                <option value="[20;30]">[20;30]</option>
+                <option value="[30;40]">[30;40]</option>
+                <option value=">40">> 40</option>
+              </select>
+            </div>
+            //- input.input100(type='number' name='age' placeholder='Age*')
+            //- span.focus-input100
+            //- span.symbol-input100
+            //-   img(src="/images/icons/hornbill-brands.svg", width="15")
 
           // gender
           .wrap-input100.validate-input.mt-3
-            b.mr-2 Gender: 
+            b.mr-2 Gender*: 
             .form-check.form-check-inline.ml-4
               input#inlineRadio1.form-check-input(type='radio' name='gender' value='male' required)
               label.form-check-label.pl-2(for='inlineRadio1') Male
