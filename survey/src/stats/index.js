@@ -139,7 +139,7 @@ const file2 = async type => {
   console.log("==== DONE FILE 2 ====");
 };
 
-const file3 = async () => {
+const file3 = async type => {
   let allAnswers = await Models.Answer.find();
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
@@ -353,7 +353,7 @@ const file3 = async () => {
   console.log("==== DONE FILE 3 ====");
 };
 
-const file4 = async () => {
+const file4 = async type => {
   let allAnswers = await Models.Answer.find();
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
