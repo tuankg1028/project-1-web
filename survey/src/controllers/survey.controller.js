@@ -64,11 +64,9 @@ class SurveyController {
   async handleAnswer(req, res, next) {
     try {
       const { type, slotId, id: userId } = user;
-      const answers = await Models.Answer.findOne(
-        {
-          userId
-        },
-      );
+      const answers = await Models.Answer.findOne({
+        userId
+      });
       if (type === "microworker" && answers && answers.questions.length === 26)
         await rq({
           method: "PUT",
@@ -94,77 +92,6 @@ class SurveyController {
           });
 
       return res.redirect("/success");
-      const { _id: userId } = req.user;
-      // get questions (intro)
-      const data = JSON.parse(req.body.data);
-
-      // const data = Utils.Function.objectToArray(req.body);
-      const apps = [];
-      for (const appId in data.questions) {
-        // nodes
-        const nodes = data.questions[appId];
-        const { name: appName } = await Models.App.findById(appId).cache(
-          60 * 60 * 24 * 30
-        ); // 1 month
-
-        // loop nodes
-        const nodeData = [];
-        for (const nodeName in nodes) {
-          if (
-            nodeName === "group" ||
-            nodeName === "final" ||
-            nodeName === "time"
-          )
-            continue;
-
-          const leafNodes = nodes[nodeName];
-          // leaf node
-          const leafNodesData = [];
-          for (const leafNodeName in leafNodes) {
-            if (leafNodeName === "group" || leafNodeName === "final") continue;
-
-            const leafNodeValue = leafNodes[leafNodeName];
-            leafNodesData.push({
-              name: leafNodeName,
-              response: leafNodeValue
-            });
-          }
-
-          nodeData.push({
-            name: nodeName,
-            // response: leafNodes.final,
-            leafNodes: leafNodesData
-          });
-        }
-        // data
-        apps.push({
-          name: appName,
-          appId,
-          time: nodes.time,
-          nodes: nodeData,
-          response: nodes.final
-        });
-      }
-
-      // categories
-      let categories = [];
-      if (Array.isArray(data.categories)) {
-        categories = data.categories;
-      } else {
-        categories = data.categories ? [data.categories] : [];
-      }
-      // create
-      await Models.Answer.create({
-        apps,
-        userId,
-
-        comment: data.comment,
-        categories
-      });
-
-      res.json({
-        message: "Created successfully"
-      });
     } catch (error) {
       next(error);
     }
