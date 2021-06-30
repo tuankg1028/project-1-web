@@ -63,8 +63,13 @@ class SurveyController {
 
   async handleAnswer(req, res, next) {
     try {
-      const { type, slotId, id: userID } = user;
-      if (type === "microworker")
+      const { type, slotId, id: userId } = user;
+      const answers = await Models.Answer.findOne(
+        {
+          userId
+        },
+      );
+      if (type === "microworker" && answers && answers.questions.length === 26)
         await rq({
           method: "PUT",
           uri: `https://ttv.microworkers.com/api/v2/slots/${slotId}/submitProof`,
@@ -77,7 +82,7 @@ class SurveyController {
           .then(function(data) {
             Models.User.update(
               {
-                _id: userID
+                _id: userId
               },
               {
                 isPaid: true
