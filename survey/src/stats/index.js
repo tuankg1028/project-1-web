@@ -479,7 +479,7 @@ const file4 = async type => {
 // File 1 xem có bao nhiều người chọn theo từng phương án (Yes, No, Maybe)
 // File 2 chứa các comment của họ
 const main = async () => {
-  const types = ["normal", "microworker"];
+  const types = ["expert", "microworker"];
   for (let i = 0; i < types.length; i++) {
     const type = types[i];
 
