@@ -465,7 +465,7 @@
         });
     } else if (index == 27) {
       startLoad();
-      window.location.href = "/microworker/success";
+      window.location.href = `/microworker/success/${email}`;
       endLoad();
     }
   }

@@ -13,8 +13,6 @@ router.get(
   Controllers.SurveyMicroWorker.getQuestion
 );
 
-router.get("/success", Controllers.SurveyMicroWorker.getSuccess);
-
 router.post("/handle-answer", Controllers.SurveyMicroWorker.handleAnswer);
 
 router.get("/users", Controllers.SurveyMicroWorker.getUsers);
@@ -22,4 +20,6 @@ router.post(
   "/question/app-invalid",
   Controllers.SurveyMicroWorker.getAppComment
 );
+router.get("/success/:email", Controllers.SurveyMicroWorker.getSuccess);
+
 module.exports = router;
