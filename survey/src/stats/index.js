@@ -5,10 +5,18 @@ import Models from "../models";
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 import _ from "lodash";
 import fs from "fs";
-const file1 = async () => {
-  let answers = await Models.Answer.find();
-  answers = answers.filter(item => item.questions.length === 26);
+const file1 = async type => {
+  let allAnswers = await Models.Answer.find();
+  allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
+  const answers = [];
+  for (let i = 0; i < allAnswers.length; i++) {
+    const answer = allAnswers[i];
+
+    const user = await Models.User.findById(answer.userId);
+
+    if (user.type === type) answers.push(answer);
+  }
   // file 1
   const header = [
     {
@@ -67,7 +75,7 @@ const file1 = async () => {
   ];
 
   const csvWriter = createCsvWriter({
-    path: "file-1.csv",
+    path: `file-1 (${type}).csv`,
     header
   });
   await csvWriter.writeRecords(rows);
@@ -75,9 +83,18 @@ const file1 = async () => {
   console.log("==== DONE FILE 1 ====");
 };
 
-const file2 = async () => {
-  let answers = await Models.Answer.find();
-  answers = answers.filter(item => item.questions.length === 26);
+const file2 = async type => {
+  let allAnswers = await Models.Answer.find();
+  allAnswers = allAnswers.filter(item => item.questions.length === 26);
+
+  const answers = [];
+  for (let i = 0; i < allAnswers.length; i++) {
+    const answer = allAnswers[i];
+
+    const user = await Models.User.findById(answer.userId);
+
+    if (user.type === type) answers.push(answer);
+  }
 
   const header = [
     {
@@ -114,7 +131,7 @@ const file2 = async () => {
   rows = _.orderBy(rows, "stt");
 
   const csvWriter = createCsvWriter({
-    path: "file-2.csv",
+    path: `file-2 (${type}).csv`,
     header: header
   });
   await csvWriter.writeRecords(rows);
@@ -123,8 +140,17 @@ const file2 = async () => {
 };
 
 const file3 = async () => {
-  let answers = await Models.Answer.find();
-  answers = answers.filter(item => item.questions.length === 26);
+  let allAnswers = await Models.Answer.find();
+  allAnswers = allAnswers.filter(item => item.questions.length === 26);
+
+  const answers = [];
+  for (let i = 0; i < allAnswers.length; i++) {
+    const answer = allAnswers[i];
+
+    const user = await Models.User.findById(answer.userId);
+
+    if (user.type === type) answers.push(answer);
+  }
 
   // file
   const header = [
@@ -187,7 +213,7 @@ const file3 = async () => {
   }
 
   const csvWriter1 = createCsvWriter({
-    path: "file-3-accuracy-approach-1.csv",
+    path: `file-3-accuracy-approach-1 (${type}).csv`,
     header
   });
   await csvWriter1.writeRecords(rows1);
@@ -231,7 +257,7 @@ const file3 = async () => {
   }
 
   const csvWriter2 = createCsvWriter({
-    path: "file-3-accuracy-approach-2.csv",
+    path: `file-3-accuracy-approach-2 (${type}).csv`,
     header
   });
   await csvWriter2.writeRecords(rows2);
@@ -275,7 +301,7 @@ const file3 = async () => {
   }
 
   const csvWriter3 = createCsvWriter({
-    path: "file-3-accuracy-approach-3.csv",
+    path: `file-3-accuracy-approach-3 (${type}).csv`,
     header
   });
   await csvWriter3.writeRecords(rows3);
@@ -319,7 +345,7 @@ const file3 = async () => {
   }
 
   const csvWriter4 = createCsvWriter({
-    path: "file-3-accuracy-approach-4.csv",
+    path: `file-3-accuracy-approach-4 (${type}).csv`,
     header
   });
   await csvWriter4.writeRecords(rows4);
@@ -328,8 +354,17 @@ const file3 = async () => {
 };
 
 const file4 = async () => {
-  let answers = await Models.Answer.find();
-  answers = answers.filter(item => item.questions.length === 26);
+  let allAnswers = await Models.Answer.find();
+  allAnswers = allAnswers.filter(item => item.questions.length === 26);
+
+  const answers = [];
+  for (let i = 0; i < allAnswers.length; i++) {
+    const answer = allAnswers[i];
+
+    const user = await Models.User.findById(answer.userId);
+
+    if (user.type === type) answers.push(answer);
+  }
 
   let result1 = 0;
   let resultMaybe1 = 0;
@@ -436,7 +471,7 @@ const file4 = async () => {
     ) / 100} 
   `;
 
-  fs.writeFileSync("file-4.txt", content, { encoding: "utf-8" });
+  fs.writeFileSync(`file-4 (${type}).txt`, content, { encoding: "utf-8" });
   // eslint-disable-next-line no-console
   console.log("==== DONE FILE 4 ====");
 };
@@ -444,9 +479,14 @@ const file4 = async () => {
 // File 1 xem có bao nhiều người chọn theo từng phương án (Yes, No, Maybe)
 // File 2 chứa các comment của họ
 const main = async () => {
-  await file1();
-  await file2();
-  await file3();
-  await file4();
+  const types = ["normal", "microworker"];
+  for (let i = 0; i < types.length; i++) {
+    const type = types[i];
+
+    await file1(type);
+    await file2(type);
+    await file3(type);
+    await file4(type);
+  }
 };
 main();
