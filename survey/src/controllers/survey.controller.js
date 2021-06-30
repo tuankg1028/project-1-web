@@ -63,6 +63,31 @@ class SurveyController {
 
   async handleAnswer(req, res, next) {
     try {
+      const { type, slotId, id: userID } = user;
+      if (type === "microworker")
+        await rq({
+          method: "PUT",
+          uri: `https://ttv.microworkers.com/api/v2/slots/${slotId}/submitProof`,
+          headers: {
+            MicroworkersApiKey:
+              "0b699dd430dfdea18466d2ea36967022652f9bcb6114c5977066518e1ecd5314"
+          },
+          form: "{}"
+        })
+          .then(function(data) {
+            Models.User.update(
+              {
+                _id: userID
+              },
+              {
+                isPaid: true
+              }
+            );
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+
       return res.redirect("/success");
       const { _id: userId } = req.user;
       // get questions (intro)
@@ -348,38 +373,38 @@ class SurveyController {
           return false;
         })[0];
 
-        if (!question.personalDataTypes || !question.personalDataTypes.length) {
-          let apis = await Promise.all(
-            question.nodes.map(Utils.Function.getAPIFromNode)
-          );
-          apis = _.uniqBy(apis, "name");
+        // if (!question.personalDataTypes || !question.personalDataTypes.length) {
+        //   let apis = await Promise.all(
+        //     question.nodes.map(Utils.Function.getAPIFromNode)
+        //   );
+        //   apis = _.uniqBy(apis, "name");
 
-          const groupApis = _.groupBy(apis, "parent");
+        //   const groupApis = _.groupBy(apis, "parent");
 
-          let personalDataTypes = [];
-          for (const personalDataTypeId in groupApis) {
-            const parent = await Models.Tree.findById(personalDataTypeId);
+        //   let personalDataTypes = [];
+        //   for (const personalDataTypeId in groupApis) {
+        //     const parent = await Models.Tree.findById(personalDataTypeId);
 
-            const personalDataTypeApiIds = groupApis[personalDataTypeId];
+        //     const personalDataTypeApiIds = groupApis[personalDataTypeId];
 
-            const personalDataTypeApis = await Promise.all(
-              personalDataTypeApiIds.map(id =>
-                Models.Tree.findById(id).cache(60 * 60 * 24 * 30)
-              )
-            );
+        //     const personalDataTypeApis = await Promise.all(
+        //       personalDataTypeApiIds.map(id =>
+        //         Models.Tree.findById(id).cache(60 * 60 * 24 * 30)
+        //       )
+        //     );
 
-            personalDataTypes.push({
-              name: parent.name,
-              apis: personalDataTypeApis
-            });
-          }
+        //     personalDataTypes.push({
+        //       name: parent.name,
+        //       apis: personalDataTypeApis
+        //     });
+        //   }
 
-          question.personalDataTypes = personalDataTypes;
-          await Models.App.updateOne(
-            { _id: id },
-            { $set: { personalDataTypes } }
-          );
-        }
+        //   question.personalDataTypes = personalDataTypes;
+        //   await Models.App.updateOne(
+        //     { _id: id },
+        //     { $set: { personalDataTypes } }
+        //   );
+        // }
 
         question.personalDataTypes = question.personalDataTypes.map(
           personalDataType => {

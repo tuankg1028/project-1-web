@@ -36,6 +36,26 @@ var userSchema = new Schema(
     },
     OSOfDevices: {
       type: String
+    },
+    workerId: {
+      type: String
+    },
+    slotId: {
+      type: String
+    },
+    randKey: {
+      type: String
+    },
+    campaignId: {
+      type: String
+    },
+    type: {
+      type: String,
+      default: "normal"
+    },
+    isPaid: {
+      type: Boolean,
+      default: false
     }
   },
   {

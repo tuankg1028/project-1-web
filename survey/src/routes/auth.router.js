@@ -10,7 +10,7 @@ const creationValidator = Validators.Auth.create();
 //   updationValidator = Validators.Auth.update(),
 //   deleteValidator = Validators.Auth.delete();
 router.get("/login", Controllers.Auth.login);
-router.get("/signup", Controllers.Auth.signup);
+router.get("/signup/:campaignId?/:workerId?/:slotId?", Controllers.Auth.signup);
 
 router.post("/signup", creationValidator, Controllers.Auth.signupHandle);
 router.post(

@@ -7,41 +7,26 @@ var answerSchema = new Schema(
     userId: {
       type: Schema.Types.ObjectId
     },
-    workerId: {
-      type: String
-    },
-    slotId: {
-      type: String
-    },
-    randKey: {
-      type: String
-    },
-    campaignId: {
-      type: String
-    },
+
     categories: [String],
     comment: String,
     clientIp: String,
-    isPaid: {
-      type: Boolean,
-      default: false
-    },
     groupSurvey: {
       type: String
     },
     questions: [
       {
         responses: [
-          { 
+          {
             name: {
               type: String,
               required: true
             },
             value: {
-              type: String, 
+              type: String,
               required: true
             }
-         }
+          }
         ]
       }
     ],

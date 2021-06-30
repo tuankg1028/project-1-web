@@ -9,6 +9,10 @@ block content
         .login100-pic.js-tilt(data-tilt='')
           img(src='/images/img-01.png' alt='IMG')
         form(action="/auth/signup" method="POST").validate-form.signup100-form
+          input(type="hidden" name="campaignId" value=campaignId)
+          input(type="hidden" name="workerId" value=workerId)
+          input(type="hidden" name="slotId" value=slotId)
+          input(type="hidden" name="type" value=type)
           span.login100-form-title
             | Sign Up
           // email

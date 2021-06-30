@@ -19,10 +19,21 @@ class AuthController {
 
   async signup(req, res, next) {
     try {
+      const { campaignId, workerId, slotId } = req.params;
+
+      let type = campaignId && workerId && slotId ? "microworker" : "normal";
+
       const errors = req.session.errors;
       delete req.session.errors;
 
-      res.render("auth/signup", { isSignedUp: false, errors });
+      res.render("auth/signup", {
+        isSignedUp: false,
+        errors,
+        campaignId,
+        workerId,
+        slotId,
+        type
+      });
     } catch (error) {
       next(error);
     }
@@ -31,9 +42,15 @@ class AuthController {
   async signupHandle(req, res, next) {
     try {
       let errors = validationResult(req);
+      const { campaignId, workerId, slotId, type } = req.body;
       if (!errors.isEmpty()) {
         req.session.errors = errors.array();
-        return res.redirect("/auth/signup");
+
+        if (type === "microworker")
+          return res.redirect(
+            `/auth/signup/${campaignId}/${workerId}/${slotId}`
+          );
+        else return res.redirect("/auth/signup");
       }
 
       const {
@@ -54,7 +71,11 @@ class AuthController {
         country,
         age,
         gender,
-        fieldOfWork
+        fieldOfWork,
+        campaignId,
+        workerId,
+        slotId,
+        type
       });
 
       if (!user) throw Error(res, "Create account failed");
@@ -70,9 +91,7 @@ class AuthController {
 
       let user = await Models.User.findOne({
         email
-      }).cache(
-        60 * 60 * 24 * 30
-      ); // 1 month;
+      }).cache(60 * 60 * 24 * 30); // 1 month;
 
       if (!user) {
         req.session.errors = [
