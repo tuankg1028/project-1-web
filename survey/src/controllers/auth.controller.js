@@ -103,6 +103,8 @@ class AuthController {
         return res.redirect("/auth/login");
       }
 
+      if (user.type === "microworker")
+        return res.redirect(`/microworker/${email}`);
       // generate token
       const token = Services.Authentication.genToken(user.toJSON());
       req.session.token = token;

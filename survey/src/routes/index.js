@@ -1,11 +1,12 @@
 import authRouter from "./auth.router";
 import Middlewares from "../middlewares";
 import Controllers from "../controllers";
+import microWrokerRouter from "./micro.router";
 var express = require("express");
 var router = express.Router();
 
 router.use("/auth", authRouter);
-
+router.use("/microworker", microWrokerRouter);
 /* GET home page. */
 // [Middlewares.Auth.isUser]
 // router.get(
