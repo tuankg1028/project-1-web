@@ -7,6 +7,31 @@ import Utils from "../utils";
 import Services from "../services";
 import constants from "../utils/constants";
 
+// rq({
+//   method: "PUT",
+//   uri:
+//     "https://ttv.microworkers.com/api/v2/slots/60dd39e60c46f21eb46abb4e/submitProof",
+//   // https://ttv.microworkers.com/api/v2/slots/60dc968fd13d20554a08e6bd/submitProof
+//   headers: {
+//     MicroworkersApiKey:
+//       "0b699dd430dfdea18466d2ea36967022652f9bcb6114c5977066518e1ecd5314"
+//   },
+//   form: "{}"
+// })
+//   .then(function(data) {
+//     console.log(data);
+//     Models.User.update(
+//       {
+//         _id: "60dcaaf088dee169d90059dd"
+//       },
+//       {
+//         isPaid: true
+//       }
+//     );
+//   })
+//   .catch(function(err) {
+//     console.log(err);
+//   });
 class SurveyController {
   async getSurvey(req, res, next) {
     try {
@@ -70,10 +95,12 @@ class SurveyController {
       if (type === "microworker" && answers && answers.questions.length === 26)
         await rq({
           method: "PUT",
-          uri: `https://ttv.microworkers.com/api/v2/slots/${slotId}/submitProof`,
+          uri: `https://ttv-sandbox.microworkers.com/api/v2/slots/${slotId}/submitProof`,
+          // `https://ttv.microworkers.com/api/v2/slots/${slotId}/submitProof`,
           headers: {
             MicroworkersApiKey:
-              "0b699dd430dfdea18466d2ea36967022652f9bcb6114c5977066518e1ecd5314"
+              "63ede3380dbf70421f6b4f2cc2e32be9c2516afc639479d51c142e769f08ca04"
+            // "0b699dd430dfdea18466d2ea36967022652f9bcb6114c5977066518e1ecd5314"
           },
           form: "{}"
         })
