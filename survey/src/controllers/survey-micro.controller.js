@@ -111,12 +111,14 @@ class SurveyController {
           form: "{}"
         })
           .then(function(data) {
-            Models.User.update(
+            Models.User.updateOne(
               {
                 _id: userId
               },
               {
-                isPaid: true
+                $set: {
+                  isPaid: true
+                }
               }
             );
           })
