@@ -95,12 +95,13 @@ class SurveyController {
       if (type === "microworker" && answers && answers.questions.length === 26)
         await rq({
           method: "PUT",
-          uri: `https://ttv-sandbox.microworkers.com/api/v2/slots/${slotId}/submitProof`,
-          // `https://ttv.microworkers.com/api/v2/slots/${slotId}/submitProof`,
+          uri:
+            // `https://ttv-sandbox.microworkers.com/api/v2/slots/${slotId}/submitProof`,
+            `https://ttv.microworkers.com/api/v2/slots/${slotId}/submitProof`,
           headers: {
             MicroworkersApiKey:
-              "63ede3380dbf70421f6b4f2cc2e32be9c2516afc639479d51c142e769f08ca04"
-            // "0b699dd430dfdea18466d2ea36967022652f9bcb6114c5977066518e1ecd5314"
+              // "63ede3380dbf70421f6b4f2cc2e32be9c2516afc639479d51c142e769f08ca04"
+              "0b699dd430dfdea18466d2ea36967022652f9bcb6114c5977066518e1ecd5314"
           },
           form: "{}"
         })
