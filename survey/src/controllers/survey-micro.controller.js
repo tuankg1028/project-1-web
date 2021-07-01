@@ -92,12 +92,6 @@ class SurveyController {
         userId
       });
 
-      console.log(
-        1,
-        type === "microworker" && answers && answers.questions.length === 26,
-        answers.questions.length,
-        type
-      );
       if (type === "microworker" && answers && answers.questions.length === 26)
         await rq({
           method: "PUT",
@@ -111,7 +105,8 @@ class SurveyController {
           form: "{}"
         })
           .then(function(data) {
-            Models.User.updateOne(
+            console.log(data);
+            return Models.User.updateOne(
               {
                 _id: userId
               },
