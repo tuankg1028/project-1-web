@@ -358,18 +358,18 @@
           url: `/microworker/handle-questions/${email}`,
           type: "post",
           data: data,
-          success: function(response) {}
+          success: function(response) {
+            // marked as answered
+            $(".slick-active form").attr("isAnswered", true);
+            origSlide(a, b);
+
+            // next
+            loadQuestion();
+            showNextButton();
+          }
         }).fail(err => {
           alert("Unfortunately something went wrong. Please submit again");
         });
-
-        // marked as answered
-        $(".slick-active form").attr("isAnswered", true);
-        origSlide(a, b);
-
-        // next
-        loadQuestion();
-        showNextButton();
       }
     } else {
       $(".slick-active form button[type='submit']").click();
