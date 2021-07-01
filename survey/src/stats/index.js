@@ -75,7 +75,7 @@ const file1 = async type => {
   ];
 
   const csvWriter = createCsvWriter({
-    path: `file-1 (${type}).csv`,
+    path: `file-1 (${type === "microworker" ? "microworker" : "expert"}).csv`,
     header
   });
   await csvWriter.writeRecords(rows);
@@ -131,7 +131,7 @@ const file2 = async type => {
   rows = _.orderBy(rows, "stt");
 
   const csvWriter = createCsvWriter({
-    path: `file-2 (${type}).csv`,
+    path: `file-2 (${type === "microworker" ? "microworker" : "expert"}).csv`,
     header: header
   });
   await csvWriter.writeRecords(rows);
@@ -213,7 +213,9 @@ const file3 = async type => {
   }
 
   const csvWriter1 = createCsvWriter({
-    path: `file-3-accuracy-approach-1 (${type}).csv`,
+    path: `file-3-accuracy-approach-1 (${
+      type === "microworker" ? "microworker" : "expert"
+    }).csv`,
     header
   });
   await csvWriter1.writeRecords(rows1);
@@ -257,7 +259,9 @@ const file3 = async type => {
   }
 
   const csvWriter2 = createCsvWriter({
-    path: `file-3-accuracy-approach-2 (${type}).csv`,
+    path: `file-3-accuracy-approach-2 (${
+      type === "microworker" ? "microworker" : "expert"
+    }).csv`,
     header
   });
   await csvWriter2.writeRecords(rows2);
@@ -301,7 +305,9 @@ const file3 = async type => {
   }
 
   const csvWriter3 = createCsvWriter({
-    path: `file-3-accuracy-approach-3 (${type}).csv`,
+    path: `file-3-accuracy-approach-3 (${
+      type === "microworker" ? "microworker" : "expert"
+    }).csv`,
     header
   });
   await csvWriter3.writeRecords(rows3);
@@ -345,7 +351,9 @@ const file3 = async type => {
   }
 
   const csvWriter4 = createCsvWriter({
-    path: `file-3-accuracy-approach-4 (${type}).csv`,
+    path: `file-3-accuracy-approach-4 (${
+      type === "microworker" ? "microworker" : "expert"
+    }).csv`,
     header
   });
   await csvWriter4.writeRecords(rows4);
@@ -471,7 +479,11 @@ const file4 = async type => {
     ) / 100} 
   `;
 
-  fs.writeFileSync(`file-4 (${type}).txt`, content, { encoding: "utf-8" });
+  fs.writeFileSync(
+    `file-4 (${type === "microworker" ? "microworker" : "expert"}).txt`,
+    content,
+    { encoding: "utf-8" }
+  );
   // eslint-disable-next-line no-console
   console.log("==== DONE FILE 4 ====");
 };
@@ -479,7 +491,7 @@ const file4 = async type => {
 // File 1 xem có bao nhiều người chọn theo từng phương án (Yes, No, Maybe)
 // File 2 chứa các comment của họ
 const main = async () => {
-  const types = ["expert", "microworker"];
+  const types = ["normal", "microworker"];
   for (let i = 0; i < types.length; i++) {
     const type = types[i];
 
