@@ -22,7 +22,8 @@
     "thirdFile": "babel-watch --max_old_space_size=8192 thirdFile.js",
     "countingRisk": "babel-watch --max_old_space_size=8192 countingRisk.js",
     "exportingUsers": "babel-watch --max_old_space_size=8192 export-user.js",
-    "stats": "babel-watch src/stats/index"
+    "stats": "babel-watch src/stats/index",
+    "report-users": "babel-watch src/stats/user"
   },
   "heroku-prebuild": "rm -rf node_modules",
   "dependencies": {
