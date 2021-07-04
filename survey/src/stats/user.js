@@ -230,17 +230,17 @@ async function file23(condition, isRequiredComplete, pathFile) {
   console.log("==== DONE FILE 23 ====");
 }
 async function main() {
-  //   file1("microworker");
-  // file1("normal");
+  await file1("microworker");
+  await file1("normal");
 
-  file23(
+  await file23(
     {
       type: "microworker"
     },
     false,
     "./reports/Microworker_User(microworker).csv"
   );
-  file23(
+  await file23(
     {
       type: "normal"
     },
@@ -248,14 +248,14 @@ async function main() {
     "./reports/Microworker_User(expert).csv"
   );
 
-  file23(
+  await file23(
     {
       type: "microworker"
     },
     true,
     "./reports/Microworker_FinishSurvey(microworker).csv"
   );
-  file23(
+  await file23(
     {
       type: "normal"
     },
