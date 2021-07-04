@@ -262,5 +262,6 @@ async function main() {
     true,
     "./reports/Microworker_FinishSurvey(expert).csv"
   );
+  console.log("Completed exporting users");
 }
 main();
