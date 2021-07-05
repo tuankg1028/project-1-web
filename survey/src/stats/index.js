@@ -1,9 +1,21 @@
 const path = require("path");
+const chalk = require("chalk");
 require("dotenv").config({ path: path.join(__dirname, "../../.env") });
 import "../configs/mongoose.config";
 import Models from "../models";
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 import _ from "lodash";
+function getRegionByCampaignId(campaignId) {
+  const regions = {
+    "0d3a745340d0": "Europe East",
+    "99cf426fa790": "Latin America",
+    "7cfcb3709b44": "Europe West",
+    "4d74caeee538": "Asia - Africa",
+    e0a4b9cf46eb: "USA - Western"
+  };
+  return regions[campaignId];
+}
+
 import fs from "fs";
 const file1 = async type => {
   let allAnswers = await Models.Answer.find();
@@ -488,6 +500,221 @@ const file4 = async type => {
   console.log("==== DONE FILE 4 ====");
 };
 
+const file4ByRegion = async campaignId => {
+  let allAnswers = await Models.Answer.find();
+  allAnswers = allAnswers.filter(item => item.questions.length === 26);
+
+  const answers = [],
+    users = [];
+  for (let i = 0; i < allAnswers.length; i++) {
+    const answer = allAnswers[i];
+
+    const user = await Models.User.findById(answer.userId);
+
+    if (user.type === "microworker" && user.campaignId === campaignId) {
+      answers.push(answer);
+      users.push(user);
+    }
+  }
+
+  let result1 = 0;
+  let resultMaybe1 = 0;
+
+  for (let j = 0; j < answers.length; j++) {
+    const answer = answers[j];
+    let { questions } = answer;
+    questions = [questions[10], questions[11], questions[12], questions[13]];
+
+    questions.forEach((question, i) => {
+      const responses = question.responses;
+      const indexAgreePredict = responses.findIndex(
+        item => item.name === "agreePredict"
+      );
+      const indexInstall = responses.findIndex(item => item.name === "install");
+      responses[indexAgreePredict].value == 0 &&
+        responses[indexInstall].value == 2 &&
+        resultMaybe1++;
+      responses[indexAgreePredict].value == 1 && result1++;
+    });
+  }
+
+  let result2 = 0;
+  let resultMaybe2 = 0;
+  for (let j = 0; j < answers.length; j++) {
+    const answer = answers[j];
+    let { questions } = answer;
+    questions = [questions[14], questions[15], questions[16], questions[17]];
+
+    questions.forEach((question, i) => {
+      const responses = question.responses;
+      const indexAgreePredict = responses.findIndex(
+        item => item.name === "agreePredict"
+      );
+      const indexInstall = responses.findIndex(item => item.name === "install");
+      responses[indexAgreePredict].value == 0 &&
+        responses[indexInstall].value == 2 &&
+        resultMaybe2++;
+
+      responses[indexAgreePredict].value == 1 && result2++;
+    });
+  }
+
+  let result3 = 0;
+  let resultMaybe3 = 0;
+  for (let j = 0; j < answers.length; j++) {
+    const answer = answers[j];
+    let { questions } = answer;
+    questions = [questions[18], questions[19], questions[20], questions[21]];
+
+    questions.forEach((question, i) => {
+      const responses = question.responses;
+      const indexAgreePredict = responses.findIndex(
+        item => item.name === "agreePredict"
+      );
+      const indexInstall = responses.findIndex(item => item.name === "install");
+      responses[indexAgreePredict].value == 0 &&
+        responses[indexInstall].value == 2 &&
+        resultMaybe3++;
+
+      responses[indexAgreePredict].value == 1 && result3++;
+    });
+  }
+
+  let result4 = 0;
+  let resultMaybe4 = 0;
+  for (let j = 0; j < answers.length; j++) {
+    const answer = answers[j];
+    let { questions } = answer;
+    questions = [questions[22], questions[23], questions[24], questions[25]];
+
+    questions.forEach((question, i) => {
+      const responses = question.responses;
+      const indexAgreePredict = responses.findIndex(
+        item => item.name === "agreePredict"
+      );
+      const indexInstall = responses.findIndex(item => item.name === "install");
+      responses[indexAgreePredict].value == 0 &&
+        responses[indexInstall].value == 2 &&
+        resultMaybe4++;
+
+      responses[indexAgreePredict].value == 1 && result4++;
+    });
+  }
+
+  let content = `
+  Accuracy:
+    Approach 1: ${Math.round((result1 / (answers.length * 4)) * 10000) / 100} 
+    Approach 2: ${Math.round((result2 / (answers.length * 4)) * 10000) / 100} 
+    Approach 3: ${Math.round((result3 / (answers.length * 4)) * 10000) / 100} 
+    Approach 4: ${Math.round((result4 / (answers.length * 4)) * 10000) / 100}
+  Satisfied level: 
+    Approach 1: ${Math.round(
+      ((result1 * 100 + resultMaybe1 * 50) / (answers.length * 4 * 100)) * 10000
+    ) / 100} 
+    Approach 2: ${Math.round(
+      ((result2 * 100 + resultMaybe2 * 50) / (answers.length * 4 * 100)) * 10000
+    ) / 100}  
+    Approach 3: ${Math.round(
+      ((result3 * 100 + resultMaybe3 * 50) / (answers.length * 4 * 100)) * 10000
+    ) / 100}  
+    Approach 4: ${Math.round(
+      ((result4 * 100 + resultMaybe4 * 50) / (answers.length * 4 * 100)) * 10000
+    ) / 100} \n
+  `;
+
+  // stats gender, country, ...
+  const result = { ages: {}, countries: {}, genders: {}, regions: {} };
+  users.forEach(({ age, country, gender, campaignId }) => {
+    result.ages[age] ? result.ages[age]++ : (result.ages[age] = 1);
+    result.countries[country.trim()]
+      ? result.countries[country.trim()]++
+      : (result.countries[country.trim()] = 1);
+
+    result.genders[gender]
+      ? result.genders[gender]++
+      : (result.genders[gender] = 1);
+
+    result.countries[country.trim()]
+      ? result.countries[country.trim()]++
+      : (result.countries[country.trim()] = 1);
+
+    const region = getRegionByCampaignId(campaignId);
+    result.regions[region]
+      ? result.regions[region]++
+      : (result.regions[region] = 1);
+  });
+
+  content += `
+    * Ages: 
+        - [0;20]: ${result.ages["[0;20]"]} (${(
+    (result.ages["[0;20]"] / users.length) *
+    100
+  ).toFixed(2)}%)
+
+        - [20;30]: ${result.ages["[20;30]"]} (${(
+    (result.ages["[20;30]"] / users.length) *
+    100
+  ).toFixed(2)}%)
+
+        - [30;40]: ${result.ages["[30;40]"]} (${(
+    (result.ages["[30;40]"] / users.length) *
+    100
+  ).toFixed(2)}%)
+            
+        - [>40]: ${result.ages[">40"]} (${(
+    (result.ages[">40"] / users.length) *
+    100
+  ).toFixed(2)}%)
+
+    * Genders: 
+        - Male: ${result.genders["male"]} (${(
+    (result.genders["male"] / users.length) *
+    100
+  ).toFixed(2)}%)
+
+        - Female: ${result.genders["female"]} (${(
+    (result.genders["female"] / users.length) *
+    100
+  ).toFixed(2)}%)
+  `;
+
+  // sort country by name
+  content += "\n    * Countries: \n";
+  _.sortBy(Object.entries(result.countries), [
+    function(o) {
+      return o[0];
+    }
+  ]).forEach(([country, value]) => {
+    content += `        - ${country}: ${value} (${(
+      (value / users.length) *
+      100
+    ).toFixed(2)}%) \n`;
+  });
+
+  // region
+  if (!_.isEmpty(result.regions)) {
+    content += "\n    * Regions: \n";
+    for (const region in result.regions) {
+      const value = result.regions[region];
+
+      content += `        - ${region}: ${value} (${(
+        (value / users.length) *
+        100
+      ).toFixed(2)}%) \n`;
+    }
+  }
+
+  fs.writeFileSync(
+    `./reports/file-4 (microworker-${getRegionByCampaignId(campaignId)}).txt`,
+    content,
+    {
+      encoding: "utf-8"
+    }
+  );
+  // eslint-disable-next-line no-console
+  console.log("==== DONE FILE 4 ====");
+};
+
 // File 1 xem có bao nhiều người chọn theo từng phương án (Yes, No, Maybe)
 // File 2 chứa các comment của họ
 const main = async () => {
@@ -495,10 +722,21 @@ const main = async () => {
   for (let i = 0; i < types.length; i++) {
     const type = types[i];
 
-    await file1(type);
-    await file2(type);
-    await file3(type);
-    await file4(type);
+    await Promise.all([file1(type), file2(type), file3(type), file4(type)]);
   }
+
+  const regions = {
+    "0d3a745340d0": "Europe East",
+    "99cf426fa790": "Latin America",
+    "7cfcb3709b44": "Europe West",
+    "4d74caeee538": "Asia - Africa",
+    e0a4b9cf46eb: "USA - Western"
+  };
+
+  for (const campaignId in regions) {
+    await file4ByRegion(campaignId);
+  }
+
+  console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
 main();
