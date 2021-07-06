@@ -15,4 +15,5 @@ output-apps/
 # survey
 survey/data
 
-survey/reports/*.txt
+**/reports/*.txt
+**/reports/*.csv

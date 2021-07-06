@@ -715,28 +715,99 @@ const file4ByRegion = async campaignId => {
   console.log("==== DONE FILE 4 ====");
 };
 
+async function usersPaid() {
+  const header = [
+    {
+      id: "stt",
+      title: "#"
+    },
+    {
+      id: "workerId",
+      title: "Worker ID"
+    },
+    {
+      id: "email",
+      title: "Email"
+    },
+    {
+      id: "gender",
+      title: "Gender"
+    },
+    {
+      id: "region",
+      title: "Region"
+    },
+    {
+      id: "country",
+      title: "Country"
+    },
+    {
+      id: "isPaid",
+      title: "Paid"
+    },
+    {
+      id: "numberOfQuestions",
+      title: "Number of questions the user did"
+    }
+  ];
+  let rows = [];
+  const users = await Models.User.find({
+    type: "microworker"
+  });
+
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+    const answer = await Models.Answer.findOne({
+      userId: user.id
+    });
+
+    // numberOfQuestions
+    let numberOfQuestions = 0;
+    if (answer && answer.questions) {
+      numberOfQuestions = answer.questions.length;
+    }
+    rows.push({
+      stt: i + 1,
+      workerId: user.workerId,
+      email: user.email,
+      gender: user.gender,
+      region: getRegionByCampaignId(user.campaignId),
+      country: user.country,
+      isPaid: user.isPaid ? "YES" : "NO",
+      numberOfQuestions
+    });
+  }
+
+  rows = _.sortBy(rows, ["isPaid"], ["desc"]);
+  const csvWriter = createCsvWriter({
+    path: "./reports/users-paid.csv",
+    header
+  });
+  await csvWriter.writeRecords(rows);
+}
 // File 1 xem có bao nhiều người chọn theo từng phương án (Yes, No, Maybe)
 // File 2 chứa các comment của họ
 const main = async () => {
-  const types = ["normal", "microworker"];
-  for (let i = 0; i < types.length; i++) {
-    const type = types[i];
+  // const types = ["normal", "microworker"];
+  // for (let i = 0; i < types.length; i++) {
+  //   const type = types[i];
 
-    await Promise.all([file1(type), file2(type), file3(type), file4(type)]);
-  }
+  //   await Promise.all([file1(type), file2(type), file3(type), file4(type)]);
+  // }
 
-  const regions = {
-    "0d3a745340d0": "Europe East",
-    "99cf426fa790": "Latin America",
-    "7cfcb3709b44": "Europe West",
-    "4d74caeee538": "Asia - Africa",
-    e0a4b9cf46eb: "USA - Western"
-  };
+  // const regions = {
+  //   "0d3a745340d0": "Europe East",
+  //   "99cf426fa790": "Latin America",
+  //   "7cfcb3709b44": "Europe West",
+  //   "4d74caeee538": "Asia - Africa",
+  //   e0a4b9cf46eb: "USA - Western"
+  // };
 
-  for (const campaignId in regions) {
-    await file4ByRegion(campaignId);
-  }
+  // for (const campaignId in regions) {
+  //   await file4ByRegion(campaignId);
+  // }
 
+  await usersPaid();
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
 main();
