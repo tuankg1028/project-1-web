@@ -944,6 +944,269 @@ async function confusionMaxtrix() {
   });
   await csvWriterUnPaid.writeRecords(rowsForUnPaid);
 }
+
+async function metricsDefinition() {
+  const matrix = {
+    expert: [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0]
+    ],
+    paid: [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0]
+    ],
+    unpaid: [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0]
+    ],
+    totalexpert: 0,
+    totalpaid: 0,
+    totalunpaid: 0
+  };
+  const answers = await Models.Answer.find();
+  for (let i = 0; i < answers.length; i++) {
+    const { questions, userId } = answers[i];
+    const user = await Models.User.findById(userId);
+    if (!user || questions.length <= 10) continue;
+    // userType
+    const userType =
+      user.type === "normal" ? "expert" : user.isPaid ? "paid" : "unpaid";
+
+    for (let j = 11; j < questions.length; j++) {
+      const question = questions[j];
+      matrix[`total${userType}`]++;
+      // agreePredict
+      let agreePredict = question.responses.find(
+        item => item.name === "agreePredict"
+      );
+      agreePredict = Number(
+        agreePredict.value.replace("[", "").replace("]", "")
+      );
+
+      // ourPrediction
+      let ourPrediction = question.responses.find(
+        item => item.name === "ourPrediction"
+      );
+      ourPrediction = Number(
+        ourPrediction.value.replace("[", "").replace("]", "")
+      );
+
+      if (agreePredict) {
+        matrix[userType][ourPrediction][ourPrediction]++;
+      } else {
+        //install
+        let install = question.responses.find(item => item.name === "install");
+        install = Number(install.value.replace("[", "").replace("]", ""));
+
+        matrix[userType][install][ourPrediction]++;
+      }
+    }
+  }
+
+  const result = {
+    expert: {},
+    paid: {},
+    unpaid: {}
+  };
+  result["expert"]["accurancy"] =
+    (matrix["expert"][0][0] + matrix["expert"][1][1] + matrix["expert"][2][2]) /
+    matrix.totalexpert;
+  //precisionY
+  result["expert"]["precisionY"] =
+    matrix["expert"][0][0] /
+    (matrix["expert"][0][0] + matrix["expert"][1][0] + matrix["expert"][2][0]);
+  //precisionN
+  result["expert"]["precisionN"] =
+    matrix["expert"][1][1] /
+    (matrix["expert"][1][1] + matrix["expert"][0][1] + matrix["expert"][2][1]);
+
+  //precisionM
+  result["expert"]["precisionM"] =
+    matrix["expert"][2][2] /
+    (matrix["expert"][2][2] + matrix["expert"][0][2] + matrix["expert"][1][2]);
+
+  //recallY
+  result["expert"]["recallY"] =
+    matrix["expert"][0][0] /
+    (matrix["expert"][0][0] + matrix["expert"][0][1] + matrix["expert"][0][2]);
+
+  //recallN
+  result["expert"]["recallN"] =
+    matrix["expert"][1][1] /
+    (matrix["expert"][1][1] + matrix["expert"][1][0] + matrix["expert"][1][2]);
+
+  //recallM
+  result["expert"]["recallM"] =
+    matrix["expert"][2][2] /
+    (matrix["expert"][2][2] + matrix["expert"][2][0] + matrix["expert"][2][1]);
+
+  result["expert"]["F1Y"] =
+    (result["expert"]["precisionY"] * result["expert"]["recallY"]) /
+    (result["expert"]["precisionY"] + result["expert"]["recallY"]);
+
+  result["expert"]["F1N"] =
+    (result["expert"]["precisionN"] * result["expert"]["recallN"]) /
+    (result["expert"]["precisionN"] + result["expert"]["recallN"]);
+
+  result["expert"]["F1M"] =
+    (result["expert"]["precisionM"] * result["expert"]["recallM"]) /
+    (result["expert"]["precisionM"] + result["expert"]["recallM"]);
+
+  // ========= paid ========
+  result["paid"]["accurancy"] =
+    (matrix["paid"][0][0] + matrix["paid"][1][1] + matrix["paid"][2][2]) /
+    matrix.totalpaid;
+  //precisionY
+  result["paid"]["precisionY"] =
+    matrix["paid"][0][0] /
+    (matrix["paid"][0][0] + matrix["paid"][1][0] + matrix["paid"][2][0]);
+  //precisionN
+  result["paid"]["precisionN"] =
+    matrix["paid"][1][1] /
+    (matrix["paid"][1][1] + matrix["paid"][0][1] + matrix["paid"][2][1]);
+
+  //precisionM
+  result["paid"]["precisionM"] =
+    matrix["paid"][2][2] /
+    (matrix["paid"][2][2] + matrix["paid"][0][2] + matrix["paid"][1][2]);
+
+  //recallY
+  result["paid"]["recallY"] =
+    matrix["paid"][0][0] /
+    (matrix["paid"][0][0] + matrix["paid"][0][1] + matrix["paid"][0][2]);
+
+  //recallN
+  result["paid"]["recallN"] =
+    matrix["paid"][1][1] /
+    (matrix["paid"][1][1] + matrix["paid"][1][0] + matrix["paid"][1][2]);
+
+  //recallM
+  result["paid"]["recallM"] =
+    matrix["paid"][2][2] /
+    (matrix["paid"][2][2] + matrix["paid"][2][0] + matrix["paid"][2][1]);
+
+  result["paid"]["F1Y"] =
+    (result["paid"]["precisionY"] * result["paid"]["recallY"]) /
+    (result["paid"]["precisionY"] + result["paid"]["recallY"]);
+
+  result["paid"]["F1N"] =
+    (result["paid"]["precisionN"] * result["paid"]["recallN"]) /
+    (result["paid"]["precisionN"] + result["paid"]["recallN"]);
+
+  result["paid"]["F1M"] =
+    (result["paid"]["precisionM"] * result["paid"]["recallM"]) /
+    (result["paid"]["precisionM"] + result["paid"]["recallM"]);
+
+  // ========= unpaid ========
+  result["unpaid"]["accurancy"] =
+    (matrix["unpaid"][0][0] + matrix["unpaid"][1][1] + matrix["unpaid"][2][2]) /
+    matrix.totalunpaid;
+  //precisionY
+  result["unpaid"]["precisionY"] =
+    matrix["unpaid"][0][0] /
+    (matrix["unpaid"][0][0] + matrix["unpaid"][1][0] + matrix["unpaid"][2][0]);
+  //precisionN
+  result["unpaid"]["precisionN"] =
+    matrix["unpaid"][1][1] /
+    (matrix["unpaid"][1][1] + matrix["unpaid"][0][1] + matrix["unpaid"][2][1]);
+
+  //precisionM
+  result["unpaid"]["precisionM"] =
+    matrix["unpaid"][2][2] /
+    (matrix["unpaid"][2][2] + matrix["unpaid"][0][2] + matrix["unpaid"][1][2]);
+
+  //recallY
+  result["unpaid"]["recallY"] =
+    matrix["unpaid"][0][0] /
+    (matrix["unpaid"][0][0] + matrix["unpaid"][0][1] + matrix["unpaid"][0][2]);
+
+  //recallN
+  result["unpaid"]["recallN"] =
+    matrix["unpaid"][1][1] /
+    (matrix["unpaid"][1][1] + matrix["unpaid"][1][0] + matrix["unpaid"][1][2]);
+
+  //recallM
+  result["unpaid"]["recallM"] =
+    matrix["unpaid"][2][2] /
+    (matrix["unpaid"][2][2] + matrix["unpaid"][2][0] + matrix["unpaid"][2][1]);
+
+  result["unpaid"]["F1Y"] =
+    (result["unpaid"]["precisionY"] * result["unpaid"]["recallY"]) /
+    (result["unpaid"]["precisionY"] + result["unpaid"]["recallY"]);
+
+  result["unpaid"]["F1N"] =
+    (result["unpaid"]["precisionN"] * result["unpaid"]["recallN"]) /
+    (result["unpaid"]["precisionN"] + result["unpaid"]["recallN"]);
+
+  result["unpaid"]["F1M"] =
+    (result["unpaid"]["precisionM"] * result["unpaid"]["recallM"]) /
+    (result["unpaid"]["precisionM"] + result["unpaid"]["recallM"]);
+
+  console.log(result);
+
+  // expert
+  fs.writeFileSync(
+    "./reports/metrics definition/expert.txt",
+    `
+    Accurancy: ${result["expert"]["accurancy"]} 
+
+    Precision Yes: ${result["expert"]["precisionY"]}
+    Precision No: ${result["expert"]["precisionN"]}
+    Precision Maybe: ${result["expert"]["precisionM"]} 
+
+    Recall Yes: ${result["expert"]["recallY"]}
+    Recall No: ${result["expert"]["recallN"]}
+    Recall Maybe: ${result["expert"]["recallM"]}
+
+    F1 Yes: ${result["expert"]["F1Y"]}
+    F1 No: ${result["expert"]["F1N"]}
+    F1 Maybe: ${result["expert"]["F1M"]}
+  `
+  );
+
+  // paid
+  fs.writeFileSync(
+    "./reports/metrics definition/microworker-paid.txt",
+    `
+    Accurancy: ${result["paid"]["accurancy"]} 
+
+    Precision Yes: ${result["paid"]["precisionY"]}
+    Precision No: ${result["paid"]["precisionN"]}
+    Precision Maybe: ${result["paid"]["precisionM"]} 
+
+    Recall Yes: ${result["paid"]["recallY"]}
+    Recall No: ${result["paid"]["recallN"]}
+    Recall Maybe: ${result["paid"]["recallM"]}
+
+    F1 Yes: ${result["paid"]["F1Y"]}
+    F1 No: ${result["paid"]["F1N"]}
+    F1 Maybe: ${result["paid"]["F1M"]}
+  `
+  );
+
+  // unpaid
+  fs.writeFileSync(
+    "./reports/metrics definition/microworker-unpaid.txt",
+    `
+    Accurancy: ${result["unpaid"]["accurancy"]} 
+
+    Precision Yes: ${result["unpaid"]["precisionY"]}
+    Precision No: ${result["unpaid"]["precisionN"]}
+    Precision Maybe: ${result["unpaid"]["precisionM"]} 
+
+    Recall Yes: ${result["unpaid"]["recallY"]}
+    Recall No: ${result["unpaid"]["recallN"]}
+    Recall Maybe: ${result["unpaid"]["recallM"]}
+
+    F1 Yes: ${result["unpaid"]["F1Y"]}
+    F1 No: ${result["unpaid"]["F1N"]}
+    F1 Maybe: ${result["unpaid"]["F1M"]}
+  `
+  );
+}
 // File 1 xem có bao nhiều người chọn theo từng phương án (Yes, No, Maybe)
 // File 2 chứa các comment của họ
 const main = async () => {
@@ -967,7 +1230,9 @@ const main = async () => {
   }
 
   await usersPaid();
+  //
   await confusionMaxtrix();
+  await metricsDefinition();
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
 main();
