@@ -785,29 +785,189 @@ async function usersPaid() {
   });
   await csvWriter.writeRecords(rows);
 }
+
+async function confusionMaxtrix() {
+  const header = [
+    {
+      id: "name",
+      title: ""
+    },
+    {
+      id: "predictY",
+      title: "Predicted value: YES"
+    },
+    {
+      id: "predictN",
+      title: "Predicted value: NO"
+    },
+    {
+      id: "predictM",
+      title: "Predicted value: MAYBE"
+    }
+  ];
+
+  const matrix = {
+    expert: [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0]
+    ],
+    paid: [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0]
+    ],
+    unpaid: [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0]
+    ]
+  };
+  const answers = await Models.Answer.find();
+  for (let i = 0; i < answers.length; i++) {
+    const { questions, userId } = answers[i];
+    const user = await Models.User.findById(userId);
+    if (!user || questions.length <= 10) continue;
+    // userType
+    const userType =
+      user.type === "normal" ? "expert" : user.isPaid ? "paid" : "unpaid";
+
+    for (let j = 11; j < questions.length; j++) {
+      const question = questions[j];
+      // agreePredict
+      let agreePredict = question.responses.find(
+        item => item.name === "agreePredict"
+      );
+      agreePredict = Number(
+        agreePredict.value.replace("[", "").replace("]", "")
+      );
+
+      // ourPrediction
+      let ourPrediction = question.responses.find(
+        item => item.name === "ourPrediction"
+      );
+      ourPrediction = Number(
+        ourPrediction.value.replace("[", "").replace("]", "")
+      );
+
+      if (agreePredict) {
+        matrix[userType][ourPrediction][ourPrediction]++;
+      } else {
+        //install
+        let install = question.responses.find(item => item.name === "install");
+        install = Number(install.value.replace("[", "").replace("]", ""));
+
+        matrix[userType][install][ourPrediction]++;
+      }
+    }
+  }
+
+  const rowsForExpert = [
+    {
+      name: "Actual value: Yes",
+      predictY: matrix["expert"][1][1],
+      predictN: matrix["expert"][1][0],
+      predictM: matrix["expert"][1][2]
+    },
+    {
+      name: "Actual value: No",
+      predictY: matrix["expert"][0][1],
+      predictN: matrix["expert"][0][0],
+      predictM: matrix["expert"][0][2]
+    },
+    {
+      name: "Actual value: Maybe",
+      predictY: matrix["expert"][2][1],
+      predictN: matrix["expert"][2][0],
+      predictM: matrix["expert"][2][2]
+    }
+  ];
+
+  const rowsForPaid = [
+    {
+      name: "Actual value: Yes",
+      predictY: matrix["paid"][1][1],
+      predictN: matrix["paid"][1][0],
+      predictM: matrix["paid"][1][2]
+    },
+    {
+      name: "Actual value: No",
+      predictY: matrix["paid"][0][1],
+      predictN: matrix["paid"][0][0],
+      predictM: matrix["paid"][0][2]
+    },
+    {
+      name: "Actual value: Maybe",
+      predictY: matrix["paid"][2][1],
+      predictN: matrix["paid"][2][0],
+      predictM: matrix["paid"][2][2]
+    }
+  ];
+
+  const rowsForUnPaid = [
+    {
+      name: "Actual value: Yes",
+      predictY: matrix["unpaid"][1][1],
+      predictN: matrix["unpaid"][1][0],
+      predictM: matrix["unpaid"][1][2]
+    },
+    {
+      name: "Actual value: No",
+      predictY: matrix["unpaid"][0][1],
+      predictN: matrix["unpaid"][0][0],
+      predictM: matrix["unpaid"][0][2]
+    },
+    {
+      name: "Actual value: Maybe",
+      predictY: matrix["unpaid"][2][1],
+      predictN: matrix["unpaid"][2][0],
+      predictM: matrix["unpaid"][2][2]
+    }
+  ];
+  const csvWriterExpert = createCsvWriter({
+    path: "./reports/confusion matrix/expert.csv",
+    header
+  });
+  await csvWriterExpert.writeRecords(rowsForExpert);
+
+  // paid
+  const csvWriterPaid = createCsvWriter({
+    path: "./reports/confusion matrix/microworker-paid.csv",
+    header
+  });
+  await csvWriterPaid.writeRecords(rowsForPaid);
+
+  // unpaid
+  const csvWriterUnPaid = createCsvWriter({
+    path: "./reports/confusion matrix/microworker-unpaid.csv",
+    header
+  });
+  await csvWriterUnPaid.writeRecords(rowsForUnPaid);
+}
 // File 1 xem có bao nhiều người chọn theo từng phương án (Yes, No, Maybe)
 // File 2 chứa các comment của họ
 const main = async () => {
-  // const types = ["normal", "microworker"];
-  // for (let i = 0; i < types.length; i++) {
-  //   const type = types[i];
+  const types = ["normal", "microworker"];
+  for (let i = 0; i < types.length; i++) {
+    const type = types[i];
 
-  //   await Promise.all([file1(type), file2(type), file3(type), file4(type)]);
-  // }
+    await Promise.all([file1(type), file2(type), file3(type), file4(type)]);
+  }
 
-  // const regions = {
-  //   "0d3a745340d0": "Europe East",
-  //   "99cf426fa790": "Latin America",
-  //   "7cfcb3709b44": "Europe West",
-  //   "4d74caeee538": "Asia - Africa",
-  //   e0a4b9cf46eb: "USA - Western"
-  // };
+  const regions = {
+    "0d3a745340d0": "Europe East",
+    "99cf426fa790": "Latin America",
+    "7cfcb3709b44": "Europe West",
+    "4d74caeee538": "Asia - Africa",
+    e0a4b9cf46eb: "USA - Western"
+  };
 
-  // for (const campaignId in regions) {
-  //   await file4ByRegion(campaignId);
-  // }
+  for (const campaignId in regions) {
+    await file4ByRegion(campaignId);
+  }
 
   await usersPaid();
+  await confusionMaxtrix();
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
 main();

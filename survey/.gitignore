@@ -17,3 +17,5 @@ survey/data
 
 **/reports/*.txt
 **/reports/*.csv
+**/reports/**/*.txt
+**/reports/**/*.csv
