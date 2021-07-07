@@ -1279,22 +1279,58 @@ async function metricsDefinition() {
       4: 0
     },
     satisfactionexpert: {
-      1: 0,
-      2: 0,
-      3: 0,
-      4: 0
+      1: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      2: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      3: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      4: {
+        attendanceNumber: 0,
+        value: 0
+      }
     },
     satisfactionpaid: {
-      1: 0,
-      2: 0,
-      3: 0,
-      4: 0
+      1: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      2: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      3: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      4: {
+        attendanceNumber: 0,
+        value: 0
+      }
     },
     satisfactionunpaid: {
-      1: 0,
-      2: 0,
-      3: 0,
-      4: 0
+      1: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      2: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      3: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      4: {
+        attendanceNumber: 0,
+        value: 0
+      }
     }
   };
   const answers = await Models.Answer.find();
@@ -1324,8 +1360,11 @@ async function metricsDefinition() {
           satisfaction.value.replace("[", "").replace("]", "")
         );
         const value = satisfaction === 1 ? 1 : satisfaction === 2 ? 0.5 : 0;
-        matrix[`satisfaction${userType}`][approach] =
-          matrix[`satisfaction${userType}`][approach] + value;
+
+        matrix[`satisfaction${userType}`][approach]["value"] =
+          matrix[`satisfaction${userType}`][approach]["value"] + value;
+
+        matrix[`satisfaction${userType}`][approach]["attendanceNumber"]++;
       }
       matrix[`total${userType}`][approach]++;
       // agreePredict
@@ -1355,7 +1394,7 @@ async function metricsDefinition() {
       }
     }
   }
-
+  console.log(matrix);
   const result = {
     expert: { 1: {}, 2: {}, 3: {}, 4: {} },
     paid: { 1: {}, 2: {}, 3: {}, 4: {} },
@@ -1370,8 +1409,8 @@ async function metricsDefinition() {
       matrix.totalexpert[approach];
 
     result["expert"][approach]["satisfaction"] =
-      (matrix["satisfactionexpert"][approach] / matrix.totalexpert[approach]) *
-      4;
+      matrix["satisfactionexpert"][approach].value /
+      matrix["satisfactionexpert"][approach].attendanceNumber;
     //precisionY
     result["expert"][approach]["precisionY"] =
       matrix["expert"][approach][0][0] /
@@ -1444,7 +1483,8 @@ async function metricsDefinition() {
       matrix.totalpaid[approach];
 
     result["paid"][approach]["satisfaction"] =
-      (matrix["satisfactionpaid"][approach] / matrix.totalpaid[approach]) * 4;
+      matrix["satisfactionpaid"][approach].value /
+      matrix["satisfactionpaid"][approach].attendanceNumber;
     //precisionY
     result["paid"][approach]["precisionY"] =
       matrix["paid"][approach][0][0] /
@@ -1516,8 +1556,8 @@ async function metricsDefinition() {
       matrix.totalunpaid[approach];
 
     result["unpaid"][approach]["satisfaction"] =
-      (matrix["satisfactionunpaid"][approach] / matrix.totalunpaid[approach]) *
-      4;
+      matrix["satisfactionunpaid"][approach].value /
+      matrix["satisfactionunpaid"][approach].attendanceNumber;
     //precisionY
     result["unpaid"][approach]["precisionY"] =
       matrix["unpaid"][approach][0][0] /
@@ -1663,28 +1703,28 @@ async function metricsDefinition() {
 // File 1 xem có bao nhiều người chọn theo từng phương án (Yes, No, Maybe)
 // File 2 chứa các comment của họ
 const main = async () => {
-  const types = ["normal", "microworker"];
-  for (let i = 0; i < types.length; i++) {
-    const type = types[i];
+  // const types = ["normal", "microworker"];
+  // for (let i = 0; i < types.length; i++) {
+  //   const type = types[i];
 
-    await Promise.all([file1(type), file2(type), file3(type), file4(type)]);
-  }
+  //   await Promise.all([file1(type), file2(type), file3(type), file4(type)]);
+  // }
 
-  const regions = {
-    "0d3a745340d0": "Europe East",
-    "99cf426fa790": "Latin America",
-    "7cfcb3709b44": "Europe West",
-    "4d74caeee538": "Asia - Africa",
-    e0a4b9cf46eb: "USA - Western"
-  };
+  // const regions = {
+  //   "0d3a745340d0": "Europe East",
+  //   "99cf426fa790": "Latin America",
+  //   "7cfcb3709b44": "Europe West",
+  //   "4d74caeee538": "Asia - Africa",
+  //   e0a4b9cf46eb: "USA - Western"
+  // };
 
-  for (const campaignId in regions) {
-    await file4ByRegion(campaignId);
-  }
+  // for (const campaignId in regions) {
+  //   await file4ByRegion(campaignId);
+  // }
 
-  await usersPaid();
+  // await usersPaid();
 
-  await confusionMaxtrix();
+  // await confusionMaxtrix();
   await metricsDefinition();
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
