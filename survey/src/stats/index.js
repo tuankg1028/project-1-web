@@ -1703,28 +1703,28 @@ async function metricsDefinition() {
 // File 1 xem có bao nhiều người chọn theo từng phương án (Yes, No, Maybe)
 // File 2 chứa các comment của họ
 const main = async () => {
-  // const types = ["normal", "microworker"];
-  // for (let i = 0; i < types.length; i++) {
-  //   const type = types[i];
+  const types = ["normal", "microworker"];
+  for (let i = 0; i < types.length; i++) {
+    const type = types[i];
 
-  //   await Promise.all([file1(type), file2(type), file3(type), file4(type)]);
-  // }
+    await Promise.all([file1(type), file2(type), file3(type), file4(type)]);
+  }
 
-  // const regions = {
-  //   "0d3a745340d0": "Europe East",
-  //   "99cf426fa790": "Latin America",
-  //   "7cfcb3709b44": "Europe West",
-  //   "4d74caeee538": "Asia - Africa",
-  //   e0a4b9cf46eb: "USA - Western"
-  // };
+  const regions = {
+    "0d3a745340d0": "Europe East",
+    "99cf426fa790": "Latin America",
+    "7cfcb3709b44": "Europe West",
+    "4d74caeee538": "Asia - Africa",
+    e0a4b9cf46eb: "USA - Western"
+  };
 
-  // for (const campaignId in regions) {
-  //   await file4ByRegion(campaignId);
-  // }
+  for (const campaignId in regions) {
+    await file4ByRegion(campaignId);
+  }
 
-  // await usersPaid();
+  await usersPaid();
 
-  // await confusionMaxtrix();
+  await confusionMaxtrix();
   await metricsDefinition();
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
