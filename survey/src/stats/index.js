@@ -1277,6 +1277,24 @@ async function metricsDefinition() {
       2: 0,
       3: 0,
       4: 0
+    },
+    satisfactionexpert: {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0
+    },
+    satisfactionpaid: {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0
+    },
+    satisfactionunpaid: {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0
     }
   };
   const answers = await Models.Answer.find();
@@ -1297,6 +1315,18 @@ async function metricsDefinition() {
       else if (j >= 18 && j < 22) approach = 3;
       else approach = 4;
 
+      // calculate satisfaction
+      if (j === 13 || j === 17 || j === 21 || j === 25) {
+        let satisfaction = question.responses.find(
+          item => item.name === "satisfaction"
+        );
+        satisfaction = Number(
+          satisfaction.value.replace("[", "").replace("]", "")
+        );
+        const value = satisfaction === 1 ? 1 : satisfaction === 2 ? 0.5 : 0;
+        matrix[`satisfaction${userType}`][approach] =
+          matrix[`satisfaction${userType}`][approach] + value;
+      }
       matrix[`total${userType}`][approach]++;
       // agreePredict
       let agreePredict = question.responses.find(
@@ -1338,6 +1368,10 @@ async function metricsDefinition() {
         matrix["expert"][approach][1][1] +
         matrix["expert"][approach][2][2]) /
       matrix.totalexpert[approach];
+
+    result["expert"][approach]["satisfaction"] =
+      (matrix["satisfactionexpert"][approach] / matrix.totalexpert[approach]) *
+      4;
     //precisionY
     result["expert"][approach]["precisionY"] =
       matrix["expert"][approach][0][0] /
@@ -1408,6 +1442,9 @@ async function metricsDefinition() {
         matrix["paid"][approach][1][1] +
         matrix["paid"][approach][2][2]) /
       matrix.totalpaid[approach];
+
+    result["paid"][approach]["satisfaction"] =
+      (matrix["satisfactionpaid"][approach] / matrix.totalpaid[approach]) * 4;
     //precisionY
     result["paid"][approach]["precisionY"] =
       matrix["paid"][approach][0][0] /
@@ -1477,6 +1514,10 @@ async function metricsDefinition() {
         matrix["unpaid"][approach][1][1] +
         matrix["unpaid"][approach][2][2]) /
       matrix.totalunpaid[approach];
+
+    result["unpaid"][approach]["satisfaction"] =
+      (matrix["satisfactionunpaid"][approach] / matrix.totalunpaid[approach]) *
+      4;
     //precisionY
     result["unpaid"][approach]["precisionY"] =
       matrix["unpaid"][approach][0][0] /
@@ -1546,6 +1587,8 @@ async function metricsDefinition() {
     expertContent += `
     * Approach ${approach}: 
       Accurancy: ${result["expert"][approach]["accurancy"]} 
+
+      Satisfaction: ${result["expert"][approach]["satisfaction"]} 
     
       Precision Yes: ${result["expert"][approach]["precisionY"]}
       Precision No: ${result["expert"][approach]["precisionN"]}
@@ -1569,6 +1612,8 @@ async function metricsDefinition() {
     paidContent += `
     * Approach ${approach}: 
       Accurancy: ${result["paid"][approach]["accurancy"]} 
+
+      Satisfaction: ${result["paid"][approach]["satisfaction"]} 
     
       Precision Yes: ${result["paid"][approach]["precisionY"]}
       Precision No: ${result["paid"][approach]["precisionN"]}
@@ -1594,7 +1639,9 @@ async function metricsDefinition() {
     unpaidContent += `
     * Approach ${approach}: 
       Accurancy: ${result["unpaid"][approach]["accurancy"]} 
-    
+
+      Satisfaction: ${result["unpaid"][approach]["satisfaction"]} 
+
       Precision Yes: ${result["unpaid"][approach]["precisionY"]}
       Precision No: ${result["unpaid"][approach]["precisionN"]}
       Precision Maybe: ${result["unpaid"][approach]["precisionM"]} 
