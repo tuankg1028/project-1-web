@@ -1807,7 +1807,7 @@ async function calculateAccuranceByAlgorithm(algorithm) {
       );
 
       if (agreePredict) {
-        matrix[userType][approach][ourPrediction][ourPrediction]++;
+        matrix[approach][ourPrediction][ourPrediction]++;
       } else {
         //install
         let install = question.responses.find(item => item.name === "install");
