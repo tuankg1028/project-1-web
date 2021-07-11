@@ -2374,7 +2374,8 @@ const getOurPredictionApproach3 = async (
 const getOurPredictionApproach4 = async (
   tranningAppIds,
   userAnswer,
-  question
+  question,
+  algorithm = "EM"
 ) => {
   const tranningApps = await Promise.all(
     tranningAppIds.map(appId => Models.App.findById(appId))
@@ -2569,11 +2570,43 @@ const getOurPredictionApproach4 = async (
     tranningSet,
     testSet
   );
-
-  const predict = await Services.Prediction.getPredictEM({
-    train: tranningSet,
-    test: testSet
-  });
+  let predict;
+  switch (algorithm) {
+    case "EM":
+      predict = await Services.Prediction.getPredictEM({
+        train: tranningSet,
+        test: testSet
+      });
+      break;
+    // SVM
+    case "SVM":
+      predict = await Services.Prediction.getPredictSVM({
+        train: tranningSet,
+        test: testSet
+      });
+      break;
+    // GradientBoostingClassifier
+    case "GradientBoostingClassifier":
+      predict = await Services.Prediction.getPredictGradientBoostingClassifier({
+        train: tranningSet,
+        test: testSet
+      });
+      break;
+    // AdaBoostClassifier
+    case "AdaBoostClassifier":
+      predict = await Services.Prediction.getPredictAdaBoostClassifier({
+        train: tranningSet,
+        test: testSet
+      });
+      break;
+    // GradientBoostingRegressor
+    case "GradientBoostingRegressor":
+      predict = await Services.Prediction.getPredictGradientBoostingRegressor({
+        train: tranningSet,
+        test: testSet
+      });
+      break;
+  }
 
   // eslint-disable-next-line no-console
   console.log("Step 3 Prediction is: ", predict);

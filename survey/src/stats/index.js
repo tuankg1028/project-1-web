@@ -5,6 +5,7 @@ import "../configs/mongoose.config";
 import Models from "../models";
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 import _ from "lodash";
+import Utils from "../utils";
 function getRegionByCampaignId(campaignId) {
   const regions = {
     "0d3a745340d0": "Europe East",
@@ -1700,32 +1701,246 @@ async function metricsDefinition() {
     unpaidContent
   );
 }
+
+async function calculateAccuranceByAlgorithm(algorithm) {
+  const matrix = {
+    1: [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0]
+    ],
+    2: [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0]
+    ],
+    3: [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0]
+    ],
+    4: [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0]
+    ],
+    total: {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0
+    },
+    satisfaction: {
+      1: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      2: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      3: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      4: {
+        attendanceNumber: 0,
+        value: 0
+      }
+    }
+  };
+  let allAnswers = await Models.Answer.find();
+
+  allAnswers = allAnswers.filter(item => item.questions.length === 26);
+
+  for (let i = 0; i < allAnswers.length; i++) {
+    const answer = allAnswers[i];
+    const { questions, userId } = answer;
+    const user = await Models.User.findById(userId);
+    if (!user || questions.length <= 10) continue;
+
+    for (let j = 10; j < questions.length; j++) {
+      const question = questions[j];
+      // approach
+      let approach;
+      if (j >= 10 && j < 14) approach = 1;
+      else if (j >= 14 && j < 18) approach = 2;
+      else if (j >= 18 && j < 22) approach = 3;
+      else approach = 4;
+
+      // calculate satisfaction
+      if (j === 13 || j === 17 || j === 21 || j === 25) {
+        let satisfaction = question.responses.find(
+          item => item.name === "satisfaction"
+        );
+        satisfaction = Number(
+          satisfaction.value.replace("[", "").replace("]", "")
+        );
+        const value = satisfaction === 1 ? 1 : satisfaction === 2 ? 0.5 : 0;
+
+        matrix["satisfaction"][approach]["value"] =
+          matrix["satisfaction"][approach]["value"] + value;
+
+        matrix["satisfaction"][approach]["attendanceNumber"]++;
+      }
+
+      matrix["total"][approach]++;
+      // agreePredict
+      let agreePredict = question.responses.find(
+        item => item.name === "agreePredict"
+      );
+      agreePredict = Number(
+        agreePredict.value.replace("[", "").replace("]", "")
+      );
+
+      const tranningAppIds = user.questionIds.slice(0, 10);
+      // ourPrediction
+      const ourPrediction = await Utils.Function.getOurPredictionApproach4(
+        tranningAppIds,
+        answer,
+        question,
+        algorithm
+      );
+
+      if (agreePredict) {
+        matrix[userType][approach][ourPrediction][ourPrediction]++;
+      } else {
+        //install
+        let install = question.responses.find(item => item.name === "install");
+        install = Number(install.value.replace("[", "").replace("]", ""));
+
+        matrix[approach][install][ourPrediction]++;
+      }
+    }
+  }
+
+  console.log(matrix);
+  const result = {
+    1: {},
+    2: {},
+    3: {},
+    4: {}
+  };
+  //
+  for (const approach in result) {
+    result[approach]["accurancy"] =
+      (matrix[approach][0][0] +
+        matrix[approach][1][1] +
+        matrix[approach][2][2]) /
+      matrix.total[approach];
+
+    result[approach]["satisfaction"] =
+      matrix["satisfaction"][approach].value /
+      matrix["satisfaction"][approach].attendanceNumber;
+    //precisionY
+    result[approach]["precisionY"] =
+      matrix[approach][0][0] /
+      (matrix[approach][0][0] +
+        matrix[approach][1][0] +
+        matrix[approach][2][0]);
+    //precisionN
+    result[approach]["precisionN"] =
+      matrix[approach][1][1] /
+      (matrix[approach][1][1] +
+        matrix[approach][0][1] +
+        matrix[approach][2][1]);
+
+    //precisionM
+    result[approach]["precisionM"] =
+      matrix[approach][2][2] /
+      (matrix[approach][2][2] +
+        matrix[approach][0][2] +
+        matrix[approach][1][2]);
+
+    //recallY
+    result[approach]["recallY"] =
+      matrix[approach][0][0] /
+      (matrix[approach][0][0] +
+        matrix[approach][0][1] +
+        matrix[approach][0][2]);
+
+    //recallN
+    result[approach]["recallN"] =
+      matrix[approach][1][1] /
+      (matrix[approach][1][1] +
+        matrix[approach][1][0] +
+        matrix[approach][1][2]);
+
+    //recallM
+    result[approach]["recallM"] =
+      matrix[approach][2][2] /
+      (matrix[approach][2][2] +
+        matrix[approach][2][0] +
+        matrix[approach][2][1]);
+
+    result[approach]["F1Y"] =
+      (2 * (result[approach]["precisionY"] * result[approach]["recallY"])) /
+      (result[approach]["precisionY"] + result[approach]["recallY"]);
+
+    result[approach]["F1N"] =
+      (2 * (result[approach]["precisionN"] * result[approach]["recallN"])) /
+      (result[approach]["precisionN"] + result[approach]["recallN"]);
+
+    result[approach]["F1M"] =
+      (2 * (result[approach]["precisionM"] * result[approach]["recallM"])) /
+      (result[approach]["precisionM"] + result[approach]["recallM"]);
+  }
+
+  let content = "";
+  for (const approach in result) {
+    content += `
+    * Approach ${approach}: 
+      Accurancy: ${result[approach]["accurancy"]} 
+
+      Satisfaction: ${result[approach]["satisfaction"]} 
+
+      Precision Yes: ${result[approach]["precisionY"]}
+      Precision No: ${result[approach]["precisionN"]}
+      Precision Maybe: ${result[approach]["precisionM"]} 
+    
+      Recall Yes: ${result[approach]["recallY"]}
+      Recall No: ${result[approach]["recallN"]}
+      Recall Maybe: ${result[approach]["recallM"]}
+    
+      F1 Yes: ${result[approach]["F1Y"]}
+      F1 No: ${result[approach]["F1N"]}
+      F1 Maybe: ${result[approach]["F1M"]} \n
+  `;
+  }
+  fs.writeFileSync(
+    `./reports/accurance by algorithms/${algorithm}.txt`,
+    content
+  );
+}
 // File 1 xem có bao nhiều người chọn theo từng phương án (Yes, No, Maybe)
 // File 2 chứa các comment của họ
 const main = async () => {
-  const types = ["normal", "microworker"];
-  for (let i = 0; i < types.length; i++) {
-    const type = types[i];
+  // const types = ["normal", "microworker"];
+  // for (let i = 0; i < types.length; i++) {
+  //   const type = types[i];
 
-    await Promise.all([file1(type), file2(type), file3(type), file4(type)]);
-  }
+  //   await Promise.all([file1(type), file2(type), file3(type), file4(type)]);
+  // }
 
-  const regions = {
-    "0d3a745340d0": "Europe East",
-    "99cf426fa790": "Latin America",
-    "7cfcb3709b44": "Europe West",
-    "4d74caeee538": "Asia - Africa",
-    e0a4b9cf46eb: "USA - Western"
-  };
+  // const regions = {
+  //   "0d3a745340d0": "Europe East",
+  //   "99cf426fa790": "Latin America",
+  //   "7cfcb3709b44": "Europe West",
+  //   "4d74caeee538": "Asia - Africa",
+  //   e0a4b9cf46eb: "USA - Western"
+  // };
 
-  for (const campaignId in regions) {
-    await file4ByRegion(campaignId);
-  }
+  // for (const campaignId in regions) {
+  //   await file4ByRegion(campaignId);
+  // }
 
-  await usersPaid();
+  // await usersPaid();
 
-  await confusionMaxtrix();
-  await metricsDefinition();
+  // await confusionMaxtrix();
+  // await metricsDefinition();
+
+  await calculateAccuranceByAlgorithm("SVM");
+
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
 main();
