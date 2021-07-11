@@ -1822,7 +1822,7 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
           ...user.questionIds.slice(0, 5),
           ...user.questionIds.slice(5, 5)
         ];
-
+      console.log("tranningAppIds", tranningAppIds);
       let app = await Models.App.findById(user.questionIds[j]).cache(
         60 * 60 * 24 * 30
       ); // 1 month;
