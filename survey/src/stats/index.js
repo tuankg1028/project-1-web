@@ -1971,11 +1971,11 @@ const main = async () => {
   // await confusionMaxtrix();
   // await metricsDefinition();
 
-  await calculateAccuranceByAlgorithm("SVM", 1);
-  await calculateAccuranceByAlgorithm("SVM", 2);
-  await calculateAccuranceByAlgorithm("SVM", 3);
-  await calculateAccuranceByAlgorithm("SVM", 4);
-  await calculateAccuranceByAlgorithm("SVM", 5);
+  await calculateAccuranceByAlgorithm("GradientBoostingClassifier", 1);
+  // await calculateAccuranceByAlgorithm("SVM", 2);
+  // await calculateAccuranceByAlgorithm("SVM", 3);
+  // await calculateAccuranceByAlgorithm("SVM", 4);
+  // await calculateAccuranceByAlgorithm("SVM", 5);
 
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
