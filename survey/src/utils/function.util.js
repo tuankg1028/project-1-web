@@ -2522,23 +2522,113 @@ const getOurPredictionApproach4 = async (
     view3Tranning,
     view3Test
   });
-  const data = await Promise.all([
-    // view1
-    Services.Prediction.getPredictEM({
-      train: view1Tranning,
-      test: view1Test
-    }),
-    // view2
-    Services.Prediction.getPredictEM({
-      train: view2Tranning,
-      test: view2Test
-    }),
-    // appAndPP
-    Services.Prediction.getPredictEM({
-      train: view3Tranning,
-      test: view3Test
-    })
-  ]);
+  let data = [];
+  switch (algorithm) {
+    case "EM":
+      data = await Promise.all([
+        // view1
+        Services.Prediction.getPredictEM({
+          train: view1Tranning,
+          test: view1Test
+        }),
+        // view2
+        Services.Prediction.getPredictEM({
+          train: view2Tranning,
+          test: view2Test
+        }),
+        // appAndPP
+        Services.Prediction.getPredictEM({
+          train: view3Tranning,
+          test: view3Test
+        })
+      ]);
+      break;
+    // SVM
+    case "SVM":
+      data = await Promise.all([
+        // view1
+        Services.Prediction.getPredictSVM({
+          train: view1Tranning,
+          test: view1Test
+        }),
+        // view2
+        Services.Prediction.getPredictSVM({
+          train: view2Tranning,
+          test: view2Test
+        }),
+        // appAndPP
+        Services.Prediction.getPredictSVM({
+          train: view3Tranning,
+          test: view3Test
+        })
+      ]);
+
+      break;
+    // GradientBoostingClassifier
+    case "GradientBoostingClassifier":
+      data = await Promise.all([
+        // view1
+        Services.Prediction.getPredictGradientBoostingClassifier({
+          train: view1Tranning,
+          test: view1Test
+        }),
+        // view2
+        Services.Prediction.getPredictGradientBoostingClassifier({
+          train: view2Tranning,
+          test: view2Test
+        }),
+        // appAndPP
+        Services.Prediction.getPredictGradientBoostingClassifier({
+          train: view3Tranning,
+          test: view3Test
+        })
+      ]);
+
+      break;
+    // AdaBoostClassifier
+    case "AdaBoostClassifier":
+      data = await Promise.all([
+        // view1
+        Services.Prediction.getPredictAdaBoostClassifier({
+          train: view1Tranning,
+          test: view1Test
+        }),
+        // view2
+        Services.Prediction.getPredictAdaBoostClassifier({
+          train: view2Tranning,
+          test: view2Test
+        }),
+        // appAndPP
+        Services.Prediction.getPredictAdaBoostClassifier({
+          train: view3Tranning,
+          test: view3Test
+        })
+      ]);
+
+      break;
+    // GradientBoostingRegressor
+    case "GradientBoostingRegressor":
+      data = await Promise.all([
+        // view1
+        Services.Prediction.getPredictGradientBoostingRegressor({
+          train: view1Tranning,
+          test: view1Test
+        }),
+        // view2
+        Services.Prediction.getPredictGradientBoostingRegressor({
+          train: view2Tranning,
+          test: view2Test
+        }),
+        // appAndPP
+        Services.Prediction.getPredictGradientBoostingRegressor({
+          train: view3Tranning,
+          test: view3Test
+        })
+      ]);
+
+      break;
+  }
+
   // eslint-disable-next-line no-console
   console.log("Step 1 in approach 3 with data: ", data);
 
@@ -2619,8 +2709,8 @@ const getOurPredictionApproach4 = async (
 
   // eslint-disable-next-line no-console
   console.log("Step 3 Prediction is: ", predict);
-
   return predict[0][0];
+  // return predict ? predict[0][0] : 0;
 };
 
 const buildDataCollectionAndThirdParty = (data, type) => {
