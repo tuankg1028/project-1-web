@@ -1794,6 +1794,10 @@ async function calculateAccuranceByAlgorithm(algorithm) {
       );
 
       const tranningAppIds = user.questionIds.slice(0, 10);
+
+      let app = await Models.App.findById(user.questionIds[j]).cache(
+        60 * 60 * 24 * 30
+      ); // 1 month;
       // ourPrediction
       const ourPrediction = await Utils.Function.getOurPredictionApproach4(
         tranningAppIds,
