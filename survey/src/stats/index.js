@@ -1842,6 +1842,7 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
           algorithm
         );
       } catch (err) {
+        console.log(err);
         continue;
       }
       console.log(1, ourPrediction);
