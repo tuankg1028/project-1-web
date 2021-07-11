@@ -2731,7 +2731,7 @@ const getOurPredictionApproach1 = async (
     return false;
   })[0];
 
-  const traningSet = tranningApps.map(tranningApp => {
+  const tranningSet = tranningApps.map(tranningApp => {
     let { PPModel, apisModel, id } = tranningApp;
 
     PPModel = JSON.parse(PPModel);
@@ -2777,7 +2777,7 @@ const getOurPredictionApproach1 = async (
     // SVM
     case "SVM":
       predict = await Services.Prediction.getPredictSVM({
-        train: traningSet,
+        train: tranningSet,
         test: testSet
       });
       break;
