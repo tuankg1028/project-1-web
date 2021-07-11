@@ -2721,7 +2721,9 @@ const getOurPredictionApproach1 = async (
   algorithm = "EM"
 ) => {
   const tranningApps = await Promise.all(
-    tranningAppIds.map(appId => Models.App.findById(appId))
+    tranningAppIds.map(appId =>
+      Models.App.findById(appId).cache(60 * 60 * 24 * 30)
+    )
   );
 
   const category = Object.entries(constants.categoryGroups).find(item => {
@@ -2826,7 +2828,9 @@ const getOurPredictionApproach0 = async (
   questionPrediction = []
 ) => {
   const tranningApps = await Promise.all(
-    tranningAppIds.map(appId => Models.App.findById(appId))
+    tranningAppIds.map(appId =>
+      Models.App.findById(appId).cache(60 * 60 * 24 * 30)
+    )
   );
 
   const tranningSet = tranningApps.map(tranningApp => {

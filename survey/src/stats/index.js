@@ -1704,46 +1704,37 @@ async function metricsDefinition() {
 
 async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
   const matrix = {
-    1: [
+    paid: [
       [0, 0, 0],
       [0, 0, 0],
       [0, 0, 0]
     ],
-    2: [
+    unpaid: [
       [0, 0, 0],
       [0, 0, 0],
       [0, 0, 0]
     ],
-    3: [
+    expert: [
       [0, 0, 0],
       [0, 0, 0],
       [0, 0, 0]
     ],
-    4: [
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0]
-    ],
+
     total: {
-      1: 0,
-      2: 0,
-      3: 0,
-      4: 0
+      paid: 0,
+      unpaid: 0,
+      expert: 0
     },
     satisfaction: {
-      1: {
+      paid: {
         attendanceNumber: 0,
         value: 0
       },
-      2: {
+      unpaid: {
         attendanceNumber: 0,
         value: 0
       },
-      3: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      4: {
+      expert: {
         attendanceNumber: 0,
         value: 0
       }
@@ -1754,21 +1745,19 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
   const totalTranningApps = experimentNumber + 5;
-  for (let i = 0; i < allAnswers.length; i++) {
+  for (let i = 0; i < 10; i++) {
     const answer = allAnswers[i];
     console.log(`Running ${i}/${allAnswers.length}`);
     const { questions, userId } = answer;
     const user = await Models.User.findById(userId);
     if (!user) continue;
 
+    // userType
+    const userType =
+      user.type === "normal" ? "expert" : user.isPaid ? "paid" : "unpaid";
+
     for (let j = totalTranningApps; j < questions.length; j++) {
       const question = questions[j];
-      // approach
-      let approach;
-      if (j >= 10 && j < 14) approach = 1;
-      else if (j >= 14 && j < 18) approach = 2;
-      else if (j >= 18 && j < 22) approach = 3;
-      else approach = 4;
 
       // calculate satisfaction
       if (j === 13 || j === 17 || j === 21 || j === 25) {
@@ -1780,10 +1769,10 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
         );
         const value = satisfaction === 1 ? 1 : satisfaction === 2 ? 0.5 : 0;
 
-        matrix["satisfaction"][approach]["value"] =
-          matrix["satisfaction"][approach]["value"] + value;
+        matrix["satisfaction"][userType]["value"] =
+          matrix["satisfaction"][userType]["value"] + value;
 
-        matrix["satisfaction"][approach]["attendanceNumber"]++;
+        matrix["satisfaction"][userType]["attendanceNumber"]++;
       }
 
       // agreePredict
@@ -1844,111 +1833,110 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
         console.log(err);
         continue;
       }
-      matrix["total"][approach]++;
+      matrix["total"][userType]++;
       console.log(1, ourPrediction);
       if (agreePredict) {
-        matrix[approach][ourPrediction][ourPrediction]++;
+        matrix[userType][ourPrediction][ourPrediction]++;
       } else {
         //install
         let install = question.responses.find(item => item.name === "install");
         install = Number(install.value.replace("[", "").replace("]", ""));
 
-        matrix[approach][install][ourPrediction]++;
+        matrix[userType][install][ourPrediction]++;
       }
     }
   }
 
   console.log(matrix);
   const result = {
-    1: {},
-    2: {},
-    3: {},
-    4: {}
+    paid: {},
+    unpaid: {},
+    expert: {}
   };
   //
-  for (const approach in result) {
-    result[approach]["accurancy"] =
-      (matrix[approach][0][0] +
-        matrix[approach][1][1] +
-        matrix[approach][2][2]) /
-      matrix.total[approach];
+  for (const userType in result) {
+    result[userType]["accurancy"] =
+      (matrix[userType][0][0] +
+        matrix[userType][1][1] +
+        matrix[userType][2][2]) /
+      matrix.total[userType];
 
-    result[approach]["satisfaction"] =
-      matrix["satisfaction"][approach].value /
-      matrix["satisfaction"][approach].attendanceNumber;
+    result[userType]["satisfaction"] =
+      matrix["satisfaction"][userType].value /
+      matrix["satisfaction"][userType].attendanceNumber;
     //precisionY
-    result[approach]["precisionY"] =
-      matrix[approach][0][0] /
-      (matrix[approach][0][0] +
-        matrix[approach][1][0] +
-        matrix[approach][2][0]);
+    result[userType]["precisionY"] =
+      matrix[userType][0][0] /
+      (matrix[userType][0][0] +
+        matrix[userType][1][0] +
+        matrix[userType][2][0]);
     //precisionN
-    result[approach]["precisionN"] =
-      matrix[approach][1][1] /
-      (matrix[approach][1][1] +
-        matrix[approach][0][1] +
-        matrix[approach][2][1]);
+    result[userType]["precisionN"] =
+      matrix[userType][1][1] /
+      (matrix[userType][1][1] +
+        matrix[userType][0][1] +
+        matrix[userType][2][1]);
 
     //precisionM
-    result[approach]["precisionM"] =
-      matrix[approach][2][2] /
-      (matrix[approach][2][2] +
-        matrix[approach][0][2] +
-        matrix[approach][1][2]);
+    result[userType]["precisionM"] =
+      matrix[userType][2][2] /
+      (matrix[userType][2][2] +
+        matrix[userType][0][2] +
+        matrix[userType][1][2]);
 
     //recallY
-    result[approach]["recallY"] =
-      matrix[approach][0][0] /
-      (matrix[approach][0][0] +
-        matrix[approach][0][1] +
-        matrix[approach][0][2]);
+    result[userType]["recallY"] =
+      matrix[userType][0][0] /
+      (matrix[userType][0][0] +
+        matrix[userType][0][1] +
+        matrix[userType][0][2]);
 
     //recallN
-    result[approach]["recallN"] =
-      matrix[approach][1][1] /
-      (matrix[approach][1][1] +
-        matrix[approach][1][0] +
-        matrix[approach][1][2]);
+    result[userType]["recallN"] =
+      matrix[userType][1][1] /
+      (matrix[userType][1][1] +
+        matrix[userType][1][0] +
+        matrix[userType][1][2]);
 
     //recallM
-    result[approach]["recallM"] =
-      matrix[approach][2][2] /
-      (matrix[approach][2][2] +
-        matrix[approach][2][0] +
-        matrix[approach][2][1]);
+    result[userType]["recallM"] =
+      matrix[userType][2][2] /
+      (matrix[userType][2][2] +
+        matrix[userType][2][0] +
+        matrix[userType][2][1]);
 
-    result[approach]["F1Y"] =
-      (2 * (result[approach]["precisionY"] * result[approach]["recallY"])) /
-      (result[approach]["precisionY"] + result[approach]["recallY"]);
+    result[userType]["F1Y"] =
+      (2 * (result[userType]["precisionY"] * result[userType]["recallY"])) /
+      (result[userType]["precisionY"] + result[userType]["recallY"]);
 
-    result[approach]["F1N"] =
-      (2 * (result[approach]["precisionN"] * result[approach]["recallN"])) /
-      (result[approach]["precisionN"] + result[approach]["recallN"]);
+    result[userType]["F1N"] =
+      (2 * (result[userType]["precisionN"] * result[userType]["recallN"])) /
+      (result[userType]["precisionN"] + result[userType]["recallN"]);
 
-    result[approach]["F1M"] =
-      (2 * (result[approach]["precisionM"] * result[approach]["recallM"])) /
-      (result[approach]["precisionM"] + result[approach]["recallM"]);
+    result[userType]["F1M"] =
+      (2 * (result[userType]["precisionM"] * result[userType]["recallM"])) /
+      (result[userType]["precisionM"] + result[userType]["recallM"]);
   }
   console.log("result ", result);
   let content = "";
-  for (const approach in result) {
+  for (const userType in result) {
     content += `
-    * Approach ${approach}: 
-      Accurancy: ${result[approach]["accurancy"]} 
+    * ${userType}: 
+      Accurancy: ${result[userType]["accurancy"]} 
 
-      Satisfaction: ${result[approach]["satisfaction"]} 
+      Satisfaction: ${result[userType]["satisfaction"]} 
 
-      Precision Yes: ${result[approach]["precisionY"]}
-      Precision No: ${result[approach]["precisionN"]}
-      Precision Maybe: ${result[approach]["precisionM"]} 
+      Precision Yes: ${result[userType]["precisionY"]}
+      Precision No: ${result[userType]["precisionN"]}
+      Precision Maybe: ${result[userType]["precisionM"]} 
     
-      Recall Yes: ${result[approach]["recallY"]}
-      Recall No: ${result[approach]["recallN"]}
-      Recall Maybe: ${result[approach]["recallM"]}
+      Recall Yes: ${result[userType]["recallY"]}
+      Recall No: ${result[userType]["recallN"]}
+      Recall Maybe: ${result[userType]["recallM"]}
     
-      F1 Yes: ${result[approach]["F1Y"]}
-      F1 No: ${result[approach]["F1N"]}
-      F1 Maybe: ${result[approach]["F1M"]} \n
+      F1 Yes: ${result[userType]["F1Y"]}
+      F1 No: ${result[userType]["F1N"]}
+      F1 Maybe: ${result[userType]["F1M"]} \n
   `;
   }
   fs.writeFileSync(
@@ -1958,46 +1946,37 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
 }
 async function calculateAccuranceByTranningApps() {
   const matrix = {
-    1: [
+    paid: [
       [0, 0, 0],
       [0, 0, 0],
       [0, 0, 0]
     ],
-    2: [
+    unpaid: [
       [0, 0, 0],
       [0, 0, 0],
       [0, 0, 0]
     ],
-    3: [
+    expert: [
       [0, 0, 0],
       [0, 0, 0],
       [0, 0, 0]
     ],
-    4: [
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0]
-    ],
+
     total: {
-      1: 0,
-      2: 0,
-      3: 0,
-      4: 0
+      paid: 0,
+      unpaid: 0,
+      expert: 0
     },
     satisfaction: {
-      1: {
+      paid: {
         attendanceNumber: 0,
         value: 0
       },
-      2: {
+      unpaid: {
         attendanceNumber: 0,
         value: 0
       },
-      3: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      4: {
+      expert: {
         attendanceNumber: 0,
         value: 0
       }
@@ -2013,14 +1992,11 @@ async function calculateAccuranceByTranningApps() {
     const user = await Models.User.findById(userId);
     if (!user) continue;
 
+    // userType
+    const userType =
+      user.type === "normal" ? "expert" : user.isPaid ? "paid" : "unpaid";
     for (let j = 0; j < questions.length; j++) {
       const question = questions[j];
-      // approach
-      let approach;
-      if (j >= 10 && j < 14) approach = 1;
-      else if (j >= 14 && j < 18) approach = 2;
-      else if (j >= 18 && j < 22) approach = 3;
-      else approach = 4;
 
       // calculate satisfaction
       if (j === 13 || j === 17 || j === 21 || j === 25) {
@@ -2032,13 +2008,13 @@ async function calculateAccuranceByTranningApps() {
         );
         const value = satisfaction === 1 ? 1 : satisfaction === 2 ? 0.5 : 0;
 
-        matrix["satisfaction"][approach]["value"] =
-          matrix["satisfaction"][approach]["value"] + value;
+        matrix["satisfaction"][userType]["value"] =
+          matrix["satisfaction"][userType]["value"] + value;
 
-        matrix["satisfaction"][approach]["attendanceNumber"]++;
+        matrix["satisfaction"][userType]["attendanceNumber"]++;
       }
 
-      matrix["total"][approach]++;
+      matrix["total"][userType]++;
       // agreePredict
       let agreePredict = question.responses.find(
         item => item.name === "agreePredict"
@@ -2072,101 +2048,100 @@ async function calculateAccuranceByTranningApps() {
       let install = question.responses.find(item => item.name === "install");
       install = Number(install.value.replace("[", "").replace("]", ""));
 
-      matrix[approach][install][ourPrediction]++;
+      matrix[userType][install][ourPrediction]++;
     }
   }
 
   console.log(matrix);
   const result = {
-    1: {},
-    2: {},
-    3: {},
-    4: {}
+    paid: {},
+    unpaid: {},
+    expert: {}
   };
   //
-  for (const approach in result) {
-    result[approach]["accurancy"] =
-      (matrix[approach][0][0] +
-        matrix[approach][1][1] +
-        matrix[approach][2][2]) /
-      matrix.total[approach];
+  for (const userType in result) {
+    result[userType]["accurancy"] =
+      (matrix[userType][0][0] +
+        matrix[userType][1][1] +
+        matrix[userType][2][2]) /
+      matrix.total[userType];
 
-    result[approach]["satisfaction"] =
-      matrix["satisfaction"][approach].value /
-      matrix["satisfaction"][approach].attendanceNumber;
+    result[userType]["satisfaction"] =
+      matrix["satisfaction"][userType].value /
+      matrix["satisfaction"][userType].attendanceNumber;
     //precisionY
-    result[approach]["precisionY"] =
-      matrix[approach][0][0] /
-      (matrix[approach][0][0] +
-        matrix[approach][1][0] +
-        matrix[approach][2][0]);
+    result[userType]["precisionY"] =
+      matrix[userType][0][0] /
+      (matrix[userType][0][0] +
+        matrix[userType][1][0] +
+        matrix[userType][2][0]);
     //precisionN
-    result[approach]["precisionN"] =
-      matrix[approach][1][1] /
-      (matrix[approach][1][1] +
-        matrix[approach][0][1] +
-        matrix[approach][2][1]);
+    result[userType]["precisionN"] =
+      matrix[userType][1][1] /
+      (matrix[userType][1][1] +
+        matrix[userType][0][1] +
+        matrix[userType][2][1]);
 
     //precisionM
-    result[approach]["precisionM"] =
-      matrix[approach][2][2] /
-      (matrix[approach][2][2] +
-        matrix[approach][0][2] +
-        matrix[approach][1][2]);
+    result[userType]["precisionM"] =
+      matrix[userType][2][2] /
+      (matrix[userType][2][2] +
+        matrix[userType][0][2] +
+        matrix[userType][1][2]);
 
     //recallY
-    result[approach]["recallY"] =
-      matrix[approach][0][0] /
-      (matrix[approach][0][0] +
-        matrix[approach][0][1] +
-        matrix[approach][0][2]);
+    result[userType]["recallY"] =
+      matrix[userType][0][0] /
+      (matrix[userType][0][0] +
+        matrix[userType][0][1] +
+        matrix[userType][0][2]);
 
     //recallN
-    result[approach]["recallN"] =
-      matrix[approach][1][1] /
-      (matrix[approach][1][1] +
-        matrix[approach][1][0] +
-        matrix[approach][1][2]);
+    result[userType]["recallN"] =
+      matrix[userType][1][1] /
+      (matrix[userType][1][1] +
+        matrix[userType][1][0] +
+        matrix[userType][1][2]);
 
     //recallM
-    result[approach]["recallM"] =
-      matrix[approach][2][2] /
-      (matrix[approach][2][2] +
-        matrix[approach][2][0] +
-        matrix[approach][2][1]);
+    result[userType]["recallM"] =
+      matrix[userType][2][2] /
+      (matrix[userType][2][2] +
+        matrix[userType][2][0] +
+        matrix[userType][2][1]);
 
-    result[approach]["F1Y"] =
-      (2 * (result[approach]["precisionY"] * result[approach]["recallY"])) /
-      (result[approach]["precisionY"] + result[approach]["recallY"]);
+    result[userType]["F1Y"] =
+      (2 * (result[userType]["precisionY"] * result[userType]["recallY"])) /
+      (result[userType]["precisionY"] + result[userType]["recallY"]);
 
-    result[approach]["F1N"] =
-      (2 * (result[approach]["precisionN"] * result[approach]["recallN"])) /
-      (result[approach]["precisionN"] + result[approach]["recallN"]);
+    result[userType]["F1N"] =
+      (2 * (result[userType]["precisionN"] * result[userType]["recallN"])) /
+      (result[userType]["precisionN"] + result[userType]["recallN"]);
 
-    result[approach]["F1M"] =
-      (2 * (result[approach]["precisionM"] * result[approach]["recallM"])) /
-      (result[approach]["precisionM"] + result[approach]["recallM"]);
+    result[userType]["F1M"] =
+      (2 * (result[userType]["precisionM"] * result[userType]["recallM"])) /
+      (result[userType]["precisionM"] + result[userType]["recallM"]);
   }
 
   let content = "";
-  for (const approach in result) {
+  for (const userType in result) {
     content += `
-    * Approach ${approach}: 
-      Accurancy: ${result[approach]["accurancy"]} 
+    * ${userType}: 
+      Accurancy: ${result[userType]["accurancy"]} 
 
-      Satisfaction: ${result[approach]["satisfaction"]} 
+      Satisfaction: ${result[userType]["satisfaction"]} 
 
-      Precision Yes: ${result[approach]["precisionY"]}
-      Precision No: ${result[approach]["precisionN"]}
-      Precision Maybe: ${result[approach]["precisionM"]} 
+      Precision Yes: ${result[userType]["precisionY"]}
+      Precision No: ${result[userType]["precisionN"]}
+      Precision Maybe: ${result[userType]["precisionM"]} 
     
-      Recall Yes: ${result[approach]["recallY"]}
-      Recall No: ${result[approach]["recallN"]}
-      Recall Maybe: ${result[approach]["recallM"]}
+      Recall Yes: ${result[userType]["recallY"]}
+      Recall No: ${result[userType]["recallN"]}
+      Recall Maybe: ${result[userType]["recallM"]}
     
-      F1 Yes: ${result[approach]["F1Y"]}
-      F1 No: ${result[approach]["F1N"]}
-      F1 Maybe: ${result[approach]["F1M"]} \n
+      F1 Yes: ${result[userType]["F1Y"]}
+      F1 No: ${result[userType]["F1N"]}
+      F1 Maybe: ${result[userType]["F1M"]} \n
   `;
   }
   fs.writeFileSync("./reports/accurance-by-tranning-apps.txt", content);
@@ -2199,13 +2174,13 @@ const main = async () => {
   // await confusionMaxtrix();
   // await metricsDefinition();
 
-  for (let i = 1; i < 6; i++) {
+  for (let i = 1; i < 2; i++) {
     await Promise.all([
-      calculateAccuranceByAlgorithm("SVM", i),
-      calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
-      calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
-      calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
-      calculateAccuranceByAlgorithm("EM", i)
+      calculateAccuranceByAlgorithm("SVM", i)
+      // calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
+      // calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
+      // calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
+      // calculateAccuranceByAlgorithm("EM", i)
     ]);
 
     console.log(
@@ -2213,10 +2188,10 @@ const main = async () => {
     );
   }
 
-  await calculateAccuranceByTranningApps();
-  console.log(
-    chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
-  );
-  console.log(chalk.default.bgGreen.black("==== DONE ===="));
+  // await calculateAccuranceByTranningApps();
+  // console.log(
+  //   chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
+  // );
+  // console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
 main();
