@@ -2380,6 +2380,7 @@ const getOurPredictionApproach4 = async (
   const tranningApps = await Promise.all(
     tranningAppIds.map(appId => Models.App.findById(appId))
   );
+  console.log(1, question);
   const category = Object.entries(constants.categoryGroups).find(item => {
     const subCategories = item[1];
 
