@@ -2200,42 +2200,23 @@ const main = async () => {
   // await metricsDefinition();
 
   for (let i = 1; i < 6; i++) {
-    await calculateAccuranceByAlgorithm("SVM", i);
+    await Promise.all([
+      calculateAccuranceByAlgorithm("SVM", i),
+      calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
+      calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
+      calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
+      calculateAccuranceByAlgorithm("EM", i)
+    ]);
+
     console.log(
-      chalk.default.bgGreen.black(
-        "==== Created accurance by algorithms for SVM ===="
-      )
-    );
-    await calculateAccuranceByAlgorithm("GradientBoostingClassifier", i);
-    console.log(
-      chalk.default.bgGreen.black(
-        "==== Created accurance by algorithms for GradientBoostingClassifier ===="
-      )
-    );
-    await calculateAccuranceByAlgorithm("AdaBoostClassifier", i);
-    console.log(
-      chalk.default.bgGreen.black(
-        "==== Created accurance by algorithms for AdaBoostClassifier ===="
-      )
-    );
-    await calculateAccuranceByAlgorithm("GradientBoostingRegressor", i);
-    console.log(
-      chalk.default.bgGreen.black(
-        "==== Created accurance by algorithms for GradientBoostingRegressor ===="
-      )
-    );
-    await calculateAccuranceByAlgorithm("EM", i);
-    console.log(
-      chalk.default.bgGreen.black(
-        "==== Created accurance by algorithms for EM ===="
-      )
+      chalk.default.bgGreen.black("==== Created accurance by algorithms  ====")
     );
   }
 
-  // await calculateAccuranceByTranningApps();
-  // console.log(
-  //   chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
-  // );
+  await calculateAccuranceByTranningApps();
+  console.log(
+    chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
+  );
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
 main();
