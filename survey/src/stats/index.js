@@ -1702,7 +1702,7 @@ async function metricsDefinition() {
   );
 }
 
-async function calculateAccuranceByAlgorithm(algorithm) {
+async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
   const matrix = {
     1: [
       [0, 0, 0],
@@ -1753,13 +1753,14 @@ async function calculateAccuranceByAlgorithm(algorithm) {
 
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
+  const totalTranningApps = experimentNumber + 5;
   for (let i = 0; i < allAnswers.length; i++) {
     const answer = allAnswers[i];
     const { questions, userId } = answer;
     const user = await Models.User.findById(userId);
     if (!user || questions.length <= 10) continue;
 
-    for (let j = 10; j < questions.length; j++) {
+    for (let j = totalTranningApps; j < questions.length; j++) {
       const question = questions[j];
       // approach
       let approach;
@@ -1793,7 +1794,33 @@ async function calculateAccuranceByAlgorithm(algorithm) {
         agreePredict.value.replace("[", "").replace("]", "")
       );
 
-      const tranningAppIds = user.questionIds.slice(0, 10);
+      // get tranning apps
+      let tranningAppIds = [];
+      if (totalTranningApps === 6)
+        tranningAppIds = [
+          ...user.questionIds.slice(0, 3),
+          ...user.questionIds.slice(5, 3)
+        ];
+      else if (totalTranningApps === 7)
+        tranningAppIds = [
+          ...user.questionIds.slice(0, 4),
+          ...user.questionIds.slice(5, 3)
+        ];
+      else if (totalTranningApps === 8)
+        tranningAppIds = [
+          ...user.questionIds.slice(0, 4),
+          ...user.questionIds.slice(5, 4)
+        ];
+      else if (totalTranningApps === 9)
+        tranningAppIds = [
+          ...user.questionIds.slice(0, 5),
+          ...user.questionIds.slice(5, 4)
+        ];
+      else
+        tranningAppIds = [
+          ...user.questionIds.slice(0, 5),
+          ...user.questionIds.slice(5, 5)
+        ];
 
       let app = await Models.App.findById(user.questionIds[j]).cache(
         60 * 60 * 24 * 30
@@ -1912,7 +1939,7 @@ async function calculateAccuranceByAlgorithm(algorithm) {
   `;
   }
   fs.writeFileSync(
-    `./reports/accurance by algorithms/${algorithm}.txt`,
+    `./reports/accurance by algorithms/${algorithm}-${experimentNumber}.txt`,
     content
   );
 }
@@ -1943,7 +1970,11 @@ const main = async () => {
   // await confusionMaxtrix();
   // await metricsDefinition();
 
-  await calculateAccuranceByAlgorithm("SVM");
+  await calculateAccuranceByAlgorithm("SVM", 1);
+  await calculateAccuranceByAlgorithm("SVM", 2);
+  await calculateAccuranceByAlgorithm("SVM", 3);
+  await calculateAccuranceByAlgorithm("SVM", 4);
+  await calculateAccuranceByAlgorithm("SVM", 5);
 
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
