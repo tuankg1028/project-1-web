@@ -1745,7 +1745,7 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
   const totalTranningApps = experimentNumber + 5;
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < allAnswers.length; i++) {
     const answer = allAnswers[i];
     console.log(`Running ${i}/${allAnswers.length}`);
     const { questions, userId } = answer;
@@ -2174,13 +2174,13 @@ const main = async () => {
   // await confusionMaxtrix();
   // await metricsDefinition();
 
-  for (let i = 1; i < 2; i++) {
+  for (let i = 1; i < 6; i++) {
     await Promise.all([
-      calculateAccuranceByAlgorithm("SVM", i)
-      // calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
-      // calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
-      // calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
-      // calculateAccuranceByAlgorithm("EM", i)
+      calculateAccuranceByAlgorithm("SVM", i),
+      calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
+      calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
+      calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
+      calculateAccuranceByAlgorithm("EM", i)
     ]);
 
     console.log(
@@ -2188,10 +2188,10 @@ const main = async () => {
     );
   }
 
-  // await calculateAccuranceByTranningApps();
-  // console.log(
-  //   chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
-  // );
-  // console.log(chalk.default.bgGreen.black("==== DONE ===="));
+  await calculateAccuranceByTranningApps();
+  console.log(
+    chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
+  );
+  console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
 main();
