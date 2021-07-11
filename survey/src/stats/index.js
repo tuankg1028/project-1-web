@@ -1790,9 +1790,10 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
       let agreePredict = question.responses.find(
         item => item.name === "agreePredict"
       );
-      agreePredict = Number(
-        agreePredict.value.replace("[", "").replace("]", "")
-      );
+      if (agreePredict)
+        agreePredict = Number(
+          agreePredict.value.replace("[", "").replace("]", "")
+        );
 
       // get tranning apps
       let tranningAppIds = [];
