@@ -1800,27 +1800,27 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
       if (totalTranningApps === 6)
         tranningAppIds = [
           ...user.questionIds.slice(0, 3),
-          ...user.questionIds.slice(5, 3)
+          ...user.questionIds.slice(5, 8)
         ];
       else if (totalTranningApps === 7)
         tranningAppIds = [
           ...user.questionIds.slice(0, 4),
-          ...user.questionIds.slice(5, 3)
+          ...user.questionIds.slice(5, 8)
         ];
       else if (totalTranningApps === 8)
         tranningAppIds = [
           ...user.questionIds.slice(0, 4),
-          ...user.questionIds.slice(5, 4)
+          ...user.questionIds.slice(5, 9)
         ];
       else if (totalTranningApps === 9)
         tranningAppIds = [
           ...user.questionIds.slice(0, 5),
-          ...user.questionIds.slice(5, 4)
+          ...user.questionIds.slice(5, 9)
         ];
       else
         tranningAppIds = [
           ...user.questionIds.slice(0, 5),
-          ...user.questionIds.slice(5, 5)
+          ...user.questionIds.slice(5, 10)
         ];
       console.log("tranningAppIds", tranningAppIds);
       let app = await Models.App.findById(user.questionIds[j]).cache(
