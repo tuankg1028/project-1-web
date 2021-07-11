@@ -2415,7 +2415,7 @@ const getOurPredictionApproach4 = async (
     return [
       index + 1,
       Object.keys(constants.categoryGroups).indexOf(category) + 1,
-      label
+      Number(label)
     ];
   });
   // app and categor(view 1)
@@ -2459,7 +2459,7 @@ const getOurPredictionApproach4 = async (
     if (!questionInstallation) throw Error("Answer not found");
     const label = questionInstallation.value;
 
-    return [...Object.values(apisModel), label];
+    return [...Object.values(apisModel), Number(label)];
   });
   const view2Test = tranningApps.map((tranningApp, index) => {
     let { id, apisModel } = tranningApp;
@@ -2493,7 +2493,7 @@ const getOurPredictionApproach4 = async (
     return [
       ...buildDataCollectionAndThirdParty(collectionData, "collection"),
       ...buildDataCollectionAndThirdParty(thirdPartyData, "thirdParty"),
-      label
+      Number(label)
     ];
   });
   const view3Test = tranningApps.map((tranningApp, index) => {
