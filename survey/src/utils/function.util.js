@@ -2468,7 +2468,7 @@ const getOurPredictionApproach4 = async (
 
     return [...Object.values(apisModel), -1];
   });
-  view2Test.push([...Object.values(question.apisModel), -1]);
+  view2Test.push([...Object.values(JSON.parse(question.apisModel)), -1]);
 
   // collection and third party
   const view3Tranning = tranningApps.map((tranningApp, index) => {
