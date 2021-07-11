@@ -2199,43 +2199,43 @@ const main = async () => {
   // await confusionMaxtrix();
   // await metricsDefinition();
 
-  for (let i = 1; i < 6; i++) {
+  for (let i = 1; i < 2; i++) {
     await calculateAccuranceByAlgorithm("SVM", i);
     console.log(
       chalk.default.bgGreen.black(
         "==== Created accurance by algorithms for SVM ===="
       )
     );
-    await calculateAccuranceByAlgorithm("GradientBoostingClassifier", i);
-    console.log(
-      chalk.default.bgGreen.black(
-        "==== Created accurance by algorithms for GradientBoostingClassifier ===="
-      )
-    );
-    await calculateAccuranceByAlgorithm("AdaBoostClassifier", i);
-    console.log(
-      chalk.default.bgGreen.black(
-        "==== Created accurance by algorithms for AdaBoostClassifier ===="
-      )
-    );
-    await calculateAccuranceByAlgorithm("GradientBoostingRegressor", i);
-    console.log(
-      chalk.default.bgGreen.black(
-        "==== Created accurance by algorithms for GradientBoostingRegressor ===="
-      )
-    );
-    await calculateAccuranceByAlgorithm("EM", i);
-    console.log(
-      chalk.default.bgGreen.black(
-        "==== Created accurance by algorithms for EM ===="
-      )
-    );
+    // await calculateAccuranceByAlgorithm("GradientBoostingClassifier", i);
+    // console.log(
+    //   chalk.default.bgGreen.black(
+    //     "==== Created accurance by algorithms for GradientBoostingClassifier ===="
+    //   )
+    // );
+    // await calculateAccuranceByAlgorithm("AdaBoostClassifier", i);
+    // console.log(
+    //   chalk.default.bgGreen.black(
+    //     "==== Created accurance by algorithms for AdaBoostClassifier ===="
+    //   )
+    // );
+    // await calculateAccuranceByAlgorithm("GradientBoostingRegressor", i);
+    // console.log(
+    //   chalk.default.bgGreen.black(
+    //     "==== Created accurance by algorithms for GradientBoostingRegressor ===="
+    //   )
+    // );
+    // await calculateAccuranceByAlgorithm("EM", i);
+    // console.log(
+    //   chalk.default.bgGreen.black(
+    //     "==== Created accurance by algorithms for EM ===="
+    //   )
+    // );
   }
 
-  await calculateAccuranceByTranningApps();
-  console.log(
-    chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
-  );
+  // await calculateAccuranceByTranningApps();
+  // console.log(
+  //   chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
+  // );
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
 main();
