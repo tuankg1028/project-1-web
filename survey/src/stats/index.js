@@ -1754,7 +1754,7 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
   const totalTranningApps = experimentNumber + 5;
-  for (let i = 0; i < allAnswers.length; i++) {
+  for (let i = 0; i < 10; i++) {
     const answer = allAnswers[i];
     console.log(`Running ${i}/${allAnswers.length}`);
     const { questions, userId } = answer;
@@ -1844,7 +1844,7 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
       } catch (err) {
         continue;
       }
-
+      console.log(1, ourPrediction);
       if (agreePredict) {
         matrix[approach][ourPrediction][ourPrediction]++;
       } else {
