@@ -1971,12 +1971,10 @@ const main = async () => {
   // await confusionMaxtrix();
   // await metricsDefinition();
 
-  await Promise.all([
-    calculateAccuranceByAlgorithm("SVM", 5),
-    calculateAccuranceByAlgorithm("GradientBoostingClassifier", 5),
-    calculateAccuranceByAlgorithm("AdaBoostClassifier", 5),
-    calculateAccuranceByAlgorithm("GradientBoostingRegressor", 5)
-  ]);
+  await calculateAccuranceByAlgorithm("SVM", 5);
+  await calculateAccuranceByAlgorithm("GradientBoostingClassifier", 5);
+  await calculateAccuranceByAlgorithm("AdaBoostClassifier", 5);
+  await calculateAccuranceByAlgorithm("GradientBoostingRegressor", 5);
 
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };

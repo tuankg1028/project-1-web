@@ -2630,7 +2630,7 @@ const getOurPredictionApproach4 = async (
   }
 
   // eslint-disable-next-line no-console
-  console.log("Step 1 in approach 3 with data: ", data);
+  console.log("Step 1 in approach 3 with data: ", data, userAnswer.id);
 
   const tranningSet = Array.from({ length: tranningApps.length }, (v, i) => {
     const { id } = tranningApps[i];
