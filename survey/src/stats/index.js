@@ -1756,6 +1756,7 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
   const totalTranningApps = experimentNumber + 5;
   for (let i = 0; i < allAnswers.length; i++) {
     const answer = allAnswers[i];
+    console.log(`Running ${i}/${allAnswers.length}`);
     const { questions, userId } = answer;
     const user = await Models.User.findById(userId);
     if (!user) continue;
