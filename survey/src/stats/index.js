@@ -1758,7 +1758,7 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
     const answer = allAnswers[i];
     const { questions, userId } = answer;
     const user = await Models.User.findById(userId);
-    if (!user || questions.length <= 10) continue;
+    if (!user) continue;
 
     for (let j = totalTranningApps; j < questions.length; j++) {
       const question = questions[j];
@@ -1800,39 +1800,49 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
       if (totalTranningApps === 6)
         tranningAppIds = [
           ...user.questionIds.slice(0, 3),
-          ...user.questionIds.slice(5, 8)
+          ...user.questionIds.slice(5, 8),
+          ...(algorithm === "EM" && user.questionIds.slice(10, j + 1))
         ];
       else if (totalTranningApps === 7)
         tranningAppIds = [
           ...user.questionIds.slice(0, 4),
-          ...user.questionIds.slice(5, 8)
+          ...user.questionIds.slice(5, 8),
+          ...(algorithm === "EM" && user.questionIds.slice(10, j + 1))
         ];
       else if (totalTranningApps === 8)
         tranningAppIds = [
           ...user.questionIds.slice(0, 4),
-          ...user.questionIds.slice(5, 9)
+          ...user.questionIds.slice(5, 9),
+          ...(algorithm === "EM" && user.questionIds.slice(10, j + 1))
         ];
       else if (totalTranningApps === 9)
         tranningAppIds = [
           ...user.questionIds.slice(0, 5),
-          ...user.questionIds.slice(5, 9)
+          ...user.questionIds.slice(5, 9),
+          ...(algorithm === "EM" && user.questionIds.slice(10, j + 1))
         ];
       else
         tranningAppIds = [
           ...user.questionIds.slice(0, 5),
-          ...user.questionIds.slice(5, 10)
+          ...user.questionIds.slice(5, 10),
+          ...(algorithm === "EM" && user.questionIds.slice(10, j + 1))
         ];
-      console.log("tranningAppIds", tranningAppIds);
+
       let app = await Models.App.findById(user.questionIds[j]).cache(
         60 * 60 * 24 * 30
       ); // 1 month;
-      // ourPrediction
-      const ourPrediction = await Utils.Function.getOurPredictionApproach4(
-        tranningAppIds,
-        answer,
-        app,
-        algorithm
-      );
+
+      let ourPrediction;
+      try {
+        ourPrediction = await Utils.Function.getOurPredictionApproach1(
+          tranningAppIds,
+          answer,
+          app,
+          algorithm
+        );
+      } catch (err) {
+        continue;
+      }
 
       if (agreePredict) {
         matrix[approach][ourPrediction][ourPrediction]++;
@@ -1971,10 +1981,13 @@ const main = async () => {
   // await confusionMaxtrix();
   // await metricsDefinition();
 
-  await calculateAccuranceByAlgorithm("SVM", 5);
-  await calculateAccuranceByAlgorithm("GradientBoostingClassifier", 5);
-  await calculateAccuranceByAlgorithm("AdaBoostClassifier", 5);
-  await calculateAccuranceByAlgorithm("GradientBoostingRegressor", 5);
+  for (let i = 1; i < 6; i++) {
+    await calculateAccuranceByAlgorithm("SVM", i);
+    await calculateAccuranceByAlgorithm("GradientBoostingClassifier", i);
+    await calculateAccuranceByAlgorithm("AdaBoostClassifier", i);
+    await calculateAccuranceByAlgorithm("GradientBoostingRegressor", i);
+    await calculateAccuranceByAlgorithm("EM", i);
+  }
 
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };

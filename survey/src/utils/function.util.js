@@ -2524,25 +2524,6 @@ const getOurPredictionApproach4 = async (
   });
   let data = [];
   switch (algorithm) {
-    case "EM":
-      data = await Promise.all([
-        // view1
-        Services.Prediction.getPredictEM({
-          train: view1Tranning,
-          test: view1Test
-        }),
-        // view2
-        Services.Prediction.getPredictEM({
-          train: view2Tranning,
-          test: view2Test
-        }),
-        // appAndPP
-        Services.Prediction.getPredictEM({
-          train: view3Tranning,
-          test: view3Test
-        })
-      ]);
-      break;
     // SVM
     case "SVM":
       data = await Promise.all([
@@ -2626,6 +2607,26 @@ const getOurPredictionApproach4 = async (
         })
       ]);
 
+      break;
+
+    default:
+      data = await Promise.all([
+        // view1
+        Services.Prediction.getPredictEM({
+          train: view1Tranning,
+          test: view1Test
+        }),
+        // view2
+        Services.Prediction.getPredictEM({
+          train: view2Tranning,
+          test: view2Test
+        }),
+        // appAndPP
+        Services.Prediction.getPredictEM({
+          train: view3Tranning,
+          test: view3Test
+        })
+      ]);
       break;
   }
 
@@ -2671,12 +2672,6 @@ const getOurPredictionApproach4 = async (
   );
   let predict;
   switch (algorithm) {
-    case "EM":
-      predict = await Services.Prediction.getPredictEM({
-        train: tranningSet,
-        test: testSet
-      });
-      break;
     // SVM
     case "SVM":
       predict = await Services.Prediction.getPredictSVM({
@@ -2705,6 +2700,12 @@ const getOurPredictionApproach4 = async (
         test: testSet
       });
       break;
+    default:
+      predict = await Services.Prediction.getPredictEM({
+        train: tranningSet,
+        test: testSet
+      });
+      break;
   }
 
   // eslint-disable-next-line no-console
@@ -2713,6 +2714,106 @@ const getOurPredictionApproach4 = async (
   // return predict ? predict[0][0] : 0;
 };
 
+const getOurPredictionApproach1 = async (
+  tranningAppIds,
+  userAnswer,
+  question,
+  algorithm = "EM"
+) => {
+  const tranningApps = await Promise.all(
+    tranningAppIds.map(appId => Models.App.findById(appId))
+  );
+
+  const category = Object.entries(constants.categoryGroups).find(item => {
+    const subCategories = item[1];
+
+    if (subCategories.includes(question.categoryName)) return true;
+    return false;
+  })[0];
+
+  const traningSet = tranningApps.map(tranningApp => {
+    let { PPModel, apisModel, id } = tranningApp;
+
+    PPModel = JSON.parse(PPModel);
+    apisModel = JSON.parse(apisModel);
+
+    const userAnswerQuestion = userAnswer.questions.find(
+      question => question.id === id
+    );
+    let questionInstallation = userAnswerQuestion.responses.find(
+      item => item.name === "install"
+    );
+    if (!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(
+        item => item.name === "agreePredict"
+      );
+
+    if (!questionInstallation) throw Error("Answer not found");
+    const label = questionInstallation.value;
+
+    return [
+      ...Object.values(PPModel).map(item => item.toString()),
+      ...Object.values(apisModel).map(item => item.toString()),
+      label.toString()
+    ];
+  });
+
+  const testSet = [
+    [
+      ...Object.values(question.PPModel).map(item => item.toString()),
+      ...Object.values(question.apisModel).map(item => item.toString()),
+      "-1"
+    ]
+  ];
+
+  // eslint-disable-next-line no-console
+  console.log(
+    "Step 2 in approach 3 with tranning and test: ",
+    tranningSet,
+    testSet
+  );
+  let predict;
+  switch (algorithm) {
+    // SVM
+    case "SVM":
+      predict = await Services.Prediction.getPredictEM({
+        train: traningSet,
+        test: testSet
+      });
+      break;
+    // GradientBoostingClassifier
+    case "GradientBoostingClassifier":
+      predict = await Services.Prediction.getPredictGradientBoostingClassifier({
+        train: tranningSet,
+        test: testSet
+      });
+      break;
+    // AdaBoostClassifier
+    case "AdaBoostClassifier":
+      predict = await Services.Prediction.getPredictAdaBoostClassifier({
+        train: tranningSet,
+        test: testSet
+      });
+      break;
+    // GradientBoostingRegressor
+    case "GradientBoostingRegressor":
+      predict = await Services.Prediction.getPredictGradientBoostingRegressor({
+        train: tranningSet,
+        test: testSet
+      });
+      break;
+    default:
+      predict = await Services.Prediction.getPredictEM({
+        train: tranningSet,
+        test: testSet
+      });
+      break;
+  }
+
+  // eslint-disable-next-line no-console
+  console.log("Step 3 Prediction is: ", predict);
+  return predict[0][0];
+};
 const buildDataCollectionAndThirdParty = (data, type) => {
   let flattendata = {};
   flattenTree(data, "children", flattendata);
@@ -2791,6 +2892,7 @@ export default {
   getGroupApi,
   getPersonalDataType,
   getTranningData,
+  getOurPredictionApproach1,
   getOurPredictionApproach3,
   getOurPredictionApproach4
 };
