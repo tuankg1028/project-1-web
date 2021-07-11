@@ -1834,17 +1834,17 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
       ); // 1 month;
 
       let ourPrediction;
-      try {
-        ourPrediction = await Utils.Function.getOurPredictionApproach1(
-          tranningAppIds,
-          answer,
-          app,
-          algorithm
-        );
-      } catch (err) {
-        console.log(err);
-        continue;
-      }
+      // try {
+      ourPrediction = await Utils.Function.getOurPredictionApproach1(
+        tranningAppIds,
+        answer,
+        app,
+        algorithm
+      );
+      // } catch (err) {
+      //   console.log(err);
+      //   continue;
+      // }
       console.log(1, ourPrediction);
       if (agreePredict) {
         matrix[approach][ourPrediction][ourPrediction]++;

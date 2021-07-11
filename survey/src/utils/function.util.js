@@ -2760,8 +2760,12 @@ const getOurPredictionApproach1 = async (
 
   const testSet = [
     [
-      ...Object.values(question.PPModel).map(item => item.toString()),
-      ...Object.values(question.apisModel).map(item => item.toString()),
+      ...Object.values(JSON.parse(question.PPModel)).map(item =>
+        item.toString()
+      ),
+      ...Object.values(JSON.parse(question.apisModel)).map(item =>
+        item.toString()
+      ),
       "-1"
     ]
   ];
