@@ -1802,7 +1802,7 @@ async function calculateAccuranceByAlgorithm(algorithm) {
       const ourPrediction = await Utils.Function.getOurPredictionApproach4(
         tranningAppIds,
         answer,
-        question,
+        app,
         algorithm
       );
 
