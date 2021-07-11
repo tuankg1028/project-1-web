@@ -2001,8 +2001,8 @@ async function calculateAccuranceByTranningApps() {
       }
     }
   };
+  const questionPrediction = [];
   let allAnswers = await Models.Answer.find();
-
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
   for (let i = 0; i < allAnswers.length; i++) {
@@ -2051,25 +2051,26 @@ async function calculateAccuranceByTranningApps() {
 
       let ourPrediction;
       try {
-        ourPrediction = await Utils.Function.getOurPredictionApproach1(
+        ourPrediction = await Utils.Function.getOurPredictionApproach0(
           tranningAppIds,
           answer,
           app,
-          algorithm
+          questionPrediction
         );
       } catch (err) {
         continue;
       }
 
-      if (agreePredict) {
-        matrix[approach][ourPrediction][ourPrediction]++;
-      } else {
-        //install
-        let install = question.responses.find(item => item.name === "install");
-        install = Number(install.value.replace("[", "").replace("]", ""));
+      questionPrediction.push({
+        id: question.id,
+        value: ourPrediction
+      });
 
-        matrix[approach][install][ourPrediction]++;
-      }
+      //install
+      let install = question.responses.find(item => item.name === "install");
+      install = Number(install.value.replace("[", "").replace("]", ""));
+
+      matrix[approach][install][ourPrediction]++;
     }
   }
 
@@ -2166,10 +2167,7 @@ async function calculateAccuranceByTranningApps() {
       F1 Maybe: ${result[approach]["F1M"]} \n
   `;
   }
-  fs.writeFileSync(
-    `./reports/accurance by algorithms/${algorithm}-${experimentNumber}.txt`,
-    content
-  );
+  fs.writeFileSync("./reports/accurance-by-tranning-apps.txt", content);
 }
 
 // File 1 xem có bao nhiều người chọn theo từng phương án (Yes, No, Maybe)
@@ -2201,13 +2199,41 @@ const main = async () => {
 
   for (let i = 1; i < 6; i++) {
     await calculateAccuranceByAlgorithm("SVM", i);
+    console.log(
+      chalk.default.bgGreen.black(
+        "==== Created accurance by algorithms for SVM ===="
+      )
+    );
     await calculateAccuranceByAlgorithm("GradientBoostingClassifier", i);
+    console.log(
+      chalk.default.bgGreen.black(
+        "==== Created accurance by algorithms for GradientBoostingClassifier ===="
+      )
+    );
     await calculateAccuranceByAlgorithm("AdaBoostClassifier", i);
+    console.log(
+      chalk.default.bgGreen.black(
+        "==== Created accurance by algorithms for AdaBoostClassifier ===="
+      )
+    );
     await calculateAccuranceByAlgorithm("GradientBoostingRegressor", i);
+    console.log(
+      chalk.default.bgGreen.black(
+        "==== Created accurance by algorithms for GradientBoostingRegressor ===="
+      )
+    );
     await calculateAccuranceByAlgorithm("EM", i);
+    console.log(
+      chalk.default.bgGreen.black(
+        "==== Created accurance by algorithms for EM ===="
+      )
+    );
   }
 
-  // await calculateAccuranceByTranningApps();
+  await calculateAccuranceByTranningApps();
+  console.log(
+    chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
+  );
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
 main();
