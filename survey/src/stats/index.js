@@ -2232,10 +2232,10 @@ const main = async () => {
     );
   }
 
-  // await calculateAccuranceByTranningApps();
-  // console.log(
-  //   chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
-  // );
+  await calculateAccuranceByTranningApps();
+  console.log(
+    chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
+  );
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
 main();
