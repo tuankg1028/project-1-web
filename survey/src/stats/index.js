@@ -1786,7 +1786,6 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
         matrix["satisfaction"][approach]["attendanceNumber"]++;
       }
 
-      matrix["total"][approach]++;
       // agreePredict
       let agreePredict = question.responses.find(
         item => item.name === "agreePredict"
@@ -1834,17 +1833,18 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
       ); // 1 month;
 
       let ourPrediction;
-      // try {
-      ourPrediction = await Utils.Function.getOurPredictionApproach1(
-        tranningAppIds,
-        answer,
-        app,
-        algorithm
-      );
-      // } catch (err) {
-      //   console.log(err);
-      //   continue;
-      // }
+      try {
+        ourPrediction = await Utils.Function.getOurPredictionApproach1(
+          tranningAppIds,
+          answer,
+          app,
+          algorithm
+        );
+      } catch (err) {
+        console.log(err);
+        continue;
+      }
+      matrix["total"][approach]++;
       console.log(1, ourPrediction);
       if (agreePredict) {
         matrix[approach][ourPrediction][ourPrediction]++;
@@ -2200,35 +2200,16 @@ const main = async () => {
   // await metricsDefinition();
 
   for (let i = 1; i < 6; i++) {
-    await calculateAccuranceByAlgorithm("SVM", i);
+    await Promise.all([
+      calculateAccuranceByAlgorithm("SVM", i),
+      calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
+      calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
+      calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
+      calculateAccuranceByAlgorithm("EM", i)
+    ]);
+
     console.log(
-      chalk.default.bgGreen.black(
-        "==== Created accurance by algorithms for SVM ===="
-      )
-    );
-    await calculateAccuranceByAlgorithm("GradientBoostingClassifier", i);
-    console.log(
-      chalk.default.bgGreen.black(
-        "==== Created accurance by algorithms for GradientBoostingClassifier ===="
-      )
-    );
-    await calculateAccuranceByAlgorithm("AdaBoostClassifier", i);
-    console.log(
-      chalk.default.bgGreen.black(
-        "==== Created accurance by algorithms for AdaBoostClassifier ===="
-      )
-    );
-    await calculateAccuranceByAlgorithm("GradientBoostingRegressor", i);
-    console.log(
-      chalk.default.bgGreen.black(
-        "==== Created accurance by algorithms for GradientBoostingRegressor ===="
-      )
-    );
-    await calculateAccuranceByAlgorithm("EM", i);
-    console.log(
-      chalk.default.bgGreen.black(
-        "==== Created accurance by algorithms for EM ===="
-      )
+      chalk.default.bgGreen.black("==== Created accurance by algorithms====")
     );
   }
 
