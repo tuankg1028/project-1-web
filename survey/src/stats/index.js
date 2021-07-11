@@ -1929,7 +1929,7 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
       (2 * (result[approach]["precisionM"] * result[approach]["recallM"])) /
       (result[approach]["precisionM"] + result[approach]["recallM"]);
   }
-
+  console.log("result ", result);
   let content = "";
   for (const approach in result) {
     content += `
