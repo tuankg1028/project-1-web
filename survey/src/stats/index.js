@@ -1420,17 +1420,17 @@ async function metricsDefinition() {
         matrix["expert"][approach][2][0]);
     //precisionN
     result["expert"][approach]["precisionN"] =
-      matrix["expert"][approach][1][1] /
-      (matrix["expert"][approach][1][1] +
-        matrix["expert"][approach][0][1] +
-        matrix["expert"][approach][2][1]);
+      matrix["expert"][approach][0][0] /
+      (matrix["expert"][approach][0][0] +
+        matrix["expert"][approach][1][0] +
+        matrix["expert"][approach][2][0]);
 
     //precisionM
     result["expert"][approach]["precisionM"] =
       matrix["expert"][approach][2][2] /
       (matrix["expert"][approach][2][2] +
-        matrix["expert"][approach][0][2] +
-        matrix["expert"][approach][1][2]);
+        matrix["expert"][approach][1][2] +
+        matrix["expert"][approach][0][2]);
 
     //recallY
     result["expert"][approach]["recallY"] =
@@ -1488,37 +1488,37 @@ async function metricsDefinition() {
       matrix["satisfactionpaid"][approach].attendanceNumber;
     //precisionY
     result["paid"][approach]["precisionY"] =
-      matrix["paid"][approach][0][0] /
-      (matrix["paid"][approach][0][0] +
-        matrix["paid"][approach][1][0] +
-        matrix["paid"][approach][2][0]);
-    //precisionN
-    result["paid"][approach]["precisionN"] =
       matrix["paid"][approach][1][1] /
       (matrix["paid"][approach][1][1] +
         matrix["paid"][approach][0][1] +
         matrix["paid"][approach][2][1]);
+    //precisionN
+    result["paid"][approach]["precisionN"] =
+      matrix["paid"][approach][0][0] /
+      (matrix["paid"][approach][0][0] +
+        matrix["paid"][approach][1][0] +
+        matrix["paid"][approach][2][0]);
 
     //precisionM
     result["paid"][approach]["precisionM"] =
       matrix["paid"][approach][2][2] /
       (matrix["paid"][approach][2][2] +
-        matrix["paid"][approach][0][2] +
-        matrix["paid"][approach][1][2]);
+        matrix["paid"][approach][1][2] +
+        matrix["paid"][approach][0][2]);
 
     //recallY
     result["paid"][approach]["recallY"] =
-      matrix["paid"][approach][0][0] /
-      (matrix["paid"][approach][0][0] +
-        matrix["paid"][approach][0][1] +
-        matrix["paid"][approach][0][2]);
-
-    //recallN
-    result["paid"][approach]["recallN"] =
       matrix["paid"][approach][1][1] /
       (matrix["paid"][approach][1][1] +
         matrix["paid"][approach][1][0] +
         matrix["paid"][approach][1][2]);
+
+    //recallN
+    result["paid"][approach]["recallN"] =
+      matrix["paid"][approach][0][0] /
+      (matrix["paid"][approach][0][0] +
+        matrix["paid"][approach][0][1] +
+        matrix["paid"][approach][0][2]);
 
     //recallM
     result["paid"][approach]["recallM"] =
@@ -1565,33 +1565,34 @@ async function metricsDefinition() {
       (matrix["unpaid"][approach][0][0] +
         matrix["unpaid"][approach][1][0] +
         matrix["unpaid"][approach][2][0]);
+
     //precisionN
     result["unpaid"][approach]["precisionN"] =
-      matrix["unpaid"][approach][1][1] /
-      (matrix["unpaid"][approach][1][1] +
-        matrix["unpaid"][approach][0][1] +
-        matrix["unpaid"][approach][2][1]);
+      matrix["unpaid"][approach][0][0] /
+      (matrix["unpaid"][approach][0][0] +
+        matrix["unpaid"][approach][1][0] +
+        matrix["unpaid"][approach][2][0]);
 
     //precisionM
     result["unpaid"][approach]["precisionM"] =
       matrix["unpaid"][approach][2][2] /
       (matrix["unpaid"][approach][2][2] +
-        matrix["unpaid"][approach][0][2] +
-        matrix["unpaid"][approach][1][2]);
+        matrix["unpaid"][approach][1][2] +
+        matrix["unpaid"][approach][0][2]);
 
     //recallY
     result["unpaid"][approach]["recallY"] =
-      matrix["unpaid"][approach][0][0] /
-      (matrix["unpaid"][approach][0][0] +
-        matrix["unpaid"][approach][0][1] +
-        matrix["unpaid"][approach][0][2]);
-
-    //recallN
-    result["unpaid"][approach]["recallN"] =
       matrix["unpaid"][approach][1][1] /
       (matrix["unpaid"][approach][1][1] +
         matrix["unpaid"][approach][1][0] +
         matrix["unpaid"][approach][1][2]);
+
+    //recallN
+    result["unpaid"][approach]["recallN"] =
+      matrix["unpaid"][approach][0][0] /
+      (matrix["unpaid"][approach][0][0] +
+        matrix["unpaid"][approach][0][1] +
+        matrix["unpaid"][approach][0][2]);
 
     //recallM
     result["unpaid"][approach]["recallM"] =
@@ -1870,33 +1871,34 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
       (matrix[userType][0][0] +
         matrix[userType][1][0] +
         matrix[userType][2][0]);
+
     //precisionN
     result[userType]["precisionN"] =
-      matrix[userType][1][1] /
-      (matrix[userType][1][1] +
-        matrix[userType][0][1] +
-        matrix[userType][2][1]);
+      matrix[userType][0][0] /
+      (matrix[userType][0][0] +
+        matrix[userType][1][0] +
+        matrix[userType][2][0]);
 
     //precisionM
     result[userType]["precisionM"] =
       matrix[userType][2][2] /
       (matrix[userType][2][2] +
-        matrix[userType][0][2] +
-        matrix[userType][1][2]);
+        matrix[userType][1][2] +
+        matrix[userType][0][2]);
 
     //recallY
     result[userType]["recallY"] =
-      matrix[userType][0][0] /
-      (matrix[userType][0][0] +
-        matrix[userType][0][1] +
-        matrix[userType][0][2]);
-
-    //recallN
-    result[userType]["recallN"] =
       matrix[userType][1][1] /
       (matrix[userType][1][1] +
         matrix[userType][1][0] +
         matrix[userType][1][2]);
+
+    //recallN
+    result[userType]["recallN"] =
+      matrix[userType][0][0] /
+      (matrix[userType][0][0] +
+        matrix[userType][0][1] +
+        matrix[userType][0][2]);
 
     //recallM
     result[userType]["recallM"] =
@@ -2104,33 +2106,34 @@ async function calculateAccuranceByTranningApps() {
       (matrix["expert"][approach][0][0] +
         matrix["expert"][approach][1][0] +
         matrix["expert"][approach][2][0]);
+
     //precisionN
     result["expert"][approach]["precisionN"] =
-      matrix["expert"][approach][1][1] /
-      (matrix["expert"][approach][1][1] +
-        matrix["expert"][approach][0][1] +
-        matrix["expert"][approach][2][1]);
+      matrix["expert"][approach][0][0] /
+      (matrix["expert"][approach][0][0] +
+        matrix["expert"][approach][1][0] +
+        matrix["expert"][approach][2][0]);
 
     //precisionM
     result["expert"][approach]["precisionM"] =
       matrix["expert"][approach][2][2] /
       (matrix["expert"][approach][2][2] +
-        matrix["expert"][approach][0][2] +
-        matrix["expert"][approach][1][2]);
+        matrix["expert"][approach][1][2] +
+        matrix["expert"][approach][0][2]);
 
     //recallY
     result["expert"][approach]["recallY"] =
-      matrix["expert"][approach][0][0] /
-      (matrix["expert"][approach][0][0] +
-        matrix["expert"][approach][0][1] +
-        matrix["expert"][approach][0][2]);
-
-    //recallN
-    result["expert"][approach]["recallN"] =
       matrix["expert"][approach][1][1] /
       (matrix["expert"][approach][1][1] +
         matrix["expert"][approach][1][0] +
         matrix["expert"][approach][1][2]);
+
+    //recallN
+    result["expert"][approach]["recallN"] =
+      matrix["expert"][approach][0][0] /
+      (matrix["expert"][approach][0][0] +
+        matrix["expert"][approach][0][1] +
+        matrix["expert"][approach][0][2]);
 
     //recallM
     result["expert"][approach]["recallM"] =
@@ -2178,33 +2181,34 @@ async function calculateAccuranceByTranningApps() {
       (matrix["paid"][approach][0][0] +
         matrix["paid"][approach][1][0] +
         matrix["paid"][approach][2][0]);
+
     //precisionN
     result["paid"][approach]["precisionN"] =
-      matrix["paid"][approach][1][1] /
-      (matrix["paid"][approach][1][1] +
-        matrix["paid"][approach][0][1] +
-        matrix["paid"][approach][2][1]);
+      matrix["paid"][approach][0][0] /
+      (matrix["paid"][approach][0][0] +
+        matrix["paid"][approach][1][0] +
+        matrix["paid"][approach][2][0]);
 
     //precisionM
     result["paid"][approach]["precisionM"] =
       matrix["paid"][approach][2][2] /
       (matrix["paid"][approach][2][2] +
-        matrix["paid"][approach][0][2] +
-        matrix["paid"][approach][1][2]);
+        matrix["paid"][approach][1][2] +
+        matrix["paid"][approach][0][2]);
 
     //recallY
     result["paid"][approach]["recallY"] =
-      matrix["paid"][approach][0][0] /
-      (matrix["paid"][approach][0][0] +
-        matrix["paid"][approach][0][1] +
-        matrix["paid"][approach][0][2]);
-
-    //recallN
-    result["paid"][approach]["recallN"] =
       matrix["paid"][approach][1][1] /
       (matrix["paid"][approach][1][1] +
         matrix["paid"][approach][1][0] +
         matrix["paid"][approach][1][2]);
+
+    //recallN
+    result["paid"][approach]["recallN"] =
+      matrix["paid"][approach][0][0] /
+      (matrix["paid"][approach][0][0] +
+        matrix["paid"][approach][0][1] +
+        matrix["paid"][approach][0][2]);
 
     //recallM
     result["paid"][approach]["recallM"] =
@@ -2251,33 +2255,34 @@ async function calculateAccuranceByTranningApps() {
       (matrix["unpaid"][approach][0][0] +
         matrix["unpaid"][approach][1][0] +
         matrix["unpaid"][approach][2][0]);
+
     //precisionN
     result["unpaid"][approach]["precisionN"] =
-      matrix["unpaid"][approach][1][1] /
-      (matrix["unpaid"][approach][1][1] +
-        matrix["unpaid"][approach][0][1] +
-        matrix["unpaid"][approach][2][1]);
+      matrix["unpaid"][approach][0][0] /
+      (matrix["unpaid"][approach][0][0] +
+        matrix["unpaid"][approach][1][0] +
+        matrix["unpaid"][approach][2][0]);
 
     //precisionM
     result["unpaid"][approach]["precisionM"] =
       matrix["unpaid"][approach][2][2] /
       (matrix["unpaid"][approach][2][2] +
-        matrix["unpaid"][approach][0][2] +
-        matrix["unpaid"][approach][1][2]);
+        matrix["unpaid"][approach][1][2] +
+        matrix["unpaid"][approach][0][2]);
 
     //recallY
     result["unpaid"][approach]["recallY"] =
-      matrix["unpaid"][approach][0][0] /
-      (matrix["unpaid"][approach][0][0] +
-        matrix["unpaid"][approach][0][1] +
-        matrix["unpaid"][approach][0][2]);
-
-    //recallN
-    result["unpaid"][approach]["recallN"] =
       matrix["unpaid"][approach][1][1] /
       (matrix["unpaid"][approach][1][1] +
         matrix["unpaid"][approach][1][0] +
         matrix["unpaid"][approach][1][2]);
+
+    //recallN
+    result["unpaid"][approach]["recallN"] =
+      matrix["unpaid"][approach][0][0] /
+      (matrix["unpaid"][approach][0][0] +
+        matrix["unpaid"][approach][0][1] +
+        matrix["unpaid"][approach][0][2]);
 
     //recallM
     result["unpaid"][approach]["recallM"] =
