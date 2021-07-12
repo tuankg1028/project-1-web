@@ -2103,14 +2103,6 @@ async function calculateAccuranceByTranningApps() {
 
         const question = questions[j];
 
-        // agreePredict
-        let agreePredict = question.responses.find(
-          item => item.name === "agreePredict"
-        );
-        agreePredict = Number(
-          agreePredict.value.replace("[", "").replace("]", "")
-        );
-
         // ourPrediction
         let app = await Models.App.findById(user.questionIds[j]).cache(
           60 * 60 * 24 * 30
@@ -2131,17 +2123,11 @@ async function calculateAccuranceByTranningApps() {
           value: ourPrediction
         });
 
-        if (agreePredict) {
-          matrix[userType][approach][ourPrediction][ourPrediction]++;
-        } else {
-          //install
-          let install = question.responses.find(
-            item => item.name === "install"
-          );
-          install = Number(install.value.replace("[", "").replace("]", ""));
+        //install
+        let install = question.responses.find(item => item.name === "install");
+        install = Number(install.value.replace("[", "").replace("]", ""));
 
-          matrix[userType][approach][install][ourPrediction]++;
-        }
+        matrix[userType][approach][install][ourPrediction]++;
       }
     }
   }
