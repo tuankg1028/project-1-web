@@ -1995,24 +1995,8 @@ async function calculateAccuranceByTranningApps() {
     // userType
     const userType =
       user.type === "normal" ? "expert" : user.isPaid ? "paid" : "unpaid";
-    for (let j = 0; j < questions.length; j++) {
+    for (let j = 0; j < 10; j++) {
       const question = questions[j];
-
-      // calculate satisfaction
-      if (j === 13 || j === 17 || j === 21 || j === 25) {
-        let satisfaction = question.responses.find(
-          item => item.name === "satisfaction"
-        );
-        satisfaction = Number(
-          satisfaction.value.replace("[", "").replace("]", "")
-        );
-        const value = satisfaction === 1 ? 1 : satisfaction === 2 ? 0.5 : 0;
-
-        matrix["satisfaction"][userType]["value"] =
-          matrix["satisfaction"][userType]["value"] + value;
-
-        matrix["satisfaction"][userType]["attendanceNumber"]++;
-      }
 
       matrix["total"][userType]++;
       // agreePredict
@@ -2071,9 +2055,6 @@ async function calculateAccuranceByTranningApps() {
         matrix[userType][2][2]) /
       matrix.total[userType];
 
-    result[userType]["satisfaction"] =
-      matrix["satisfaction"][userType].value /
-      matrix["satisfaction"][userType].attendanceNumber;
     //precisionY
     result[userType]["precisionY"] =
       matrix[userType][0][0] /
@@ -2133,8 +2114,6 @@ async function calculateAccuranceByTranningApps() {
     content += `
     * ${userType}: 
       Accurancy: ${result[userType]["accurancy"]} 
-
-      Satisfaction: ${result[userType]["satisfaction"]} 
 
       Precision Yes: ${result[userType]["precisionY"]}
       Precision No: ${result[userType]["precisionN"]}
