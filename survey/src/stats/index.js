@@ -2027,6 +2027,10 @@ async function calculateAccuranceByTranningApps() {
       // get tranning apps
       let tranningAppIds = user.questionIds.slice(0, 10);
 
+      let app = await Models.App.findById(user.questionIds[j]).cache(
+        60 * 60 * 24 * 30
+      ); // 1 month;
+
       let ourPrediction;
       // try {
       ourPrediction = await Utils.Function.getOurPredictionApproach0(
