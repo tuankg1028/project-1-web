@@ -2037,7 +2037,6 @@ async function calculateAccuranceByTranningApps() {
   let allAnswers = await Models.Answer.find();
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
-  allAnswers = allAnswers.slice(0, 10);
   const getMatrixFromApp = async (answer, matrix) => {
     const { questions, userId } = answer;
     const user = await Models.User.findById(userId);
