@@ -4,7 +4,7 @@ class Prediction {
   constructor() {
     this.API = axios.create({
       baseURL: "http://localhost:5000",
-      timeout: 20000
+      timeout: 60 * 1000
     });
   }
 

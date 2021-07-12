@@ -1746,12 +1746,15 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
   const totalTranningApps = experimentNumber + 5;
-  for (let i = 0; i < allAnswers.length; i++) {
-    const answer = allAnswers[i];
-    console.log(`Running ${i}/${allAnswers.length}`);
+  const getMatrixFromApp = async (
+    answer,
+    matrix,
+    totalTranningApps,
+    algorithm
+  ) => {
     const { questions, userId } = answer;
     const user = await Models.User.findById(userId);
-    if (!user) continue;
+    if (!user) return;
 
     // userType
     const userType =
@@ -1846,7 +1849,13 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
         matrix[userType][install][ourPrediction]++;
       }
     }
-  }
+    return;
+  };
+  await Promise.all(
+    allAnswers.map(answer =>
+      getMatrixFromApp(answer, matrix, totalTranningApps, algorithm)
+    )
+  );
 
   console.log("matrix", matrix);
   const result = {
@@ -2364,24 +2373,24 @@ const main = async () => {
   // await confusionMaxtrix();
   // await metricsDefinition();
 
-  // for (let i = 4; i > 0; i--) {
-  //   await Promise.all([
-  //     calculateAccuranceByAlgorithm("SVM", i),
-  //     calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
-  //     calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
-  //     calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
-  //     calculateAccuranceByAlgorithm("EM", i)
-  //   ]);
+  for (let i = 1; i < 6; i++) {
+    await Promise.all([
+      calculateAccuranceByAlgorithm("SVM", i),
+      calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
+      calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
+      calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
+      calculateAccuranceByAlgorithm("EM", i)
+    ]);
 
-  //   console.log(
-  //     chalk.default.bgGreen.black("==== Created accurance by algorithms====")
-  //   );
-  // }
+    console.log(
+      chalk.default.bgGreen.black("==== Created accurance by algorithms====")
+    );
+  }
 
-  await calculateAccuranceByTranningApps();
-  console.log(
-    chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
-  );
+  // await calculateAccuranceByTranningApps();
+  // console.log(
+  //   chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
+  // );
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
 main();
