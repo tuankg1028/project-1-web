@@ -2085,11 +2085,11 @@ async function calculateAccuranceByTranningApps() {
       }
     }
   };
-
+  const approaches = [1, 2, 3, 4];
   let allAnswers = await Models.Answer.find();
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
-  for (let i = 0; i < allAnswers.length; i++) {
+  for (let i = 0; i < 5; i++) {
     const { questions, userId } = answers[i];
     const user = await Models.User.findById(userId);
     if (!user || questions.length <= 10) continue;
@@ -2097,55 +2097,52 @@ async function calculateAccuranceByTranningApps() {
     const userType =
       user.type === "normal" ? "expert" : user.isPaid ? "paid" : "unpaid";
     const questionPrediction = [];
-    for (let j = 10; j < questions.length; j++) {
-      const question = questions[j];
-      // approach
-      let approach;
-      if (j >= 10 && j < 14) approach = 1;
-      else if (j >= 14 && j < 18) approach = 2;
-      else if (j >= 18 && j < 22) approach = 3;
-      else approach = 4;
+    for (let j = 0; j < 10; j++) {
+      for (let k = 0; k < approaches.length; k++) {
+        const approach = approaches[k];
 
-      matrix[`total${userType}`][approach]++;
-      // agreePredict
-      let agreePredict = question.responses.find(
-        item => item.name === "agreePredict"
-      );
-      agreePredict = Number(
-        agreePredict.value.replace("[", "").replace("]", "")
-      );
+        const question = questions[j];
 
-      // ourPrediction
-      let app = await Models.App.findById(user.questionIds[j]).cache(
-        60 * 60 * 24 * 30
-      ); // 1 month;
-
-      let ourPrediction;
-      try {
-        ourPrediction = await Utils.Function.getOurPredictionApproach0(
-          tranningAppIds,
-          answer,
-          app,
-          questionPrediction
+        matrix[`total${userType}`][approach]++;
+        // agreePredict
+        let agreePredict = question.responses.find(
+          item => item.name === "agreePredict"
         );
-      } catch (err) {
-        console.log(err);
-        continue;
-      }
+        agreePredict = Number(
+          agreePredict.value.replace("[", "").replace("]", "")
+        );
 
-      questionPrediction.push({
-        id: question.id,
-        value: ourPrediction
-      });
-      console.log(1, questionPrediction);
-      if (agreePredict) {
-        matrix[userType][approach][ourPrediction][ourPrediction]++;
-      } else {
-        //install
-        let install = question.responses.find(item => item.name === "install");
-        install = Number(install.value.replace("[", "").replace("]", ""));
+        // ourPrediction
+        let app = await Models.App.findById(user.questionIds[j]).cache(
+          60 * 60 * 24 * 30
+        ); // 1 month;
 
-        matrix[userType][approach][install][ourPrediction]++;
+        let ourPrediction;
+        // try {
+        ourPrediction = await Utils.Function[
+          `getOurPredictionApproach${approach}`
+        ](tranningAppIds, answer, app, "EM", questionPrediction);
+        // } catch (err) {
+        //   console.log(err);
+        //   continue;
+        // }
+
+        questionPrediction.push({
+          id: question.id,
+          value: ourPrediction
+        });
+        console.log(1, questionPrediction);
+        if (agreePredict) {
+          matrix[userType][approach][ourPrediction][ourPrediction]++;
+        } else {
+          //install
+          let install = question.responses.find(
+            item => item.name === "install"
+          );
+          install = Number(install.value.replace("[", "").replace("]", ""));
+
+          matrix[userType][approach][install][ourPrediction]++;
+        }
       }
     }
   }
@@ -2433,24 +2430,24 @@ const main = async () => {
   // await confusionMaxtrix();
   // await metricsDefinition();
 
-  for (let i = 5; i > 0; i--) {
-    await Promise.all([
-      calculateAccuranceByAlgorithm("SVM", i),
-      calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
-      calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
-      calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
-      calculateAccuranceByAlgorithm("EM", i)
-    ]);
+  // for (let i = 5; i > 0; i--) {
+  //   await Promise.all([
+  //     calculateAccuranceByAlgorithm("SVM", i),
+  //     calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
+  //     calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
+  //     calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
+  //     calculateAccuranceByAlgorithm("EM", i)
+  //   ]);
 
-    console.log(
-      chalk.default.bgGreen.black("==== Created accurance by algorithms====")
-    );
-  }
+  //   console.log(
+  //     chalk.default.bgGreen.black("==== Created accurance by algorithms====")
+  //   );
+  // }
 
-  // await calculateAccuranceByTranningApps();
-  // console.log(
-  //   chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
-  // );
+  await calculateAccuranceByTranningApps();
+  console.log(
+    chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
+  );
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
 main();

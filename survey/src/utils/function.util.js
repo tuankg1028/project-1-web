@@ -2134,7 +2134,9 @@ const getTranningData = async (tranningAppIds, userAnswer) => {
 const getOurPredictionApproach3 = async (
   tranningAppIds,
   userAnswer,
-  question
+  question,
+  algorithm,
+  questionPrediction = []
 ) => {
   const tranningApps = await Promise.all(
     tranningAppIds.map(appId => Models.App.findById(appId))
@@ -2169,7 +2171,13 @@ const getOurPredictionApproach3 = async (
         item => item.name === "agreePredict"
       );
     if (!questionInstallation) throw Error("Answer not found");
-    const label = questionInstallation.value;
+    let label;
+    const ourPrediction = questionPrediction.find(item => item.id === id);
+    if (ourPrediction) {
+      label = ourPrediction.value;
+    } else {
+      label = questionInstallation.value;
+    }
 
     return [
       index + 1,
@@ -2375,7 +2383,8 @@ const getOurPredictionApproach4 = async (
   tranningAppIds,
   userAnswer,
   question,
-  algorithm = "EM"
+  algorithm = "EM",
+  questionPrediction = []
 ) => {
   const tranningApps = await Promise.all(
     tranningAppIds.map(appId => Models.App.findById(appId))
@@ -2410,7 +2419,13 @@ const getOurPredictionApproach4 = async (
         item => item.name === "agreePredict"
       );
     if (!questionInstallation) throw Error("Answer not found");
-    const label = questionInstallation.value;
+    let label;
+    const ourPrediction = questionPrediction.find(item => item.id === id);
+    if (ourPrediction) {
+      label = ourPrediction.value;
+    } else {
+      label = questionInstallation.value;
+    }
 
     return [
       index + 1,
@@ -2727,12 +2742,113 @@ const getOurPredictionApproach1 = async (
     )
   );
 
-  const category = Object.entries(constants.categoryGroups).find(item => {
-    const subCategories = item[1];
+  const tranningSet = tranningApps.map(tranningApp => {
+    let { PPModel, apisModel, id } = tranningApp;
 
-    if (subCategories.includes(question.categoryName)) return true;
-    return false;
-  })[0];
+    PPModel = JSON.parse(PPModel);
+    apisModel = JSON.parse(apisModel);
+
+    const userAnswerQuestion = userAnswer.questions.find(
+      question => question.id === id
+    );
+    let questionInstallation = userAnswerQuestion.responses.find(
+      item => item.name === "install"
+    );
+    if (!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(
+        item => item.name === "agreePredict"
+      );
+
+    if (!questionInstallation) throw Error("Answer not found");
+
+    let label;
+    const ourPrediction = questionPrediction.find(item => item.id === id);
+    if (ourPrediction) {
+      label = ourPrediction.value;
+    } else {
+      label = questionInstallation.value;
+    }
+
+    return [
+      ...Object.values(PPModel).map(item => item.toString()),
+      ...Object.values(apisModel).map(item => item.toString()),
+      label.toString()
+    ];
+  });
+
+  const testSet = [
+    [
+      ...Object.values(JSON.parse(question.PPModel)).map(item =>
+        item.toString()
+      ),
+      ...Object.values(JSON.parse(question.apisModel)).map(item =>
+        item.toString()
+      ),
+      "-1"
+    ]
+  ];
+
+  // eslint-disable-next-line no-console
+  console.log(
+    "Step 2 in approach 3 with tranning and test: ",
+    tranningSet,
+    testSet
+  );
+  let predict;
+  switch (algorithm) {
+    // SVM
+    case "SVM":
+      predict = await Services.Prediction.getPredictSVM({
+        train: tranningSet,
+        test: testSet
+      });
+      break;
+    // GradientBoostingClassifier
+    case "GradientBoostingClassifier":
+      predict = await Services.Prediction.getPredictGradientBoostingClassifier({
+        train: tranningSet,
+        test: testSet
+      });
+      break;
+    // AdaBoostClassifier
+    case "AdaBoostClassifier":
+      predict = await Services.Prediction.getPredictAdaBoostClassifier({
+        train: tranningSet,
+        test: testSet
+      });
+      break;
+    // GradientBoostingRegressor
+    case "GradientBoostingRegressor":
+      predict = await Services.Prediction.getPredictGradientBoostingRegressor({
+        train: tranningSet,
+        test: testSet
+      });
+      break;
+    default:
+      predict = await Services.Prediction.getPredictEM({
+        train: tranningSet,
+        test: testSet
+      });
+      break;
+  }
+
+  // eslint-disable-next-line no-console
+  console.log("Step 3 Prediction is: ", predict);
+  return predict[0][0];
+};
+
+const getOurPredictionApproach2 = async (
+  tranningAppIds,
+  userAnswer,
+  question,
+  algorithm = "EM",
+  questionPrediction = []
+) => {
+  const tranningApps = await Promise.all(
+    tranningAppIds.map(appId =>
+      Models.App.findById(appId).cache(60 * 60 * 24 * 30)
+    )
+  );
 
   const tranningSet = tranningApps.map(tranningApp => {
     let { PPModel, apisModel, id } = tranningApp;
@@ -2978,6 +3094,7 @@ export default {
   getTranningData,
   getOurPredictionApproach0,
   getOurPredictionApproach1,
+  getOurPredictionApproach2,
   getOurPredictionApproach3,
   getOurPredictionApproach4
 };
