@@ -2718,7 +2718,8 @@ const getOurPredictionApproach1 = async (
   tranningAppIds,
   userAnswer,
   question,
-  algorithm = "EM"
+  algorithm = "EM",
+  questionPrediction = []
 ) => {
   const tranningApps = await Promise.all(
     tranningAppIds.map(appId =>
@@ -2751,7 +2752,14 @@ const getOurPredictionApproach1 = async (
       );
 
     if (!questionInstallation) throw Error("Answer not found");
-    const label = questionInstallation.value;
+
+    let label;
+    const ourPrediction = questionPrediction.find(item => item.id === id);
+    if (ourPrediction) {
+      label = ourPrediction.value;
+    } else {
+      label = questionInstallation.value;
+    }
 
     return [
       ...Object.values(PPModel).map(item => item.toString()),

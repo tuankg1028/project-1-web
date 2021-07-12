@@ -1946,187 +1946,463 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
 }
 async function calculateAccuranceByTranningApps() {
   const matrix = {
-    paid: [
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0]
-    ],
-    unpaid: [
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0]
-    ],
-    expert: [
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0]
-    ],
-
-    total: {
-      paid: 0,
-      unpaid: 0,
-      expert: 0
+    expert: {
+      1: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ],
+      2: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ],
+      3: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ],
+      4: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ]
     },
-    satisfaction: {
-      paid: {
+    paid: {
+      1: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ],
+      2: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ],
+      3: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ],
+      4: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ]
+    },
+    unpaid: {
+      1: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ],
+      2: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ],
+      3: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ],
+      4: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ]
+    },
+    totalexpert: {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0
+    },
+    totalpaid: {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0
+    },
+    totalunpaid: {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0
+    },
+    satisfactionexpert: {
+      1: {
         attendanceNumber: 0,
         value: 0
       },
-      unpaid: {
+      2: {
         attendanceNumber: 0,
         value: 0
       },
-      expert: {
+      3: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      4: {
+        attendanceNumber: 0,
+        value: 0
+      }
+    },
+    satisfactionpaid: {
+      1: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      2: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      3: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      4: {
+        attendanceNumber: 0,
+        value: 0
+      }
+    },
+    satisfactionunpaid: {
+      1: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      2: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      3: {
+        attendanceNumber: 0,
+        value: 0
+      },
+      4: {
         attendanceNumber: 0,
         value: 0
       }
     }
   };
-  const questionPrediction = [];
+
   let allAnswers = await Models.Answer.find();
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
   for (let i = 0; i < allAnswers.length; i++) {
-    const answer = allAnswers[i];
-    const { questions, userId } = answer;
+    const { questions, userId } = answers[i];
     const user = await Models.User.findById(userId);
-    if (!user) continue;
-
+    if (!user || questions.length <= 10) continue;
     // userType
     const userType =
       user.type === "normal" ? "expert" : user.isPaid ? "paid" : "unpaid";
-    for (let j = 0; j < 10; j++) {
+    const questionPrediction = [];
+    for (let j = 10; j < questions.length; j++) {
       const question = questions[j];
+      // approach
+      let approach;
+      if (j >= 10 && j < 14) approach = 1;
+      else if (j >= 14 && j < 18) approach = 2;
+      else if (j >= 18 && j < 22) approach = 3;
+      else approach = 4;
 
-      matrix["total"][userType]++;
+      matrix[`total${userType}`][approach]++;
       // agreePredict
       let agreePredict = question.responses.find(
         item => item.name === "agreePredict"
       );
-      if (agreePredict)
-        agreePredict = Number(
-          agreePredict.value.replace("[", "").replace("]", "")
-        );
+      agreePredict = Number(
+        agreePredict.value.replace("[", "").replace("]", "")
+      );
 
-      // get tranning apps
-      let tranningAppIds = user.questionIds.slice(0, 10);
-
+      // ourPrediction
       let app = await Models.App.findById(user.questionIds[j]).cache(
         60 * 60 * 24 * 30
       ); // 1 month;
 
       let ourPrediction;
-      // try {
-      ourPrediction = await Utils.Function.getOurPredictionApproach0(
-        tranningAppIds,
-        answer,
-        app,
-        questionPrediction
-      );
-      // } catch (err) {
-      //   continue;
-      // }
+      try {
+        ourPrediction = await Utils.Function.getOurPredictionApproach0(
+          tranningAppIds,
+          answer,
+          app,
+          questionPrediction
+        );
+      } catch (err) {
+        console.log(err);
+        continue;
+      }
 
       questionPrediction.push({
         id: question.id,
         value: ourPrediction
       });
+      console.log(1, questionPrediction);
+      if (agreePredict) {
+        matrix[userType][approach][ourPrediction][ourPrediction]++;
+      } else {
+        //install
+        let install = question.responses.find(item => item.name === "install");
+        install = Number(install.value.replace("[", "").replace("]", ""));
 
-      //install
-      let install = question.responses.find(item => item.name === "install");
-      install = Number(install.value.replace("[", "").replace("]", ""));
-
-      matrix[userType][install][ourPrediction]++;
+        matrix[userType][approach][install][ourPrediction]++;
+      }
     }
   }
 
   console.log(matrix);
   const result = {
-    paid: {},
-    unpaid: {},
-    expert: {}
+    expert: { 1: {}, 2: {}, 3: {}, 4: {} },
+    paid: { 1: {}, 2: {}, 3: {}, 4: {} },
+    unpaid: { 1: {}, 2: {}, 3: {}, 4: {} }
   };
-  //
-  for (const userType in result) {
-    result[userType]["accurancy"] =
-      (matrix[userType][0][0] +
-        matrix[userType][1][1] +
-        matrix[userType][2][2]) /
-      matrix.total[userType];
+  // expert
+  for (const approach in result.expert) {
+    result["expert"][approach]["accurancy"] =
+      (matrix["expert"][approach][0][0] +
+        matrix["expert"][approach][1][1] +
+        matrix["expert"][approach][2][2]) /
+      matrix.totalexpert[approach];
 
+    result["expert"][approach]["satisfaction"] =
+      matrix["satisfactionexpert"][approach].value /
+      matrix["satisfactionexpert"][approach].attendanceNumber;
     //precisionY
-    result[userType]["precisionY"] =
-      matrix[userType][0][0] /
-      (matrix[userType][0][0] +
-        matrix[userType][1][0] +
-        matrix[userType][2][0]);
+    result["expert"][approach]["precisionY"] =
+      matrix["expert"][approach][0][0] /
+      (matrix["expert"][approach][0][0] +
+        matrix["expert"][approach][1][0] +
+        matrix["expert"][approach][2][0]);
     //precisionN
-    result[userType]["precisionN"] =
-      matrix[userType][1][1] /
-      (matrix[userType][1][1] +
-        matrix[userType][0][1] +
-        matrix[userType][2][1]);
+    result["expert"][approach]["precisionN"] =
+      matrix["expert"][approach][1][1] /
+      (matrix["expert"][approach][1][1] +
+        matrix["expert"][approach][0][1] +
+        matrix["expert"][approach][2][1]);
 
     //precisionM
-    result[userType]["precisionM"] =
-      matrix[userType][2][2] /
-      (matrix[userType][2][2] +
-        matrix[userType][0][2] +
-        matrix[userType][1][2]);
+    result["expert"][approach]["precisionM"] =
+      matrix["expert"][approach][2][2] /
+      (matrix["expert"][approach][2][2] +
+        matrix["expert"][approach][0][2] +
+        matrix["expert"][approach][1][2]);
 
     //recallY
-    result[userType]["recallY"] =
-      matrix[userType][0][0] /
-      (matrix[userType][0][0] +
-        matrix[userType][0][1] +
-        matrix[userType][0][2]);
+    result["expert"][approach]["recallY"] =
+      matrix["expert"][approach][0][0] /
+      (matrix["expert"][approach][0][0] +
+        matrix["expert"][approach][0][1] +
+        matrix["expert"][approach][0][2]);
 
     //recallN
-    result[userType]["recallN"] =
-      matrix[userType][1][1] /
-      (matrix[userType][1][1] +
-        matrix[userType][1][0] +
-        matrix[userType][1][2]);
+    result["expert"][approach]["recallN"] =
+      matrix["expert"][approach][1][1] /
+      (matrix["expert"][approach][1][1] +
+        matrix["expert"][approach][1][0] +
+        matrix["expert"][approach][1][2]);
 
     //recallM
-    result[userType]["recallM"] =
-      matrix[userType][2][2] /
-      (matrix[userType][2][2] +
-        matrix[userType][2][0] +
-        matrix[userType][2][1]);
+    result["expert"][approach]["recallM"] =
+      matrix["expert"][approach][2][2] /
+      (matrix["expert"][approach][2][2] +
+        matrix["expert"][approach][2][0] +
+        matrix["expert"][approach][2][1]);
 
-    result[userType]["F1Y"] =
-      (2 * (result[userType]["precisionY"] * result[userType]["recallY"])) /
-      (result[userType]["precisionY"] + result[userType]["recallY"]);
+    result["expert"][approach]["F1Y"] =
+      (2 *
+        (result["expert"][approach]["precisionY"] *
+          result["expert"][approach]["recallY"])) /
+      (result["expert"][approach]["precisionY"] +
+        result["expert"][approach]["recallY"]);
 
-    result[userType]["F1N"] =
-      (2 * (result[userType]["precisionN"] * result[userType]["recallN"])) /
-      (result[userType]["precisionN"] + result[userType]["recallN"]);
+    result["expert"][approach]["F1N"] =
+      (2 *
+        (result["expert"][approach]["precisionN"] *
+          result["expert"][approach]["recallN"])) /
+      (result["expert"][approach]["precisionN"] +
+        result["expert"][approach]["recallN"]);
 
-    result[userType]["F1M"] =
-      (2 * (result[userType]["precisionM"] * result[userType]["recallM"])) /
-      (result[userType]["precisionM"] + result[userType]["recallM"]);
+    result["expert"][approach]["F1M"] =
+      (2 *
+        (result["expert"][approach]["precisionM"] *
+          result["expert"][approach]["recallM"])) /
+      (result["expert"][approach]["precisionM"] +
+        result["expert"][approach]["recallM"]);
+  }
+
+  // ========= paid ========
+  for (const approach in result.paid) {
+    result["paid"][approach]["accurancy"] =
+      (matrix["paid"][approach][0][0] +
+        matrix["paid"][approach][1][1] +
+        matrix["paid"][approach][2][2]) /
+      matrix.totalpaid[approach];
+
+    result["paid"][approach]["satisfaction"] =
+      matrix["satisfactionpaid"][approach].value /
+      matrix["satisfactionpaid"][approach].attendanceNumber;
+    //precisionY
+    result["paid"][approach]["precisionY"] =
+      matrix["paid"][approach][0][0] /
+      (matrix["paid"][approach][0][0] +
+        matrix["paid"][approach][1][0] +
+        matrix["paid"][approach][2][0]);
+    //precisionN
+    result["paid"][approach]["precisionN"] =
+      matrix["paid"][approach][1][1] /
+      (matrix["paid"][approach][1][1] +
+        matrix["paid"][approach][0][1] +
+        matrix["paid"][approach][2][1]);
+
+    //precisionM
+    result["paid"][approach]["precisionM"] =
+      matrix["paid"][approach][2][2] /
+      (matrix["paid"][approach][2][2] +
+        matrix["paid"][approach][0][2] +
+        matrix["paid"][approach][1][2]);
+
+    //recallY
+    result["paid"][approach]["recallY"] =
+      matrix["paid"][approach][0][0] /
+      (matrix["paid"][approach][0][0] +
+        matrix["paid"][approach][0][1] +
+        matrix["paid"][approach][0][2]);
+
+    //recallN
+    result["paid"][approach]["recallN"] =
+      matrix["paid"][approach][1][1] /
+      (matrix["paid"][approach][1][1] +
+        matrix["paid"][approach][1][0] +
+        matrix["paid"][approach][1][2]);
+
+    //recallM
+    result["paid"][approach]["recallM"] =
+      matrix["paid"][approach][2][2] /
+      (matrix["paid"][approach][2][2] +
+        matrix["paid"][approach][2][0] +
+        matrix["paid"][approach][2][1]);
+
+    result["paid"][approach]["F1Y"] =
+      (2 *
+        (result["paid"][approach]["precisionY"] *
+          result["paid"][approach]["recallY"])) /
+      (result["paid"][approach]["precisionY"] +
+        result["paid"][approach]["recallY"]);
+
+    result["paid"][approach]["F1N"] =
+      (2 *
+        (result["paid"][approach]["precisionN"] *
+          result["paid"][approach]["recallN"])) /
+      (result["paid"][approach]["precisionN"] +
+        result["paid"][approach]["recallN"]);
+
+    result["paid"][approach]["F1M"] =
+      (2 *
+        (result["paid"][approach]["precisionM"] *
+          result["paid"][approach]["recallM"])) /
+      (result["paid"][approach]["precisionM"] +
+        result["paid"][approach]["recallM"]);
+  }
+  // ========= unpaid ========
+  for (const approach in result.unpaid) {
+    result["unpaid"][approach]["accurancy"] =
+      (matrix["unpaid"][approach][0][0] +
+        matrix["unpaid"][approach][1][1] +
+        matrix["unpaid"][approach][2][2]) /
+      matrix.totalunpaid[approach];
+
+    result["unpaid"][approach]["satisfaction"] =
+      matrix["satisfactionunpaid"][approach].value /
+      matrix["satisfactionunpaid"][approach].attendanceNumber;
+    //precisionY
+    result["unpaid"][approach]["precisionY"] =
+      matrix["unpaid"][approach][0][0] /
+      (matrix["unpaid"][approach][0][0] +
+        matrix["unpaid"][approach][1][0] +
+        matrix["unpaid"][approach][2][0]);
+    //precisionN
+    result["unpaid"][approach]["precisionN"] =
+      matrix["unpaid"][approach][1][1] /
+      (matrix["unpaid"][approach][1][1] +
+        matrix["unpaid"][approach][0][1] +
+        matrix["unpaid"][approach][2][1]);
+
+    //precisionM
+    result["unpaid"][approach]["precisionM"] =
+      matrix["unpaid"][approach][2][2] /
+      (matrix["unpaid"][approach][2][2] +
+        matrix["unpaid"][approach][0][2] +
+        matrix["unpaid"][approach][1][2]);
+
+    //recallY
+    result["unpaid"][approach]["recallY"] =
+      matrix["unpaid"][approach][0][0] /
+      (matrix["unpaid"][approach][0][0] +
+        matrix["unpaid"][approach][0][1] +
+        matrix["unpaid"][approach][0][2]);
+
+    //recallN
+    result["unpaid"][approach]["recallN"] =
+      matrix["unpaid"][approach][1][1] /
+      (matrix["unpaid"][approach][1][1] +
+        matrix["unpaid"][approach][1][0] +
+        matrix["unpaid"][approach][1][2]);
+
+    //recallM
+    result["unpaid"][approach]["recallM"] =
+      matrix["unpaid"][approach][2][2] /
+      (matrix["unpaid"][approach][2][2] +
+        matrix["unpaid"][approach][2][0] +
+        matrix["unpaid"][approach][2][1]);
+
+    result["unpaid"][approach]["F1Y"] =
+      (2 *
+        (result["unpaid"][approach]["precisionY"] *
+          result["unpaid"][approach]["recallY"])) /
+      (result["unpaid"][approach]["precisionY"] +
+        result["unpaid"][approach]["recallY"]);
+
+    result["unpaid"][approach]["F1N"] =
+      (2 *
+        (result["unpaid"][approach]["precisionN"] *
+          result["unpaid"][approach]["recallN"])) /
+      (result["unpaid"][approach]["precisionN"] +
+        result["unpaid"][approach]["recallN"]);
+
+    result["unpaid"][approach]["F1M"] =
+      (2 *
+        (result["unpaid"][approach]["precisionM"] *
+          result["unpaid"][approach]["recallM"])) /
+      (result["unpaid"][approach]["precisionM"] +
+        result["unpaid"][approach]["recallM"]);
   }
 
   let content = "";
   for (const userType in result) {
     content += `
     * ${userType}: 
-      Accurancy: ${result[userType]["accurancy"]} 
-
-      Precision Yes: ${result[userType]["precisionY"]}
-      Precision No: ${result[userType]["precisionN"]}
-      Precision Maybe: ${result[userType]["precisionM"]} 
-    
-      Recall Yes: ${result[userType]["recallY"]}
-      Recall No: ${result[userType]["recallN"]}
-      Recall Maybe: ${result[userType]["recallM"]}
-    
-      F1 Yes: ${result[userType]["F1Y"]}
-      F1 No: ${result[userType]["F1N"]}
-      F1 Maybe: ${result[userType]["F1M"]} \n
   `;
+
+    for (const approach in result[userType]) {
+      content += `
+      - Approach ${approach}: 
+        Accurancy: ${result[userType][approach]["accurancy"]} 
+
+        Precision Yes: ${result[userType][approach]["precisionY"]}
+        Precision No: ${result[userType][approach]["precisionN"]}
+        Precision Maybe: ${result[userType][approach]["precisionM"]} 
+      
+        Recall Yes: ${result[userType][approach]["recallY"]}
+        Recall No: ${result[userType][approach]["recallN"]}
+        Recall Maybe: ${result[userType][approach]["recallM"]}
+      
+        F1 Yes: ${result[userType][approach]["F1Y"]}
+        F1 No: ${result[userType][approach]["F1N"]}
+        F1 Maybe: ${result[userType][approach]["F1M"]} \n
+  `;
+    }
   }
+
   fs.writeFileSync("./reports/accurance-by-tranning-apps.txt", content);
 }
 
@@ -2157,24 +2433,24 @@ const main = async () => {
   // await confusionMaxtrix();
   // await metricsDefinition();
 
-  // for (let i = 1; i < 6; i++) {
-  //   await Promise.all([
-  //     calculateAccuranceByAlgorithm("SVM", i),
-  //     calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
-  //     calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
-  //     calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
-  //     calculateAccuranceByAlgorithm("EM", i)
-  //   ]);
+  for (let i = 5; i > 0; i--) {
+    await Promise.all([
+      calculateAccuranceByAlgorithm("SVM", i),
+      calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
+      calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
+      calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
+      calculateAccuranceByAlgorithm("EM", i)
+    ]);
 
-  //   console.log(
-  //     chalk.default.bgGreen.black("==== Created accurance by algorithms====")
-  //   );
-  // }
+    console.log(
+      chalk.default.bgGreen.black("==== Created accurance by algorithms====")
+    );
+  }
 
-  await calculateAccuranceByTranningApps();
-  console.log(
-    chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
-  );
+  // await calculateAccuranceByTranningApps();
+  // console.log(
+  //   chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
+  // );
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
 main();
