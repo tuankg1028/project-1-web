@@ -1847,7 +1847,7 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
     }
   }
 
-  console.log(matrix);
+  console.log("matrix", matrix);
   const result = {
     paid: {},
     unpaid: {},
@@ -2029,67 +2029,13 @@ async function calculateAccuranceByTranningApps() {
       2: 0,
       3: 0,
       4: 0
-    },
-    satisfactionexpert: {
-      1: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      2: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      3: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      4: {
-        attendanceNumber: 0,
-        value: 0
-      }
-    },
-    satisfactionpaid: {
-      1: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      2: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      3: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      4: {
-        attendanceNumber: 0,
-        value: 0
-      }
-    },
-    satisfactionunpaid: {
-      1: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      2: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      3: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      4: {
-        attendanceNumber: 0,
-        value: 0
-      }
     }
   };
   const approaches = [1, 2, 3, 4];
   let allAnswers = await Models.Answer.find();
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < allAnswers.length; i++) {
     const answer = allAnswers[i];
     const { questions, userId } = answer;
     const user = await Models.User.findById(userId);
@@ -2135,7 +2081,7 @@ async function calculateAccuranceByTranningApps() {
     }
   }
 
-  console.log(matrix);
+  console.log("matrix", matrix);
   const result = {
     expert: { 1: {}, 2: {}, 3: {}, 4: {} },
     paid: { 1: {}, 2: {}, 3: {}, 4: {} },
@@ -2362,6 +2308,7 @@ async function calculateAccuranceByTranningApps() {
         result["unpaid"][approach]["recallM"]);
   }
 
+  console.log("result", result);
   let content = "";
   for (const userType in result) {
     content += `
