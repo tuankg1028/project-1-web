@@ -2090,7 +2090,8 @@ async function calculateAccuranceByTranningApps() {
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
   for (let i = 0; i < 5; i++) {
-    const { questions, userId } = allAnswers[i];
+    const answer = allAnswers[i];
+    const { questions, userId } = answer;
     const user = await Models.User.findById(userId);
     if (!user || questions.length <= 10) continue;
     // userType
