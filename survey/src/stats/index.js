@@ -2050,6 +2050,7 @@ async function calculateAccuranceByTranningApps() {
 
       //install
       let install = question.responses.find(item => item.name === "install");
+      console.log(install, question.responses);
       install = Number(install.value.replace("[", "").replace("]", ""));
 
       matrix[userType][install][ourPrediction]++;
