@@ -2037,11 +2037,11 @@ async function calculateAccuranceByTranningApps() {
   let allAnswers = await Models.Answer.find();
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
-  for (let i = 0; i < allAnswers.length; i++) {
-    const answer = allAnswers[i];
+  allAnswers = allAnswers.slice(0, 10);
+  const getMatrixFromApp = async (answer, matrix) => {
     const { questions, userId } = answer;
     const user = await Models.User.findById(userId);
-    if (!user || questions.length <= 10) continue;
+    if (!user || questions.length <= 10) return;
     // userType
     const userType =
       user.type === "normal" ? "expert" : user.isPaid ? "paid" : "unpaid";
@@ -2081,7 +2081,10 @@ async function calculateAccuranceByTranningApps() {
         matrix[userType][approach][install][ourPrediction]++;
       }
     }
-  }
+    return;
+  };
+
+  await Promise.all(allAnswers.map(anwser => getMatrixFromApp(anwser, matrix)));
 
   console.log("matrix", matrix);
   const result = {
@@ -2097,9 +2100,6 @@ async function calculateAccuranceByTranningApps() {
         matrix["expert"][approach][2][2]) /
       matrix.totalexpert[approach];
 
-    result["expert"][approach]["satisfaction"] =
-      matrix["satisfactionexpert"][approach].value /
-      matrix["satisfactionexpert"][approach].attendanceNumber;
     //precisionY
     result["expert"][approach]["precisionY"] =
       matrix["expert"][approach][0][0] /
@@ -2172,9 +2172,6 @@ async function calculateAccuranceByTranningApps() {
         matrix["paid"][approach][2][2]) /
       matrix.totalpaid[approach];
 
-    result["paid"][approach]["satisfaction"] =
-      matrix["satisfactionpaid"][approach].value /
-      matrix["satisfactionpaid"][approach].attendanceNumber;
     //precisionY
     result["paid"][approach]["precisionY"] =
       matrix["paid"][approach][0][0] /
@@ -2246,9 +2243,6 @@ async function calculateAccuranceByTranningApps() {
         matrix["unpaid"][approach][2][2]) /
       matrix.totalunpaid[approach];
 
-    result["unpaid"][approach]["satisfaction"] =
-      matrix["satisfactionunpaid"][approach].value /
-      matrix["satisfactionunpaid"][approach].attendanceNumber;
     //precisionY
     result["unpaid"][approach]["precisionY"] =
       matrix["unpaid"][approach][0][0] /
