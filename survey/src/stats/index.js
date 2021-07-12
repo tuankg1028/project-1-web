@@ -2090,7 +2090,7 @@ async function calculateAccuranceByTranningApps() {
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
 
   for (let i = 0; i < 5; i++) {
-    const { questions, userId } = answers[i];
+    const { questions, userId } = allAnswers[i];
     const user = await Models.User.findById(userId);
     if (!user || questions.length <= 10) continue;
     // userType
@@ -2103,7 +2103,6 @@ async function calculateAccuranceByTranningApps() {
 
         const question = questions[j];
 
-        matrix[`total${userType}`][approach]++;
         // agreePredict
         let agreePredict = question.responses.find(
           item => item.name === "agreePredict"
@@ -2126,12 +2125,12 @@ async function calculateAccuranceByTranningApps() {
         //   console.log(err);
         //   continue;
         // }
-
+        matrix[`total${userType}`][approach]++;
         questionPrediction.push({
           id: question.id,
           value: ourPrediction
         });
-        console.log(1, questionPrediction);
+
         if (agreePredict) {
           matrix[userType][approach][ourPrediction][ourPrediction]++;
         } else {
