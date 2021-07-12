@@ -2112,14 +2112,14 @@ async function calculateAccuranceByTranningApps() {
         let tranningAppIds = user.questionIds.slice(0, 10);
 
         let ourPrediction;
-        // try {
-        ourPrediction = await Utils.Function[
-          `getOurPredictionApproach${approach}`
-        ](tranningAppIds, answer, app, "EM", questionPrediction);
-        // } catch (err) {
-        //   console.log(err);
-        //   continue;
-        // }
+        try {
+          ourPrediction = await Utils.Function[
+            `getOurPredictionApproach${approach}`
+          ](tranningAppIds, answer, app, "EM", questionPrediction);
+        } catch (err) {
+          console.log(err);
+          continue;
+        }
         matrix[`total${userType}`][approach]++;
         questionPrediction.push({
           id: question.id,
@@ -2418,7 +2418,7 @@ const main = async () => {
   // await confusionMaxtrix();
   // await metricsDefinition();
 
-  // for (let i = 5; i > 0; i--) {
+  // for (let i = 4; i > 0; i--) {
   //   await Promise.all([
   //     calculateAccuranceByAlgorithm("SVM", i),
   //     calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
