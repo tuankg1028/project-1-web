@@ -2028,16 +2028,16 @@ async function calculateAccuranceByTranningApps() {
       let tranningAppIds = user.questionIds.slice(0, 10);
 
       let ourPrediction;
-      try {
-        ourPrediction = await Utils.Function.getOurPredictionApproach0(
-          tranningAppIds,
-          answer,
-          app,
-          questionPrediction
-        );
-      } catch (err) {
-        continue;
-      }
+      // try {
+      ourPrediction = await Utils.Function.getOurPredictionApproach0(
+        tranningAppIds,
+        answer,
+        app,
+        questionPrediction
+      );
+      // } catch (err) {
+      //   continue;
+      // }
 
       questionPrediction.push({
         id: question.id,
