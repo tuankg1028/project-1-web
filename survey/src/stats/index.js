@@ -2108,7 +2108,7 @@ async function calculateAccuranceByTranningApps() {
           60 * 60 * 24 * 30
         ); // 1 month;
 
-        tranningAppIds = user.questionIds.slice(0, 10);
+        let tranningAppIds = user.questionIds.slice(0, 10);
 
         let ourPrediction;
         // try {
