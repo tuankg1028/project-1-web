@@ -2876,18 +2876,18 @@ const getOurPredictionApproach0 = async (
   ];
 
   // eslint-disable-next-line no-console
-  console.log(
-    "Step 2 in approach 3 with tranning and test: ",
-    tranningSet,
-    testSet
-  );
+  // console.log(
+  //   "Step 2 in approach 3 with tranning and test: ",
+  //   tranningSet,
+  //   testSet
+  // );
   let predict = await Services.Prediction.getPredictEM({
     train: tranningSet,
     test: testSet
   });
 
   // eslint-disable-next-line no-console
-  console.log("Step 3 Prediction is: ", predict);
+  // console.log("Step 3 Prediction is: ", predict);
   return predict[0][0];
 };
 const buildDataCollectionAndThirdParty = (data, type) => {
