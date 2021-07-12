@@ -2208,7 +2208,7 @@ const getOurPredictionApproach3 = async (
   view1Test.push([
     view1Test.length + 1,
     Object.keys(constants.categoryGroups).indexOf(category) + 1,
-    ...Object.values(question.apisModel),
+    ...Object.values(JSON.parse(question.apisModel)),
     -1
   ]);
 
@@ -2255,7 +2255,7 @@ const getOurPredictionApproach3 = async (
     ];
   });
   view2Test.push([
-    ...Object.values(question.apisModel),
+    ...Object.values(JSON.parse(question.apisModel)),
     ...buildDataCollectionAndThirdParty(question.collectionData, "collection"),
     ...buildDataCollectionAndThirdParty(question.thirdPartyData, "thirdParty"),
     -1
