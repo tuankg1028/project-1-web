@@ -2374,24 +2374,24 @@ const main = async () => {
   // await confusionMaxtrix();
   // await metricsDefinition();
 
-  // for (let i = 2; i < 6; i++) {
-  //   await Promise.all([
-  //     calculateAccuranceByAlgorithm("SVM", i),
-  //     calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
-  //     calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
-  //     calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
-  //     calculateAccuranceByAlgorithm("EM", i)
-  //   ]);
+  for (let i = 2; i < 6; i++) {
+    await Promise.all([
+      calculateAccuranceByAlgorithm("SVM", i),
+      calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
+      calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
+      calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
+      calculateAccuranceByAlgorithm("EM", i)
+    ]);
 
-  //   console.log(
-  //     chalk.default.bgGreen.black("==== Created accurance by algorithms====")
-  //   );
-  // }
+    console.log(
+      chalk.default.bgGreen.black("==== Created accurance by algorithms====")
+    );
+  }
 
-  await calculateAccuranceByTranningApps();
-  console.log(
-    chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
-  );
+  // await calculateAccuranceByTranningApps();
+  // console.log(
+  //   chalk.default.bgGreen.black("==== Created accurance by tranning apps ====")
+  // );
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
 main();
