@@ -2374,7 +2374,7 @@ const main = async () => {
   // await confusionMaxtrix();
   // await metricsDefinition();
 
-  for (let i = 2; i < 6; i++) {
+  for (let i = 5; i > 0; i--) {
     await Promise.all([
       calculateAccuranceByAlgorithm("SVM", i),
       calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
