@@ -248,7 +248,7 @@ async function test1() {
     };
 
     const articleChunk = chunkArray(articles, 10);
-
+    console.log("params", articleChunk);
     let txt = "";
     for (let i = 0; i < articleChunk.length; i++) {
       const chunk = articleChunk[i];
@@ -256,6 +256,7 @@ async function test1() {
       const content = await Promise.all(chunk.map(article => getData(article)));
 
       txt += content.join("\n\n");
+      console.log(i);
     }
 
     fs.writeFileSync("./content.txt", txt);
