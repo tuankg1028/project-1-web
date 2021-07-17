@@ -247,7 +247,7 @@ async function test1() {
       return results;
     };
 
-    const articleChunk = chunkArray(articles, 5);
+    const articleChunk = chunkArray(articles, 10);
 
     let txt = "";
     for (let i = 0; i < articleChunk.length; i++) {
