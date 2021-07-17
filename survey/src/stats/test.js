@@ -183,7 +183,8 @@ async function test1() {
         let articleHtml = await Promise.all([
           axios
             .get(link, { timeout: 1000 * 60 })
-            .then(response => response.data),
+            .then(response => response.data)
+            .catch(err => ""),
           getContentFromUrl(link)
         ]);
 
@@ -283,7 +284,7 @@ async function getContentFromUrl(url) {
       //   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
     });
     const page = await browser.newPage();
-    await page.setDefaultNavigationTimeout(1000 * 60 * 2);
+    await page.setDefaultNavigationTimeout(1000 * 60);
 
     await page.goto(url, { waitUntil: "networkidle0" });
 
@@ -295,6 +296,7 @@ async function getContentFromUrl(url) {
 
     return data;
   } catch (err) {
+    return "";
     console.error(err);
   }
 }
