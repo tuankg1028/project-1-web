@@ -167,76 +167,82 @@ async function test1() {
       return Number(year.value) >= 2011;
     });
 
-    const getData = async article => {
+    const getData = async (article, index) => {
       const { fields, raw } = article;
 
-      const title = fields.find(item => item.name === "title").value;
-      const ggResult = await googleIt({
-        query: title
-      });
+      try {
+        const title = fields.find(item => item.name === "title").value;
+        const ggResult = await googleIt({
+          query: title
+        });
 
-      const link = ggResult[0].link;
-      console.log("Get link", link);
+        const link = ggResult[0].link;
+        console.log("Get link", link);
 
-      // // get article html
-      let articleHtml = await Promise.all([
-        axios.get(link, { timeout: 1000 * 60 }).then(response => response.data),
-        getContentFromUrl(link)
-      ]);
+        // // get article html
+        let articleHtml = await Promise.all([
+          axios
+            .get(link, { timeout: 1000 * 60 })
+            .then(response => response.data),
+          getContentFromUrl(link)
+        ]);
 
-      articleHtml = articleHtml.join("\n");
+        articleHtml = articleHtml.join("\n");
 
-      fs.writeFileSync("./kaka.html", articleHtml);
-      const $article = await cheerio.load(articleHtml);
+        fs.writeFileSync("./kaka.html", articleHtml);
+        const $article = await cheerio.load(articleHtml);
 
-      let abstract = $article(".abstract.author p").text();
-      if (!abstract) {
-        abstract = $article(".abstract-text").text();
-        abstract.replace("Abstract:", "");
+        let abstract = $article(".abstract.author p").text();
+        if (!abstract) {
+          abstract = $article(".abstract-text").text();
+          abstract.replace("Abstract:", "");
+        }
+        if (!abstract) {
+          abstract = $article(".abstractSection").text();
+        }
+        if (!abstract) {
+          abstract = $article("#Abs1-content").text();
+        }
+        if (!abstract) {
+          abstract = $article("[itemprop='description']").text();
+        }
+
+        // keywords
+        let keywords = $article(".keywords-section div").text();
+        if (!keywords) {
+          keywords = $article(".stats-keywords-container")
+            .first()
+            .text();
+        }
+        if (!keywords) {
+          keywords = $article(".c-article-subject-list")
+            .first()
+            .text();
+        }
+
+        console.log("Get abstract", abstract);
+        console.log("Get keywords", keywords);
+        console.log("==============");
+
+        let content = raw.split("\n").filter(item => !!item);
+        content[content.length - 2] = content[content.length - 2] + ",";
+        // link
+        content[content.length - 1] = `  link      = {${link}},`;
+
+        // abstract
+        content[content.length] = `  abstract  = {${abstract}},`;
+        // keywords
+        content[content.length] = `  keywords  = {${keywords}}`;
+        // }
+        content[content.length] = "}";
+
+        content = content.join("\n");
+        console.log("content", content);
+        console.log(`${index + 1}/10`);
+        return content;
+      } catch (err) {
+        return raw;
       }
-      if (!abstract) {
-        abstract = $article(".abstractSection").text();
-      }
-      if (!abstract) {
-        abstract = $article("#Abs1-content").text();
-      }
-      if (!abstract) {
-        abstract = $article("[itemprop='description']").text();
-      }
-
-      // keywords
-      let keywords = $article(".keywords-section div").text();
-      if (!keywords) {
-        keywords = $article(".stats-keywords-container")
-          .first()
-          .text();
-      }
-      if (!keywords) {
-        keywords = $article(".c-article-subject-list")
-          .first()
-          .text();
-      }
-
-      console.log("Get abstract", abstract);
-      console.log("Get keywords", keywords);
-      console.log("==============");
-
-      let content = raw.split("\n").filter(item => !!item);
-      content[content.length - 2] = content[content.length - 2] + ",";
-      // link
-      content[content.length - 1] = `  link      = {${link}},`;
-
-      // abstract
-      content[content.length] = `  abstract  = {${abstract}},`;
-      // keywords
-      content[content.length] = `  keywords  = {${keywords}}`;
-      // }
-      content[content.length] = "}";
-
-      content = content.join("\n");
-      console.log("content", content);
-
-      return content;
     };
 
     const chunkArray = (array = [], size = ARRAY_SIZE) => {
@@ -251,12 +257,15 @@ async function test1() {
     console.log("params", articleChunk);
     let txt = "";
     for (let i = 0; i < articleChunk.length; i++) {
+      console.log(i);
       const chunk = articleChunk[i];
 
-      const content = await Promise.all(chunk.map(article => getData(article)));
+      const content = await Promise.all(
+        chunk.map((article, i) => getData(article, i))
+      );
 
       txt += content.join("\n\n");
-      console.log(i);
+      console.log("DONE", i);
     }
 
     fs.writeFileSync("./content.txt", txt);
