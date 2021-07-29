@@ -299,6 +299,7 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
                 | Maybe
                 input(type='radio' class="final-question" name="questions[" + question.id + "][install]" value="2" checked=isAnswered && userAnswer.install == 2)
                 span.checkmark
+    
     if(!isAnswered)
       div.see-next-btn() Next
 

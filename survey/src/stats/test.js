@@ -10,23 +10,35 @@ const puppeteer = require("puppeteer");
 import fs from "fs";
 // [ 'ID', 'Name', 'Level', 'Parent' ],
 async function test() {
-  const infoCollection = await csv({
+  let infoCollection = await csv({
     noheader: true,
     output: "csv"
   }).fromFile(
     path.join(
       __dirname,
-      "../../input/Privacy_preference_Level_Sheet/information collected-Table 1.csv"
+      "../../input/Privacy_preference_Level_Sheet/information-collected.csv"
     )
   );
+  infoCollection = infoCollection.filter(item => item[3] !== "null");
 
-  const permissions = await csv({
+  let permissions = await csv({
     noheader: true,
     output: "csv"
   }).fromFile(
     path.join(
       __dirname,
-      "../../input/Privacy_preference_Level_Sheet/permission-Table 1.csv"
+      "../../input/Privacy_preference_Level_Sheet/device-permission.csv"
+    )
+  );
+  permissions = permissions.filter(item => item[3] !== "null");
+
+  const services = await csv({
+    noheader: true,
+    output: "csv"
+  }).fromFile(
+    path.join(
+      __dirname,
+      "../../input/Privacy_preference_Level_Sheet/service-providers.csv"
     )
   );
 
@@ -36,14 +48,13 @@ async function test() {
   }).fromFile(
     path.join(
       __dirname,
-      "../../input/Privacy_preference_Level_Sheet/interaction-Table 1.csv"
+      "../../input/Privacy_preference_Level_Sheet/human-interaction.csv"
     )
   );
-
-  const lv1Nodes = interactions.filter(item => item[3] === "null");
+  const lv1Nodes1 = interactions.filter(item => item[3] === "null");
 
   const questions = [];
-  lv1Nodes.forEach(lv1Node => {
+  lv1Nodes1.forEach(lv1Node => {
     const [id] = lv1Node;
     const lv2Nodes = interactions.filter(item => item[3] === id);
 
@@ -55,31 +66,31 @@ async function test() {
       );
       // lv 3
       lv3Nodes.forEach(lv3Node => {
-        permissions.forEach(permission => {
-          questions.push({
-            id: lv2Node[0],
-            name: lv2Node[1],
-            lv1: {
-              id: lv1Node[0],
-              name: lv1Node[1],
-              level: lv1Node[2],
-              parent: lv1Node[3]
-            },
-            lv3: {
-              id: lv3Node[0],
-              name: lv3Node[1],
-              level: lv3Node[2],
-              parent: lv3Node[3]
-            },
-            subItem: {
-              id: permission[0],
-              name: permission[1],
-              level: permission[2],
-              parent: permission[3],
-              type: "permission"
-            }
-          });
-        });
+        // permissions.forEach(permission => {
+        //   questions.push({
+        //     id: lv2Node[0],
+        //     name: lv2Node[1],
+        //     lv1: {
+        //       id: lv1Node[0],
+        //       name: lv1Node[1],
+        //       level: lv1Node[2],
+        //       parent: lv1Node[3]
+        //     },
+        //     lv3: {
+        //       id: lv3Node[0],
+        //       name: lv3Node[1],
+        //       level: lv3Node[2],
+        //       parent: lv3Node[3]
+        //     },
+        //     subItem: {
+        //       id: permission[0],
+        //       name: permission[1],
+        //       level: permission[2],
+        //       parent: permission[3],
+        //       type: "permission"
+        //     }
+        //   });
+        // });
 
         infoCollection.forEach(collection => {
           questions.push({
@@ -110,6 +121,74 @@ async function test() {
     });
   });
 
+  const lv1Nodes2 = services.filter(item => item[3] === "null");
+  lv1Nodes2.forEach(lv1Node => {
+    const [id] = lv1Node;
+    const lv2Nodes = services.filter(item => item[3] === id);
+
+    // lv 2
+    lv2Nodes.forEach(lv2Node => {
+      const lv2Id = lv2Node[0];
+      const lv3Nodes = services.filter(item =>
+        _.includes(item[3].split(","), lv2Id)
+      );
+      // lv 3
+      lv3Nodes.forEach(lv3Node => {
+        permissions.forEach(permission => {
+          questions.push({
+            id: lv2Node[0],
+            name: lv2Node[1],
+            lv1: {
+              id: lv1Node[0],
+              name: lv1Node[1],
+              level: lv1Node[2],
+              parent: lv1Node[3]
+            },
+            lv3: {
+              id: lv3Node[0],
+              name: lv3Node[1],
+              level: lv3Node[2],
+              parent: lv3Node[3]
+            },
+            subItem: {
+              id: permission[0],
+              name: permission[1],
+              level: permission[2],
+              parent: permission[3],
+              type: "permission"
+            }
+          });
+        });
+
+        // infoCollection.forEach(collection => {
+        //   questions.push({
+        //     id: lv2Node[0],
+        //     name: lv2Node[1],
+        //     lv1: {
+        //       id: lv1Node[0],
+        //       name: lv1Node[1],
+        //       level: lv1Node[2],
+        //       parent: lv1Node[3]
+        //     },
+        //     lv3: {
+        //       id: lv3Node[0],
+        //       name: lv3Node[1],
+        //       level: lv3Node[2],
+        //       parent: lv3Node[3]
+        //     },
+        //     subItem: {
+        //       id: collection[0],
+        //       name: collection[1],
+        //       level: collection[2],
+        //       parent: collection[3],
+        //       type: "collection"
+        //     }
+        //   });
+        // });
+      });
+    });
+  });
+
   // const groupQuestions = _.groupBy(questions, "groupId");
   //   subItem: {
   //     '0': '9',
@@ -119,7 +198,7 @@ async function test() {
   //     '4': '',
   //     type: 'collection'
   //   }
-  console.log(JSON.stringify(questions));
+  console.log(JSON.stringify(questions), questions.length);
   return;
   for (const groupId in groupQuestions) {
     console.log("=========");
@@ -147,7 +226,7 @@ async function test() {
     }
   }
 }
-// test();
+test();
 
 async function test1() {
   const googleIt = require("google-it");
@@ -166,7 +245,7 @@ async function test1() {
 
       return Number(year.value) >= 2011;
     });
-
+    let missing = "";
     const getData = async (article, index) => {
       const { fields, raw } = article;
 
@@ -185,12 +264,11 @@ async function test1() {
             .get(link, { timeout: 1000 * 60 })
             .then(response => response.data)
             .catch(err => ""),
-          getContentFromUrl(link)
+          getContentFromUrl(link).catch(err => "")
         ]);
 
         articleHtml = articleHtml.join("\n");
 
-        fs.writeFileSync("./kaka.html", articleHtml);
         const $article = await cheerio.load(articleHtml);
 
         let abstract = $article(".abstract.author p").text();
@@ -240,6 +318,20 @@ async function test1() {
         content = content.join("\n");
         console.log("content", content);
         console.log(`${index + 1}/10`);
+
+        if (!keywords || !abstract) {
+          missing += `${title}\n`;
+        }
+        if (!keywords) {
+          missing += "keywords:\n";
+        }
+        if (!abstract) {
+          missing += "abstract:\n";
+        }
+        if (!keywords || !abstract) {
+          missing += "\n";
+        }
+
         return content;
       } catch (err) {
         return raw;
@@ -266,16 +358,17 @@ async function test1() {
       );
 
       txt += content.join("\n\n");
+      fs.writeFileSync("./content.txt", txt);
       console.log("DONE", i);
     }
-
     fs.writeFileSync("./content.txt", txt);
+    fs.writeFileSync("./missing.txt", missing);
     console.log("DONE");
   } catch (err) {
     console.log(err);
   }
 }
-test1();
+// test1();
 
 async function getContentFromUrl(url) {
   try {
