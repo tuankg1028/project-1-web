@@ -27,7 +27,14 @@ jobs:
     - name: Setup Docker Buildx
       uses: docker/setup-buildx-action@v1
       id: buildx
-    
+      
+    - name: Cache Docker Image Layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
             
     - name: Build and push
       id: docker_build
@@ -36,6 +43,8 @@ jobs:
         context: survey/
         push: true
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/survey-api:latest
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache
 
     - name: Image digest
       run: echo ${{ steps.docker_build.outputs.digest }}
@@ -48,7 +57,7 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         rm: true
-        source: "docker-compose.yml,deploy.sh"
+        source: "survey/docker-compose.yml,survey/deploy.sh"
         target: "${{ secrets.TARGER_DIR }}/survey-2"
 
     - name: Deploy stacks 
