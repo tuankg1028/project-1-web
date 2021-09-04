@@ -1,47 +1,58 @@
 version: '3.7'
 services:
-  nodeserver:
-    image: survey_nodeserver:latest
-    ports:
-      - "3333:3333"
+  web:
+    image: untadee/survey-api:latest
+    build: .
+    networks:
+      - webnet
+      - traefik-public
+    depends_on:
+      - redis
+    
     # service deployment
-    # deploy:
-    #   mode: replicated
-    #   replicas: 2
-      # labels: [APP=NODE_SERVER]
-      # # service resource management
-      # resources:
-      #   # Hard limit - Docker does not allow to allocate more
-      #   limits:
-      #     cpus: '0.25'
-      #     memory: 512M
-      #   # Soft limit - Docker makes best effort to return to it
-      #   reservations:
-      #     cpus: '0.25'
-      #     memory: 256M
-      # # service restart policy
-      # restart_policy:
-      #   condition: on-failure
-      #   delay: 5s
-      #   max_attempts: 3
-      #   window: 120s
-      # # service update configuration
-      # update_config:
-      #   parallelism: 1
-      #   delay: 10s
-      #   failure_action: continue
-      #   monitor: 60s
-      #   max_failure_ratio: 0.3
-  redis:
-    image: "redis:alpine"
-    volumes:
-      - ./data/redis:/data
-  db:
-    image: mongo
-    volumes:
-      - ./data/db:/data/db
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: 123123
+    deploy:
+      # service resource management
+      resources:
+        # Hard limit - Docker does not allow to allocate more
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        # Soft limit - Docker makes best effort to return to it
+        reservations:
+          cpus: '0.50'
+          memory: 256M
+      # service restart policy
+      replicas: 10
+      update_config:
+        parallelism: 2
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.survey-web.rule=Host(`rais.dista.uninsubria.it`)
+        - traefik.http.routers.survey-web.entrypoints=https
+        - traefik.http.routers.survey-web.tls=true
+        # - traefik.http.middlewares.survey-strip-prefix.stripprefix.prefixes=/survey
+        # - traefik.http.routers.survey-web.middlewares=survey-strip-prefix
+        - traefik.http.services.survey-web.loadbalancer.server.port=3333
+
+
+networks:
+  webnet:
+  traefik-public:
+    external: true
+volumes:
+  data:
+
 
