@@ -67,4 +67,4 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
-        script: cd ${{ secrets.TARGER_DIR }}/survey-2 && sh deploy.sh
+        script: cd ${{ secrets.TARGER_DIR }}/survey-2/survey && sh deploy.sh
