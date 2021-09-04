@@ -41,7 +41,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: ./
-        file: ./Dockerfile
+        file: survey/.Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/survey-api:latest
         cache-from: type=local,src=/tmp/.buildx-cache
