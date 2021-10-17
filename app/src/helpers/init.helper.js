@@ -274,19 +274,19 @@ const initAppsOnDB36K = async () => {
     //   promises.push(limit(() => _createAppDB(appName)));
     // }
 
-    setInterval(() => {
-      try {
-        execSync(
-          "rm -rf apkTemp && mkdir apkTemp &&  rm -rf sourceTemp && mkdir sourceTemp"
-        );
-      } catch (err) {
-        console.log(err);
-        Helpers.Logger.error("ERROR: remove folder");
-      }
-    }, 1000 * 60 * 60 * 2);
+    // setInterval(() => {
+    //   try {
+    //     execSync(
+    //       "rm -rf apkTemp && mkdir apkTemp &&  rm -rf sourceTemp && mkdir sourceTemp"
+    //     );
+    //   } catch (err) {
+    //     console.log(err);
+    //     Helpers.Logger.error("ERROR: remove folder");
+    //   }
+    // }, 1000 * 60 * 60 * 2);
     // temp
     let apps = await Models.App.find({
-      isCompleted: false,
+      // isCompleted: false,
     });
     apps = _.sampleSize(apps, apps.length);
     // const apps = [{ id: "60376a4192e2b52f3cf84d38" }];
@@ -335,61 +335,62 @@ const _createAppDBOnFile = async (appIdDB) => {
           `${apkSourcePath}/sources`
         );
 
-        Helpers.Logger.step("Step 4: Get base line value for leaf nodes");
-        const leafNodeBaseLines = await Services.BaseLine.initBaseLineForTree(
-          contents
-        );
+        // Helpers.Logger.step("Step 4: Get base line value for leaf nodes");
+        // const leafNodeBaseLines = await Services.BaseLine.initBaseLineForTree(
+        //   contents
+        // );
 
-        const functionConstants = leafNodeBaseLines.filter((node) => {
-          return node.right - node.left === 1 && node.baseLine === 1;
-        });
-        Helpers.Logger.info(
-          `Node data: ${JSON.stringify(functionConstants, null, 2)}`
-        );
+        // const functionConstants = leafNodeBaseLines.filter((node) => {
+        //   return node.right - node.left === 1 && node.baseLine === 1;
+        // });
+        // Helpers.Logger.info(
+        //   `Node data: ${JSON.stringify(functionConstants, null, 2)}`
+        // );
 
-        const appData = {
-          isCompleted: true,
-          nodes: functionConstants.map((item) => {
-            return {
-              id: item._id,
-              name: item.name,
-              value: item.baseLine,
-              parent: item.parent._id,
-            };
-          }),
-        };
+        // const appData = {
+        //   isCompleted: true,
+        //   nodes: functionConstants.map((item) => {
+        //     return {
+        //       id: item._id,
+        //       name: item.name,
+        //       value: item.baseLine,
+        //       parent: item.parent._id,
+        //     };
+        //   }),
+        // };
 
-        Helpers.Logger.info(`APP DATA: ${JSON.stringify(appData, null, 2)}`);
-        // create app
-        await Models.App.updateOne(
-          {
-            _id: appIdDB,
-          },
-          {
-            $set: appData,
-          },
-          {},
-          (err, data) =>
-            Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
-        );
+        // Helpers.Logger.info(`APP DATA: ${JSON.stringify(appData, null, 2)}`);
+        // // create app
+        // await Models.App.updateOne(
+        //   {
+        //     _id: appIdDB,
+        //   },
+        //   {
+        //     $set: appData,
+        //   },
+        //   {},
+        //   (err, data) =>
+        //     Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
+        // );
 
-        // remove file and folder
+        // // remove file and folder
 
-        if (fs.existsSync(apkSourcePath)) {
-          rimraf(apkSourcePath, function () {
-            Helpers.Logger.info("folder removed");
-          });
-        }
+        // if (fs.existsSync(apkSourcePath)) {
+        //   rimraf(apkSourcePath, function () {
+        //     Helpers.Logger.info("folder removed");
+        //   });
+        // }
 
-        return functionConstants;
+        return;
+        // functionConstants;
       } catch (err) {
         console.log(err);
         // remove file and folder
-        if (fs.existsSync(apkSourcePath)) {
-          rimraf(apkSourcePath, function () {
-            Helpers.Logger.info("folder removed");
-          });
-        }
+        // if (fs.existsSync(apkSourcePath)) {
+        //   rimraf(apkSourcePath, function () {
+        //     Helpers.Logger.info("folder removed");
+        //   });
+        // }
 
         Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appIdDB} app`);
       }
@@ -709,10 +710,10 @@ function ThroughDirectory(Directory, Files = []) {
 function _getApkFileFromSource(appId) {
   let apkPath = "";
   const apkFilesInFolder1 = ThroughDirectory(
-    "/home/ha/snap/skype/common/apkpure_get/new_top_apps_Download"
+    "~/tuan/36k_ap/apkpure_get/new_top_apps_Download"
   );
   const apkFilesInFolder2 = ThroughDirectory(
-    "/home/ha/snap/skype/common/apkpure_get/top_apps_Download"
+    "~/tuan/36k_ap/apkpure_get/top_apps_Download"
   );
 
   // find in folder 1
