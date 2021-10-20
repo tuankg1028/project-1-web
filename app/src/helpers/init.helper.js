@@ -249,6 +249,27 @@ const initAppsOnDBByCSV = async () => {
   }
 };
 
+const initeJavaSourceCode = async () => {
+  let apps = await Models.App.find({
+    // isCompleted: false,
+  });
+
+  for (let i = 0; i < apps.length; i++) {
+    Helpers.Logger.info(`Running ${i + 1}/${apps.length}`);
+    const app = apps[i];
+
+    const isRun = await Models.AppTemp.findOne({
+      appName: app.appName,
+      type: "36k",
+    });
+
+    if (isRun) continue;
+    // await _createAppDB(app.id);
+    promises.push(limit(() => _createAppDBOnFile(app.id)));
+  }
+
+  await Promise.all(promises).then(console.log);
+};
 const initAppsOnDB36K = async () => {
   try {
     const limit = pLimit(2);
@@ -324,16 +345,22 @@ const _createAppDBOnFile = async (appIdDB) => {
         Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
 
         // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
-        apkSourcePath = path.join(__dirname, `../../sourceTemp/${uuidv4()}`);
+        apkSourcePath = `/data/Java Code/${appIdDB}`;
 
         execSync(`mkdir ${apkSourcePath}`);
         execSync(
           `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
         );
-        Helpers.Logger.step("Step 3: Get content APK from source code");
-        const contents = await Helpers.File.getContentOfFolder(
-          `${apkSourcePath}/sources`
-        );
+
+        const app = await Models.App.findById(appIdDB);
+        await Models.AppTemp.create({
+          appName: app.appName,
+          type: "36k",
+        });
+        // Helpers.Logger.step("Step 3: Get content APK from source code");
+        // const contents = await Helpers.File.getContentOfFolder(
+        //   `${apkSourcePath}/sources`
+        // );
 
         // Helpers.Logger.step("Step 4: Get base line value for leaf nodes");
         // const leafNodeBaseLines = await Services.BaseLine.initBaseLineForTree(
@@ -747,4 +774,5 @@ export default {
   updateApps,
   changeCategoryOf36kApps,
   getAppsUninstall,
+  initeJavaSourceCode,
 };
