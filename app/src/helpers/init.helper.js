@@ -366,7 +366,8 @@ const _createAppDBOnFile = async (appIdDB) => {
         // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
         apkSourcePath = `/data/JavaCode/${appIdDB}`;
 
-        execSync(`mkdir ${apkSourcePath}`);
+        if (!fs.existsSync(apkSourcePath)) execSync(`mkdir ${apkSourcePath}`);
+
         execSync(
           `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
         );
