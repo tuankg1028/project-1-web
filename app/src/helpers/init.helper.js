@@ -252,11 +252,16 @@ const initAppsOnDBByCSV = async () => {
 const initeJavaSourceCode = async () => {
   console.log("Generating source code");
   let apps = await Models.App.find({
-    isCompletedJVCode: false,
+    $or: [
+      { isCompletedJVCode: { $exists: false } },
+      {
+        isCompletedJVCode: false,
+      },
+    ],
   }).limit(100);
   do {
     const promises = [];
-    const limit = pLimit(2);
+    const limit = pLimit(10);
     console.log(`Total apps: ${apps.length}`);
     for (let i = 0; i < apps.length; i++) {
       Helpers.Logger.info(`Running ${i + 1}/${apps.length}`);
