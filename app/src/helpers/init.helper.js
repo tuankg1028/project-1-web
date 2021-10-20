@@ -250,13 +250,14 @@ const initAppsOnDBByCSV = async () => {
 };
 
 const initeJavaSourceCode = async () => {
-  const limit = pLimit(5);
+  const limit = pLimit(2);
   let apps = await Models.App.find({
     // isCompleted: false,
   });
-
+  console.log(`Total apps: ${apps.length}`);
   for (let i = 0; i < apps.length; i++) {
     Helpers.Logger.info(`Running ${i + 1}/${apps.length}`);
+    console.log(`${i}/${apps.length}`);
     const app = apps[i];
 
     const isRun = await Models.AppTemp.findOne({
