@@ -278,7 +278,12 @@ const initeJavaSourceCode = async () => {
     }
 
     apps = await Models.App.find({
-      isCompletedJVCode: false,
+      $or: [
+        { isCompletedJVCode: { $exists: false } },
+        {
+          isCompletedJVCode: false,
+        },
+      ],
     }).limit(100);
 
     await Promise.all(promises).then(console.log);
@@ -433,7 +438,7 @@ const _createAppDBOnFile = async (appIdDB) => {
         return;
         // functionConstants;
       } catch (err) {
-        console.log(err);
+        // console.log(err);
         // remove file and folder
         // if (fs.existsSync(apkSourcePath)) {
         //   rimraf(apkSourcePath, function () {
@@ -447,7 +452,7 @@ const _createAppDBOnFile = async (appIdDB) => {
 
     return _createNodes(appIdDB);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appIdDB} app`);
   }
 };
