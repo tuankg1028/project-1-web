@@ -364,7 +364,7 @@ const _createAppDBOnFile = async (appIdDB) => {
         Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
 
         // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
-        apkSourcePath = `/data/Java Code/${appIdDB}`;
+        apkSourcePath = `/data/JavaCode/${appIdDB}`;
 
         execSync(`mkdir ${apkSourcePath}`);
         execSync(
