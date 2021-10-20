@@ -447,14 +447,14 @@ const _createAppDBOnFile = async (appIdDB) => {
         //   });
         // }
 
-        Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appIdDB} app`);
+        Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${err.message} app`);
       }
     };
 
     return _createNodes(appIdDB);
   } catch (err) {
     // console.log(err);
-    Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${appIdDB} app`);
+    Helpers.Logger.error(`ERROR: initAppsOnDB36K on ${err.message} app`);
   }
 };
 
