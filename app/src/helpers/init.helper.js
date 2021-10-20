@@ -250,6 +250,7 @@ const initAppsOnDBByCSV = async () => {
 };
 
 const initeJavaSourceCode = async () => {
+  console.log("Generating source code");
   let apps = await Models.App.find({
     isCompletedJVCode: false,
   }).limit(100);
