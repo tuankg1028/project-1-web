@@ -16,6 +16,7 @@ var schema = new Schema(
     privacyLink: String,
     chplayLink: String,
     isCompleted: Boolean,
+    isCompletedJVCode: Boolean,
     appAPKPureId: String,
     appIdCHPlay: String,
     CHPlayLink: String,

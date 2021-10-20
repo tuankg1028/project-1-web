@@ -252,8 +252,8 @@ const initAppsOnDBByCSV = async () => {
 const initeJavaSourceCode = async () => {
   const limit = pLimit(2);
   let apps = await Models.App.find({
-    // isCompleted: false,
-  });
+    isCompletedJVCode: false,
+  }).limit(5000);
   console.log(`Total apps: ${apps.length}`);
   for (let i = 0; i < apps.length; i++) {
     Helpers.Logger.info(`Running ${i + 1}/${apps.length}`);
@@ -359,6 +359,14 @@ const _createAppDBOnFile = async (appIdDB) => {
           appName: app.appName,
           type: "36k",
         });
+        await Models.App.updateOne(
+          {
+            isCompletedJVCode: true,
+          },
+          {
+            id: appIdDB,
+          }
+        );
         // Helpers.Logger.step("Step 3: Get content APK from source code");
         // const contents = await Helpers.File.getContentOfFolder(
         //   `${apkSourcePath}/sources`
