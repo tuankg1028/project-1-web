@@ -255,6 +255,7 @@ const initeJavaSourceCode = async () => {
     isCompletedJVCode: false,
   }).limit(100);
   do {
+    const promises = [];
     const limit = pLimit(2);
     console.log(`Total apps: ${apps.length}`);
     for (let i = 0; i < apps.length; i++) {
