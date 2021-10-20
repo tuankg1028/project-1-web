@@ -250,6 +250,7 @@ const initAppsOnDBByCSV = async () => {
 };
 
 const initeJavaSourceCode = async () => {
+  const limit = pLimit(5);
   let apps = await Models.App.find({
     // isCompleted: false,
   });
