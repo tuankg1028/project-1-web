@@ -250,27 +250,32 @@ const initAppsOnDBByCSV = async () => {
 };
 
 const initeJavaSourceCode = async () => {
-  const limit = pLimit(2);
   let apps = await Models.App.find({
     isCompletedJVCode: false,
-  }).limit(5000);
-  console.log(`Total apps: ${apps.length}`);
-  for (let i = 0; i < apps.length; i++) {
-    Helpers.Logger.info(`Running ${i + 1}/${apps.length}`);
-    console.log(`${i}/${apps.length}`);
-    const app = apps[i];
+  }).limit(100);
+  do {
+    const limit = pLimit(2);
+    console.log(`Total apps: ${apps.length}`);
+    for (let i = 0; i < apps.length; i++) {
+      Helpers.Logger.info(`Running ${i + 1}/${apps.length}`);
+      console.log(`${i}/${apps.length}`);
+      const app = apps[i];
 
-    const isRun = await Models.AppTemp.findOne({
-      appName: app.appName,
-      type: "36k",
-    });
+      const isRun = await Models.AppTemp.findOne({
+        appName: app.appName,
+        type: "36k",
+      });
 
-    if (isRun) continue;
-    // await _createAppDB(app.id);
-    promises.push(limit(() => _createAppDBOnFile(app.id)));
-  }
+      if (isRun) continue;
+      promises.push(limit(() => _createAppDBOnFile(app.id)));
+    }
 
-  await Promise.all(promises).then(console.log);
+    apps = await Models.App.find({
+      isCompletedJVCode: false,
+    }).limit(100);
+
+    await Promise.all(promises).then(console.log);
+  } while (apps && apps.length);
 };
 const initAppsOnDB36K = async () => {
   try {
