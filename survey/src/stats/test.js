@@ -7,7 +7,7 @@ import axios from "axios";
 const bibtexParse = require("bibtex-parse");
 const puppeteer = require("puppeteer");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
-
+var gplay = require('google-play-scraper');
 import fs from "fs";
 // [ 'ID', 'Name', 'Level', 'Parent' ],
 async function test() {
@@ -521,24 +521,144 @@ async function main() {
       id: "1"
     },
     {
+      id: "1developer",
+      title: "Developer"
+    },
+    {
+      id: "1category",
+      title: "Category"
+    },
+    {
+      id: "1appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "1purpose",
+      title: "Purpose"
+    },
+    {
+      id: "1thirdParty",
+      title: "Third Party"
+    },
+    {
       title: "Yes - Very low",
       id: "10"
+    },
+    {
+      id: "10developer",
+      title: "Developer"
+    },
+    {
+      id: "10category",
+      title: "Category"
+    },
+    {
+      id: "10appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "10purpose",
+      title: "Purpose"
+    },
+    {
+      id: "10thirdParty",
+      title: "Third Party"
     },
     {
       title: "Yes - Low",
       id: "11"
     },
     {
+      id: "11developer",
+      title: "Developer"
+    },
+    {
+      id: "11category",
+      title: "Category"
+    },
+    {
+      id: "11appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "11purpose",
+      title: "Purpose"
+    },
+    {
+      id: "11thirdParty",
+      title: "Third Party"
+    },
+    {
       title: "Yes - Neutral",
       id: "12"
+    },
+    {
+      id: "12developer",
+      title: "Developer"
+    },
+    {
+      id: "12category",
+      title: "Category"
+    },
+    {
+      id: "12appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "12purpose",
+      title: "Purpose"
+    },
+    {
+      id: "12thirdParty",
+      title: "Third Party"
     },
     {
       title: "Yes - High",
       id: "13"
     },
     {
+      id: "13developer",
+      title: "Developer"
+    },
+    {
+      id: "13category",
+      title: "Category"
+    },
+    {
+      id: "13appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "13purpose",
+      title: "Purpose"
+    },
+    {
+      id: "13thirdParty",
+      title: "Third Party"
+    },
+    {
       title: "Yes - Very high",
       id: "14"
+    },
+    {
+      id: "14developer",
+      title: "Developer"
+    },
+    {
+      id: "14category",
+      title: "Category"
+    },
+    {
+      id: "14appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "14purpose",
+      title: "Purpose"
+    },
+    {
+      id: "14thirdParty",
+      title: "Third Party"
     },
     // NO
     {
@@ -546,24 +666,145 @@ async function main() {
       id: "0"
     },
     {
+      id: "0developer",
+      title: "Developer"
+    },
+    {
+      id: "0category",
+      title: "Category"
+    },
+    {
+      id: "0appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "0purpose",
+      title: "Purpose"
+    },
+    {
+      id: "0thirdParty",
+      title: "Third Party"
+    },
+    {
       title: "No - Very low",
       id: "00"
+    },
+    {
+      id: "00developer",
+      title: "Developer"
+    },
+    {
+      id: "00category",
+      title: "Category"
+    },
+    {
+      id: "00appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "00purpose",
+      title: "Purpose"
+    },
+    {
+      id: "00thirdParty",
+      title: "Third Party"
     },
     {
       title: "No - Low",
       id: "01"
     },
     {
+      id: "01developer",
+      title: "Developer"
+    },
+    {
+      id: "01category",
+      title: "Category"
+    },
+    {
+      id: "01appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "01purpose",
+      title: "Purpose"
+    },
+    {
+      id: "01thirdParty",
+      title: "Third Party"
+    },
+    {
       title: "No - Neutral",
       id: "02"
+    },
+    {
+      id: "02developer",
+      title: "Developer"
+    },
+    {
+      id: "02category",
+      title: "Category"
+    },
+    {
+      id: "02appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "02purpose",
+      title: "Purpose"
+    },
+    {
+      id: "02thirdParty",
+      title: "Third Party"
     },
     {
       title: "No - High",
       id: "03"
     },
     {
+      id: "03developer",
+      title: "Developer"
+    },
+    {
+      id: "03category",
+      title: "Category"
+    },
+    {
+      id: "03appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "03purpose",
+      title: "Purpose"
+    },
+    {
+      id: "03thirdParty",
+      title: "Third Party"
+    },
+    
+    {
       title: "No - Very high",
       id: "04"
+    },
+    {
+      id: "04developer",
+      title: "Developer"
+    },
+    {
+      id: "04category",
+      title: "Category"
+    },
+    {
+      id: "04appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "04purpose",
+      title: "Purpose"
+    },
+    {
+      id: "04thirdParty",
+      title: "Third Party"
     },
     // Maybe
     {
@@ -571,24 +812,144 @@ async function main() {
       id: "2"
     },
     {
+      id: "2developer",
+      title: "Developer"
+    },
+    {
+      id: "2category",
+      title: "Category"
+    },
+    {
+      id: "2appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "2purpose",
+      title: "Purpose"
+    },
+    {
+      id: "2thirdParty",
+      title: "Third Party"
+    },
+    {
       title: "Maybe - Very low",
       id: "20"
+    },
+    {
+      id: "20developer",
+      title: "Developer"
+    },
+    {
+      id: "20category",
+      title: "Category"
+    },
+    {
+      id: "20appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "20purpose",
+      title: "Purpose"
+    },
+    {
+      id: "20thirdParty",
+      title: "Third Party"
     },
     {
       title: "Maybe - Low",
       id: "21"
     },
     {
+      id: "21developer",
+      title: "Developer"
+    },
+    {
+      id: "21category",
+      title: "Category"
+    },
+    {
+      id: "21appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "21purpose",
+      title: "Purpose"
+    },
+    {
+      id: "21thirdParty",
+      title: "Third Party"
+    },
+    {
       title: "Maybe - Neutral",
       id: "22"
+    },
+    {
+      id: "22developer",
+      title: "Developer"
+    },
+    {
+      id: "22category",
+      title: "Category"
+    },
+    {
+      id: "22appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "22purpose",
+      title: "Purpose"
+    },
+    {
+      id: "22thirdParty",
+      title: "Third Party"
     },
     {
       title: "Maybe - High",
       id: "23"
     },
     {
+      id: "23developer",
+      title: "Developer"
+    },
+    {
+      id: "23category",
+      title: "Category"
+    },
+    {
+      id: "23appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "23purpose",
+      title: "Purpose"
+    },
+    {
+      id: "23thirdParty",
+      title: "Third Party"
+    },
+    {
       title: "Maybe - Very high",
       id: "24"
+    },
+    {
+      id: "24developer",
+      title: "Developer"
+    },
+    {
+      id: "24category",
+      title: "Category"
+    },
+    {
+      id: "24appdev",
+      title: "App - Dev"
+    },
+    {
+      id: "24purpose",
+      title: "Purpose"
+    },
+    {
+      id: "24thirdParty",
+      title: "Third Party"
     },
   ]
   let users = await Models.User.find().cache(
@@ -615,6 +976,11 @@ async function main() {
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
 
     const result = {}
+    const category = {}
+    const developer = {}
+    const developerApp = {}
+    const purpose = {}
+    const thirdParty = {}
     for (let j = 0; j < 10; j++) {
 
       const question = answer.questions[j];
@@ -633,20 +999,120 @@ async function main() {
       else  if((range[0] + part * 2) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 3)) risk = 2
       else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
       else risk = 4
+      
+      const childrenPurpose = JSON.parse(app.collectionData).filter(item => !item.children || item.children.length === 0)
+      const childrenThirdParty = JSON.parse(app.thirdPartyData).filter(item => !item.children || item.children.length === 0)
 
 
       if(!result[installQuestion.value]) result[installQuestion.value] = 0
-      result[installQuestion.value]++
+      result[installQuestion.value]++;
+      // category 
+      if(!category[`${installQuestion.value}category`]) category[`${installQuestion.value}category`] = {}
+      category[`${installQuestion.value}category`][app.categoryName] ? category[`${installQuestion.value}category`][app.categoryName]++ : category[`${installQuestion.value}category`][app.categoryName] = 1 
+
+      // developer
+      if(!developer[`${installQuestion.value}developer`]) developer[`${installQuestion.value}developer`] = {}
+      developer[`${installQuestion.value}developer`][app.developer] ? developer[`${installQuestion.value}developer`][app.developer]++ : developer[`${installQuestion.value}developer`][app.developer] = 1 
+
+      // app - dev
+      const appsByDeveloper = await gplay.developer({devId: app.developer}).then(apps => Promise.all(apps.map(app => gplay.app({appId: app.appId}).catch(_ => null))).then(items => items.filter(item => !!item))).catch(_ => [])
+      if(!developerApp[`${installQuestion.value}appdev`]) developerApp[`${installQuestion.value}appdev`] = {}
+      developerApp[`${installQuestion.value}appdev`][app.developer] = appsByDeveloper
 
       if(!result[`${installQuestion.value}${risk}`]) result[`${installQuestion.value}${risk}`] = 0
       result[`${installQuestion.value}${risk}`]++
+
+      // purpose 
+      if(!purpose[`${installQuestion.value}purpose`]) purpose[`${installQuestion.value}purpose`] = {} 
+      childrenPurpose.forEach(item => {
+        purpose[`${installQuestion.value}purpose`][item['name']] ? purpose[`${installQuestion.value}purpose`][item['name']]++ : purpose[`${installQuestion.value}purpose`][item['name']] = 1
+      })
+
+      // third party 
+      if(!thirdParty[`${installQuestion.value}thirdParty`]) thirdParty[`${installQuestion.value}thirdParty`] = {} 
+      childrenThirdParty.forEach(item => {
+        thirdParty[`${installQuestion.value}thirdParty`][item['name']] ? thirdParty[`${installQuestion.value}thirdParty`][item['name']]++ : thirdParty[`${installQuestion.value}thirdParty`][item['name']] = 1
+      })
+      
+
+      // category 
+      if(!category[`${installQuestion.value}${risk}category`]) category[`${installQuestion.value}${risk}category`] = {}
+      category[`${installQuestion.value}${risk}category`][app.categoryName] ? category[`${installQuestion.value}${risk}category`][app.categoryName]++ : category[`${installQuestion.value}${risk}category`][app.categoryName] = 1 
+      // developer
+      if(!developer[`${installQuestion.value}${risk}developer`]) developer[`${installQuestion.value}${risk}developer`] = {}
+      developer[`${installQuestion.value}${risk}developer`][app.developer] ? developer[`${installQuestion.value}${risk}developer`][app.developer]++ : developer[`${installQuestion.value}${risk}developer`][app.developer] = 1
+
+      // app - dev
+      if(!developerApp[`${installQuestion.value}${risk}appdev`]) developerApp[`${installQuestion.value}${risk}appdev`] = {}
+      developerApp[`${installQuestion.value}${risk}appdev`][app.developer] = appsByDeveloper
+
+      // purpose 
+      if(!purpose[`${installQuestion.value}${risk}purpose`]) purpose[`${installQuestion.value}${risk}purpose`] = {} 
+      childrenPurpose.forEach(item => {
+        purpose[`${installQuestion.value}${risk}purpose`][item['name']] ? purpose[`${installQuestion.value}${risk}purpose`][item['name']]++ : purpose[`${installQuestion.value}${risk}purpose`][item['name']] = 1
+      })
+
+      // third party 
+      if(!thirdParty[`${installQuestion.value}${risk}thirdParty`]) thirdParty[`${installQuestion.value}${risk}thirdParty`] = {} 
+      childrenThirdParty.forEach(item => {
+        thirdParty[`${installQuestion.value}${risk}thirdParty`][item['name']] ? thirdParty[`${installQuestion.value}${risk}thirdParty`][item['name']]++ : thirdParty[`${installQuestion.value}${risk}thirdParty`][item['name']] = 1
+      })
     }
     
+    const categoryToStringValue = Object.entries(category).reduce((acc, item) => {
+      acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+        acc1 += `${item1[0]}: ${item1[1]}, `
+        return acc1
+      }, '')
+      return acc
+    }, {})
 
+    const developerToStringValue = Object.entries(developer).reduce((acc, item) => {
+      acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+        acc1 += `${item1[0]}: ${item1[1]}, `
+        return acc1
+      }, '')
+      return acc
+    }, {})
+    // 
+    
+    const devAppToStringValue = Object.entries(developerApp).reduce((acc, [key, item]) => {
+      acc[key] = Object.entries(item).reduce((acc, [developerName, apps]) => {
+        acc += `*${developerName}: (`
+        apps.forEach(app => {
+          acc += ` - ${app.title}: ${app.installs}; ${app.scoreText} \n`
+        })
+        acc += `)\n`
+        return acc
+      }, '')
+      return acc
+    }, {})
+
+    const purposeToString =  Object.entries(purpose).reduce((acc, item) => {
+      acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+        acc1 += `${item1[0]}: ${item1[1]}, `
+        return acc1
+      }, '')
+      return acc
+    }, {})
+
+    const thirdPartyToString =  Object.entries(thirdParty).reduce((acc, item) => {
+      acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+        acc1 += `${item1[0]}: ${item1[1]}, `
+        return acc1
+      }, '')
+      return acc
+    }, {})
+    // 
     rows[type].push({
       stt: i + 1,
       email: user.email,
-      ...result
+      ...result,
+      ...categoryToStringValue,
+      ...developerToStringValue,
+      ...devAppToStringValue,
+      ...purposeToString,
+      ...thirdPartyToString
     })
   }
   let csvWriter = createCsvWriter({
@@ -666,8 +1132,8 @@ async function main() {
     header
   });
   await csvWriter.writeRecords(rows['unpaid']);
-  
   console.log("DONE tranning")
+
   // test
   rows = {
     expert: [],
@@ -683,6 +1149,11 @@ async function main() {
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
 
     const result = {}
+    const category = {}
+    const developer = {}
+    const developerApp = {}
+    const purpose = {}
+    const thirdParty = {}
     for (let j = 10; j < answer.questions.length; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
@@ -699,17 +1170,118 @@ async function main() {
       else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
       else risk = 4
 
+      const childrenPurpose = JSON.parse(app.collectionData).filter(item => !item.children || item.children.length === 0)
+      const childrenThirdParty = JSON.parse(app.thirdPartyData).filter(item => !item.children || item.children.length === 0)
 
       if(!result[installQuestion.value]) result[installQuestion.value] = 0
       result[installQuestion.value]++
+      // category 
+      if(!category[`${installQuestion.value}category`]) category[`${installQuestion.value}category`] = {}
+      category[`${installQuestion.value}category`][app.categoryName] ? category[`${installQuestion.value}category`][app.categoryName]++ : category[`${installQuestion.value}category`][app.categoryName] = 1 
+
+      // developer
+      if(!developer[`${installQuestion.value}developer`]) developer[`${installQuestion.value}developer`] = {}
+      developer[`${installQuestion.value}developer`][app.developer] ? developer[`${installQuestion.value}developer`][app.developer]++ : developer[`${installQuestion.value}developer`][app.developer] = 1 
+
+      // app - dev
+      const appsByDeveloper = await gplay.developer({devId: app.developer}).then(apps => Promise.all(apps.map(app => gplay.app({appId: app.appId}).catch(_ => null))).then(items => items.filter(item => !!item))).catch(_ => [])
+      if(!developerApp[`${installQuestion.value}appdev`]) developerApp[`${installQuestion.value}appdev`] = {}
+      developerApp[`${installQuestion.value}appdev`][app.developer] = appsByDeveloper
+
+      // purpose 
+      if(!purpose[`${installQuestion.value}purpose`]) purpose[`${installQuestion.value}purpose`] = {} 
+      childrenPurpose.forEach(item => {
+        purpose[`${installQuestion.value}purpose`][item['name']] ? purpose[`${installQuestion.value}purpose`][item['name']]++ : purpose[`${installQuestion.value}purpose`][item['name']] = 1
+      })
+
+      // third party 
+      if(!thirdParty[`${installQuestion.value}thirdParty`]) thirdParty[`${installQuestion.value}thirdParty`] = {} 
+      childrenThirdParty.forEach(item => {
+        thirdParty[`${installQuestion.value}thirdParty`][item['name']] ? thirdParty[`${installQuestion.value}thirdParty`][item['name']]++ : thirdParty[`${installQuestion.value}thirdParty`][item['name']] = 1
+      })
+
 
       if(!result[`${installQuestion.value}${risk}`]) result[`${installQuestion.value}${risk}`] = 0
       result[`${installQuestion.value}${risk}`]++
+
+      // category 
+      if(!category[`${installQuestion.value}${risk}category`]) category[`${installQuestion.value}${risk}category`] = {}
+      category[`${installQuestion.value}${risk}category`][app.categoryName] ? category[`${installQuestion.value}${risk}category`][app.categoryName]++ : category[`${installQuestion.value}${risk}category`][app.categoryName] = 1 
+      // developer
+      if(!developer[`${installQuestion.value}${risk}developer`]) developer[`${installQuestion.value}${risk}developer`] = {}
+      developer[`${installQuestion.value}${risk}developer`][app.developer] ? developer[`${installQuestion.value}${risk}developer`][app.developer]++ : developer[`${installQuestion.value}${risk}developer`][app.developer] = 1
+      
+      // app - dev
+      if(!developerApp[`${installQuestion.value}${risk}appdev`]) developerApp[`${installQuestion.value}${risk}appdev`] = {}
+      developerApp[`${installQuestion.value}${risk}appdev`][app.developer] = appsByDeveloper
+
+      // purpose 
+      if(!purpose[`${installQuestion.value}${risk}purpose`]) purpose[`${installQuestion.value}${risk}purpose`] = {} 
+      childrenPurpose.forEach(item => {
+        purpose[`${installQuestion.value}${risk}purpose`][item['name']] ? purpose[`${installQuestion.value}${risk}purpose`][item['name']]++ : purpose[`${installQuestion.value}${risk}purpose`][item['name']] = 1
+      })
+
+      // third party 
+      if(!thirdParty[`${installQuestion.value}${risk}thirdParty`]) thirdParty[`${installQuestion.value}${risk}thirdParty`] = {} 
+      childrenThirdParty.forEach(item => {
+        thirdParty[`${installQuestion.value}${risk}thirdParty`][item['name']] ? thirdParty[`${installQuestion.value}${risk}thirdParty`][item['name']]++ : thirdParty[`${installQuestion.value}${risk}thirdParty`][item['name']] = 1
+      })
+
     }
+
+    const categoryToStringValue = Object.entries(category).reduce((acc, item) => {
+      acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+        acc1 += `${item1[0]}: ${item1[1]}, `
+        return acc1
+      }, '')
+      return acc
+    }, {})
+
+    const developerToStringValue = Object.entries(developer).reduce((acc, item) => {
+      acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+        acc1 += `${item1[0]}: ${item1[1]}, `
+        return acc1
+      }, '')
+      return acc
+    }, {})
+
+    const devAppToStringValue = Object.entries(developerApp).reduce((acc, [key, item]) => {
+      acc[key] = Object.entries(item).reduce((acc, [developerName, apps]) => {
+        acc += `*${developerName}: (`
+        apps.forEach(app => {
+          acc += ` - ${app.title}: ${app.installs}; ${app.scoreText} \n`
+        })
+        acc += `)\n`
+        return acc
+      }, '')
+      return acc
+    }, {})
+
+    const purposeToString =  Object.entries(purpose).reduce((acc, item) => {
+      acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+        acc1 += `${item1[0]}: ${item1[1]}, `
+        return acc1
+      }, '')
+      return acc
+    }, {})
+
+    const thirdPartyToString =  Object.entries(thirdParty).reduce((acc, item) => {
+      acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+        acc1 += `${item1[0]}: ${item1[1]}, `
+        return acc1
+      }, '')
+      return acc
+    }, {})
+
     rows[type].push({
       stt: i + 1,
       email: user.email,
-      ...result
+      ...result,
+      ...categoryToStringValue,
+      ...developerToStringValue,
+      ...devAppToStringValue,
+      ...purposeToString,
+      ...thirdPartyToString
     })
   }
   csvWriter = createCsvWriter({
@@ -734,6 +1306,31 @@ async function main() {
   // trainning group 
   rows = []
   let result = {
+    expert: {},
+    paid: {},
+    unpaid: {},
+  }
+  let category = {
+    expert: {},
+    paid: {},
+    unpaid: {},
+  }
+  let developer = {
+    expert: {},
+    paid: {},
+    unpaid: {},
+  }
+  let developerApp = {
+    expert: {},
+    paid: {},
+    unpaid: {},
+  }
+  let purpose = {
+    expert: {},
+    paid: {},
+    unpaid: {},
+  }
+  let thirdParty = {
     expert: {},
     paid: {},
     unpaid: {},
@@ -765,27 +1362,226 @@ async function main() {
       else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
       else risk = 4
 
+      const childrenPurpose = JSON.parse(app.collectionData).filter(item => !item.children || item.children.length === 0)
+      const childrenThirdParty = JSON.parse(app.thirdPartyData).filter(item => !item.children || item.children.length === 0)
+
       if(!result[type][installQuestion.value]) result[type][installQuestion.value] = 0
       result[type][installQuestion.value]++
+       // category 
+       if(!category[type][`${installQuestion.value}category`]) category[type][`${installQuestion.value}category`] = {}
+       category[type][`${installQuestion.value}category`][app.categoryName] ? category[type][`${installQuestion.value}category`][app.categoryName]++ : category[type][`${installQuestion.value}category`][app.categoryName] = 1 
+ 
+       // developer
+       if(!developer[type][`${installQuestion.value}developer`]) developer[type][`${installQuestion.value}developer`] = {}
+       developer[type][`${installQuestion.value}developer`][app.developer] ? developer[type][`${installQuestion.value}developer`][app.developer]++ : developer[type][`${installQuestion.value}developer`][app.developer] = 1 
+      
+       // app - dev
+      const appsByDeveloper = await gplay.developer({devId: app.developer}).then(apps => Promise.all(apps.map(app => gplay.app({appId: app.appId}).catch(_ => null))).then(items => items.filter(item => !!item))).catch(_ => [])
+      if(!developerApp[type][`${installQuestion.value}appdev`]) developerApp[type][`${installQuestion.value}appdev`] = {}
+      developerApp[type][`${installQuestion.value}appdev`][app.developer] = appsByDeveloper
+
+      // purpose 
+      if(!purpose[type][`${installQuestion.value}purpose`]) purpose[type][`${installQuestion.value}purpose`] = {} 
+      childrenPurpose.forEach(item => {
+        purpose[type][`${installQuestion.value}purpose`][item['name']] ? purpose[type][`${installQuestion.value}purpose`][item['name']]++ : purpose[type][`${installQuestion.value}purpose`][item['name']] = 1
+      })
+
+      // third party 
+      if(!thirdParty[type][`${installQuestion.value}thirdParty`]) thirdParty[type][`${installQuestion.value}thirdParty`] = {} 
+      childrenThirdParty.forEach(item => {
+        thirdParty[type][`${installQuestion.value}thirdParty`][item['name']] ? thirdParty[type][`${installQuestion.value}thirdParty`][item['name']]++ : thirdParty[type][`${installQuestion.value}thirdParty`][item['name']] = 1
+      })
 
       if(!result[type][`${installQuestion.value}${risk}`]) result[type][`${installQuestion.value}${risk}`] = 0
       result[type][`${installQuestion.value}${risk}`]++
+      // category 
+      if(!category[type][`${installQuestion.value}${risk}category`]) category[type][`${installQuestion.value}${risk}category`] = {}
+      category[type][`${installQuestion.value}${risk}category`][app.categoryName] ? category[type][`${installQuestion.value}${risk}category`][app.categoryName]++ : category[type][`${installQuestion.value}${risk}category`][app.categoryName] = 1 
+
+      // developer
+      if(!developer[type][`${installQuestion.value}${risk}developer`]) developer[type][`${installQuestion.value}${risk}developer`] = {}
+      developer[type][`${installQuestion.value}${risk}developer`][app.developer] ? developer[type][`${installQuestion.value}${risk}developer`][app.developer]++ : developer[type][`${installQuestion.value}${risk}developer`][app.developer] = 1 
+      
+       // app - dev
+       if(!developerApp[type][`${installQuestion.value}${risk}appdev`]) developerApp[type][`${installQuestion.value}${risk}appdev`] = {}
+       developerApp[type][`${installQuestion.value}${risk}appdev`][app.developer] = appsByDeveloper
+ 
+       // purpose 
+       if(!purpose[type][`${installQuestion.value}${risk}purpose`]) purpose[type][`${installQuestion.value}${risk}purpose`] = {} 
+       childrenPurpose.forEach(item => {
+         purpose[type][`${installQuestion.value}${risk}purpose`][item['name']] ? purpose[type][`${installQuestion.value}${risk}purpose`][item['name']]++ : purpose[type][`${installQuestion.value}${risk}purpose`][item['name']] = 1
+       })
+ 
+       // third party 
+       if(!thirdParty[type][`${installQuestion.value}${risk}thirdParty`]) thirdParty[type][`${installQuestion.value}${risk}thirdParty`] = {} 
+       childrenThirdParty.forEach(item => {
+         thirdParty[type][`${installQuestion.value}${risk}thirdParty`][item['name']] ? thirdParty[type][`${installQuestion.value}${risk}thirdParty`][item['name']]++ : thirdParty[type][`${installQuestion.value}${risk}thirdParty`][item['name']] = 1
+       })
     }
   }
+
+  let categoryToStringValue_expert = Object.entries(category['expert']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  let developerToStringValue_expert = Object.entries(developer['expert']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  let devAppToStringValue_expert = Object.entries(developerApp['expert']).reduce((acc, [key, item]) => {
+    acc[key] = Object.entries(item).reduce((acc, [developerName, apps]) => {
+      acc += `*${developerName}: (`
+      apps.forEach(app => {
+        acc += ` - ${app.title}: ${app.installs}; ${app.scoreText} \n`
+      })
+      acc += `)\n`
+      return acc
+    }, '')
+    return acc
+  }, {})
+
+  let purposeToString_expert =  Object.entries(purpose['expert']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  let thirdPartyToString_expert =  Object.entries(thirdParty['expert']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+
+  let categoryToStringValue_paid = Object.entries(category['paid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  let developerToStringValue_paid = Object.entries(developer['paid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  let devAppToStringValue_paid = Object.entries(developerApp['paid']).reduce((acc, [key, item]) => {
+    acc[key] = Object.entries(item).reduce((acc, [developerName, apps]) => {
+      acc += `*${developerName}: (`
+      apps.forEach(app => {
+        acc += ` - ${app.title}: ${app.installs}; ${app.scoreText} \n`
+      })
+      acc += `)\n`
+      return acc
+    }, '')
+    return acc
+  }, {})
+
+  let purposeToString_paid =  Object.entries(purpose['paid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  let thirdPartyToString_paid =  Object.entries(thirdParty['paid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  let categoryToStringValue_unpaid = Object.entries(category['unpaid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  let developerToStringValue_unpaid = Object.entries(developer['unpaid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  let devAppToStringValue_unpaid = Object.entries(developerApp['unpaid']).reduce((acc, [key, item]) => {
+    acc[key] = Object.entries(item).reduce((acc, [developerName, apps]) => {
+      acc += `*${developerName}: (`
+      apps.forEach(app => {
+        acc += ` - ${app.title}: ${app.installs}; ${app.scoreText} \n`
+      })
+      acc += `)\n`
+      return acc
+    }, '')
+    return acc
+  }, {})
+
+  let purposeToString_unpaid =  Object.entries(purpose['unpaid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  let thirdPartyToString_unpaid =  Object.entries(thirdParty['unpaid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
   rows.push({
     stt: 1,
     email: 'expert',
-    ...result['expert']
+    ...result['expert'],
+    ...categoryToStringValue_expert,
+    ...developerToStringValue_expert,
+    ...devAppToStringValue_expert,
+    ...purposeToString_expert,
+    ...thirdPartyToString_expert
   })
   rows.push({
     stt: 2,
     email: 'paid',
-    ...result['paid']
+    ...result['paid'],
+    ...categoryToStringValue_paid,
+    ...developerToStringValue_paid,
+    ...devAppToStringValue_paid,
+    ...purposeToString_paid,
+    ...thirdPartyToString_paid
   })
   rows.push({
     stt: 3,
     email: 'unpaid',
-    ...result['unpaid']
+    ...result['unpaid'],
+    ...categoryToStringValue_unpaid,
+    ...developerToStringValue_unpaid,
+    ...devAppToStringValue_unpaid,
+    ...purposeToString_unpaid,
+    ...thirdPartyToString_unpaid
   })
   csvWriter = createCsvWriter({
     path: "./reports/test/tranning(group).csv",
@@ -797,6 +1593,31 @@ async function main() {
   // testing group 
   rows = []
   result = {
+    expert: {},
+    paid: {},
+    unpaid: {},
+  }
+  category = {
+    expert: {},
+    paid: {},
+    unpaid: {},
+  }
+  developer = {
+    expert: {},
+    paid: {},
+    unpaid: {},
+  }
+  developerApp = {
+    expert: {},
+    paid: {},
+    unpaid: {},
+  }
+  purpose = {
+    expert: {},
+    paid: {},
+    unpaid: {},
+  }
+  thirdParty = {
     expert: {},
     paid: {},
     unpaid: {},
@@ -828,28 +1649,226 @@ async function main() {
       else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
       else  if((range[0] + part * 4) <= Number( app.distance) && Number( app.distance) <= (range[0] + part *5)) risk = 4
 
+      const childrenPurpose = JSON.parse(app.collectionData).filter(item => !item.children || item.children.length === 0)
+      const childrenThirdParty = JSON.parse(app.thirdPartyData).filter(item => !item.children || item.children.length === 0)
+
       if(!result[type][installQuestion.value]) result[type][installQuestion.value] = 0
       result[type][installQuestion.value]++
+       // category 
+       if(!category[type][`${installQuestion.value}category`]) category[type][`${installQuestion.value}category`] = {}
+       category[type][`${installQuestion.value}category`][app.categoryName] ? category[type][`${installQuestion.value}category`][app.categoryName]++ : category[type][`${installQuestion.value}category`][app.categoryName] = 1 
+ 
+       // developer
+       if(!developer[type][`${installQuestion.value}developer`]) developer[type][`${installQuestion.value}developer`] = {}
+       developer[type][`${installQuestion.value}developer`][app.developer] ? developer[type][`${installQuestion.value}developer`][app.developer]++ : developer[type][`${installQuestion.value}developer`][app.developer] = 1 
+
+        // app - dev
+      const appsByDeveloper = await gplay.developer({devId: app.developer}).then(apps => Promise.all(apps.map(app => gplay.app({appId: app.appId}).catch(_ => null))).then(items => items.filter(item => !!item))).catch(_ => [])
+      if(!developerApp[type][`${installQuestion.value}appdev`]) developerApp[type][`${installQuestion.value}appdev`] = {}
+      developerApp[type][`${installQuestion.value}appdev`][app.developer] = appsByDeveloper
+
+      // purpose 
+      if(!purpose[type][`${installQuestion.value}purpose`]) purpose[type][`${installQuestion.value}purpose`] = {} 
+      childrenPurpose.forEach(item => {
+        purpose[type][`${installQuestion.value}purpose`][item['name']] ? purpose[type][`${installQuestion.value}purpose`][item['name']]++ : purpose[type][`${installQuestion.value}purpose`][item['name']] = 1
+      })
+
+      // third party 
+      if(!thirdParty[type][`${installQuestion.value}thirdParty`]) thirdParty[type][`${installQuestion.value}thirdParty`] = {} 
+      childrenThirdParty.forEach(item => {
+        thirdParty[type][`${installQuestion.value}thirdParty`][item['name']] ? thirdParty[type][`${installQuestion.value}thirdParty`][item['name']]++ : thirdParty[type][`${installQuestion.value}thirdParty`][item['name']] = 1
+      })
+
 
       if(!result[type][`${installQuestion.value}${risk}`]) result[type][`${installQuestion.value}${risk}`] = 0
       result[type][`${installQuestion.value}${risk}`]++
+      // category 
+      if(!category[type][`${installQuestion.value}${risk}category`]) category[type][`${installQuestion.value}${risk}category`] = {}
+      category[type][`${installQuestion.value}${risk}category`][app.categoryName] ? category[type][`${installQuestion.value}${risk}category`][app.categoryName]++ : category[type][`${installQuestion.value}${risk}category`][app.categoryName] = 1 
+
+      // developer
+      if(!developer[type][`${installQuestion.value}${risk}developer`]) developer[type][`${installQuestion.value}${risk}developer`] = {}
+      developer[type][`${installQuestion.value}${risk}developer`][app.developer] ? developer[type][`${installQuestion.value}${risk}developer`][app.developer]++ : developer[type][`${installQuestion.value}${risk}developer`][app.developer] = 1 
       
+      // app - dev
+      if(!developerApp[type][`${installQuestion.value}${risk}appdev`]) developerApp[type][`${installQuestion.value}${risk}appdev`] = {}
+      developerApp[type][`${installQuestion.value}${risk}appdev`][app.developer] = appsByDeveloper
+
+      // purpose 
+      if(!purpose[type][`${installQuestion.value}${risk}purpose`]) purpose[type][`${installQuestion.value}${risk}purpose`] = {} 
+      childrenPurpose.forEach(item => {
+        purpose[type][`${installQuestion.value}${risk}purpose`][item['name']] ? purpose[type][`${installQuestion.value}${risk}purpose`][item['name']]++ : purpose[type][`${installQuestion.value}${risk}purpose`][item['name']] = 1
+      })
+
+      // third party 
+      if(!thirdParty[type][`${installQuestion.value}${risk}thirdParty`]) thirdParty[type][`${installQuestion.value}${risk}thirdParty`] = {} 
+      childrenThirdParty.forEach(item => {
+        thirdParty[type][`${installQuestion.value}${risk}thirdParty`][item['name']] ? thirdParty[type][`${installQuestion.value}${risk}thirdParty`][item['name']]++ : thirdParty[type][`${installQuestion.value}${risk}thirdParty`][item['name']] = 1
+      })
     }
   }
+
+   categoryToStringValue_expert = Object.entries(category['expert']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+   developerToStringValue_expert = Object.entries(developer['expert']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  devAppToStringValue_expert = Object.entries(developerApp['expert']).reduce((acc, [key, item]) => {
+    acc[key] = Object.entries(item).reduce((acc, [developerName, apps]) => {
+      acc += `*${developerName}: (`
+      apps.forEach(app => {
+        acc += ` - ${app.title}: ${app.installs}; ${app.scoreText} \n`
+      })
+      acc += `)\n`
+      return acc
+    }, '')
+    return acc
+  }, {})
+
+  purposeToString_expert =  Object.entries(purpose['expert']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  thirdPartyToString_expert =  Object.entries(thirdParty['expert']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+   categoryToStringValue_paid = Object.entries(category['paid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+   developerToStringValue_paid = Object.entries(developer['paid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  devAppToStringValue_paid = Object.entries(developerApp['paid']).reduce((acc, [key, item]) => {
+    acc[key] = Object.entries(item).reduce((acc, [developerName, apps]) => {
+      acc += `*${developerName}: (`
+      apps.forEach(app => {
+        acc += ` - ${app.title}: ${app.installs}; ${app.scoreText} \n`
+      })
+      acc += `)\n`
+      return acc
+    }, '')
+    return acc
+  }, {})
+
+  purposeToString_paid =  Object.entries(purpose['paid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  thirdPartyToString_paid =  Object.entries(thirdParty['paid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+   categoryToStringValue_unpaid = Object.entries(category['unpaid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+   developerToStringValue_unpaid = Object.entries(developer['unpaid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  devAppToStringValue_unpaid = Object.entries(developerApp['unpaid']).reduce((acc, [key, item]) => {
+    acc[key] = Object.entries(item).reduce((acc, [developerName, apps]) => {
+      acc += `*${developerName}: (`
+      apps.forEach(app => {
+        acc += ` - ${app.title}: ${app.installs}; ${app.scoreText} \n`
+      })
+      acc += `)\n`
+      return acc
+    }, '')
+    return acc
+  }, {})
+
+  purposeToString_unpaid =  Object.entries(purpose['unpaid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
+  thirdPartyToString_unpaid =  Object.entries(thirdParty['unpaid']).reduce((acc, item) => {
+    acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
+      acc1 += `${item1[0]}: ${item1[1]}, `
+      return acc1
+    }, '')
+    return acc
+  }, {})
+
   rows.push({
     stt: 1,
     email: 'expert',
-    ...result['expert']
+    ...result['expert'],
+    ...categoryToStringValue_expert,
+    ...developerToStringValue_expert,
+    ...devAppToStringValue_expert,
+    ...purposeToString_expert,
+    ...thirdPartyToString_expert
   })
   rows.push({
     stt: 2,
     email: 'paid',
-    ...result['paid']
+    ...result['paid'],
+    ...categoryToStringValue_paid,
+    ...developerToStringValue_paid,
+    ...devAppToStringValue_paid,
+    ...purposeToString_paid,
+    ...thirdPartyToString_paid
   })
   rows.push({
     stt: 3,
     email: 'unpaid',
-    ...result['unpaid']
+    ...result['unpaid'],
+    ...categoryToStringValue_unpaid,
+    ...developerToStringValue_unpaid,
+    ...devAppToStringValue_unpaid,
+    ...purposeToString_unpaid,
+    ...thirdPartyToString_unpaid
   })
   csvWriter = createCsvWriter({
     path: "./reports/test/testing(group).csv",
@@ -861,5 +1880,3 @@ async function main() {
   console.log("DONE")
 }
 main()
-
-
