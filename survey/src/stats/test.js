@@ -436,532 +436,508 @@ require("dotenv").config();
 import "../configs/mongoose.config";
 import Models from "../models";
 
-async function main() {
-  // console.log(1)
-  // const apps = await Models.App.find({
-  // }).select(["_id", "categoryName", 'distance'])
-
-  // const appGrours = _.groupBy(apps, "categoryName")
-  // console.log(2)
-  // const result1= {}
-  // for (const categoryName in appGrours) {
-  //     const apps = appGrours[categoryName];
-      
-  //     result1[categoryName] =[ _.min(_.map(apps, 'distance')), _.max(_.map(apps, 'distance'))]
-  // }
+const  ranges = {
+  Beauty: [ 0.049523809523809526, 0.09557344064386315 ],
+  Simulation: [ 0.04841660802251941, 0.07323340471092073 ],
+  Lifestyle: [ 0, 0.11054739652870495 ],
+  'Health & Fitness': [ 0, 0.12224489795918367 ],
+  'Books & Reference': [ 0, 0.11807580174927114 ],
+  Tools: [ 0, 0.13310104529616726 ],
+  Business: [ 0, 0.11805929919137466 ],
+  Social: [ 0, 0.1306122448979592 ],
+  Shopping: [ 0, 0.14285714285714285 ],
+  Puzzle: [ 0.026031746031746038, 0.0742115027829313 ],
+  Entertainment: [ 0, 0.09910089910089911 ],
+  'Travel & Local': [ 0, 0.1137254901960784 ],
+  Comics: [ 0.05803450281062217, 0.07894736842105263 ],
+  'Music & Audio': [ 0.035164835164835165, 0.13236889692585896 ],
+  Strategy: [ 0.05416837221994815, 0.08507747824241131 ],
+  'Video Players & Editors': [ 0.051241217798594973, 0.08989074816761167 ],
+  Productivity: [ 0, 0.09981684981684993 ],
+  Finance: [ 0.05809523809523809, 0.09016592472683126 ],
+  Education: [ 0, 0.14285714285714285 ],
+  'News & Magazines': [ 0, 0.09230769230769241 ],
+  Parenting: [ 0.06257611241217799, 0.08119172650305433 ],
+  'Food & Drink': [ 0, 0.13310104529616726 ],
+  Casual: [ 0.0561851556264964, 0.08365878725590946 ],
+  Medical: [ 0, 0.14285714285714285 ],
+  'Maps & Navigation': [ 0, 0.14285714285714285 ],
+  'Auto & Vehicles': [ 0.058691062631949294, 0.14285714285714285 ],
+  'Pretend Play': [ 0.04961095549330842, 0.09438720590496714 ],
+  Communication: [ 0.028571428571428564, 0.11657142857142858 ],
+  Sports: [ 0, 0.11595006934812759 ],
+  Word: [ 0.05848739495798316, 0.07118460287340742 ],
+  Action: [ 0.05314625850340136, 0.07854447439353089 ],
+  Racing: [ 0.055555555555555566, 0.08728414442700164 ],
+  Dating: [ 0.05743440233236154, 0.08388733823902562 ],
+  Weather: [ 0.060435038212816025, 0.12423280423280426 ],
+  Photography: [ 0.05501373626373627, 0.09548319327731089 ],
+  Personalization: [ 0, 0.08739143456124579 ],
+  'Art & Design': [ 0.06807727690892365, 0.09197044334975367 ],
+  Events: [ 0.05787172011661811, 0.0864021164021164 ],
+  'Action & Adventure': [ 0.06085059978189749, 0.0923699595263081 ],
+  Adventure: [ 0, 0.08567106116274033 ],
+  'House & Home': [ 0.028571428571428564, 0.08209568209568209 ],
+  Creativity: [ 0.05785207700101317, 0.09744067007910652 ],
+  Card: [ 0, 0.07174721189591074 ],
+  Casino: [ 0.05226548427324371, 0.06553038797936749 ],
+  Trivia: [ 0.05514121195503152, 0.06736842105263158 ],
+  Arcade: [ 0.05361016423923141, 0.07058823529411759 ],
+  'Role Playing': [ 0.05582664526484747, 0.08222341568206225 ],
+  Educational: [ 0.05870698644421277, 0.08431793770139638 ],
+  'Libraries & Demo': [ 0, 0.10817166372721929 ],
+  Board: [ 0.028571428571428564, 0.07161904761904771 ],
+  Music: [ 0.05632262474367738, 0.06501969208736118 ],
+  'Brain Games': [ 0.07172312223858612, 0.08312757201646091 ],
+  'Music & Video': [ 0.06251944012441671, 0.0899773242630385 ]
+}
+const header = [
+  {
+    id: "stt",
+    title: "#"
+  },
+  {
+    id: "email",
+    title: "email"
+  },
+  {
+    title: "Yes",
+    id: "1"
+  },
+  {
+    id: "1developer",
+    title: "Developer"
+  },
+  {
+    id: "1category",
+    title: "Category"
+  },
+  {
+    id: "1appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "1purpose",
+    title: "Purpose"
+  },
+  {
+    id: "1thirdParty",
+    title: "Third Party"
+  },
+  {
+    title: "Yes - Very low",
+    id: "10"
+  },
+  {
+    id: "10developer",
+    title: "Developer"
+  },
+  {
+    id: "10category",
+    title: "Category"
+  },
+  {
+    id: "10appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "10purpose",
+    title: "Purpose"
+  },
+  {
+    id: "10thirdParty",
+    title: "Third Party"
+  },
+  {
+    title: "Yes - Low",
+    id: "11"
+  },
+  {
+    id: "11developer",
+    title: "Developer"
+  },
+  {
+    id: "11category",
+    title: "Category"
+  },
+  {
+    id: "11appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "11purpose",
+    title: "Purpose"
+  },
+  {
+    id: "11thirdParty",
+    title: "Third Party"
+  },
+  {
+    title: "Yes - Neutral",
+    id: "12"
+  },
+  {
+    id: "12developer",
+    title: "Developer"
+  },
+  {
+    id: "12category",
+    title: "Category"
+  },
+  {
+    id: "12appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "12purpose",
+    title: "Purpose"
+  },
+  {
+    id: "12thirdParty",
+    title: "Third Party"
+  },
+  {
+    title: "Yes - High",
+    id: "13"
+  },
+  {
+    id: "13developer",
+    title: "Developer"
+  },
+  {
+    id: "13category",
+    title: "Category"
+  },
+  {
+    id: "13appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "13purpose",
+    title: "Purpose"
+  },
+  {
+    id: "13thirdParty",
+    title: "Third Party"
+  },
+  {
+    title: "Yes - Very high",
+    id: "14"
+  },
+  {
+    id: "14developer",
+    title: "Developer"
+  },
+  {
+    id: "14category",
+    title: "Category"
+  },
+  {
+    id: "14appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "14purpose",
+    title: "Purpose"
+  },
+  {
+    id: "14thirdParty",
+    title: "Third Party"
+  },
+  // NO
+  {
+    title: "No",
+    id: "0"
+  },
+  {
+    id: "0developer",
+    title: "Developer"
+  },
+  {
+    id: "0category",
+    title: "Category"
+  },
+  {
+    id: "0appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "0purpose",
+    title: "Purpose"
+  },
+  {
+    id: "0thirdParty",
+    title: "Third Party"
+  },
+  {
+    title: "No - Very low",
+    id: "00"
+  },
+  {
+    id: "00developer",
+    title: "Developer"
+  },
+  {
+    id: "00category",
+    title: "Category"
+  },
+  {
+    id: "00appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "00purpose",
+    title: "Purpose"
+  },
+  {
+    id: "00thirdParty",
+    title: "Third Party"
+  },
+  {
+    title: "No - Low",
+    id: "01"
+  },
+  {
+    id: "01developer",
+    title: "Developer"
+  },
+  {
+    id: "01category",
+    title: "Category"
+  },
+  {
+    id: "01appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "01purpose",
+    title: "Purpose"
+  },
+  {
+    id: "01thirdParty",
+    title: "Third Party"
+  },
+  {
+    title: "No - Neutral",
+    id: "02"
+  },
+  {
+    id: "02developer",
+    title: "Developer"
+  },
+  {
+    id: "02category",
+    title: "Category"
+  },
+  {
+    id: "02appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "02purpose",
+    title: "Purpose"
+  },
+  {
+    id: "02thirdParty",
+    title: "Third Party"
+  },
+  {
+    title: "No - High",
+    id: "03"
+  },
+  {
+    id: "03developer",
+    title: "Developer"
+  },
+  {
+    id: "03category",
+    title: "Category"
+  },
+  {
+    id: "03appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "03purpose",
+    title: "Purpose"
+  },
+  {
+    id: "03thirdParty",
+    title: "Third Party"
+  },
   
-  // console.log(result1)
-  // return 
-  const  ranges = {
-    Beauty: [ 0.049523809523809526, 0.09557344064386315 ],
-    Simulation: [ 0.04841660802251941, 0.07323340471092073 ],
-    Lifestyle: [ 0, 0.11054739652870495 ],
-    'Health & Fitness': [ 0, 0.12224489795918367 ],
-    'Books & Reference': [ 0, 0.11807580174927114 ],
-    Tools: [ 0, 0.13310104529616726 ],
-    Business: [ 0, 0.11805929919137466 ],
-    Social: [ 0, 0.1306122448979592 ],
-    Shopping: [ 0, 0.14285714285714285 ],
-    Puzzle: [ 0.026031746031746038, 0.0742115027829313 ],
-    Entertainment: [ 0, 0.09910089910089911 ],
-    'Travel & Local': [ 0, 0.1137254901960784 ],
-    Comics: [ 0.05803450281062217, 0.07894736842105263 ],
-    'Music & Audio': [ 0.035164835164835165, 0.13236889692585896 ],
-    Strategy: [ 0.05416837221994815, 0.08507747824241131 ],
-    'Video Players & Editors': [ 0.051241217798594973, 0.08989074816761167 ],
-    Productivity: [ 0, 0.09981684981684993 ],
-    Finance: [ 0.05809523809523809, 0.09016592472683126 ],
-    Education: [ 0, 0.14285714285714285 ],
-    'News & Magazines': [ 0, 0.09230769230769241 ],
-    Parenting: [ 0.06257611241217799, 0.08119172650305433 ],
-    'Food & Drink': [ 0, 0.13310104529616726 ],
-    Casual: [ 0.0561851556264964, 0.08365878725590946 ],
-    Medical: [ 0, 0.14285714285714285 ],
-    'Maps & Navigation': [ 0, 0.14285714285714285 ],
-    'Auto & Vehicles': [ 0.058691062631949294, 0.14285714285714285 ],
-    'Pretend Play': [ 0.04961095549330842, 0.09438720590496714 ],
-    Communication: [ 0.028571428571428564, 0.11657142857142858 ],
-    Sports: [ 0, 0.11595006934812759 ],
-    Word: [ 0.05848739495798316, 0.07118460287340742 ],
-    Action: [ 0.05314625850340136, 0.07854447439353089 ],
-    Racing: [ 0.055555555555555566, 0.08728414442700164 ],
-    Dating: [ 0.05743440233236154, 0.08388733823902562 ],
-    Weather: [ 0.060435038212816025, 0.12423280423280426 ],
-    Photography: [ 0.05501373626373627, 0.09548319327731089 ],
-    Personalization: [ 0, 0.08739143456124579 ],
-    'Art & Design': [ 0.06807727690892365, 0.09197044334975367 ],
-    Events: [ 0.05787172011661811, 0.0864021164021164 ],
-    'Action & Adventure': [ 0.06085059978189749, 0.0923699595263081 ],
-    Adventure: [ 0, 0.08567106116274033 ],
-    'House & Home': [ 0.028571428571428564, 0.08209568209568209 ],
-    Creativity: [ 0.05785207700101317, 0.09744067007910652 ],
-    Card: [ 0, 0.07174721189591074 ],
-    Casino: [ 0.05226548427324371, 0.06553038797936749 ],
-    Trivia: [ 0.05514121195503152, 0.06736842105263158 ],
-    Arcade: [ 0.05361016423923141, 0.07058823529411759 ],
-    'Role Playing': [ 0.05582664526484747, 0.08222341568206225 ],
-    Educational: [ 0.05870698644421277, 0.08431793770139638 ],
-    'Libraries & Demo': [ 0, 0.10817166372721929 ],
-    Board: [ 0.028571428571428564, 0.07161904761904771 ],
-    Music: [ 0.05632262474367738, 0.06501969208736118 ],
-    'Brain Games': [ 0.07172312223858612, 0.08312757201646091 ],
-    'Music & Video': [ 0.06251944012441671, 0.0899773242630385 ]
-  }
-  const header = [
-    {
-      id: "stt",
-      title: "#"
-    },
-    {
-      id: "email",
-      title: "email"
-    },
-    {
-      title: "Yes",
-      id: "1"
-    },
-    {
-      id: "1developer",
-      title: "Developer"
-    },
-    {
-      id: "1category",
-      title: "Category"
-    },
-    {
-      id: "1appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "1purpose",
-      title: "Purpose"
-    },
-    {
-      id: "1thirdParty",
-      title: "Third Party"
-    },
-    {
-      title: "Yes - Very low",
-      id: "10"
-    },
-    {
-      id: "10developer",
-      title: "Developer"
-    },
-    {
-      id: "10category",
-      title: "Category"
-    },
-    {
-      id: "10appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "10purpose",
-      title: "Purpose"
-    },
-    {
-      id: "10thirdParty",
-      title: "Third Party"
-    },
-    {
-      title: "Yes - Low",
-      id: "11"
-    },
-    {
-      id: "11developer",
-      title: "Developer"
-    },
-    {
-      id: "11category",
-      title: "Category"
-    },
-    {
-      id: "11appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "11purpose",
-      title: "Purpose"
-    },
-    {
-      id: "11thirdParty",
-      title: "Third Party"
-    },
-    {
-      title: "Yes - Neutral",
-      id: "12"
-    },
-    {
-      id: "12developer",
-      title: "Developer"
-    },
-    {
-      id: "12category",
-      title: "Category"
-    },
-    {
-      id: "12appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "12purpose",
-      title: "Purpose"
-    },
-    {
-      id: "12thirdParty",
-      title: "Third Party"
-    },
-    {
-      title: "Yes - High",
-      id: "13"
-    },
-    {
-      id: "13developer",
-      title: "Developer"
-    },
-    {
-      id: "13category",
-      title: "Category"
-    },
-    {
-      id: "13appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "13purpose",
-      title: "Purpose"
-    },
-    {
-      id: "13thirdParty",
-      title: "Third Party"
-    },
-    {
-      title: "Yes - Very high",
-      id: "14"
-    },
-    {
-      id: "14developer",
-      title: "Developer"
-    },
-    {
-      id: "14category",
-      title: "Category"
-    },
-    {
-      id: "14appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "14purpose",
-      title: "Purpose"
-    },
-    {
-      id: "14thirdParty",
-      title: "Third Party"
-    },
-    // NO
-    {
-      title: "No",
-      id: "0"
-    },
-    {
-      id: "0developer",
-      title: "Developer"
-    },
-    {
-      id: "0category",
-      title: "Category"
-    },
-    {
-      id: "0appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "0purpose",
-      title: "Purpose"
-    },
-    {
-      id: "0thirdParty",
-      title: "Third Party"
-    },
-    {
-      title: "No - Very low",
-      id: "00"
-    },
-    {
-      id: "00developer",
-      title: "Developer"
-    },
-    {
-      id: "00category",
-      title: "Category"
-    },
-    {
-      id: "00appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "00purpose",
-      title: "Purpose"
-    },
-    {
-      id: "00thirdParty",
-      title: "Third Party"
-    },
-    {
-      title: "No - Low",
-      id: "01"
-    },
-    {
-      id: "01developer",
-      title: "Developer"
-    },
-    {
-      id: "01category",
-      title: "Category"
-    },
-    {
-      id: "01appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "01purpose",
-      title: "Purpose"
-    },
-    {
-      id: "01thirdParty",
-      title: "Third Party"
-    },
-    {
-      title: "No - Neutral",
-      id: "02"
-    },
-    {
-      id: "02developer",
-      title: "Developer"
-    },
-    {
-      id: "02category",
-      title: "Category"
-    },
-    {
-      id: "02appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "02purpose",
-      title: "Purpose"
-    },
-    {
-      id: "02thirdParty",
-      title: "Third Party"
-    },
-    {
-      title: "No - High",
-      id: "03"
-    },
-    {
-      id: "03developer",
-      title: "Developer"
-    },
-    {
-      id: "03category",
-      title: "Category"
-    },
-    {
-      id: "03appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "03purpose",
-      title: "Purpose"
-    },
-    {
-      id: "03thirdParty",
-      title: "Third Party"
-    },
-    
-    {
-      title: "No - Very high",
-      id: "04"
-    },
-    {
-      id: "04developer",
-      title: "Developer"
-    },
-    {
-      id: "04category",
-      title: "Category"
-    },
-    {
-      id: "04appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "04purpose",
-      title: "Purpose"
-    },
-    {
-      id: "04thirdParty",
-      title: "Third Party"
-    },
-    // Maybe
-    {
-      title: "Maybe",
-      id: "2"
-    },
-    {
-      id: "2developer",
-      title: "Developer"
-    },
-    {
-      id: "2category",
-      title: "Category"
-    },
-    {
-      id: "2appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "2purpose",
-      title: "Purpose"
-    },
-    {
-      id: "2thirdParty",
-      title: "Third Party"
-    },
-    {
-      title: "Maybe - Very low",
-      id: "20"
-    },
-    {
-      id: "20developer",
-      title: "Developer"
-    },
-    {
-      id: "20category",
-      title: "Category"
-    },
-    {
-      id: "20appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "20purpose",
-      title: "Purpose"
-    },
-    {
-      id: "20thirdParty",
-      title: "Third Party"
-    },
-    {
-      title: "Maybe - Low",
-      id: "21"
-    },
-    {
-      id: "21developer",
-      title: "Developer"
-    },
-    {
-      id: "21category",
-      title: "Category"
-    },
-    {
-      id: "21appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "21purpose",
-      title: "Purpose"
-    },
-    {
-      id: "21thirdParty",
-      title: "Third Party"
-    },
-    {
-      title: "Maybe - Neutral",
-      id: "22"
-    },
-    {
-      id: "22developer",
-      title: "Developer"
-    },
-    {
-      id: "22category",
-      title: "Category"
-    },
-    {
-      id: "22appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "22purpose",
-      title: "Purpose"
-    },
-    {
-      id: "22thirdParty",
-      title: "Third Party"
-    },
-    {
-      title: "Maybe - High",
-      id: "23"
-    },
-    {
-      id: "23developer",
-      title: "Developer"
-    },
-    {
-      id: "23category",
-      title: "Category"
-    },
-    {
-      id: "23appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "23purpose",
-      title: "Purpose"
-    },
-    {
-      id: "23thirdParty",
-      title: "Third Party"
-    },
-    {
-      title: "Maybe - Very high",
-      id: "24"
-    },
-    {
-      id: "24developer",
-      title: "Developer"
-    },
-    {
-      id: "24category",
-      title: "Category"
-    },
-    {
-      id: "24appdev",
-      title: "App - Dev"
-    },
-    {
-      id: "24purpose",
-      title: "Purpose"
-    },
-    {
-      id: "24thirdParty",
-      title: "Third Party"
-    },
-  ]
-  let users = await Models.User.find().cache(
-    60 * 60 * 24 * 30
-  ); // 1 month;
+  {
+    title: "No - Very high",
+    id: "04"
+  },
+  {
+    id: "04developer",
+    title: "Developer"
+  },
+  {
+    id: "04category",
+    title: "Category"
+  },
+  {
+    id: "04appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "04purpose",
+    title: "Purpose"
+  },
+  {
+    id: "04thirdParty",
+    title: "Third Party"
+  },
+  // Maybe
+  {
+    title: "Maybe",
+    id: "2"
+  },
+  {
+    id: "2developer",
+    title: "Developer"
+  },
+  {
+    id: "2category",
+    title: "Category"
+  },
+  {
+    id: "2appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "2purpose",
+    title: "Purpose"
+  },
+  {
+    id: "2thirdParty",
+    title: "Third Party"
+  },
+  {
+    title: "Maybe - Very low",
+    id: "20"
+  },
+  {
+    id: "20developer",
+    title: "Developer"
+  },
+  {
+    id: "20category",
+    title: "Category"
+  },
+  {
+    id: "20appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "20purpose",
+    title: "Purpose"
+  },
+  {
+    id: "20thirdParty",
+    title: "Third Party"
+  },
+  {
+    title: "Maybe - Low",
+    id: "21"
+  },
+  {
+    id: "21developer",
+    title: "Developer"
+  },
+  {
+    id: "21category",
+    title: "Category"
+  },
+  {
+    id: "21appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "21purpose",
+    title: "Purpose"
+  },
+  {
+    id: "21thirdParty",
+    title: "Third Party"
+  },
+  {
+    title: "Maybe - Neutral",
+    id: "22"
+  },
+  {
+    id: "22developer",
+    title: "Developer"
+  },
+  {
+    id: "22category",
+    title: "Category"
+  },
+  {
+    id: "22appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "22purpose",
+    title: "Purpose"
+  },
+  {
+    id: "22thirdParty",
+    title: "Third Party"
+  },
+  {
+    title: "Maybe - High",
+    id: "23"
+  },
+  {
+    id: "23developer",
+    title: "Developer"
+  },
+  {
+    id: "23category",
+    title: "Category"
+  },
+  {
+    id: "23appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "23purpose",
+    title: "Purpose"
+  },
+  {
+    id: "23thirdParty",
+    title: "Third Party"
+  },
+  {
+    title: "Maybe - Very high",
+    id: "24"
+  },
+  {
+    id: "24developer",
+    title: "Developer"
+  },
+  {
+    id: "24category",
+    title: "Category"
+  },
+  {
+    id: "24appdev",
+    title: "App - Dev"
+  },
+  {
+    id: "24purpose",
+    title: "Purpose"
+  },
+  {
+    id: "24thirdParty",
+    title: "Third Party"
+  },
+]
 
-  let answers = await Models.Answer.find().cache(
-    60 * 60 * 24 * 30
-  ); // 1 month;
-  answers = answers.filter(answer => answer.questions.length === 26)
-
-  // tranning 
+async function tranningIndiv(answers){ 
   let rows = {
     expert: [],
     paid: [],
@@ -1134,8 +1110,10 @@ async function main() {
   await csvWriter.writeRecords(rows['unpaid']);
   console.log("DONE tranning")
 
-  // test
-  rows = {
+}
+async function testIndiv(answers) {
+
+  let rows = {
     expert: [],
     paid: [],
     unpaid: [],
@@ -1284,7 +1262,7 @@ async function main() {
       ...thirdPartyToString
     })
   }
-  csvWriter = createCsvWriter({
+  let csvWriter = createCsvWriter({
     path: `./reports/test/testing-individual(expert).csv`,
     header
   });
@@ -1303,8 +1281,10 @@ async function main() {
   await csvWriter.writeRecords(rows['unpaid']);
   
   console.log("DONE testing")
-  // trainning group 
-  rows = []
+}
+
+async function tranningGroup(answers) {
+  let rows = []
   let result = {
     expert: {},
     paid: {},
@@ -1583,41 +1563,42 @@ async function main() {
     ...purposeToString_unpaid,
     ...thirdPartyToString_unpaid
   })
-  csvWriter = createCsvWriter({
+  let csvWriter = createCsvWriter({
     path: "./reports/test/tranning(group).csv",
     header
   });
   await csvWriter.writeRecords(rows);
   console.log("DONE tranning(group)")
+}
 
-  // testing group 
-  rows = []
-  result = {
+async function testingGroup(answers) {
+  let rows = []
+  let result = {
     expert: {},
     paid: {},
     unpaid: {},
   }
-  category = {
+  let category = {
     expert: {},
     paid: {},
     unpaid: {},
   }
-  developer = {
+  let developer = {
     expert: {},
     paid: {},
     unpaid: {},
   }
-  developerApp = {
+  let developerApp = {
     expert: {},
     paid: {},
     unpaid: {},
   }
-  purpose = {
+  let purpose = {
     expert: {},
     paid: {},
     unpaid: {},
   }
-  thirdParty = {
+  let thirdParty = {
     expert: {},
     paid: {},
     unpaid: {},
@@ -1708,7 +1689,7 @@ async function main() {
     }
   }
 
-   categoryToStringValue_expert = Object.entries(category['expert']).reduce((acc, item) => {
+  let  categoryToStringValue_expert = Object.entries(category['expert']).reduce((acc, item) => {
     acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
       acc1 += `${item1[0]}: ${item1[1]}, `
       return acc1
@@ -1716,7 +1697,7 @@ async function main() {
     return acc
   }, {})
 
-   developerToStringValue_expert = Object.entries(developer['expert']).reduce((acc, item) => {
+  let  developerToStringValue_expert = Object.entries(developer['expert']).reduce((acc, item) => {
     acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
       acc1 += `${item1[0]}: ${item1[1]}, `
       return acc1
@@ -1724,7 +1705,7 @@ async function main() {
     return acc
   }, {})
 
-  devAppToStringValue_expert = Object.entries(developerApp['expert']).reduce((acc, [key, item]) => {
+  let devAppToStringValue_expert = Object.entries(developerApp['expert']).reduce((acc, [key, item]) => {
     acc[key] = Object.entries(item).reduce((acc, [developerName, apps]) => {
       acc += `*${developerName}: (`
       apps.forEach(app => {
@@ -1736,7 +1717,7 @@ async function main() {
     return acc
   }, {})
 
-  purposeToString_expert =  Object.entries(purpose['expert']).reduce((acc, item) => {
+  let purposeToString_expert =  Object.entries(purpose['expert']).reduce((acc, item) => {
     acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
       acc1 += `${item1[0]}: ${item1[1]}, `
       return acc1
@@ -1744,7 +1725,7 @@ async function main() {
     return acc
   }, {})
 
-  thirdPartyToString_expert =  Object.entries(thirdParty['expert']).reduce((acc, item) => {
+  let thirdPartyToString_expert =  Object.entries(thirdParty['expert']).reduce((acc, item) => {
     acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
       acc1 += `${item1[0]}: ${item1[1]}, `
       return acc1
@@ -1752,7 +1733,7 @@ async function main() {
     return acc
   }, {})
 
-   categoryToStringValue_paid = Object.entries(category['paid']).reduce((acc, item) => {
+  let categoryToStringValue_paid = Object.entries(category['paid']).reduce((acc, item) => {
     acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
       acc1 += `${item1[0]}: ${item1[1]}, `
       return acc1
@@ -1760,7 +1741,7 @@ async function main() {
     return acc
   }, {})
 
-   developerToStringValue_paid = Object.entries(developer['paid']).reduce((acc, item) => {
+  let  developerToStringValue_paid = Object.entries(developer['paid']).reduce((acc, item) => {
     acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
       acc1 += `${item1[0]}: ${item1[1]}, `
       return acc1
@@ -1768,7 +1749,7 @@ async function main() {
     return acc
   }, {})
 
-  devAppToStringValue_paid = Object.entries(developerApp['paid']).reduce((acc, [key, item]) => {
+  let devAppToStringValue_paid = Object.entries(developerApp['paid']).reduce((acc, [key, item]) => {
     acc[key] = Object.entries(item).reduce((acc, [developerName, apps]) => {
       acc += `*${developerName}: (`
       apps.forEach(app => {
@@ -1780,7 +1761,7 @@ async function main() {
     return acc
   }, {})
 
-  purposeToString_paid =  Object.entries(purpose['paid']).reduce((acc, item) => {
+  let purposeToString_paid =  Object.entries(purpose['paid']).reduce((acc, item) => {
     acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
       acc1 += `${item1[0]}: ${item1[1]}, `
       return acc1
@@ -1788,7 +1769,7 @@ async function main() {
     return acc
   }, {})
 
-  thirdPartyToString_paid =  Object.entries(thirdParty['paid']).reduce((acc, item) => {
+  let thirdPartyToString_paid =  Object.entries(thirdParty['paid']).reduce((acc, item) => {
     acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
       acc1 += `${item1[0]}: ${item1[1]}, `
       return acc1
@@ -1796,7 +1777,7 @@ async function main() {
     return acc
   }, {})
 
-   categoryToStringValue_unpaid = Object.entries(category['unpaid']).reduce((acc, item) => {
+  let  categoryToStringValue_unpaid = Object.entries(category['unpaid']).reduce((acc, item) => {
     acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
       acc1 += `${item1[0]}: ${item1[1]}, `
       return acc1
@@ -1804,7 +1785,7 @@ async function main() {
     return acc
   }, {})
 
-   developerToStringValue_unpaid = Object.entries(developer['unpaid']).reduce((acc, item) => {
+  let  developerToStringValue_unpaid = Object.entries(developer['unpaid']).reduce((acc, item) => {
     acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
       acc1 += `${item1[0]}: ${item1[1]}, `
       return acc1
@@ -1812,7 +1793,7 @@ async function main() {
     return acc
   }, {})
 
-  devAppToStringValue_unpaid = Object.entries(developerApp['unpaid']).reduce((acc, [key, item]) => {
+  let devAppToStringValue_unpaid = Object.entries(developerApp['unpaid']).reduce((acc, [key, item]) => {
     acc[key] = Object.entries(item).reduce((acc, [developerName, apps]) => {
       acc += `*${developerName}: (`
       apps.forEach(app => {
@@ -1824,7 +1805,7 @@ async function main() {
     return acc
   }, {})
 
-  purposeToString_unpaid =  Object.entries(purpose['unpaid']).reduce((acc, item) => {
+  let purposeToString_unpaid =  Object.entries(purpose['unpaid']).reduce((acc, item) => {
     acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
       acc1 += `${item1[0]}: ${item1[1]}, `
       return acc1
@@ -1832,7 +1813,7 @@ async function main() {
     return acc
   }, {})
 
-  thirdPartyToString_unpaid =  Object.entries(thirdParty['unpaid']).reduce((acc, item) => {
+  let thirdPartyToString_unpaid =  Object.entries(thirdParty['unpaid']).reduce((acc, item) => {
     acc[item[0]] = Object.entries(item[1]).reduce((acc1, item1) => {
       acc1 += `${item1[0]}: ${item1[1]}, `
       return acc1
@@ -1870,12 +1851,39 @@ async function main() {
     ...purposeToString_unpaid,
     ...thirdPartyToString_unpaid
   })
-  csvWriter = createCsvWriter({
+  let csvWriter = createCsvWriter({
     path: "./reports/test/testing(group).csv",
     header
   });
   await csvWriter.writeRecords(rows);
   console.log("DONE testing(group)")
+}
+async function main() {
+  
+ 
+
+  let answers = await Models.Answer.find().cache(
+    60 * 60 * 24 * 30
+  ); // 1 month;
+  answers = answers.filter(answer => answer.questions.length === 26)
+
+  // tranning 
+  await Promise.all(
+    [
+      tranningIndiv(answers),
+      testIndiv(answers),
+      tranningGroup(answers),
+      testingGroup(answers)
+    ]
+  )
+
+  // test
+  
+  // trainning group 
+  
+
+  // testing group 
+  
   
   console.log("DONE")
 }
