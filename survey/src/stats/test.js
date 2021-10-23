@@ -1859,7 +1859,7 @@ async function testingGroup(answers) {
   console.log("DONE testing(group)")
 }
 async function main() {
-  
+  console.log("Generating CSV...");
  
 
   let answers = await Models.Answer.find().cache(
