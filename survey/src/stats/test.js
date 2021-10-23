@@ -1888,7 +1888,7 @@ async function main() {
   
   console.log("DONE")
 }
-main()
+// main()
 
 
 async function stats() {
@@ -1972,9 +1972,9 @@ async function genCategory(dataSetType) {
       60 * 60 * 24 * 30
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
-    
+    const toQuestion = dataSetType === 'training' ? 0 : 10
     const toQuestion = dataSetType === 'training' ? 10 : 26
-    for (let j = 0; j < toQuestion; j++) {
+    for (let j = toQuestion; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
@@ -2013,9 +2013,9 @@ async function genCategory(dataSetType) {
       60 * 60 * 24 * 30
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
-    
+    const toQuestion = dataSetType === 'training' ? 0 : 10
     const toQuestion = dataSetType === 'training' ? 10 : 26
-    for (let j = 0; j < toQuestion; j++) {
+    for (let j = toQuestion; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
@@ -2128,9 +2128,9 @@ async function genPurpose(dataSetType) {
       60 * 60 * 24 * 30
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
-    
+    const toQuestion = dataSetType === 'training' ? 0 : 10
     const toQuestion = dataSetType === 'training' ? 10 : 26
-    for (let j = 0; j < toQuestion; j++) {
+    for (let j = toQuestion; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
@@ -2173,9 +2173,9 @@ async function genPurpose(dataSetType) {
       60 * 60 * 24 * 30
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
-    
+    const toQuestion = dataSetType === 'training' ? 0 : 10
     const toQuestion = dataSetType === 'training' ? 10 : 26
-    for (let j = 0; j < toQuestion; j++) {
+    for (let j = toQuestion; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
@@ -2289,9 +2289,9 @@ async function genThirdParty(dataSetType) {
       60 * 60 * 24 * 30
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
-    
+    const toQuestion = dataSetType === 'training' ? 0 : 10
     const toQuestion = dataSetType === 'training' ? 10 : 26
-    for (let j = 0; j < toQuestion; j++) {
+    for (let j = toQuestion; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
@@ -2334,9 +2334,9 @@ async function genThirdParty(dataSetType) {
       60 * 60 * 24 * 30
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
-    
+    const toQuestion = dataSetType === 'training' ? 0 : 10
     const toQuestion = dataSetType === 'training' ? 10 : 26
-    for (let j = 0; j < toQuestion; j++) {
+    for (let j = toQuestion; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
@@ -2450,9 +2450,9 @@ async function genDeveloper(dataSetType) {
       60 * 60 * 24 * 30
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
-    
+    const toQuestion = dataSetType === 'training' ? 0 : 10
     const toQuestion = dataSetType === 'training' ? 10 : 26
-    for (let j = 0; j < toQuestion; j++) {
+    for (let j = toQuestion; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
@@ -2518,9 +2518,9 @@ async function genDeveloper(dataSetType) {
       60 * 60 * 24 * 30
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
-    
+    const toQuestion = dataSetType === 'training' ? 0 : 10
     const toQuestion = dataSetType === 'training' ? 10 : 26
-    for (let j = 0; j < toQuestion; j++) {
+    for (let j = toQuestion; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
