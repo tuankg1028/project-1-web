@@ -1888,23 +1888,22 @@ async function main() {
   
   console.log("DONE")
 }
-main()
+// main()
 
 
 async function stats() {
   await Promise.all([
-    genCategory('training'),
-    genPurpose('training'),
-    genThirdParty('training'),
+    // genCategory('training'),
+    // genPurpose('training'),
+    // genThirdParty('training'),
     genDeveloper('training'),
-  ])
-
-  await Promise.all([
-    genCategory("testing"),
-    genPurpose("testing"),
-    genThirdParty("testing"),
+    
+    // genCategory("testing"),
+    // genPurpose("testing"),
+    // genThirdParty("testing"),
     genDeveloper("testing"),
   ])
+
   console.log("DONE")
 }
 stats()
@@ -2483,7 +2482,7 @@ async function genDeveloper(dataSetType) {
     }
   }
 
-  resultSorted = {
+  const resultSorted = {
     '1B': result['1B'],
     '[500M; 1B)': result['[500M; 1B)'] || {},
     '[100M; 500M)': result['[100M; 500M)'] || {},
@@ -2560,7 +2559,7 @@ async function genDeveloper(dataSetType) {
     }
   }
 
-  resultSorted = {
+  const resultSorted = {
     '1B': result['1B'],
     '[500M; 1B)': result['[500M; 1B)'] || {},
     '[100M; 500M)': result['[100M; 500M)'] || {},
