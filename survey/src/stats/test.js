@@ -1888,19 +1888,19 @@ async function main() {
   
   console.log("DONE")
 }
-// main()
+main()
 
 
 async function stats() {
   await Promise.all([
-    // genCategory('training'),
-    // genPurpose('training'),
-    // genThirdParty('training'),
+    genCategory('training'),
+    genPurpose('training'),
+    genThirdParty('training'),
     genDeveloper('training'),
     
-    // genCategory("testing"),
-    // genPurpose("testing"),
-    // genThirdParty("testing"),
+    genCategory("testing"),
+    genPurpose("testing"),
+    genThirdParty("testing"),
     genDeveloper("testing"),
   ])
 
