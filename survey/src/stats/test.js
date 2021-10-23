@@ -937,7 +937,7 @@ const header = [
   },
 ]
 
-async function tranningIndiv(answers){ 
+async function trainingIndiv(answers){ 
   let rows = {
     expert: [],
     paid: [],
@@ -976,8 +976,8 @@ async function tranningIndiv(answers){
       else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
       else risk = 4
       
-      const childrenPurpose = JSON.parse(app.collectionData).filter(item => !item.children || item.children.length === 0)
-      const childrenThirdParty = JSON.parse(app.thirdPartyData).filter(item => !item.children || item.children.length === 0)
+      const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
+      const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
 
 
       if(!result[installQuestion.value]) result[installQuestion.value] = 0
@@ -1148,8 +1148,8 @@ async function testIndiv(answers) {
       else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
       else risk = 4
 
-      const childrenPurpose = JSON.parse(app.collectionData).filter(item => !item.children || item.children.length === 0)
-      const childrenThirdParty = JSON.parse(app.thirdPartyData).filter(item => !item.children || item.children.length === 0)
+      const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
+      const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
 
       if(!result[installQuestion.value]) result[installQuestion.value] = 0
       result[installQuestion.value]++
@@ -1283,7 +1283,7 @@ async function testIndiv(answers) {
   console.log("DONE testing")
 }
 
-async function tranningGroup(answers) {
+async function trainingGroup(answers) {
   let rows = []
   let result = {
     expert: {},
@@ -1342,8 +1342,8 @@ async function tranningGroup(answers) {
       else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
       else risk = 4
 
-      const childrenPurpose = JSON.parse(app.collectionData).filter(item => !item.children || item.children.length === 0)
-      const childrenThirdParty = JSON.parse(app.thirdPartyData).filter(item => !item.children || item.children.length === 0)
+      const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
+      const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
 
       if(!result[type][installQuestion.value]) result[type][installQuestion.value] = 0
       result[type][installQuestion.value]++
@@ -1630,8 +1630,8 @@ async function testingGroup(answers) {
       else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
       else  if((range[0] + part * 4) <= Number( app.distance) && Number( app.distance) <= (range[0] + part *5)) risk = 4
 
-      const childrenPurpose = JSON.parse(app.collectionData).filter(item => !item.children || item.children.length === 0)
-      const childrenThirdParty = JSON.parse(app.thirdPartyData).filter(item => !item.children || item.children.length === 0)
+      const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
+      const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
 
       if(!result[type][installQuestion.value]) result[type][installQuestion.value] = 0
       result[type][installQuestion.value]++
@@ -1871,9 +1871,9 @@ async function main() {
   // tranning 
   await Promise.all(
     [
-      tranningIndiv(answers),
+      trainingIndiv(answers),
       testIndiv(answers),
-      tranningGroup(answers),
+      trainingGroup(answers),
       testingGroup(answers)
     ]
   )
@@ -1888,24 +1888,31 @@ async function main() {
   
   console.log("DONE")
 }
-// main()
+main()
 
 
 async function stats() {
   await Promise.all([
-    genCategory(),
-    genPurpose(),
-    genThirdParty(),
-    genDeveloper(),
+    genCategory('training'),
+    genPurpose('training'),
+    genThirdParty('training'),
+    genDeveloper('training'),
   ])
 
+  await Promise.all([
+    genCategory("testing"),
+    genPurpose("testing"),
+    genThirdParty("testing"),
+    genDeveloper("testing"),
+  ])
   console.log("DONE")
 }
 stats()
 
 
 
-async function genCategory() {
+async function genCategory(dataSetType) {
+  
   let answers = await Models.Answer.find().cache(
     60 * 60 * 24 * 30
   ); // 1 month;
@@ -1967,7 +1974,8 @@ async function genCategory() {
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
     
-    for (let j = 0; j < answer.questions.length; j++) {
+    const toQuestion = dataSetType === 'training' ? 10 : 26
+    for (let j = 0; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
@@ -1989,11 +1997,11 @@ async function genCategory() {
     }
   })
   let csvWriter = createCsvWriter({
-    path: "./reports/test/category/quantitiy.csv",
+    path: `./reports/test/category/quantitiy(${dataSetType}).csv`,
     header
   });
   await csvWriter.writeRecords(rows);
-  console.log("DONE category(quantitiy)")
+  console.log("DONE category(quantitiy)", dataSetType)
 
   rows = []
 
@@ -2007,7 +2015,8 @@ async function genCategory() {
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
     
-    for (let j = 0; j < answer.questions.length; j++) {
+    const toQuestion = dataSetType === 'training' ? 10 : 26
+    for (let j = 0; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
@@ -2048,18 +2057,18 @@ async function genCategory() {
     }
   })
   csvWriter = createCsvWriter({
-    path: "./reports/test/category/risk.csv",
+    path: `./reports/test/category/risk(${dataSetType}).csv`,
     header
   });
   await csvWriter.writeRecords(rows);
 
-  console.log("DONE category(risk)")
+  console.log("DONE category(risk)", dataSetType)
 
   // 
 }
 
 
-async function genPurpose() {
+async function genPurpose(dataSetType) {
   let answers = await Models.Answer.find().cache(
     60 * 60 * 24 * 30
   ); // 1 month;
@@ -2121,7 +2130,8 @@ async function genPurpose() {
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
     
-    for (let j = 0; j < answer.questions.length; j++) {
+    const toQuestion = dataSetType === 'training' ? 10 : 26
+    for (let j = 0; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
@@ -2130,8 +2140,8 @@ async function genPurpose() {
       const installQuestion = question.responses.find(item => item.name === "install")
       if(!installQuestion) continue;
 
-      const childrenPurpose = JSON.parse(app.collectionData).filter(item => !item.children || item.children.length === 0)
-      const childrenThirdParty = JSON.parse(app.thirdPartyData).filter(item => !item.children || item.children.length === 0)
+      const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
+      const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
 
       childrenPurpose.forEach(item => {
         if(!result[item['name']]) result[item['name']] = {}
@@ -2147,11 +2157,11 @@ async function genPurpose() {
     }
   })
   let csvWriter = createCsvWriter({
-    path: "./reports/test/purpose/quantitiy.csv",
+    path: `./reports/test/purpose/quantitiy${dataSetType}.csv`,
     header
   });
   await csvWriter.writeRecords(rows);
-  console.log("DONE purpose(quantitiy)")
+  console.log("DONE purpose(quantitiy)", dataSetType)
 
   rows = []
 
@@ -2165,7 +2175,8 @@ async function genPurpose() {
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
     
-    for (let j = 0; j < answer.questions.length; j++) {
+    const toQuestion = dataSetType === 'training' ? 10 : 26
+    for (let j = 0; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
@@ -2183,8 +2194,8 @@ async function genPurpose() {
       const installQuestion = question.responses.find(item => item.name === "install")
       if(!installQuestion) continue;
 
-      const childrenPurpose = JSON.parse(app.collectionData).filter(item => !item.children || item.children.length === 0)
-      const childrenThirdParty = JSON.parse(app.thirdPartyData).filter(item => !item.children || item.children.length === 0)
+      const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
+      const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
 
       childrenPurpose.forEach(item => {
         if(!result[item['name']]) result[item['name']] = {}
@@ -2209,7 +2220,7 @@ async function genPurpose() {
     }
   })
   csvWriter = createCsvWriter({
-    path: "./reports/test/purpose/risk.csv",
+    path: `./reports/test/purpose/risk(${dataSetType}).csv`,
     header
   });
   await csvWriter.writeRecords(rows);
@@ -2218,7 +2229,7 @@ async function genPurpose() {
   // 
 }
 
-async function genThirdParty() {
+async function genThirdParty(dataSetType) {
   let answers = await Models.Answer.find().cache(
     60 * 60 * 24 * 30
   ); // 1 month;
@@ -2280,7 +2291,8 @@ async function genThirdParty() {
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
     
-    for (let j = 0; j < answer.questions.length; j++) {
+    const toQuestion = dataSetType === 'training' ? 10 : 26
+    for (let j = 0; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
@@ -2289,8 +2301,8 @@ async function genThirdParty() {
       const installQuestion = question.responses.find(item => item.name === "install")
       if(!installQuestion) continue;
 
-      const childrenPurpose = JSON.parse(app.collectionData).filter(item => !item.children || item.children.length === 0)
-      const childrenThirdParty = JSON.parse(app.thirdPartyData).filter(item => !item.children || item.children.length === 0)
+      const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
+      const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
 
       childrenThirdParty.forEach(item => {
         if(!result[item['name']]) result[item['name']] = {}
@@ -2306,11 +2318,11 @@ async function genThirdParty() {
     }
   })
   let csvWriter = createCsvWriter({
-    path: "./reports/test/third-party/quantitiy.csv",
+    path: `./reports/test/third-party/quantitiy(${dataSetType}).csv`,
     header
   });
   await csvWriter.writeRecords(rows);
-  console.log("DONE third-party(quantitiy)")
+  console.log("DONE third-party(quantitiy)", dataSetType)
 
   rows = []
 
@@ -2324,7 +2336,8 @@ async function genThirdParty() {
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
     
-    for (let j = 0; j < answer.questions.length; j++) {
+    const toQuestion = dataSetType === 'training' ? 10 : 26
+    for (let j = 0; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
@@ -2342,8 +2355,8 @@ async function genThirdParty() {
       const installQuestion = question.responses.find(item => item.name === "install")
       if(!installQuestion) continue;
 
-      const childrenPurpose = JSON.parse(app.collectionData).filter(item => !item.children || item.children.length === 0)
-      const childrenThirdParty = JSON.parse(app.thirdPartyData).filter(item => !item.children || item.children.length === 0)
+      const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
+      const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
 
       childrenThirdParty.forEach(item => {
         if(!result[item['name']]) result[item['name']] = {}
@@ -2368,16 +2381,16 @@ async function genThirdParty() {
     }
   })
   csvWriter = createCsvWriter({
-    path: "./reports/test/third-party/risk.csv",
+    path: `./reports/test/third-party/risk(${dataSetType}).csv`,
     header
   });
-  await csvWriter.writeRecords(rows);
+  await csvWriter.writeRecords(rows, dataSetType);
 
   console.log("DONE third-party(risk)")
   // 
 }
 
-async function genDeveloper() {
+async function genDeveloper(dataSetType) {
   let answers = await Models.Answer.find().cache(
     60 * 60 * 24 * 30
   ); // 1 month;
@@ -2439,7 +2452,8 @@ async function genDeveloper() {
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
     
-    for (let j = 0; j < answer.questions.length; j++) {
+    const toQuestion = dataSetType === 'training' ? 10 : 26
+    for (let j = 0; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
@@ -2469,7 +2483,7 @@ async function genDeveloper() {
     }
   }
 
-  let resultSorted = {
+  resultSorted = {
     '1B': result['1B'],
     '[500M; 1B)': result['[500M; 1B)'] || {},
     '[100M; 500M)': result['[100M; 500M)'] || {},
@@ -2480,6 +2494,7 @@ async function genDeveloper() {
     '[100K; 500K)': result['[100K; 500K)'] || {},
     '[50K; 100K)': result['[50K; 100K)'] || {},
     '[10K; 50K)': result['[10K; 50K)'] || {},
+    '<10K': result['<10K'] || {},
   }
   rows = Object.entries(resultSorted).map(item => {
     return {
@@ -2488,11 +2503,11 @@ async function genDeveloper() {
     }
   })
   let csvWriter = createCsvWriter({
-    path: "./reports/test/developer/quantitiy.csv",
+    path: `./reports/test/developer/quantitiy(${dataSetType}).csv`,
     header
   });
   await csvWriter.writeRecords(rows);
-  console.log("DONE developer(quantitiy)")
+  console.log("DONE developer(quantitiy)", dataSetType)
   rows = []
 
   result = {
@@ -2505,7 +2520,8 @@ async function genDeveloper() {
     ); // 1 month;
     const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
     
-    for (let j = 0; j < answer.questions.length; j++) {
+    const toQuestion = dataSetType === 'training' ? 10 : 26
+    for (let j = 0; j < toQuestion; j++) {
       const question = answer.questions[j];
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
@@ -2555,6 +2571,7 @@ async function genDeveloper() {
     '[100K; 500K)': result['[100K; 500K)'] || {},
     '[50K; 100K)': result['[50K; 100K)'] || {},
     '[10K; 50K)': result['[10K; 50K)'] || {},
+    '<10K': result['<10K'] || {},
   }
 
   rows = Object.entries(resultSorted).map(item => {
@@ -2572,11 +2589,23 @@ async function genDeveloper() {
     }
   })
   csvWriter = createCsvWriter({
-    path: "./reports/test/developer/risk.csv",
+    path: `./reports/test/developer/risk(${dataSetType}).csv`,
     header
   });
   await csvWriter.writeRecords(rows);
 
-  console.log("DONE developer(risk)")
+  console.log("DONE developer(risk)", dataSetType)
   // 
+}
+
+
+function getLeafNodes(nodes, result = []){
+  for(var i = 0, length = nodes.length; i < length; i++){
+    if(!nodes[i].children || nodes[i].children.length === 0){
+      result.push(nodes[i]);
+    }else{
+      result = getLeafNodes(nodes[i].children, result);
+    }
+  }
+  return result;
 }
