@@ -1908,7 +1908,7 @@ async function main() {
   
   console.log("DONE")
 }
-// main()
+main()
 
 
 async function stats() {
@@ -1926,7 +1926,7 @@ async function stats() {
 
   console.log("DONE")
 }
-// stats()
+stats()
 
 
 async function genCategory(dataSetType) {
