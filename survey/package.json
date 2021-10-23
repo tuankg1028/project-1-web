@@ -24,7 +24,7 @@
     "exportingUsers": "babel-watch --max_old_space_size=8192 export-user.js",
     "stats": "babel-watch src/stats/index",
     "report-users": "babel-watch src/stats/user",
-    "test": "npm run build && node --max_old_space_size=8192 dist/stats/test"
+    "test": "babel-watch src/stats/test"
   },
   "heroku-prebuild": "rm -rf node_modules",
   "dependencies": {
