@@ -1893,9 +1893,9 @@ main()
 
 async function stats() {
   await Promise.all([
-    // genCategory(),
-    // genPurpose(),
-    // genThirdParty(),
+    genCategory(),
+    genPurpose(),
+    genThirdParty(),
     genDeveloper(),
   ])
 
