@@ -2482,7 +2482,7 @@ async function genDeveloper(dataSetType) {
     }
   }
 
-  const resultSorted = {
+  let resultSorted = {
     '1B': result['1B'],
     '[500M; 1B)': result['[500M; 1B)'] || {},
     '[100M; 500M)': result['[100M; 500M)'] || {},
@@ -2559,7 +2559,7 @@ async function genDeveloper(dataSetType) {
     }
   }
 
-  const resultSorted = {
+  resultSorted = {
     '1B': result['1B'],
     '[500M; 1B)': result['[500M; 1B)'] || {},
     '[100M; 500M)': result['[100M; 500M)'] || {},
