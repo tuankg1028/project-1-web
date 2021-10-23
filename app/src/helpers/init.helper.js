@@ -268,12 +268,12 @@ const initeJavaSourceCode = async () => {
       console.log(`${i}/${apps.length}`);
       const app = apps[i];
 
-      const isRun = await Models.AppTemp.findOne({
+      const isExisted = await Models.AppTemp.findOne({
         appName: app.appName,
         type: "36k",
       });
 
-      if (isRun) continue;
+      if (isExisted) continue;
       promises.push(limit(() => _createAppDBOnFile(app.id)));
     }
 
@@ -357,8 +357,9 @@ const _createAppDBOnFile = async (appIdDB) => {
       let pathFileApk;
       let apkSourcePath;
       try {
+        const app = await Models.App.findById(appIdDB);
         Helpers.Logger.step("Step 1: Get apk file from source");
-        pathFileApk = _getApkFileFromSource(appIdDB);
+        pathFileApk = _getApkFileFromSource(appIdDB, app.appName);
 
         if (!pathFileApk) throw new Error("Cannot find apk file");
         Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
@@ -372,7 +373,6 @@ const _createAppDBOnFile = async (appIdDB) => {
           `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
         );
 
-        const app = await Models.App.findById(appIdDB);
         await Models.AppTemp.create({
           appName: app.appName,
           type: "36k",
@@ -762,7 +762,7 @@ function ThroughDirectory(Directory, Files = []) {
   return Files;
 }
 
-function _getApkFileFromSource(appId) {
+function _getApkFileFromSource(appId, appName) {
   let apkPath = "";
   const apkFilesInFolder1 = ThroughDirectory(
     "/home/ha/snap/skype/common/apkpure_get/new_top_apps_Download"
@@ -775,7 +775,7 @@ function _getApkFileFromSource(appId) {
   for (let i = 0; i < apkFilesInFolder1.length; i++) {
     const apkFile = apkFilesInFolder1[i];
 
-    if (apkFile.includes(appId)) {
+    if (apkFile.includes(appId) || apkFile.includes(appName)) {
       apkPath = apkFile;
       break;
     }
@@ -786,7 +786,7 @@ function _getApkFileFromSource(appId) {
   for (let i = 0; i < apkFilesInFolder2.length; i++) {
     const apkFile = apkFilesInFolder2[i];
 
-    if (apkFile.includes(appId)) {
+    if (apkFile.includes(appId) || apkFile.includes(appName)) {
       apkPath = apkFile;
       break;
     }
