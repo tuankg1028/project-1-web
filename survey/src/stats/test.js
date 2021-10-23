@@ -964,7 +964,12 @@ async function trainingIndiv(answers){
         60 * 60 * 24 * 30
       ); // 1 month;
 
-      const installQuestion = question.responses.find(item => item.name === "install")
+      let installQuestion = question.responses.find(item => item.name === "install")
+      const agreePredict = question.responses.find(item => item.name === "agreePredict")
+      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+      if(!installQuestion && agreePredict == '1') {
+        installQuestion = ourPrediction
+      }
       if(!installQuestion) continue;
 
       const range = ranges[app.categoryName]
@@ -1137,7 +1142,12 @@ async function testIndiv(answers) {
       const app = await Models.App.findById(question.id).cache(
         60 * 60 * 24 * 30
       ); // 1 month;
-      const installQuestion = question.responses.find(item => item.name === "install")
+      let installQuestion = question.responses.find(item => item.name === "install")
+      const agreePredict = question.responses.find(item => item.name === "agreePredict")
+      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+      if(!installQuestion && agreePredict == '1') {
+        installQuestion = ourPrediction
+      }
       if(!installQuestion) continue;
       const range = ranges[app.categoryName]
       let risk
@@ -1330,7 +1340,12 @@ async function trainingGroup(answers) {
         60 * 60 * 24 * 30
       ); // 1 month;
 
-      const installQuestion = question.responses.find(item => item.name === "install")
+      let installQuestion = question.responses.find(item => item.name === "install")
+      const agreePredict = question.responses.find(item => item.name === "agreePredict")
+      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+      if(!installQuestion && agreePredict == '1') {
+        installQuestion = ourPrediction
+      }
       if(!installQuestion) continue;
 
       const range = ranges[app.categoryName]
@@ -1618,7 +1633,12 @@ async function testingGroup(answers) {
         60 * 60 * 24 * 30
       ); // 1 month;
 
-      const installQuestion = question.responses.find(item => item.name === "install")
+      let installQuestion = question.responses.find(item => item.name === "install")
+      const agreePredict = question.responses.find(item => item.name === "agreePredict")
+      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+      if(!installQuestion && agreePredict == '1') {
+        installQuestion = ourPrediction
+      }
       if(!installQuestion) continue;
 
       const range = ranges[app.categoryName]
@@ -1906,8 +1926,7 @@ async function stats() {
 
   console.log("DONE")
 }
-stats()
-
+// stats()
 
 
 async function genCategory(dataSetType) {
@@ -1980,9 +1999,14 @@ async function genCategory(dataSetType) {
         60 * 60 * 24 * 30
       ); // 1 month;
 
-      const installQuestion = question.responses.find(item => item.name === "install")
+      let installQuestion = question.responses.find(item => item.name === "install")
+      const agreePredict = question.responses.find(item => item.name === "agreePredict")
+      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+      if(!installQuestion && agreePredict == '1') {
+        installQuestion = ourPrediction
+      }
+      
       if(!installQuestion) continue;
-
 
       if(!result[app.categoryName]) result[app.categoryName] = {}
       result[app.categoryName][`${installQuestion.value}${type}`] ? result[app.categoryName][`${installQuestion.value}${type}`]++ : result[app.categoryName][`${installQuestion.value}${type}`] = 1 
@@ -2030,7 +2054,12 @@ async function genCategory(dataSetType) {
       else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
       else  if((range[0] + part * 4) <= Number( app.distance) && Number( app.distance) <= (range[0] + part *5)) risk = 4
 
-      const installQuestion = question.responses.find(item => item.name === "install")
+      let installQuestion = question.responses.find(item => item.name === "install")
+      const agreePredict = question.responses.find(item => item.name === "agreePredict")
+      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+      if(!installQuestion && agreePredict == '1') {
+        installQuestion = ourPrediction
+      }
       if(!installQuestion) continue;
 
 
@@ -2136,7 +2165,12 @@ async function genPurpose(dataSetType) {
         60 * 60 * 24 * 30
       ); // 1 month;
 
-      const installQuestion = question.responses.find(item => item.name === "install")
+      let installQuestion = question.responses.find(item => item.name === "install")
+      const agreePredict = question.responses.find(item => item.name === "agreePredict")
+      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+      if(!installQuestion && agreePredict == '1') {
+        installQuestion = ourPrediction
+      }
       if(!installQuestion) continue;
 
       const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
@@ -2190,7 +2224,12 @@ async function genPurpose(dataSetType) {
       else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
       else  if((range[0] + part * 4) <= Number( app.distance) && Number( app.distance) <= (range[0] + part *5)) risk = 4
 
-      const installQuestion = question.responses.find(item => item.name === "install")
+      let installQuestion = question.responses.find(item => item.name === "install")
+      const agreePredict = question.responses.find(item => item.name === "agreePredict")
+      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+      if(!installQuestion && agreePredict == '1') {
+        installQuestion = ourPrediction
+      }
       if(!installQuestion) continue;
 
       const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
@@ -2297,7 +2336,12 @@ async function genThirdParty(dataSetType) {
         60 * 60 * 24 * 30
       ); // 1 month;
 
-      const installQuestion = question.responses.find(item => item.name === "install")
+      let installQuestion = question.responses.find(item => item.name === "install")
+      const agreePredict = question.responses.find(item => item.name === "agreePredict")
+      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+      if(!installQuestion && agreePredict == '1') {
+        installQuestion = ourPrediction
+      }
       if(!installQuestion) continue;
 
       const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
@@ -2351,7 +2395,12 @@ async function genThirdParty(dataSetType) {
       else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
       else  if((range[0] + part * 4) <= Number( app.distance) && Number( app.distance) <= (range[0] + part *5)) risk = 4
 
-      const installQuestion = question.responses.find(item => item.name === "install")
+      let installQuestion = question.responses.find(item => item.name === "install")
+      const agreePredict = question.responses.find(item => item.name === "agreePredict")
+      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+      if(!installQuestion && agreePredict == '1') {
+        installQuestion = ourPrediction
+      }
       if(!installQuestion) continue;
 
       const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
@@ -2458,7 +2507,12 @@ async function genDeveloper(dataSetType) {
         60 * 60 * 24 * 30
       ); // 1 month;
 
-      const installQuestion = question.responses.find(item => item.name === "install")
+      let installQuestion = question.responses.find(item => item.name === "install")
+      const agreePredict = question.responses.find(item => item.name === "agreePredict")
+      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+      if(!installQuestion && agreePredict == '1') {
+        installQuestion = ourPrediction
+      }
       if(!installQuestion) continue;
 
       const appsByDeveloper = await gplay.developer({devId: app.developer}).then(apps => Promise.all(apps.map(app => gplay.app({appId: app.appId}).catch(_ => null))).then(items => items.filter(item => !!item))).catch(_ => [])
@@ -2535,7 +2589,12 @@ async function genDeveloper(dataSetType) {
       else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
       else  if((range[0] + part * 4) <= Number( app.distance) && Number( app.distance) <= (range[0] + part *5)) risk = 4
 
-      const installQuestion = question.responses.find(item => item.name === "install")
+      let installQuestion = question.responses.find(item => item.name === "install")
+      const agreePredict = question.responses.find(item => item.name === "agreePredict")
+      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+      if(!installQuestion && agreePredict == '1') {
+        installQuestion = ourPrediction
+      }
       if(!installQuestion) continue;
 
       const appsByDeveloper = await gplay.developer({devId: app.developer}).then(apps => Promise.all(apps.map(app => gplay.app({appId: app.appId}).catch(_ => null))).then(items => items.filter(item => !!item))).catch(_ => [])
