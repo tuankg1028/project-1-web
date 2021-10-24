@@ -1497,13 +1497,14 @@ function getChildCategories(categoryName, categories, result = []) {
 
   const childs = categories.filter((item) => item.parent === category.id);
 
-  result.push(childs);
   for (let i = 0; i < childs.length; i++) {
     const child = childs[i];
 
     getChildCategories(child.name, categories, result);
   }
-  return _.flatten(result);
+
+  result.push(childs);
+  return result;
 }
 
 function checkParentHasContent(childCategoryName, ppCategories, categories) {
@@ -1873,7 +1874,9 @@ async function updateAppPrivacyPolicy(appId) {
           );
           console.log(1, isParentHasContent, category);
           if (isParentHasContent && contents && contents.length > 0) {
-            let childCategories = getChildCategories(category, categories);
+            let childCategories = _.flatten(
+              getChildCategories(category, categories)
+            );
             childCategories = _.map(childCategories, "name");
             if (childCategories.length === 0) {
               ppCategoriesAPP[dataType].push(category);
