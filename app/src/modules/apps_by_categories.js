@@ -1934,9 +1934,9 @@ async function updateAppPrivacyPolicy(appId) {
       },
       {
         $set: {
-          collectionData: JSON.stringify(collectionData),
+          // collectionData: JSON.stringify(collectionData),
           thirdPartyData: JSON.stringify(thirdPartyData),
-          retentionData: JSON.stringify(retentionData),
+          // retentionData: JSON.stringify(retentionData),
         },
       },
       {},
