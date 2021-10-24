@@ -967,7 +967,7 @@ async function trainingIndiv(answers){
       let installQuestion = question.responses.find(item => item.name === "install")
       const agreePredict = question.responses.find(item => item.name === "agreePredict")
       const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict == '1') {
+      if(!installQuestion && agreePredict.value == '1') {
         installQuestion = ourPrediction
       }
       if(!installQuestion) continue;
@@ -1145,7 +1145,7 @@ async function testIndiv(answers) {
       let installQuestion = question.responses.find(item => item.name === "install")
       const agreePredict = question.responses.find(item => item.name === "agreePredict")
       const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict == '1') {
+      if(!installQuestion && agreePredict.value == '1') {
         installQuestion = ourPrediction
       }
       if(!installQuestion) continue;
@@ -1343,7 +1343,7 @@ async function trainingGroup(answers) {
       let installQuestion = question.responses.find(item => item.name === "install")
       const agreePredict = question.responses.find(item => item.name === "agreePredict")
       const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict == '1') {
+      if(!installQuestion && agreePredict.value == '1') {
         installQuestion = ourPrediction
       }
       if(!installQuestion) continue;
@@ -1636,7 +1636,7 @@ async function testingGroup(answers) {
       let installQuestion = question.responses.find(item => item.name === "install")
       const agreePredict = question.responses.find(item => item.name === "agreePredict")
       const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict == '1') {
+      if(!installQuestion && agreePredict.value == '1') {
         installQuestion = ourPrediction
       }
       if(!installQuestion) continue;
@@ -2002,10 +2002,9 @@ async function genCategory(dataSetType) {
       let installQuestion = question.responses.find(item => item.name === "install")
       const agreePredict = question.responses.find(item => item.name === "agreePredict")
       const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict == '1') {
+      if(!installQuestion && agreePredict.value == '1') {
         installQuestion = ourPrediction
       }
-      
       if(!installQuestion) continue;
 
       if(!result[app.categoryName]) result[app.categoryName] = {}
@@ -2057,7 +2056,7 @@ async function genCategory(dataSetType) {
       let installQuestion = question.responses.find(item => item.name === "install")
       const agreePredict = question.responses.find(item => item.name === "agreePredict")
       const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict == '1') {
+      if(!installQuestion && agreePredict.value == '1') {
         installQuestion = ourPrediction
       }
       if(!installQuestion) continue;
@@ -2091,7 +2090,6 @@ async function genCategory(dataSetType) {
   await csvWriter.writeRecords(rows);
 
   console.log("DONE category(risk)", dataSetType)
-
   // 
 }
 
@@ -2168,7 +2166,7 @@ async function genPurpose(dataSetType) {
       let installQuestion = question.responses.find(item => item.name === "install")
       const agreePredict = question.responses.find(item => item.name === "agreePredict")
       const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict == '1') {
+      if(!installQuestion && agreePredict.value == '1') {
         installQuestion = ourPrediction
       }
       if(!installQuestion) continue;
@@ -2227,7 +2225,7 @@ async function genPurpose(dataSetType) {
       let installQuestion = question.responses.find(item => item.name === "install")
       const agreePredict = question.responses.find(item => item.name === "agreePredict")
       const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict == '1') {
+      if(!installQuestion && agreePredict.value == '1') {
         installQuestion = ourPrediction
       }
       if(!installQuestion) continue;
@@ -2339,7 +2337,7 @@ async function genThirdParty(dataSetType) {
       let installQuestion = question.responses.find(item => item.name === "install")
       const agreePredict = question.responses.find(item => item.name === "agreePredict")
       const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict == '1') {
+      if(!installQuestion && agreePredict.value == '1') {
         installQuestion = ourPrediction
       }
       if(!installQuestion) continue;
@@ -2398,7 +2396,7 @@ async function genThirdParty(dataSetType) {
       let installQuestion = question.responses.find(item => item.name === "install")
       const agreePredict = question.responses.find(item => item.name === "agreePredict")
       const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict == '1') {
+      if(!installQuestion && agreePredict.value == '1') {
         installQuestion = ourPrediction
       }
       if(!installQuestion) continue;
@@ -2510,7 +2508,7 @@ async function genDeveloper(dataSetType) {
       let installQuestion = question.responses.find(item => item.name === "install")
       const agreePredict = question.responses.find(item => item.name === "agreePredict")
       const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict == '1') {
+      if(!installQuestion && agreePredict.value == '1') {
         installQuestion = ourPrediction
       }
       if(!installQuestion) continue;
@@ -2592,7 +2590,7 @@ async function genDeveloper(dataSetType) {
       let installQuestion = question.responses.find(item => item.name === "install")
       const agreePredict = question.responses.find(item => item.name === "agreePredict")
       const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict == '1') {
+      if(!installQuestion && agreePredict.value == '1') {
         installQuestion = ourPrediction
       }
       if(!installQuestion) continue;
