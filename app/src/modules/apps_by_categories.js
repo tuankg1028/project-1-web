@@ -1912,7 +1912,7 @@ async function updateAppPrivacyPolicy(appId) {
     // getMeaningWithCategory(thirdPartyData, "thirdParty");
 
     const retentionData = [];
-    for (let i = 0; i < ppCategoriesAPP.retention.length; i++) {
+    for (let i = 0; i < (ppCategoriesAPP.retention || []).length; i++) {
       const element = ppCategoriesAPP.retention[i];
       await createTreeDataByNode(element, retentionData, categoriesRetention);
     }
