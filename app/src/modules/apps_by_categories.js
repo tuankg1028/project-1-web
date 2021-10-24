@@ -1813,7 +1813,7 @@ async function updateAppsPrivacyPolicy() {
   }).select("id");
 
   // .limit(1);
-  // const appIds = _.map(apps, "id");
+  const appIds = _.map(apps, "id");
 
   // for (let i = 0; i < appIds.length; i++) {
   //   const appId = appIds[i];
