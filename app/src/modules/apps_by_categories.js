@@ -1799,32 +1799,32 @@ async function getParent(node) {
 updateAppsPrivacyPolicy();
 async function updateAppsPrivacyPolicy() {
   console.log(12);
-  // const apps = await Models.App.find({
-  // isCompleted: true,
-  // appName: {
-  //   $in: [
-  //     "truecaller: phone caller id, spam blocking & chat",
-  //     "mi music",
-  //     "huawei backup",
-  //     "file manager : free and easily",
-  //     "tiktok",
-  //     "linkedin: jobs, business news & social networking",
-  //     "hicare",
-  //     "microsoft teams",
-  //     "spotify: listen to podcasts & find music you love",
-  //     "zoom cloud meetings",
-  //   ],
-  // },
-  // }).select("id");
+  const apps = await Models.App.find({
+    // isCompleted: true,
+    // appName: {
+    //   $in: [
+    //     "truecaller: phone caller id, spam blocking & chat",
+    //     "mi music",
+    //     "huawei backup",
+    //     "file manager : free and easily",
+    //     "tiktok",
+    //     "linkedin: jobs, business news & social networking",
+    //     "hicare",
+    //     "microsoft teams",
+    //     "spotify: listen to podcasts & find music you love",
+    //     "zoom cloud meetings",
+    //   ],
+    // },
+  }).select("id");
 
   // // .limit(1);
-  // const appIds = _.map(apps, "id");
+  const appIds = _.map(apps, "id");
 
   // for (let i = 0; i < appIds.length; i++) {
   //   const appId = appIds[i];
-  await updateAppPrivacyPolicy("602ae716163e554ddd9f788a");
+  // await updateAppPrivacyPolicy("602ae716163e554ddd9f788a");
   // }
-  // await Promise.all(appIds.map(updateAppPrivacyPolicy));
+  await Promise.all(appIds.map(updateAppPrivacyPolicy));
 
   // await Helpers.Tree.getTreeFromNode("602951a8163e554ddd9a1274");
   console.log("DONE");
