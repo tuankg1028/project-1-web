@@ -2369,7 +2369,7 @@ async function genThirdParty(dataSetType) {
 
   let result = {
   }
-  for (let i = 0; answers.length < 1; i++) {
+  for (let i = 0; i < answers.length; i++) {
     const answer = answers[i];
     
     const user = await Models.User.findById(answer.userId).cache(
