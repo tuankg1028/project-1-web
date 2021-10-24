@@ -1916,13 +1916,13 @@ async function stats() {
   await Promise.all([
     // genCategory('training'),
     // genPurpose('training'),
-    // genThirdParty('training'),
-    genDeveloper('training'),
+    genThirdParty('training'),
+    // genDeveloper('training'),
     
     // genCategory("testing"),
     // genPurpose("testing"),
-    // genThirdParty("testing"),
-    genDeveloper("testing"),
+    genThirdParty("testing"),
+    // genDeveloper("testing"),
   ])
 
   console.log("DONE Genrating 8 files")
@@ -2369,56 +2369,56 @@ async function genThirdParty(dataSetType) {
 
   let result = {
   }
-  // for (let i = 0; answers.length < 1; i++) {
-  //   const answer = answers[i];
+  for (let i = 0; answers.length < 1; i++) {
+    const answer = answers[i];
     
-  //   const user = await Models.User.findById(answer.userId).cache(
-  //     60 * 60 * 24 * 30
-  //   ); // 1 month;
-  //   const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
-  //   const fromQuestion = dataSetType === 'training' ? 0 : 10
-  //   const toQuestion = dataSetType === 'training' ? 10 : 26
-  //   for (let j = fromQuestion; j < toQuestion; j++) {
-  //     const question = answer.questions[j];
-  //     const app = await Models.App.findById(question.id).cache(
-  //       60 * 60 * 24 * 30
-  //     ); // 1 month;
+    const user = await Models.User.findById(answer.userId).cache(
+      60 * 60 * 24 * 30
+    ); // 1 month;
+    const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
+    const fromQuestion = dataSetType === 'training' ? 0 : 10
+    const toQuestion = dataSetType === 'training' ? 10 : 26
+    for (let j = fromQuestion; j < toQuestion; j++) {
+      const question = answer.questions[j];
+      const app = await Models.App.findById(question.id).cache(
+        60 * 60 * 24 * 30
+      ); // 1 month;
 
-  //     let installQuestion = question.responses.find(item => item.name === "install")
-  //     const agreePredict = question.responses.find(item => item.name === "agreePredict")
-  //     const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-  //     if(!installQuestion && agreePredict.value == '1') {
-  //       installQuestion = ourPrediction
-  //     }
-  //     if(!installQuestion) continue;
+      let installQuestion = question.responses.find(item => item.name === "install")
+      const agreePredict = question.responses.find(item => item.name === "agreePredict")
+      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+      if(!installQuestion && agreePredict.value == '1') {
+        installQuestion = ourPrediction
+      }
+      if(!installQuestion) continue;
 
-  //     const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
-  //     const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
+      const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
+      const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
    
-  //     childrenThirdParty.forEach(item => {
-  //       if(!result[item['name']]) result[item['name']] = {}
-  //       result[item['name']][`${installQuestion.value}${type}`] ? result[item['name']][`${installQuestion.value}${type}`]++ : result[item['name']][`${installQuestion.value}${type}`] = 1 
-  //     })
-  //   }
-  // }
+      childrenThirdParty.forEach(item => {
+        if(!result[item['name']]) result[item['name']] = {}
+        result[item['name']][`${installQuestion.value}${type}`] ? result[item['name']][`${installQuestion.value}${type}`]++ : result[item['name']][`${installQuestion.value}${type}`] = 1 
+      })
+    }
+  }
  
-  // rows = Object.entries(result).map(item => {
-  //   return {
-  //     name: item[0],
-  //     ...item[1],
-  //   }
-  // })
-  // let csvWriter = createCsvWriter({
-  //   path: `./reports/test/third-party/quantitiy(${dataSetType}).csv`,
-  //   header
-  // });
-  // await csvWriter.writeRecords(rows);
-  // console.log("DONE third-party(quantitiy)", dataSetType)
+  rows = Object.entries(result).map(item => {
+    return {
+      name: item[0],
+      ...item[1],
+    }
+  })
+  let csvWriter = createCsvWriter({
+    path: `./reports/test/third-party/quantitiy(${dataSetType}).csv`,
+    header
+  });
+  await csvWriter.writeRecords(rows);
+  console.log("DONE third-party(quantitiy)", dataSetType)
 
-  // rows = []
+  rows = []
 
-  // result = {
-  // }
+  result = {
+  }
   for (let i = 0; i < answers.length; i++) {
     const answer = answers[i];
     
@@ -2462,27 +2462,27 @@ async function genThirdParty(dataSetType) {
     }
   }
 
-  // rows = Object.entries(result).map(item => {
+  rows = Object.entries(result).map(item => {
 
-  //   const cols = Object.entries(item[1]).reduce((acc, [key, risks]) => {
-  //     acc[key] = ((risks['1'] || 0) * 0.25) + ((risks['2'] || 0) * 0.5) + ((risks['3'] || 0) * 0.75) + ((risks['4'] || 0))
-  //     acc[key] = acc[key] / ((risks['0'] || 0) + (risks['1'] || 0) + (risks['2'] || 0)+ (risks['3'] || 0)+ (risks['4'] || 0))
+    const cols = Object.entries(item[1]).reduce((acc, [key, risks]) => {
+      acc[key] = ((risks['1'] || 0) * 0.25) + ((risks['2'] || 0) * 0.5) + ((risks['3'] || 0) * 0.75) + ((risks['4'] || 0))
+      acc[key] = acc[key] / ((risks['0'] || 0) + (risks['1'] || 0) + (risks['2'] || 0)+ (risks['3'] || 0)+ (risks['4'] || 0))
 
-  //     acc[key] = Math.round(acc[key] * 100) / 100
-  //     return acc
-  //   }, {})
-  //   return {
-  //     name: item[0],
-  //     ...cols,
-  //   }
-  // })
-  // csvWriter = createCsvWriter({
-  //   path: `./reports/test/third-party/risk(${dataSetType}).csv`,
-  //   header
-  // });
-  // await csvWriter.writeRecords(rows, dataSetType);
+      acc[key] = Math.round(acc[key] * 100) / 100
+      return acc
+    }, {})
+    return {
+      name: item[0],
+      ...cols,
+    }
+  })
+  csvWriter = createCsvWriter({
+    path: `./reports/test/third-party/risk(${dataSetType}).csv`,
+    header
+  });
+  await csvWriter.writeRecords(rows, dataSetType);
 
-  // console.log("DONE third-party(risk)")
+  console.log("DONE third-party(risk)")
 
 
   rows = Object.entries(result).map(item => {
@@ -2499,7 +2499,7 @@ async function genThirdParty(dataSetType) {
       ...cols,
     }
   })
-  let csvWriter = createCsvWriter({
+  csvWriter = createCsvWriter({
     path: `./reports/test/third-party/percentage(${dataSetType}).csv`,
     header
   });
