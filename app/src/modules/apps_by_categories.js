@@ -1514,6 +1514,11 @@ function checkParentHasContent(childCategoryName, ppCategories, categories) {
     const parentCategory = categories.find(
       (item) => item.id === childCategory.parent
     );
+    parentCategory &&
+      parentCategory.keywords &&
+      (parentCategory.keywords = parentCategory.keywords.filter(
+        (item) => !!item
+      ));
 
     if (parentCategory && parentCategory.keywords.length > 0) {
       const contentsParent = ppCategories[parentCategory.name];
@@ -1812,22 +1817,22 @@ async function updateAppsPrivacyPolicy() {
     // },
   }).select("id");
 
-  // .limit(1);
+  // // .limit(1);
   const appIds = _.map(apps, "id");
 
   // for (let i = 0; i < appIds.length; i++) {
   //   const appId = appIds[i];
-  //   await updateAppPrivacyPolicy(appId);
+  // await updateAppPrivacyPolicy("60296844163e554ddd9a4ebe");
   // }
   await Promise.all(appIds.map(updateAppPrivacyPolicy));
 
   // await Helpers.Tree.getTreeFromNode("602951a8163e554ddd9a1274");
-
   console.log("DONE");
 }
 
 async function updateAppPrivacyPolicy(appId) {
   try {
+    console.log(appId);
     const app = await Models.App.findById(appId);
 
     let ppCategoriesAPP = {};
@@ -1836,11 +1841,13 @@ async function updateAppPrivacyPolicy(appId) {
     const ppCategorieTypes = await getPPCategories(app.contentPrivacyPolicy);
 
     for (const dataType in ppCategorieTypes) {
+      console.log(dataType);
       const ppCategories = ppCategorieTypes[dataType];
 
       ppCategoriesAPP[dataType] = [];
       ppCategoriesAPPContent[dataType] = [];
       let categories;
+
       switch (dataType) {
         case "collection":
           categories = categoriesCollection;
@@ -1859,7 +1866,13 @@ async function updateAppPrivacyPolicy(appId) {
         for (const category in ppCategories) {
           const contents = ppCategories[category];
 
-          if (contents && contents.length > 0) {
+          const isParentHasContent = checkParentHasContent(
+            category,
+            ppCategories,
+            categories
+          );
+          console.log(1, isParentHasContent, category);
+          if (isParentHasContent && contents && contents.length > 0) {
             let childCategories = getChildCategories(category, categories);
             childCategories = _.map(childCategories, "name");
             if (childCategories.length === 0) {
@@ -1881,23 +1894,23 @@ async function updateAppPrivacyPolicy(appId) {
       ppCategoriesAPP[dataType] = _.uniq(ppCategoriesAPP[dataType]);
     }
 
-    // const collectionData = [];
-    // for (let i = 0; i < ppCategoriesAPP.collection.length; i++) {
-    //   const element = ppCategoriesAPP.collection[i];
-    //   await createTreeDataByNode(element, collectionData, categoriesCollection);
-    // }
-    // // map CONTENT
-    // for (const categoryName in ppCategoriesAPPContent.collection) {
-    //   const contents = ppCategoriesAPPContent.collection[categoryName];
+    const collectionData = [];
+    for (let i = 0; i < ppCategoriesAPP.collection.length; i++) {
+      const element = ppCategoriesAPP.collection[i];
+      await createTreeDataByNode(element, collectionData, categoriesCollection);
+    }
+    // map CONTENT
+    for (const categoryName in ppCategoriesAPPContent.collection) {
+      const contents = ppCategoriesAPPContent.collection[categoryName];
 
-    //   mapContentWithCategory(categoryName, contents, collectionData);
-    // }
+      mapContentWithCategory(categoryName, contents, collectionData);
+    }
 
     // get meanings
-    // getMeaningWithCategory(collectionData, "collection");
+    getMeaningWithCategory(collectionData, "collection");
 
     const thirdPartyData = [];
-    for (let i = 0; i < (ppCategoriesAPP.thirdParty || []).length; i++) {
+    for (let i = 0; i < ppCategoriesAPP.thirdParty.length; i++) {
       const element = ppCategoriesAPP.thirdParty[i];
       await createTreeDataByNode(element, thirdPartyData, categoriesThirdParty);
     }
@@ -1907,12 +1920,11 @@ async function updateAppPrivacyPolicy(appId) {
 
       mapContentWithCategory(categoryName, contents, thirdPartyData);
     }
-
     // get meanings
-    // getMeaningWithCategory(thirdPartyData, "thirdParty");
+    getMeaningWithCategory(thirdPartyData, "thirdParty");
 
     const retentionData = [];
-    for (let i = 0; i < (ppCategoriesAPP.retention || []).length; i++) {
+    for (let i = 0; i < ppCategoriesAPP.retention.length; i++) {
       const element = ppCategoriesAPP.retention[i];
       await createTreeDataByNode(element, retentionData, categoriesRetention);
     }
@@ -1928,15 +1940,16 @@ async function updateAppPrivacyPolicy(appId) {
     //   thirdPartyData: JSON.stringify(thirdPartyData),
     //   retentionData: JSON.stringify(retentionData),
     // });
+
     await Models.App.updateOne(
       {
         _id: app._id,
       },
       {
         $set: {
-          // collectionData: JSON.stringify(collectionData),
+          collectionData: JSON.stringify(collectionData),
           thirdPartyData: JSON.stringify(thirdPartyData),
-          // retentionData: JSON.stringify(retentionData),
+          retentionData: JSON.stringify(retentionData),
         },
       },
       {},
@@ -1989,7 +2002,7 @@ const getMeaningWithCategory = (originalData, dataType) => {
     const element = originalData[i];
     element.meanings = [];
 
-    const contents = element.contents ? element.contents.join(",") : [];
+    const contents = element.contents ? element.contents.join(",") : "";
     collectionData.forEach((collectedItem) => {
       let { keywords, name: groupKeyword } = collectedItem;
       keywords = keywords[0].split(";").map((item) => item.trim());
@@ -2019,7 +2032,6 @@ const getMeaningWithCategory = (originalData, dataType) => {
         }
       });
     });
-
     if (element.children && element.children.length) {
       getMeaningWithCategory(element.children, dataType);
     }
