@@ -1501,9 +1501,10 @@ function getChildCategories(categoryName, categories, result = []) {
     const child = childs[i];
 
     getChildCategories(child.name, categories, result);
+
+    result.push(child);
   }
 
-  result.push(childs);
   return result;
 }
 
