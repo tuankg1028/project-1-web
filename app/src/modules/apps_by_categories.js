@@ -1820,11 +1820,11 @@ async function updateAppsPrivacyPolicy() {
   // // .limit(1);
   const appIds = _.map(apps, "id");
 
-  // for (let i = 0; i < appIds.length; i++) {
-  //   const appId = appIds[i];
-  // await updateAppPrivacyPolicy("602ae716163e554ddd9f788a");
-  // }
-  await Promise.all(appIds.map(updateAppPrivacyPolicy));
+  for (let i = 0; i < appIds.length; i++) {
+    const appId = appIds[i];
+    await updateAppPrivacyPolicy(appId);
+  }
+  // await Promise.all(appIds.map(updateAppPrivacyPolicy));
 
   // await Helpers.Tree.getTreeFromNode("602951a8163e554ddd9a1274");
   console.log("DONE");
