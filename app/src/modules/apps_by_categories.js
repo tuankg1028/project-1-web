@@ -1625,118 +1625,134 @@ async function getPPCategories(contentPrivacyPolicy) {
 
           // loop keywords
           for (let j = 0; j < keywords.length; j++) {
-            let keyword = keywords[j];
-            keyword = keyword.toLowerCase();
-            // find keyword in content
-            // is time
-            if (isTime) {
-              const hours = getTimeInContent("hour", content);
-              const days = getTimeInContent("day", content);
-              const months = getTimeInContent("month", content);
-              const years = getTimeInContent("year", content);
-              switch (keyword) {
-                case "< 24 hours": {
-                  if (
-                    hours &&
-                    hours.length &&
-                    hours.some((hour) => hour < 24)
-                  ) {
-                    result[contentType][category.name].push(content);
-                  }
-                  break;
-                }
-                case "> 24 hours && < 14 days": {
-                  if (
-                    hours &&
-                    hours.length &&
-                    hours.some((hour) => hour > 24) &&
-                    days.some((day) => day < 14)
-                  ) {
-                    result[contentType][category.name].push(content);
-                  }
-                  break;
-                }
+            let keywordItems = keywords[j];
+            keywordItems = keywordItems.toLowerCase();
 
-                case ">14 days && < 30 days": {
-                  if (
-                    hours &&
-                    hours.length &&
-                    days.some((day) => day > 14 && day < 30)
-                  ) {
-                    result[contentType][category.name].push(content);
-                  }
-                  break;
-                }
+            keywordItems =
+              keywordItems &&
+              keywordItems
+                .split(";")
+                .filter((item) => !!item)
+                .map((item) => item.trim());
 
-                case "> 1 month && < 3 months": {
-                  if (
-                    hours &&
-                    hours.length &&
-                    months.some((month) => month > 1 && month < 3)
-                  ) {
-                    result[contentType][category.name].push(content);
-                  }
-                  break;
-                }
+            keywordItems &&
+              keywordItems.forEach((keyword) => {
+                // find keyword in content
+                // is time
+                if (isTime) {
+                  const hours = getTimeInContent("hour", content);
+                  const days = getTimeInContent("day", content);
+                  const months = getTimeInContent("month", content);
+                  const years = getTimeInContent("year", content);
+                  switch (keyword) {
+                    case "< 24 hours": {
+                      if (
+                        hours &&
+                        hours.length &&
+                        hours.some((hour) => hour < 24)
+                      ) {
+                        result[contentType][category.name].push(content);
+                      }
+                      break;
+                    }
+                    case "> 24 hours && < 14 days": {
+                      if (
+                        hours &&
+                        hours.length &&
+                        hours.some((hour) => hour > 24) &&
+                        days.some((day) => day < 14)
+                      ) {
+                        result[contentType][category.name].push(content);
+                      }
+                      break;
+                    }
 
-                case "> 3 months && < 6 months": {
-                  if (
-                    hours &&
-                    hours.length &&
-                    months.some((month) => month > 3 && month < 6)
-                  ) {
-                    result[contentType][category.name].push(content);
-                  }
-                  break;
-                }
+                    case ">14 days && < 30 days": {
+                      if (
+                        hours &&
+                        hours.length &&
+                        days.some((day) => day > 14 && day < 30)
+                      ) {
+                        result[contentType][category.name].push(content);
+                      }
+                      break;
+                    }
 
-                case "> 6 months && < 1 year": {
-                  if (
-                    hours &&
-                    hours.length &&
-                    months.some((month) => month > 6 && month < 12)
-                  ) {
-                    result[contentType][category.name].push(content);
-                  }
-                  break;
-                }
+                    case "> 1 month && < 3 months": {
+                      if (
+                        hours &&
+                        hours.length &&
+                        months.some((month) => month > 1 && month < 3)
+                      ) {
+                        result[contentType][category.name].push(content);
+                      }
+                      break;
+                    }
 
-                case "> 1 year && < 2 years": {
-                  if (
-                    hours &&
-                    hours.length &&
-                    (years.some((year) => year > 1 && year < 2) ||
-                      months.some((month) => month > 12 && month < 24))
-                  ) {
-                    result[contentType][category.name].push(content);
-                  }
-                  break;
-                }
+                    case "> 3 months && < 6 months": {
+                      if (
+                        hours &&
+                        hours.length &&
+                        months.some((month) => month > 3 && month < 6)
+                      ) {
+                        result[contentType][category.name].push(content);
+                      }
+                      break;
+                    }
 
-                case "> 2 years": {
-                  if (
-                    hours &&
-                    hours.length &&
-                    (years.some((year) => year > 2) ||
-                      months.some((month) => month > 24))
-                  ) {
-                    result[contentType][category.name].push(content);
+                    case "> 6 months && < 1 year": {
+                      if (
+                        hours &&
+                        hours.length &&
+                        months.some((month) => month > 6 && month < 12)
+                      ) {
+                        result[contentType][category.name].push(content);
+                      }
+                      break;
+                    }
+
+                    case "> 1 year && < 2 years": {
+                      if (
+                        hours &&
+                        hours.length &&
+                        (years.some((year) => year > 1 && year < 2) ||
+                          months.some((month) => month > 12 && month < 24))
+                      ) {
+                        result[contentType][category.name].push(content);
+                      }
+                      break;
+                    }
+
+                    case "> 2 years": {
+                      if (
+                        hours &&
+                        hours.length &&
+                        (years.some((year) => year > 2) ||
+                          months.some((month) => month > 24))
+                      ) {
+                        result[contentType][category.name].push(content);
+                      }
+                      break;
+                    }
                   }
-                  break;
+                  // console.log(hours, days, months, years);
+                } else {
+                  if (
+                    (~content.indexOf(keyword.toLowerCase()) &&
+                      !requiredKeyword) ||
+                    (~content.indexOf(keyword.toLowerCase()) &&
+                      requiredKeyword &&
+                      ~content.indexOf(requiredKeyword.toLowerCase()))
+                  ) {
+                    const isExisted = result[contentType][category.name].some(
+                      (item) => item === content
+                    );
+                    !isExisted &&
+                      result[contentType][category.name].push(content);
+                    // break;
+                  }
                 }
-              }
-              // console.log(hours, days, months, years);
-            } else {
-              if (
-                (~content.indexOf(keyword) && !requiredKeyword) ||
-                (~content.indexOf(keyword) &&
-                  requiredKeyword &&
-                  ~content.indexOf(requiredKeyword))
-              ) {
-                result[contentType][category.name].push(content);
-                // break;
-              }
-            }
+              });
           }
         });
       }
@@ -1777,6 +1793,7 @@ async function getParent(node) {
 
 updateAppsPrivacyPolicy();
 async function updateAppsPrivacyPolicy() {
+  console.log(12);
   const apps = await Models.App.find({
     // isCompleted: true,
     // appName: {
@@ -1796,15 +1813,17 @@ async function updateAppsPrivacyPolicy() {
   }).select("id");
 
   // .limit(1);
-  const appIds = _.map(apps, "id");
+  // const appIds = _.map(apps, "id");
 
-  for (let i = 0; i < appIds.length; i++) {
-    const appId = appIds[i];
-    await updateAppPrivacyPolicy(appId);
-  }
-  // Promise.all(appIds.map(updateAppPrivacyPolicy));
+  // for (let i = 0; i < appIds.length; i++) {
+  //   const appId = appIds[i];
+  //   await updateAppPrivacyPolicy(appId);
+  // }
+  await Promise.all(appIds.map(updateAppPrivacyPolicy));
 
   // await Helpers.Tree.getTreeFromNode("602951a8163e554ddd9a1274");
+
+  console.log("DONE");
 }
 
 async function updateAppPrivacyPolicy(appId) {
@@ -1840,13 +1859,7 @@ async function updateAppPrivacyPolicy(appId) {
         for (const category in ppCategories) {
           const contents = ppCategories[category];
 
-          const isParentHasContent = checkParentHasContent(
-            category,
-            ppCategories,
-            categories
-          );
-
-          if (isParentHasContent && contents && contents.length > 0) {
+          if (contents && contents.length > 0) {
             let childCategories = getChildCategories(category, categories);
             childCategories = _.map(childCategories, "name");
             if (childCategories.length === 0) {
@@ -1881,7 +1894,7 @@ async function updateAppPrivacyPolicy(appId) {
     }
 
     // get meanings
-    getMeaningWithCategory(collectionData, "collection");
+    // getMeaningWithCategory(collectionData, "collection");
 
     const thirdPartyData = [];
     for (let i = 0; i < ppCategoriesAPP.thirdParty.length; i++) {
@@ -1894,8 +1907,9 @@ async function updateAppPrivacyPolicy(appId) {
 
       mapContentWithCategory(categoryName, contents, thirdPartyData);
     }
+
     // get meanings
-    getMeaningWithCategory(thirdPartyData, "thirdParty");
+    // getMeaningWithCategory(thirdPartyData, "thirdParty");
 
     const retentionData = [];
     for (let i = 0; i < ppCategoriesAPP.retention.length; i++) {
@@ -1975,7 +1989,7 @@ const getMeaningWithCategory = (originalData, dataType) => {
     const element = originalData[i];
     element.meanings = [];
 
-    const contents = element.contents.join(",");
+    const contents = element.contents ? element.contents.join(",") : [];
     collectionData.forEach((collectedItem) => {
       let { keywords, name: groupKeyword } = collectedItem;
       keywords = keywords[0].split(";").map((item) => item.trim());
@@ -2005,7 +2019,7 @@ const getMeaningWithCategory = (originalData, dataType) => {
         }
       });
     });
-    console.log(1, element.name, element.meanings);
+
     if (element.children && element.children.length) {
       getMeaningWithCategory(element.children, dataType);
     }
