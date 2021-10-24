@@ -1881,17 +1881,17 @@ async function updateAppPrivacyPolicy(appId) {
       ppCategoriesAPP[dataType] = _.uniq(ppCategoriesAPP[dataType]);
     }
 
-    const collectionData = [];
-    for (let i = 0; i < ppCategoriesAPP.collection.length; i++) {
-      const element = ppCategoriesAPP.collection[i];
-      await createTreeDataByNode(element, collectionData, categoriesCollection);
-    }
-    // map CONTENT
-    for (const categoryName in ppCategoriesAPPContent.collection) {
-      const contents = ppCategoriesAPPContent.collection[categoryName];
+    // const collectionData = [];
+    // for (let i = 0; i < ppCategoriesAPP.collection.length; i++) {
+    //   const element = ppCategoriesAPP.collection[i];
+    //   await createTreeDataByNode(element, collectionData, categoriesCollection);
+    // }
+    // // map CONTENT
+    // for (const categoryName in ppCategoriesAPPContent.collection) {
+    //   const contents = ppCategoriesAPPContent.collection[categoryName];
 
-      mapContentWithCategory(categoryName, contents, collectionData);
-    }
+    //   mapContentWithCategory(categoryName, contents, collectionData);
+    // }
 
     // get meanings
     // getMeaningWithCategory(collectionData, "collection");
