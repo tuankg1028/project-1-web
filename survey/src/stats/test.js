@@ -1908,10 +1908,11 @@ async function main() {
   
   console.log("DONE")
 }
-main()
+// main()
 
 
 async function stats() {
+  console.log("Genrating 8 files")
   await Promise.all([
     genCategory('training'),
     genPurpose('training'),
@@ -1924,7 +1925,7 @@ async function stats() {
     genDeveloper("testing"),
   ])
 
-  console.log("DONE")
+  console.log("DONE Genrating 8 files")
 }
 stats()
 
@@ -1984,46 +1985,114 @@ async function genCategory(dataSetType) {
 
   let result = {
   }
-  for (let i = 0; i < answers.length; i++) {
-    const answer = answers[i];
+  // for (let i = 0; i < answers.length; i++) {
+  //   const answer = answers[i];
     
-    const user = await Models.User.findById(answer.userId).cache(
-      60 * 60 * 24 * 30
-    ); // 1 month;
-    const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
-    const fromQuestion = dataSetType === 'training' ? 0 : 10
-    const toQuestion = dataSetType === 'training' ? 10 : 26
-    for (let j = fromQuestion; j < toQuestion; j++) {
-      const question = answer.questions[j];
-      const app = await Models.App.findById(question.id).cache(
-        60 * 60 * 24 * 30
-      ); // 1 month;
+  //   const user = await Models.User.findById(answer.userId).cache(
+  //     60 * 60 * 24 * 30
+  //   ); // 1 month;
+  //   const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
+  //   const fromQuestion = dataSetType === 'training' ? 0 : 10
+  //   const toQuestion = dataSetType === 'training' ? 10 : 26
+  //   for (let j = fromQuestion; j < toQuestion; j++) {
+  //     const question = answer.questions[j];
+  //     const app = await Models.App.findById(question.id).cache(
+  //       60 * 60 * 24 * 30
+  //     ); // 1 month;
 
-      let installQuestion = question.responses.find(item => item.name === "install")
-      const agreePredict = question.responses.find(item => item.name === "agreePredict")
-      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict.value == '1') {
-        installQuestion = ourPrediction
-      }
-      if(!installQuestion) continue;
+  //     let installQuestion = question.responses.find(item => item.name === "install")
+  //     const agreePredict = question.responses.find(item => item.name === "agreePredict")
+  //     const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+  //     if(!installQuestion && agreePredict.value == '1') {
+  //       installQuestion = ourPrediction
+  //     }
+  //     if(!installQuestion) continue;
 
-      if(!result[app.categoryName]) result[app.categoryName] = {}
-      result[app.categoryName][`${installQuestion.value}${type}`] ? result[app.categoryName][`${installQuestion.value}${type}`]++ : result[app.categoryName][`${installQuestion.value}${type}`] = 1 
-    }
-  }
+  //     if(!result[app.categoryName]) result[app.categoryName] = {}
+  //     result[app.categoryName][`${installQuestion.value}${type}`] ? result[app.categoryName][`${installQuestion.value}${type}`]++ : result[app.categoryName][`${installQuestion.value}${type}`] = 1 
+  //   }
+  // }
 
-  rows = Object.entries(result).map(item => {
-    return {
-      name: item[0],
-      ...item[1],
-    }
-  })
-  let csvWriter = createCsvWriter({
-    path: `./reports/test/category/quantitiy(${dataSetType}).csv`,
-    header
-  });
-  await csvWriter.writeRecords(rows);
-  console.log("DONE category(quantitiy)", dataSetType)
+  // rows = Object.entries(result).map(item => {
+  //   return {
+  //     name: item[0],
+  //     ...item[1],
+  //   }
+  // })
+  // let csvWriter = createCsvWriter({
+  //   path: `./reports/test/category/quantitiy(${dataSetType}).csv`,
+  //   header
+  // });
+  // await csvWriter.writeRecords(rows);
+  // console.log("DONE category(quantitiy)", dataSetType)
+
+  // rows = []
+
+  // result = {
+  // }
+  // for (let i = 0; i < answers.length; i++) {
+  //   const answer = answers[i];
+    
+  //   const user = await Models.User.findById(answer.userId).cache(
+  //     60 * 60 * 24 * 30
+  //   ); // 1 month;
+  //   const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
+  //   const fromQuestion = dataSetType === 'training' ? 0 : 10
+  //   const toQuestion = dataSetType === 'training' ? 10 : 26
+  //   for (let j = fromQuestion; j < toQuestion; j++) {
+  //     const question = answer.questions[j];
+  //     const app = await Models.App.findById(question.id).cache(
+  //       60 * 60 * 24 * 30
+  //     ); // 1 month;
+
+  //     const range = ranges[app.categoryName]
+  //     let risk
+  //     const part = (range[1] - range[0]) / 5
+  //     if(0 <= Number( app.distance) && Number( app.distance) < (range[0] + part * 1)) risk = 0
+  //     else if((range[0] + part * 1) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 2)) risk = 1
+  //     else  if((range[0] + part * 2) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 3)) risk = 2
+  //     else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
+  //     else  if((range[0] + part * 4) <= Number( app.distance) && Number( app.distance) <= (range[0] + part *5)) risk = 4
+
+  //     let installQuestion = question.responses.find(item => item.name === "install")
+  //     const agreePredict = question.responses.find(item => item.name === "agreePredict")
+  //     const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+  //     if(!installQuestion && agreePredict.value == '1') {
+  //       installQuestion = ourPrediction
+  //     }
+  //     if(!installQuestion) continue;
+
+
+  //     if(!result[app.categoryName]) result[app.categoryName] = {}
+  //     if(!result[app.categoryName][`${installQuestion.value}${type}`]) result[app.categoryName][`${installQuestion.value}${type}`] = {}
+
+  //     result[app.categoryName][`${installQuestion.value}${type}`]['total']
+  //     result[app.categoryName][`${installQuestion.value}${type}`][risk] ? result[app.categoryName][`${installQuestion.value}${type}`][risk]++ : result[app.categoryName][`${installQuestion.value}${type}`][risk] = 1
+  //   }
+  // }
+
+  // rows = Object.entries(result).map(item => {
+
+  //   const cols = Object.entries(item[1]).reduce((acc, [key, risks]) => {
+  //     acc[key] = ((risks['1'] || 0) * 0.25) + ((risks['2'] || 0) * 0.5) + ((risks['3'] || 0) * 0.75) + ((risks['4'] || 0))
+  //     acc[key] = acc[key] / ((risks['0'] || 0) + (risks['1'] || 0) + (risks['2'] || 0)+ (risks['3'] || 0)+ (risks['4'] || 0))
+
+  //     acc[key] = Math.round(acc[key] * 100) / 100
+  //     return acc
+  //   }, {})
+  //   return {
+  //     name: item[0],
+  //     ...cols,
+  //   }
+  // })
+  // csvWriter = createCsvWriter({
+  //   path: `./reports/test/category/risk(${dataSetType}).csv`,
+  //   header
+  // });
+  // await csvWriter.writeRecords(rows);
+
+  // console.log("DONE category(risk)", dataSetType)
+
 
   rows = []
 
@@ -2063,33 +2132,40 @@ async function genCategory(dataSetType) {
 
 
       if(!result[app.categoryName]) result[app.categoryName] = {}
-      if(!result[app.categoryName][`${installQuestion.value}${type}`]) result[app.categoryName][`${installQuestion.value}${type}`] = {}
+      if(!result[app.categoryName][type]) result[app.categoryName][type] = {}
+      if(!result[app.categoryName][type][installQuestion.value]) result[app.categoryName][type][installQuestion.value] = {}
 
-      result[app.categoryName][`${installQuestion.value}${type}`][risk] ? result[app.categoryName][`${installQuestion.value}${type}`][risk]++ : result[app.categoryName][`${installQuestion.value}${type}`][risk] = 1
+      result[app.categoryName][type]['total'] ? result[app.categoryName][type]['total']++ : result[app.categoryName][type]['total'] = 1
+      result[app.categoryName][type][installQuestion.value][risk] ? result[app.categoryName][type][installQuestion.value][risk]++ : result[app.categoryName][type][installQuestion.value][risk] = 1
     }
   }
 
-  rows = Object.entries(result).map(item => {
+  rows = Object.entries(result).map(([categoryName, types]) => {
 
-    const cols = Object.entries(item[1]).reduce((acc, [key, risks]) => {
-      acc[key] = ((risks['1'] || 0) * 0.25) + ((risks['2'] || 0) * 0.5) + ((risks['3'] || 0) * 0.75) + ((risks['4'] || 0))
-      acc[key] = acc[key] / ((risks['0'] || 0) + (risks['1'] || 0) + (risks['2'] || 0)+ (risks['3'] || 0)+ (risks['4'] || 0))
+    const cols = Object.entries(types).reduce((acc, [typeName, installQuestions]) => {
+      
+      Object.entries(installQuestions).forEach(([installQuestionName, risks]) => {
 
-      acc[key] = Math.round(acc[key] * 100) / 100
+        if(installQuestionName !== 'total')
+          acc[`${installQuestionName}${typeName}`] = ((risks['1'] || 0) + (risks['2'] || 0) + (risks['3'] || 0) + ((risks['4'] || 0))) / installQuestions.total
+      })
       return acc
     }, {})
+
     return {
-      name: item[0],
+      name: categoryName,
       ...cols,
     }
   })
+
+  
   csvWriter = createCsvWriter({
-    path: `./reports/test/category/risk(${dataSetType}).csv`,
+    path: `./reports/test/category/percentage(${dataSetType}).csv`,
     header
   });
   await csvWriter.writeRecords(rows);
 
-  console.log("DONE category(risk)", dataSetType)
+  console.log("DONE percentage(risk)", dataSetType)
   // 
 }
 
@@ -2148,51 +2224,121 @@ async function genPurpose(dataSetType) {
 
   let result = {
   }
-  for (let i = 0; i < answers.length; i++) {
-    const answer = answers[i];
+  // for (let i = 0; i < answers.length; i++) {
+  //   const answer = answers[i];
     
-    const user = await Models.User.findById(answer.userId).cache(
-      60 * 60 * 24 * 30
-    ); // 1 month;
-    const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
-    const fromQuestion = dataSetType === 'training' ? 0 : 10
-    const toQuestion = dataSetType === 'training' ? 10 : 26
-    for (let j = fromQuestion; j < toQuestion; j++) {
-      const question = answer.questions[j];
-      const app = await Models.App.findById(question.id).cache(
-        60 * 60 * 24 * 30
-      ); // 1 month;
+  //   const user = await Models.User.findById(answer.userId).cache(
+  //     60 * 60 * 24 * 30
+  //   ); // 1 month;
+  //   const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
+  //   const fromQuestion = dataSetType === 'training' ? 0 : 10
+  //   const toQuestion = dataSetType === 'training' ? 10 : 26
+  //   for (let j = fromQuestion; j < toQuestion; j++) {
+  //     const question = answer.questions[j];
+  //     const app = await Models.App.findById(question.id).cache(
+  //       60 * 60 * 24 * 30
+  //     ); // 1 month;
 
-      let installQuestion = question.responses.find(item => item.name === "install")
-      const agreePredict = question.responses.find(item => item.name === "agreePredict")
-      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict.value == '1') {
-        installQuestion = ourPrediction
-      }
-      if(!installQuestion) continue;
+  //     let installQuestion = question.responses.find(item => item.name === "install")
+  //     const agreePredict = question.responses.find(item => item.name === "agreePredict")
+  //     const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+  //     if(!installQuestion && agreePredict.value == '1') {
+  //       installQuestion = ourPrediction
+  //     }
+  //     if(!installQuestion) continue;
 
-      const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
-      const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
+  //     const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
+  //     const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
 
-      childrenPurpose.forEach(item => {
-        if(!result[item['name']]) result[item['name']] = {}
-        result[item['name']][`${installQuestion.value}${type}`] ? result[item['name']][`${installQuestion.value}${type}`]++ : result[item['name']][`${installQuestion.value}${type}`] = 1 
-      })
-    }
-  }
+  //     childrenPurpose.forEach(item => {
+  //       if(!result[item['name']]) result[item['name']] = {}
+  //       result[item['name']][`${installQuestion.value}${type}`] ? result[item['name']][`${installQuestion.value}${type}`]++ : result[item['name']][`${installQuestion.value}${type}`] = 1 
+  //     })
+  //   }
+  // }
 
-  rows = Object.entries(result).map(item => {
-    return {
-      name: item[0],
-      ...item[1],
-    }
-  })
-  let csvWriter = createCsvWriter({
-    path: `./reports/test/purpose/quantitiy${dataSetType}.csv`,
-    header
-  });
-  await csvWriter.writeRecords(rows);
-  console.log("DONE purpose(quantitiy)", dataSetType)
+  // rows = Object.entries(result).map(item => {
+  //   return {
+  //     name: item[0],
+  //     ...item[1],
+  //   }
+  // })
+  // let csvWriter = createCsvWriter({
+  //   path: `./reports/test/purpose/quantitiy(${dataSetType}).csv`,
+  //   header
+  // });
+  // await csvWriter.writeRecords(rows);
+  // console.log("DONE purpose(quantitiy)", dataSetType)
+
+  // rows = []
+
+  // result = {
+  // }
+  // for (let i = 0; i < answers.length; i++) {
+  //   const answer = answers[i];
+    
+  //   const user = await Models.User.findById(answer.userId).cache(
+  //     60 * 60 * 24 * 30
+  //   ); // 1 month;
+  //   const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
+  //   const fromQuestion = dataSetType === 'training' ? 0 : 10
+  //   const toQuestion = dataSetType === 'training' ? 10 : 26
+  //   for (let j = fromQuestion; j < toQuestion; j++) {
+  //     const question = answer.questions[j];
+  //     const app = await Models.App.findById(question.id).cache(
+  //       60 * 60 * 24 * 30
+  //     ); // 1 month;
+
+  //     const range = ranges[app.categoryName]
+  //     let risk
+  //     const part = (range[1] - range[0]) / 5
+  //     if(0 <= Number( app.distance) && Number( app.distance) < (range[0] + part * 1)) risk = 0
+  //     else if((range[0] + part * 1) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 2)) risk = 1
+  //     else  if((range[0] + part * 2) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 3)) risk = 2
+  //     else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
+  //     else  if((range[0] + part * 4) <= Number( app.distance) && Number( app.distance) <= (range[0] + part *5)) risk = 4
+
+  //     let installQuestion = question.responses.find(item => item.name === "install")
+  //     const agreePredict = question.responses.find(item => item.name === "agreePredict")
+  //     const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+  //     if(!installQuestion && agreePredict.value == '1') {
+  //       installQuestion = ourPrediction
+  //     }
+  //     if(!installQuestion) continue;
+
+  //     const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
+  //     const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
+
+  //     childrenPurpose.forEach(item => {
+  //       if(!result[item['name']]) result[item['name']] = {}
+  //       if(!result[item['name']][`${installQuestion.value}${type}`]) result[item['name']][`${installQuestion.value}${type}`] = {}
+  //       result[item['name']][`${installQuestion.value}${type}`][risk] ? result[item['name']][`${installQuestion.value}${type}`][risk]++ : result[item['name']][`${installQuestion.value}${type}`][risk] = 1
+  //     })
+  //   }
+  // }
+
+  // rows = Object.entries(result).map(item => {
+
+  //   const cols = Object.entries(item[1]).reduce((acc, [key, risks]) => {
+  //     acc[key] = ((risks['1'] || 0) * 0.25) + ((risks['2'] || 0) * 0.5) + ((risks['3'] || 0) * 0.75) + ((risks['4'] || 0))
+  //     acc[key] = acc[key] / ((risks['0'] || 0) + (risks['1'] || 0) + (risks['2'] || 0)+ (risks['3'] || 0)+ (risks['4'] || 0))
+
+  //     acc[key] = Math.round(acc[key] * 100) / 100
+  //     return acc
+  //   }, {})
+  //   return {
+  //     name: item[0],
+  //     ...cols,
+  //   }
+  // })
+  // csvWriter = createCsvWriter({
+  //   path: `./reports/test/purpose/risk(${dataSetType}).csv`,
+  //   header
+  // });
+  // await csvWriter.writeRecords(rows);
+
+  // console.log("DONE purpose(risk)")
+
 
   rows = []
 
@@ -2234,34 +2380,42 @@ async function genPurpose(dataSetType) {
       const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
 
       childrenPurpose.forEach(item => {
+
         if(!result[item['name']]) result[item['name']] = {}
-        if(!result[item['name']][`${installQuestion.value}${type}`]) result[item['name']][`${installQuestion.value}${type}`] = {}
-        result[item['name']][`${installQuestion.value}${type}`][risk] ? result[item['name']][`${installQuestion.value}${type}`][risk]++ : result[item['name']][`${installQuestion.value}${type}`][risk] = 1
+        if(!result[item['name']][type]) result[item['name']][type] = {}
+        if(!result[item['name']][type][installQuestion.value]) result[item['name']][type][installQuestion.value] = {}
+
+        result[item['name']][type]['total'] ? result[item['name']][type]['total']++ : result[item['name']][type]['total'] = 1
+        result[item['name']][type][installQuestion.value][risk] ? result[item['name']][type][installQuestion.value][risk]++ : result[item['name']][type][installQuestion.value][risk] = 1
       })
     }
   }
 
-  rows = Object.entries(result).map(item => {
+  rows = Object.entries(result).map(([categoryName, types]) => {
 
-    const cols = Object.entries(item[1]).reduce((acc, [key, risks]) => {
-      acc[key] = ((risks['1'] || 0) * 0.25) + ((risks['2'] || 0) * 0.5) + ((risks['3'] || 0) * 0.75) + ((risks['4'] || 0))
-      acc[key] = acc[key] / ((risks['0'] || 0) + (risks['1'] || 0) + (risks['2'] || 0)+ (risks['3'] || 0)+ (risks['4'] || 0))
+    const cols = Object.entries(types).reduce((acc, [typeName, installQuestions]) => {
+      
+      Object.entries(installQuestions).forEach(([installQuestionName, risks]) => {
 
-      acc[key] = Math.round(acc[key] * 100) / 100
+        if(installQuestionName !== 'total')
+          acc[`${installQuestionName}${typeName}`] = ((risks['1'] || 0) + (risks['2'] || 0) + (risks['3'] || 0) + ((risks['4'] || 0))) / installQuestions.total
+      })
       return acc
     }, {})
+
     return {
-      name: item[0],
+      name: categoryName,
       ...cols,
     }
   })
+
   csvWriter = createCsvWriter({
-    path: `./reports/test/purpose/risk(${dataSetType}).csv`,
+    path: `./reports/test/purpose/percentage(${dataSetType}).csv`,
     header
   });
   await csvWriter.writeRecords(rows);
 
-  console.log("DONE purpose(risk)")
+  console.log("DONE purpose(percentage)")
   // 
 }
 
@@ -2319,51 +2473,121 @@ async function genThirdParty(dataSetType) {
 
   let result = {
   }
-  for (let i = 0; i < answers.length; i++) {
-    const answer = answers[i];
+  // for (let i = 0; answers.length < 1; i++) {
+  //   const answer = answers[i];
     
-    const user = await Models.User.findById(answer.userId).cache(
-      60 * 60 * 24 * 30
-    ); // 1 month;
-    const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
-    const fromQuestion = dataSetType === 'training' ? 0 : 10
-    const toQuestion = dataSetType === 'training' ? 10 : 26
-    for (let j = fromQuestion; j < toQuestion; j++) {
-      const question = answer.questions[j];
-      const app = await Models.App.findById(question.id).cache(
-        60 * 60 * 24 * 30
-      ); // 1 month;
+  //   const user = await Models.User.findById(answer.userId).cache(
+  //     60 * 60 * 24 * 30
+  //   ); // 1 month;
+  //   const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
+  //   const fromQuestion = dataSetType === 'training' ? 0 : 10
+  //   const toQuestion = dataSetType === 'training' ? 10 : 26
+  //   for (let j = fromQuestion; j < toQuestion; j++) {
+  //     const question = answer.questions[j];
+  //     const app = await Models.App.findById(question.id).cache(
+  //       60 * 60 * 24 * 30
+  //     ); // 1 month;
 
-      let installQuestion = question.responses.find(item => item.name === "install")
-      const agreePredict = question.responses.find(item => item.name === "agreePredict")
-      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict.value == '1') {
-        installQuestion = ourPrediction
-      }
-      if(!installQuestion) continue;
+  //     let installQuestion = question.responses.find(item => item.name === "install")
+  //     const agreePredict = question.responses.find(item => item.name === "agreePredict")
+  //     const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+  //     if(!installQuestion && agreePredict.value == '1') {
+  //       installQuestion = ourPrediction
+  //     }
+  //     if(!installQuestion) continue;
 
-      const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
-      const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
+  //     const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
+  //     const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
+   
+  //     childrenThirdParty.forEach(item => {
+  //       if(!result[item['name']]) result[item['name']] = {}
+  //       result[item['name']][`${installQuestion.value}${type}`] ? result[item['name']][`${installQuestion.value}${type}`]++ : result[item['name']][`${installQuestion.value}${type}`] = 1 
+  //     })
+  //   }
+  // }
+ 
+  // rows = Object.entries(result).map(item => {
+  //   return {
+  //     name: item[0],
+  //     ...item[1],
+  //   }
+  // })
+  // let csvWriter = createCsvWriter({
+  //   path: `./reports/test/third-party/quantitiy(${dataSetType}).csv`,
+  //   header
+  // });
+  // await csvWriter.writeRecords(rows);
+  // console.log("DONE third-party(quantitiy)", dataSetType)
 
-      childrenThirdParty.forEach(item => {
-        if(!result[item['name']]) result[item['name']] = {}
-        result[item['name']][`${installQuestion.value}${type}`] ? result[item['name']][`${installQuestion.value}${type}`]++ : result[item['name']][`${installQuestion.value}${type}`] = 1 
-      })
-    }
-  }
+  // rows = []
 
-  rows = Object.entries(result).map(item => {
-    return {
-      name: item[0],
-      ...item[1],
-    }
-  })
-  let csvWriter = createCsvWriter({
-    path: `./reports/test/third-party/quantitiy(${dataSetType}).csv`,
-    header
-  });
-  await csvWriter.writeRecords(rows);
-  console.log("DONE third-party(quantitiy)", dataSetType)
+  // result = {
+  // }
+  // for (let i = 0; i < answers.length; i++) {
+  //   const answer = answers[i];
+    
+  //   const user = await Models.User.findById(answer.userId).cache(
+  //     60 * 60 * 24 * 30
+  //   ); // 1 month;
+  //   const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
+  //   const fromQuestion = dataSetType === 'training' ? 0 : 10
+  //   const toQuestion = dataSetType === 'training' ? 10 : 26
+  //   for (let j = fromQuestion; j < toQuestion; j++) {
+  //     const question = answer.questions[j];
+  //     const app = await Models.App.findById(question.id).cache(
+  //       60 * 60 * 24 * 30
+  //     ); // 1 month;
+
+  //     const range = ranges[app.categoryName]
+  //     let risk
+  //     const part = (range[1] - range[0]) / 5
+  //     if(0 <= Number( app.distance) && Number( app.distance) < (range[0] + part * 1)) risk = 0
+  //     else if((range[0] + part * 1) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 2)) risk = 1
+  //     else  if((range[0] + part * 2) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 3)) risk = 2
+  //     else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
+  //     else  if((range[0] + part * 4) <= Number( app.distance) && Number( app.distance) <= (range[0] + part *5)) risk = 4
+
+  //     let installQuestion = question.responses.find(item => item.name === "install")
+  //     const agreePredict = question.responses.find(item => item.name === "agreePredict")
+  //     const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+  //     if(!installQuestion && agreePredict.value == '1') {
+  //       installQuestion = ourPrediction
+  //     }
+  //     if(!installQuestion) continue;
+
+  //     const childrenPurpose = getLeafNodes(JSON.parse(app.collectionData))
+  //     const childrenThirdParty = getLeafNodes(JSON.parse(app.thirdPartyData))
+
+  //     childrenThirdParty.forEach(item => {
+  //       if(!result[item['name']]) result[item['name']] = {}
+  //       if(!result[item['name']][`${installQuestion.value}${type}`]) result[item['name']][`${installQuestion.value}${type}`] = {}
+  //       result[item['name']][`${installQuestion.value}${type}`][risk] ? result[item['name']][`${installQuestion.value}${type}`][risk]++ : result[item['name']][`${installQuestion.value}${type}`][risk] = 1
+  //     })
+  //   }
+  // }
+
+  // rows = Object.entries(result).map(item => {
+
+  //   const cols = Object.entries(item[1]).reduce((acc, [key, risks]) => {
+  //     acc[key] = ((risks['1'] || 0) * 0.25) + ((risks['2'] || 0) * 0.5) + ((risks['3'] || 0) * 0.75) + ((risks['4'] || 0))
+  //     acc[key] = acc[key] / ((risks['0'] || 0) + (risks['1'] || 0) + (risks['2'] || 0)+ (risks['3'] || 0)+ (risks['4'] || 0))
+
+  //     acc[key] = Math.round(acc[key] * 100) / 100
+  //     return acc
+  //   }, {})
+  //   return {
+  //     name: item[0],
+  //     ...cols,
+  //   }
+  // })
+  // csvWriter = createCsvWriter({
+  //   path: `./reports/test/third-party/risk(${dataSetType}).csv`,
+  //   header
+  // });
+  // await csvWriter.writeRecords(rows, dataSetType);
+
+  // console.log("DONE third-party(risk)")
+
 
   rows = []
 
@@ -2406,33 +2630,39 @@ async function genThirdParty(dataSetType) {
 
       childrenThirdParty.forEach(item => {
         if(!result[item['name']]) result[item['name']] = {}
-        if(!result[item['name']][`${installQuestion.value}${type}`]) result[item['name']][`${installQuestion.value}${type}`] = {}
-        result[item['name']][`${installQuestion.value}${type}`][risk] ? result[item['name']][`${installQuestion.value}${type}`][risk]++ : result[item['name']][`${installQuestion.value}${type}`][risk] = 1
+        if(!result[item['name']][type]) result[item['name']][type] = {}
+        if(!result[item['name']][type][installQuestion.value]) result[item['name']][type][installQuestion.value] = {}
+
+        result[item['name']][type]['total'] ? result[item['name']][type]['total']++ : result[item['name']][type]['total'] = 1
+        result[item['name']][type][installQuestion.value][risk] ? result[item['name']][type][installQuestion.value][risk]++ : result[item['name']][type][installQuestion.value][risk] = 1
       })
     }
   }
 
-  rows = Object.entries(result).map(item => {
+  rows = Object.entries(result).map(([categoryName, types]) => {
 
-    const cols = Object.entries(item[1]).reduce((acc, [key, risks]) => {
-      acc[key] = ((risks['1'] || 0) * 0.25) + ((risks['2'] || 0) * 0.5) + ((risks['3'] || 0) * 0.75) + ((risks['4'] || 0))
-      acc[key] = acc[key] / ((risks['0'] || 0) + (risks['1'] || 0) + (risks['2'] || 0)+ (risks['3'] || 0)+ (risks['4'] || 0))
+    const cols = Object.entries(types).reduce((acc, [typeName, installQuestions]) => {
+      
+      Object.entries(installQuestions).forEach(([installQuestionName, risks]) => {
 
-      acc[key] = Math.round(acc[key] * 100) / 100
+        if(installQuestionName !== 'total')
+          acc[`${installQuestionName}${typeName}`] = ((risks['1'] || 0) + (risks['2'] || 0) + (risks['3'] || 0) + ((risks['4'] || 0))) / installQuestions.total
+      })
       return acc
     }, {})
+
     return {
-      name: item[0],
+      name: categoryName,
       ...cols,
     }
   })
   csvWriter = createCsvWriter({
-    path: `./reports/test/third-party/risk(${dataSetType}).csv`,
+    path: `./reports/test/third-party/percentage(${dataSetType}).csv`,
     header
   });
   await csvWriter.writeRecords(rows, dataSetType);
 
-  console.log("DONE third-party(risk)")
+  console.log("DONE third-party(percentage)")
   // 
 }
 
@@ -2490,75 +2720,168 @@ async function genDeveloper(dataSetType) {
 
   let result = {
   }
-  for (let i = 0; i < answers.length; i++) {
-    const answer = answers[i];
+  // for (let i = 0; i < answers.length; i++) {
+  //   const answer = answers[i];
     
-    const user = await Models.User.findById(answer.userId).cache(
-      60 * 60 * 24 * 30
-    ); // 1 month;
-    const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
-    const fromQuestion = dataSetType === 'training' ? 0 : 10
-    const toQuestion = dataSetType === 'training' ? 10 : 26
-    for (let j = fromQuestion; j < toQuestion; j++) {
-      const question = answer.questions[j];
-      const app = await Models.App.findById(question.id).cache(
-        60 * 60 * 24 * 30
-      ); // 1 month;
+  //   const user = await Models.User.findById(answer.userId).cache(
+  //     60 * 60 * 24 * 30
+  //   ); // 1 month;
+  //   const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
+  //   const fromQuestion = dataSetType === 'training' ? 0 : 10
+  //   const toQuestion = dataSetType === 'training' ? 10 : 26
+  //   for (let j = fromQuestion; j < toQuestion; j++) {
+  //     const question = answer.questions[j];
+  //     const app = await Models.App.findById(question.id).cache(
+  //       60 * 60 * 24 * 30
+  //     ); // 1 month;
 
-      let installQuestion = question.responses.find(item => item.name === "install")
-      const agreePredict = question.responses.find(item => item.name === "agreePredict")
-      const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
-      if(!installQuestion && agreePredict.value == '1') {
-        installQuestion = ourPrediction
-      }
-      if(!installQuestion) continue;
+  //     let installQuestion = question.responses.find(item => item.name === "install")
+  //     const agreePredict = question.responses.find(item => item.name === "agreePredict")
+  //     const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+  //     if(!installQuestion && agreePredict.value == '1') {
+  //       installQuestion = ourPrediction
+  //     }
+  //     if(!installQuestion) continue;
 
-      const appsByDeveloper = await gplay.developer({devId: app.developer}).then(apps => Promise.all(apps.map(app => gplay.app({appId: app.appId}).catch(_ => null))).then(items => items.filter(item => !!item))).catch(_ => [])
-      const installCount = _.sumBy(appsByDeveloper, 'maxInstalls')
-      let installText = ''
-      if(installCount >= 1000000000) installText = '1B'
-      else if(installCount >= 500000000 && installCount < 1000000000) installText = '[500M; 1B)'
-      else if(installCount >= 100000000 && installCount < 500000000) installText = '[100M; 500M)'
-      else if(installCount >= 50000000 && installCount < 100000000) installText = '[50M;100M)'
-      else if(installCount >= 10000000 && installCount < 50000000) installText = '[10M; 50M)'
-      else if(installCount >= 1000000 && installCount < 10000000) installText = '[1M; 10M)'
-      else if(installCount >= 500000 && installCount < 1000000) installText = '[500K; 1M)'
-      else if(installCount >= 100000 && installCount < 500000) installText = '[100K; 500K)'
-      else if(installCount >= 50000 && installCount < 100000) installText = '[50K; 100K)'
-      else if(installCount >= 10000 && installCount < 50000) installText = '[10K; 50K)'
-      else installText = '<10K'
+  //     const appsByDeveloper = await gplay.developer({devId: app.developer}).then(apps => Promise.all(apps.map(app => gplay.app({appId: app.appId}).catch(_ => null))).then(items => items.filter(item => !!item))).catch(_ => [])
+  //     const installCount = _.sumBy(appsByDeveloper, 'maxInstalls')
+  //     let installText = ''
+  //     if(installCount >= 1000000000) installText = '1B'
+  //     else if(installCount >= 500000000 && installCount < 1000000000) installText = '[500M; 1B)'
+  //     else if(installCount >= 100000000 && installCount < 500000000) installText = '[100M; 500M)'
+  //     else if(installCount >= 50000000 && installCount < 100000000) installText = '[50M;100M)'
+  //     else if(installCount >= 10000000 && installCount < 50000000) installText = '[10M; 50M)'
+  //     else if(installCount >= 1000000 && installCount < 10000000) installText = '[1M; 10M)'
+  //     else if(installCount >= 500000 && installCount < 1000000) installText = '[500K; 1M)'
+  //     else if(installCount >= 100000 && installCount < 500000) installText = '[100K; 500K)'
+  //     else if(installCount >= 50000 && installCount < 100000) installText = '[50K; 100K)'
+  //     else if(installCount >= 10000 && installCount < 50000) installText = '[10K; 50K)'
+  //     else installText = '<10K'
 
-      if(!result[installText]) result[installText] = {}
-      result[installText][`${installQuestion.value}${type}`] ? result[installText][`${installQuestion.value}${type}`]++ : result[installText][`${installQuestion.value}${type}`] = 1 
+  //     if(!result[installText]) result[installText] = {}
+  //     result[installText][`${installQuestion.value}${type}`] ? result[installText][`${installQuestion.value}${type}`]++ : result[installText][`${installQuestion.value}${type}`] = 1 
 
-    }
-  }
+  //   }
+  // }
 
-  let resultSorted = {
-    '1B': result['1B'],
-    '[500M; 1B)': result['[500M; 1B)'] || {},
-    '[100M; 500M)': result['[100M; 500M)'] || {},
-    '[50M;100M)': result['[50M;100M)'] || {},
-    '[10M; 50M)': result['[10M; 50M)'] || {},
-    '[1M; 10M)': result['[1M; 10M)'] || {},
-    '[500K; 1M)': result['[500K; 1M)'] || {},
-    '[100K; 500K)': result['[100K; 500K)'] || {},
-    '[50K; 100K)': result['[50K; 100K)'] || {},
-    '[10K; 50K)': result['[10K; 50K)'] || {},
-    '<10K': result['<10K'] || {},
-  }
-  rows = Object.entries(resultSorted).map(item => {
-    return {
-      name: item[0],
-      ...item[1],
-    }
-  })
-  let csvWriter = createCsvWriter({
-    path: `./reports/test/developer/quantitiy(${dataSetType}).csv`,
-    header
-  });
-  await csvWriter.writeRecords(rows);
-  console.log("DONE developer(quantitiy)", dataSetType)
+  // let resultSorted = {
+  //   '1B': result['1B'],
+  //   '[500M; 1B)': result['[500M; 1B)'] || {},
+  //   '[100M; 500M)': result['[100M; 500M)'] || {},
+  //   '[50M;100M)': result['[50M;100M)'] || {},
+  //   '[10M; 50M)': result['[10M; 50M)'] || {},
+  //   '[1M; 10M)': result['[1M; 10M)'] || {},
+  //   '[500K; 1M)': result['[500K; 1M)'] || {},
+  //   '[100K; 500K)': result['[100K; 500K)'] || {},
+  //   '[50K; 100K)': result['[50K; 100K)'] || {},
+  //   '[10K; 50K)': result['[10K; 50K)'] || {},
+  //   '<10K': result['<10K'] || {},
+  // }
+  // rows = Object.entries(resultSorted).map(item => {
+  //   return {
+  //     name: item[0],
+  //     ...item[1],
+  //   }
+  // })
+  // let csvWriter = createCsvWriter({
+  //   path: `./reports/test/developer/quantitiy(${dataSetType}).csv`,
+  //   header
+  // });
+  // await csvWriter.writeRecords(rows);
+  // console.log("DONE developer(quantitiy)", dataSetType)
+  // rows = []
+
+  // result = {
+  // }
+  // for (let i = 0; i < answers.length; i++) {
+  //   const answer = answers[i];
+    
+  //   const user = await Models.User.findById(answer.userId).cache(
+  //     60 * 60 * 24 * 30
+  //   ); // 1 month;
+  //   const type = user.type === 'normal'? 'expert' : (user.isPaid) ? 'paid' : 'unpaid'
+  //   const fromQuestion = dataSetType === 'training' ? 0 : 10
+  //   const toQuestion = dataSetType === 'training' ? 10 : 26
+  //   for (let j = fromQuestion; j < toQuestion; j++) {
+  //     const question = answer.questions[j];
+  //     const app = await Models.App.findById(question.id).cache(
+  //       60 * 60 * 24 * 30
+  //     ); // 1 month;
+
+  //     const range = ranges[app.categoryName]
+  //     let risk
+  //     const part = (range[1] - range[0]) / 5
+  //     if(0 <= Number( app.distance) && Number( app.distance) < (range[0] + part * 1)) risk = 0
+  //     else if((range[0] + part * 1) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 2)) risk = 1
+  //     else  if((range[0] + part * 2) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 3)) risk = 2
+  //     else if((range[0] + part * 3) <= Number( app.distance) && Number( app.distance) < (range[0] + part * 4)) risk = 3
+  //     else  if((range[0] + part * 4) <= Number( app.distance) && Number( app.distance) <= (range[0] + part *5)) risk = 4
+
+  //     let installQuestion = question.responses.find(item => item.name === "install")
+  //     const agreePredict = question.responses.find(item => item.name === "agreePredict")
+  //     const ourPrediction = question.responses.find(item => item.name === "ourPrediction")
+  //     if(!installQuestion && agreePredict.value == '1') {
+  //       installQuestion = ourPrediction
+  //     }
+  //     if(!installQuestion) continue;
+
+  //     const appsByDeveloper = await gplay.developer({devId: app.developer}).then(apps => Promise.all(apps.map(app => gplay.app({appId: app.appId}).catch(_ => null))).then(items => items.filter(item => !!item))).catch(_ => [])
+  //     const installCount = _.sumBy(appsByDeveloper, 'maxInstalls')
+  //     let installText = ''
+  //     if(installCount >= 1000000000) installText = '1B'
+  //     else if(installCount >= 500000000 && installCount < 1000000000) installText = '[500M; 1B)'
+  //     else if(installCount >= 100000000 && installCount < 500000000) installText = '[100M; 500M)'
+  //     else if(installCount >= 50000000 && installCount < 100000000) installText = '[50M;100M)'
+  //     else if(installCount >= 10000000 && installCount < 50000000) installText = '[10M; 50M)'
+  //     else if(installCount >= 1000000 && installCount < 10000000) installText = '[1M; 10M)'
+  //     else if(installCount >= 500000 && installCount < 1000000) installText = '[500K; 1M)'
+  //     else if(installCount >= 100000 && installCount < 500000) installText = '[100K; 500K)'
+  //     else if(installCount >= 50000 && installCount < 100000) installText = '[50K; 100K)'
+  //     else if(installCount >= 10000 && installCount < 50000) installText = '[10K; 50K)'
+  //     else installText = '<10K'
+
+  //     if(!result[installText]) result[installText] = {}
+  //     if(!result[installText][`${installQuestion.value}${type}`]) result[installText][`${installQuestion.value}${type}`] = {}
+  //     result[installText][`${installQuestion.value}${type}`][risk] ? result[installText][`${installQuestion.value}${type}`][risk]++ : result[installText][`${installQuestion.value}${type}`][risk] = 1
+  //   }
+  // }
+
+  // resultSorted = {
+  //   '1B': result['1B'],
+  //   '[500M; 1B)': result['[500M; 1B)'] || {},
+  //   '[100M; 500M)': result['[100M; 500M)'] || {},
+  //   '[50M;100M)': result['[50M;100M)'] || {},
+  //   '[10M; 50M)': result['[10M; 50M)'] || {},
+  //   '[1M; 10M)': result['[1M; 10M)'] || {},
+  //   '[500K; 1M)': result['[500K; 1M)'] || {},
+  //   '[100K; 500K)': result['[100K; 500K)'] || {},
+  //   '[50K; 100K)': result['[50K; 100K)'] || {},
+  //   '[10K; 50K)': result['[10K; 50K)'] || {},
+  //   '<10K': result['<10K'] || {},
+  // }
+
+  // rows = Object.entries(resultSorted).map(item => {
+
+  //   const cols = Object.entries(item[1]).reduce((acc, [key, risks]) => {
+  //     acc[key] = ((risks['1'] || 0) * 0.25) + ((risks['2'] || 0) * 0.5) + ((risks['3'] || 0) * 0.75) + ((risks['4'] || 0))
+  //     acc[key] = acc[key] / ((risks['0'] || 0) + (risks['1'] || 0) + (risks['2'] || 0)+ (risks['3'] || 0)+ (risks['4'] || 0))
+
+  //     acc[key] = Math.round(acc[key] * 100) / 100
+  //     return acc
+  //   }, {})
+  //   return {
+  //     name: item[0],
+  //     ...cols,
+  //   }
+  // })
+  // csvWriter = createCsvWriter({
+  //   path: `./reports/test/developer/risk(${dataSetType}).csv`,
+  //   header
+  // });
+  // await csvWriter.writeRecords(rows);
+
+  // console.log("DONE developer(risk)", dataSetType)
+
   rows = []
 
   result = {
@@ -2611,8 +2934,11 @@ async function genDeveloper(dataSetType) {
       else installText = '<10K'
 
       if(!result[installText]) result[installText] = {}
-      if(!result[installText][`${installQuestion.value}${type}`]) result[installText][`${installQuestion.value}${type}`] = {}
-      result[installText][`${installQuestion.value}${type}`][risk] ? result[installText][`${installQuestion.value}${type}`][risk]++ : result[installText][`${installQuestion.value}${type}`][risk] = 1
+      if(!result[installText][type]) result[installText][type] = {}
+      if(!result[installText][type][installQuestion.value]) result[installText][type][installQuestion.value] = {}
+
+      result[installText][type]['total'] ? result[installText][type]['total']++ : result[installText][type]['total'] = 1
+      result[installText][type][installQuestion.value][risk] ? result[installText][type][installQuestion.value][risk]++ : result[installText][type][installQuestion.value][risk] = 1
     }
   }
 
@@ -2630,27 +2956,31 @@ async function genDeveloper(dataSetType) {
     '<10K': result['<10K'] || {},
   }
 
-  rows = Object.entries(resultSorted).map(item => {
+  rows = Object.entries(result).map(([categoryName, types]) => {
 
-    const cols = Object.entries(item[1]).reduce((acc, [key, risks]) => {
-      acc[key] = ((risks['1'] || 0) * 0.25) + ((risks['2'] || 0) * 0.5) + ((risks['3'] || 0) * 0.75) + ((risks['4'] || 0))
-      acc[key] = acc[key] / ((risks['0'] || 0) + (risks['1'] || 0) + (risks['2'] || 0)+ (risks['3'] || 0)+ (risks['4'] || 0))
+    const cols = Object.entries(types).reduce((acc, [typeName, installQuestions]) => {
+      
+      Object.entries(installQuestions).forEach(([installQuestionName, risks]) => {
 
-      acc[key] = Math.round(acc[key] * 100) / 100
+        if(installQuestionName !== 'total')
+          acc[`${installQuestionName}${typeName}`] = ((risks['1'] || 0) + (risks['2'] || 0) + (risks['3'] || 0) + ((risks['4'] || 0))) / installQuestions.total
+      })
       return acc
     }, {})
+
     return {
-      name: item[0],
+      name: categoryName,
       ...cols,
     }
   })
+
   csvWriter = createCsvWriter({
-    path: `./reports/test/developer/risk(${dataSetType}).csv`,
+    path: `./reports/test/developer/percentage(${dataSetType}).csv`,
     header
   });
   await csvWriter.writeRecords(rows);
 
-  console.log("DONE developer(risk)", dataSetType)
+  console.log("DONE developer(percentage)", dataSetType)
   // 
 }
 
