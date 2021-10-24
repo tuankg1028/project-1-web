@@ -1914,14 +1914,14 @@ async function main() {
 async function stats() {
   console.log("Genrating 8 files")
   await Promise.all([
-    genCategory('training'),
-    genPurpose('training'),
-    genThirdParty('training'),
+    // genCategory('training'),
+    // genPurpose('training'),
+    // genThirdParty('training'),
     genDeveloper('training'),
     
-    genCategory("testing"),
-    genPurpose("testing"),
-    genThirdParty("testing"),
+    // genCategory("testing"),
+    // genPurpose("testing"),
+    // genThirdParty("testing"),
     genDeveloper("testing"),
   ])
 
@@ -2689,7 +2689,7 @@ async function genDeveloper(dataSetType) {
     }
   }
 
-  resultSorted = {
+  let resultSorted = {
     '1B': result['1B'],
     '[500M; 1B)': result['[500M; 1B)'] || {},
     '[100M; 500M)': result['[100M; 500M)'] || {},
@@ -2725,7 +2725,7 @@ async function genDeveloper(dataSetType) {
 
   // console.log("DONE developer(risk)", dataSetType)
 
-  rows = Object.entries(result).map(item => {
+  rows = Object.entries(resultSorted).map(item => {
 
     const cols = Object.entries(item[1]).reduce((acc, [key, risks]) => {
       acc[key] = ((risks['3'] || 0)) + ((risks['4'] || 0))
