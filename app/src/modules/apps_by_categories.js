@@ -250,7 +250,7 @@ const categoriesCollection = [
   },
   {
     id: "27",
-    name: "Booking",
+    name: "Booking2",
     level: "2",
     parent: "5",
     keywords: ["booking"],
@@ -1497,6 +1497,7 @@ function getChildCategories(categoryName, categories, result = []) {
 
   const childs = categories.filter((item) => item.parent === category.id);
 
+  console.log(1, categoryName, category, childs);
   for (let i = 0; i < childs.length; i++) {
     const child = childs[i];
 
@@ -1800,7 +1801,6 @@ async function getParent(node) {
 
 updateAppsPrivacyPolicy();
 async function updateAppsPrivacyPolicy() {
-  console.log(12);
   const apps = await Models.App.find({
     // isCompleted: true,
     // appName: {
@@ -1834,7 +1834,6 @@ async function updateAppsPrivacyPolicy() {
 
 async function updateAppPrivacyPolicy(appId) {
   try {
-    console.log(appId);
     const app = await Models.App.findById(appId);
 
     let ppCategoriesAPP = {};
@@ -1873,7 +1872,6 @@ async function updateAppPrivacyPolicy(appId) {
             ppCategories,
             categories
           );
-          console.log(1, isParentHasContent, category);
           if (isParentHasContent && contents && contents.length > 0) {
             let childCategories = _.flatten(
               getChildCategories(category, categories)
