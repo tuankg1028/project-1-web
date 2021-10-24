@@ -2109,7 +2109,7 @@ async function genCategory(dataSetType) {
   })
 
   
-  csvWriter = createCsvWriter({
+  let csvWriter = createCsvWriter({
     path: `./reports/test/category/percentage(${dataSetType}).csv`,
     header
   });
@@ -2305,7 +2305,7 @@ async function genPurpose(dataSetType) {
     }
   })
 
-  csvWriter = createCsvWriter({
+  let csvWriter = createCsvWriter({
     path: `./reports/test/purpose/percentage(${dataSetType}).csv`,
     header
   });
@@ -2499,7 +2499,7 @@ async function genThirdParty(dataSetType) {
       ...cols,
     }
   })
-  csvWriter = createCsvWriter({
+  let csvWriter = createCsvWriter({
     path: `./reports/test/third-party/percentage(${dataSetType}).csv`,
     header
   });
@@ -2740,7 +2740,7 @@ async function genDeveloper(dataSetType) {
     }
   })
 
-  csvWriter = createCsvWriter({
+  let csvWriter = createCsvWriter({
     path: `./reports/test/developer/percentage(${dataSetType}).csv`,
     header
   });
