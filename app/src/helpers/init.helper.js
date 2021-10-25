@@ -261,36 +261,42 @@ const initeJavaSourceCode = async () => {
     ],
   }).limit(100);
   do {
-    offset += 100;
-    const promises = [];
-    const limit = pLimit(10);
-    console.log(`Total apps: ${apps.length}`);
-    for (let i = 0; i < apps.length; i++) {
-      Helpers.Logger.info(`Running ${i + 1}/${apps.length}`);
-      console.log(`${i}/${apps.length}`);
-      const app = apps[i];
+    try {
+      offset += 100;
+      const promises = [];
+      const limit = pLimit(10);
+      console.log(`Total apps: ${apps.length}`);
+      for (let i = 0; i < apps.length; i++) {
+        Helpers.Logger.info(`Running ${i + 1}/${apps.length}`);
+        console.log(`${i}/${apps.length}`);
+        const app = apps[i];
 
-      const isExisted = await Models.AppTemp.findOne({
-        appName: app.appName,
-        type: "36k",
-      });
+        const isExisted = await Models.AppTemp.findOne({
+          appName: app.appName,
+          type: "36k",
+        });
 
-      if (isExisted) continue;
-      promises.push(limit(() => _createAppDBOnFile(app.id).catch(console.log)));
+        if (isExisted) continue;
+        promises.push(
+          limit(() => _createAppDBOnFile(app.id).catch(console.log))
+        );
+      }
+
+      apps = await Models.App.find({
+        $or: [
+          { isCompletedJVCode: { $exists: false } },
+          {
+            isCompletedJVCode: false,
+          },
+        ],
+      })
+        .skip(offset)
+        .limit(100);
+
+      await Promise.all(promises).then(console.log);
+    } catch (err) {
+      console.log(err);
     }
-
-    apps = await Models.App.find({
-      $or: [
-        { isCompletedJVCode: { $exists: false } },
-        {
-          isCompletedJVCode: false,
-        },
-      ],
-    })
-      .skip(offset)
-      .limit(100);
-
-    await Promise.all(promises).then(console.log);
   } while (apps && apps.length);
 };
 const initAppsOnDB36K = async () => {
