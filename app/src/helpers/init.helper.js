@@ -361,7 +361,7 @@ const _createAppDBOnFile = async (appIdDB) => {
       let pathFileApk;
       let apkSourcePath;
       try {
-        const app = await Models.App.findById(appIdDB);
+        const app = await Models.App.findById(appIdDB).cache(60 * 60 * 24 * 30);
         Helpers.Logger.step("Step 1: Get apk file from source");
         pathFileApk = _getApkFileFromSource(appIdDB, app.appName);
 
