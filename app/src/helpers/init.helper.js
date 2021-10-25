@@ -276,7 +276,7 @@ const initeJavaSourceCode = async () => {
       });
 
       if (isExisted) continue;
-      promises.push(limit(() => _createAppDBOnFile(app.id)));
+      promises.push(limit(() => _createAppDBOnFile(app.id).catch(console.log)));
     }
 
     apps = await Models.App.find({
