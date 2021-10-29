@@ -253,6 +253,9 @@ const initeJavaSourceCode = async () => {
   console.log("Generating source code");
   let offset = 0;
   let apps = await Models.App.find({
+    id: {
+      $nin: ["6030b5fea690c37f3d2a6bf1"],
+    },
     $or: [
       { isCompletedJVCode: { $exists: false } },
       {
@@ -283,6 +286,9 @@ const initeJavaSourceCode = async () => {
       }
 
       apps = await Models.App.find({
+        id: {
+          $nin: ["6030b5fea690c37f3d2a6bf1"],
+        },
         $or: [
           { isCompletedJVCode: { $exists: false } },
           {
