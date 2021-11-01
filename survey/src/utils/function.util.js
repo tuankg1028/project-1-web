@@ -2729,6 +2729,232 @@ const getOurPredictionApproach4 = async (
   // return predict ? predict[0][0] : 0;
 };
 
+
+const thirdPartyData = ["Payment", "Marketing", "Advertisement", "Analysis"]
+function getFlattenTrees(trees, result) {
+  for (let i = 0; i < trees.length; i++) {
+    const tree = trees[i];
+    if (tree.children) {
+      tree.children.forEach((item) => getFlattenTrees(item, result));
+    }
+    delete tree.children;
+    result.push(tree);
+  }
+}
+const getPredictModel2 = async (
+  tranningAppIds,
+  userAnswer,
+  question,
+) => { 
+  const tranningApps = await Promise.all(
+    tranningAppIds.map(appId =>
+      Models.App.findById(appId).cache(60 * 60 * 24 * 30)
+    )
+  );
+
+  const tranningSet = tranningApps.map(tranningApp => {
+    let {  apisModel, id,  } = tranningApp;
+
+    apisModel = JSON.parse(apisModel);
+    const userAnswerQuestion = userAnswer.questions.find(
+      question => question.id === id
+    );
+  
+    let questionInstallation = userAnswerQuestion.responses.find(
+      item => item.name === "install"
+    );
+    if (!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(
+        item => item.name === "agreePredict"
+      );
+
+    if (!questionInstallation) throw Error("Answer not found");
+
+    const label = questionInstallation.value;
+
+    return [
+      ...Object.values(apisModel).map(item => item.toString()),
+      label.toString()
+    ];
+  });
+
+  const testSet = [
+    [
+      ...Object.values(JSON.parse(question.apisModel)).map(item =>
+        item.toString()
+      ),
+      "-1"
+    ]
+  ];
+
+  // eslint-disable-next-line no-console
+  // console.log(
+  //   "Step 2 in approach 3 with tranning and test: ",
+  //   tranningSet,
+  //   testSet
+  // );
+
+  const predict = await Services.Prediction.getPredictEM({
+    train: tranningSet,
+    test: testSet
+  });
+ 
+
+  // eslint-disable-next-line no-console
+  console.log("Step 3 Prediction is: ", predict);
+  return predict[0][0];
+}
+const getPredictModel3 = async (
+  tranningAppIds,
+  userAnswer,
+  question,
+) => { 
+  const tranningApps = await Promise.all(
+    tranningAppIds.map(appId =>
+      Models.App.findById(appId).cache(60 * 60 * 24 * 30)
+    )
+  );
+
+  const tranningSet = tranningApps.map(tranningApp => {
+    let { PPModel, thirdPartyData, id,  } = tranningApp;
+    PPModel = JSON.parse(PPModel);
+    thirdPartyData = JSON.parse(thirdPartyData);
+    let flattenThirdPartyData = []
+    getFlattenTrees(thirdPartyData, flattenThirdPartyData)
+    flattenThirdPartyData = _.map(flattenThirdPartyData, "name")
+
+    const userAnswerQuestion = userAnswer.questions.find(
+      question => question.id === id
+    );
+    
+    let questionInstallation = userAnswerQuestion.responses.find(
+      item => item.name === "install"
+    );
+    if (!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(
+        item => item.name === "agreePredict"
+      );
+
+    if (!questionInstallation) throw Error("Answer not found");
+
+    const label = questionInstallation.value;
+
+    return [
+      ...Object.values(PPModel).map(item => item.toString()),
+      ...thirdPartyData.map(item => _.includes(item, flattenThirdPartyData) ? '1' : '0'),
+      label.toString()
+    ];
+  });
+
+  let thirdPartyData = JSON.parse(question.thirdPartyData);
+  let flattenThirdPartyData = []
+  getFlattenTrees(thirdPartyData, flattenThirdPartyData)
+  flattenThirdPartyData = _.map(flattenThirdPartyData, "name")
+  const testSet = [
+    [
+      ...Object.values(JSON.parse(question.PPModel)).map(item =>
+        item.toString()
+      ),
+      ...thirdPartyData.map(item => _.includes(item, flattenThirdPartyData) ? '1' : '0'),
+      "-1"
+    ]
+  ];
+
+  // eslint-disable-next-line no-console
+  // console.log(
+  //   "Step 2 in approach 3 with tranning and test: ",
+  //   tranningSet,
+  //   testSet
+  // );
+
+  const predict = await Services.Prediction.getPredictEM({
+    train: tranningSet,
+    test: testSet
+  });
+ 
+
+  // eslint-disable-next-line no-console
+  console.log("Step 3 Prediction is: ", predict);
+  return predict[0][0];
+}
+const getPredictModel5 = async (
+  tranningAppIds,
+  userAnswer,
+  question,
+) => { 
+  const tranningApps = await Promise.all(
+    tranningAppIds.map(appId =>
+      Models.App.findById(appId).cache(60 * 60 * 24 * 30)
+    )
+  );
+
+  const tranningSet = tranningApps.map(tranningApp => {
+    let { PPModel, thirdPartyData, apisModel, id,  } = tranningApp;
+    PPModel = JSON.parse(PPModel);
+    apisModel = JSON.parse(apisModel);
+    thirdPartyData = JSON.parse(thirdPartyData);
+    let flattenThirdPartyData = []
+    getFlattenTrees(thirdPartyData, flattenThirdPartyData)
+    flattenThirdPartyData = _.map(flattenThirdPartyData, "name")
+
+    const userAnswerQuestion = userAnswer.questions.find(
+      question => question.id === id
+    );
+    
+    let questionInstallation = userAnswerQuestion.responses.find(
+      item => item.name === "install"
+    );
+    if (!questionInstallation)
+      questionInstallation = userAnswerQuestion.responses.find(
+        item => item.name === "agreePredict"
+      );
+
+    if (!questionInstallation) throw Error("Answer not found");
+
+    const label = questionInstallation.value;
+
+    return [
+      ...Object.values(apisModel).map(item => item.toString()),
+      ...Object.values(PPModel).map(item => item.toString()),
+      ...thirdPartyData.map(item => _.includes(item, flattenThirdPartyData) ? '1' : '0'),
+      label.toString()
+    ];
+  });
+
+  let thirdPartyData = JSON.parse(question.thirdPartyData);
+  let flattenThirdPartyData = []
+  getFlattenTrees(thirdPartyData, flattenThirdPartyData)
+  flattenThirdPartyData = _.map(flattenThirdPartyData, "name")
+  const testSet = [
+    [
+      ...Object.values(JSON.parse(question.apisModel)).map(item =>
+        item.toString()
+      ),
+      ...Object.values(JSON.parse(question.PPModel)).map(item =>
+        item.toString()
+      ),
+      ...thirdPartyData.map(item => _.includes(item, flattenThirdPartyData) ? '1' : '0'),
+      "-1"
+    ]
+  ];
+
+  // eslint-disable-next-line no-console
+  // console.log(
+  //   "Step 2 in approach 3 with tranning and test: ",
+  //   tranningSet,
+  //   testSet
+  // );
+
+  const predict = await Services.Prediction.getPredictEM({
+    train: tranningSet,
+    test: testSet
+  });
+ 
+
+  // eslint-disable-next-line no-console
+  console.log("Step 3 Prediction is: ", predict);
+  return predict[0][0];
+}
 const getOurPredictionApproach1 = async (
   tranningAppIds,
   userAnswer,
@@ -3096,5 +3322,8 @@ export default {
   getOurPredictionApproach1,
   getOurPredictionApproach2,
   getOurPredictionApproach3,
-  getOurPredictionApproach4
+  getOurPredictionApproach4,
+  getPredictModel2,
+  getPredictModel3,
+  getPredictModel5
 };
