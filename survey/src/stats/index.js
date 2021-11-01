@@ -1228,7 +1228,7 @@ async function metricsDefinition(getNewOurPrediction, prefix) {
     }
   };
   const answers = await Models.Answer.find().cache(60 * 60 * 24 * 30)
-  for (let i = 0; i < 1; answers.length++) {
+  for (let i = 0; i < answers.length; i++) {
     console.log(`Running ${i}/${answers.length}`)
     const answer = answers[i]
     const { questions, userId } = answer
