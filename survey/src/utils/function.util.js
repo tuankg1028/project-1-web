@@ -2730,7 +2730,7 @@ const getOurPredictionApproach4 = async (
 };
 
 
-const thirdPartyData = ["Payment", "Marketing", "Advertisement", "Analysis"]
+const thirdPartyDataInit = ["Payment", "Marketing", "Advertisement", "Analysis"]
 function getFlattenTrees(trees, result) {
   for (let i = 0; i < trees.length; i++) {
     const tree = trees[i];
@@ -2841,7 +2841,7 @@ const getPredictModel3 = async (
 
     return [
       ...Object.values(PPModel).map(item => item.toString()),
-      ...thirdPartyData.map(item => _.includes(item, flattenThirdPartyData) ? '1' : '0'),
+      ...thirdPartyDataInit.map(item => _.includes(item, flattenThirdPartyData) ? '1' : '0'),
       label.toString()
     ];
   });
@@ -2850,12 +2850,13 @@ const getPredictModel3 = async (
   let flattenThirdPartyData = []
   getFlattenTrees(thirdPartyData, flattenThirdPartyData)
   flattenThirdPartyData = _.map(flattenThirdPartyData, "name")
+  
   const testSet = [
     [
       ...Object.values(JSON.parse(question.PPModel)).map(item =>
         item.toString()
       ),
-      ...thirdPartyData.map(item => _.includes(item, flattenThirdPartyData) ? '1' : '0'),
+      ...thirdPartyDataInit.map(item => _.includes(item, flattenThirdPartyData) ? '1' : '0'),
       "-1"
     ]
   ];
@@ -2916,7 +2917,7 @@ const getPredictModel5 = async (
     return [
       ...Object.values(apisModel).map(item => item.toString()),
       ...Object.values(PPModel).map(item => item.toString()),
-      ...thirdPartyData.map(item => _.includes(item, flattenThirdPartyData) ? '1' : '0'),
+      ...thirdPartyDataInit.map(item => _.includes(item, flattenThirdPartyData) ? '1' : '0'),
       label.toString()
     ];
   });
@@ -2933,7 +2934,7 @@ const getPredictModel5 = async (
       ...Object.values(JSON.parse(question.PPModel)).map(item =>
         item.toString()
       ),
-      ...thirdPartyData.map(item => _.includes(item, flattenThirdPartyData) ? '1' : '0'),
+      ...thirdPartyDataInit.map(item => _.includes(item, flattenThirdPartyData) ? '1' : '0'),
       "-1"
     ]
   ];
