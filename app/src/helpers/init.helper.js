@@ -385,9 +385,9 @@ const _createAppDBOnFile = async (appIdDB) => {
 
         if (!fs.existsSync(apkSourcePath)) execSync(`mkdir ${apkSourcePath}`);
 
-        execSync(
-          `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`
-        );
+        const jadxScript = `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`;
+        console.log("jadxScript", jadxScript);
+        execSync(jadxScript);
 
         await Models.AppTemp.create({
           appName: app.appName,
