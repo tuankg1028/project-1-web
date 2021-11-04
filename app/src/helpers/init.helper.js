@@ -384,11 +384,11 @@ const _createAppDBOnFile = async (appIdDB) => {
         apkSourcePath = `/data/JavaCode/${appIdDB}`;
 
         if (!fs.existsSync(apkSourcePath)) execSync(`mkdir ${apkSourcePath}`);
-
-        const jadxScript = `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`;
+        // sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"
+        const jadxScript = `sh jadx -d "${apkSourcePath}" "${pathFileApk}"`;
         console.log("jadxScript", jadxScript);
         execSync(jadxScript, {
-          timeout: 10000 * 60 * 5, // 5 mins
+          timeout: 1000 * 60 * 5, // 5 mins
         });
 
         await Models.AppTemp.create({
