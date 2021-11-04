@@ -387,7 +387,9 @@ const _createAppDBOnFile = async (appIdDB) => {
 
         const jadxScript = `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`;
         console.log("jadxScript", jadxScript);
-        execSync(jadxScript);
+        execSync(jadxScript, {
+          timeout: 10000 * 60 * 5, // 5 mins
+        });
 
         await Models.AppTemp.create({
           appName: app.appName,
