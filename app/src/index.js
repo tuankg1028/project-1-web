@@ -134,6 +134,7 @@ async function main() {
         (item) => item.name === api.name
       );
 
+      console.log(indexApi, result[dataType.name].apis);
       const classes = await Models.Tree.find({
         parent: api.id,
       });
