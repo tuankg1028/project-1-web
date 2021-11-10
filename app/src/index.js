@@ -96,8 +96,8 @@ async function main() {
     appsApis = [...appsApis, ...appApis];
 
     skip += 1000;
-    // apps = [];
-    apps = await Models.App.find({}).limit(1000).skip(skip);
+    apps = [];
+    // apps = await Models.App.find({}).limit(1000).skip(skip);
   }
 
   console.log("RUNNING data TYpe");
@@ -213,6 +213,190 @@ async function main() {
   console.log("DONE");
 }
 main();
+
+async function main1() {
+  const header = [
+    {
+      id: "stt",
+      title: "STT",
+    },
+    {
+      id: "dataType",
+      title: "Data type",
+    },
+    {
+      id: "count",
+      title: "so lan xuat hien",
+    },
+    {
+      id: "value",
+      title: "value",
+    },
+  ];
+  const rows = [];
+  var readline = require("linebyline"),
+    rl = readline("/Users/a1234/Downloads/data_collect_purpose.json");
+  rl.on("line", function (line, lineCount, byteCount) {
+    // do something with the line of text
+    const app = JSON.parse(line);
+
+    // console.log(app);
+    rows;
+  })
+    .on("error", function (e) {
+      // something went wrong
+    })
+    .on("close", function (e) {
+      // something went wrong
+      console.log(1);
+    });
+  return;
+  // console.log(1,  config);
+
+  // const rows = [];
+  // const result = {};
+  // const tree = await Models.Tree.find({
+  //   parent: "602951a2163e554ddd9a1262",
+  // }).cache(60 * 60 * 24 * 30);
+
+  // let skip = 0;
+  // let apps = await Models.App.find({}).limit(1000).skip(skip);
+  // let appsApis = [];
+  // while (apps.length) {
+  //   const appApis = apps.map((app) => {
+  //     const apis = app.apisModel ? JSON.parse(app.apisModel) : {};
+  //     const apisUsed = Object.entries(apis).reduce((acc, [key, value]) => {
+  //       if (value == 1) acc.push(key);
+
+  //       return acc;
+  //     }, []);
+
+  //     return {
+  //       ...app,
+  //       apis: apisUsed,
+  //     };
+  //   });
+
+  //   appsApis = [...appsApis, ...appApis];
+
+  //   skip += 1000;
+  //   // apps = [];
+  //   apps = await Models.App.find({}).limit(1000).skip(skip);
+  // }
+
+  // console.log("RUNNING data TYpe");
+  // for (let i = 0; i < tree.length; i++) {
+  //   const dataType = tree[i];
+  //   console.log(dataType.name);
+  //   const cloneAppsApis = JSON.parse(JSON.stringify(appsApis));
+
+  //   !result[dataType.name] &&
+  //     (result[dataType.name] = {
+  //       count: 0,
+  //       apis: [],
+  //     });
+  //   // apis
+  //   const apis = await Models.Tree.find({
+  //     parent: dataType.id,
+  //   }).cache(60 * 60 * 24 * 30);
+
+  //   for (let j = 0; j < apis.length; j++) {
+  //     const api = apis[j].toJSON();
+
+  //     const cloneAppsApisForApi = JSON.parse(JSON.stringify(cloneAppsApis));
+  //     for (let f = 0; f < cloneAppsApisForApi.length; f++) {
+  //       const apisApp = cloneAppsApisForApi[f];
+
+  //       if (apisApp.apis.includes(api.name.replace(".", ""))) {
+  //         result[dataType.name].count++;
+
+  //         const index = cloneAppsApis.findIndex(
+  //           (item) => item.name === apisApp.name
+  //         );
+  //         cloneAppsApis.splice(index, 1);
+  //       }
+  //     }
+
+  //     let indexApi = result[dataType.name].apis.findIndex(
+  //       (item) => item.name === api.name
+  //     );
+  //     if (indexApi === -1)
+  //       result[dataType.name].apis.push({
+  //         ...api,
+  //         classes: [],
+  //       });
+  //     indexApi = result[dataType.name].apis.findIndex(
+  //       (item) => item.name === api.name
+  //     );
+
+  //     // classes
+  //     const classes = await Models.Tree.find({
+  //       parent: api.id,
+  //     }).cache(60 * 60 * 24 * 30);
+  //     for (let k = 0; k < classes.length; k++) {
+  //       const class1 = classes[k].toJSON();
+
+  //       let indexClass = result[dataType.name].apis[indexApi].classes.findIndex(
+  //         (item) => item.name === class1.name
+  //       );
+  //       if (indexClass === -1)
+  //         result[dataType.name].apis[indexApi].classes.push({
+  //           ...class1,
+  //           functions: [],
+  //         });
+  //       indexClass = result[dataType.name].apis[indexApi].classes.findIndex(
+  //         (item) => item.name === class1.name
+  //       );
+  //       // functions
+  //       const functions = await Models.Tree.find({
+  //         parent: class1.id,
+  //       }).cache(60 * 60 * 24 * 30);
+
+  //       for (let l = 0; l < functions.length; l++) {
+  //         const function1 = functions[l].toJSON();
+
+  //         result[dataType.name].apis[indexApi].classes[
+  //           indexClass
+  //         ].functions.push(function1);
+  //       }
+  //     }
+  //   }
+  // }
+
+  // let stt = 1;
+  // for (const dataType in result) {
+  //   const { count, apis } = result[dataType];
+
+  //   apis.forEach((api) => {
+  //     const { classes } = api;
+
+  //     classes.forEach((class1) => {
+  //       let { functions } = class1;
+  //       functions = _.uniqBy(functions, "name");
+
+  //       functions.forEach((function1) => {
+  //         rows.push({
+  //           stt: stt++,
+  //           dataType,
+  //           api: api.name,
+  //           class: class1.name,
+  //           function: function1.name,
+  //           count,
+  //         });
+  //       });
+  //     });
+  //   });
+  // }
+
+  // const csvWriterNo = createCsvWriter({
+  //   path: "file2.csv",
+  //   header,
+  // });
+  // await csvWriterNo.writeRecords(rows);
+
+  // console.log("DONE");
+}
+// main1();
 app.get("/", function (req, res) {
   res.render("pages/index");
 });
