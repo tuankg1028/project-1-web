@@ -105,6 +105,7 @@ async function main() {
         count: 0,
         apis: [],
       });
+    // apis
     const apis = await Models.Tree.find({
       parent: dataType.id,
     });
@@ -134,7 +135,7 @@ async function main() {
         (item) => item.name === api.name
       );
 
-      console.log(indexApi, result[dataType.name].apis);
+      // classes
       const classes = await Models.Tree.find({
         parent: api.id,
       });
@@ -152,7 +153,7 @@ async function main() {
         indexClass = result[dataType.name].apis[indexApi].classes.findIndex(
           (item) => item.name === class1.name
         );
-
+        // functions
         const functions = await Models.Tree.find({
           parent: class1.id,
         });
