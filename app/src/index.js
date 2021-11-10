@@ -76,7 +76,7 @@ async function main() {
   }).cache(60 * 60 * 24 * 30);
 
   let skip = 0;
-  let apps = await Models.App.find({}).limit(1000).skip(skip);
+  let apps = await Models.App.find({}).limit(3000).skip(skip);
   let appsApis = [];
   while (apps.length) {
     const appApis = apps.map((app) => {
@@ -96,19 +96,17 @@ async function main() {
     appsApis = [...appsApis, ...appApis];
 
     skip += 1000;
-    // apps = [];
-    apps = await Models.App.find({}).limit(1000).skip(skip);
+    apps = [];
+    // apps = await Models.App.find({}).limit(1000).skip(skip);
   }
 
   console.log("RUNNING data TYpe");
   for (let i = 0; i < tree.length; i++) {
     const dataType = tree[i];
-    console.log(dataType.name, appsApis);
-    const cloneAppsApis = JSON.parse(JSON.stringify(appsApis));
+    console.log(dataType.name);
 
     !result[dataType.name] &&
       (result[dataType.name] = {
-        count: 0,
         apis: [],
       });
     // apis
@@ -119,31 +117,27 @@ async function main() {
     for (let j = 0; j < apis.length; j++) {
       const api = apis[j].toJSON();
 
-      const cloneAppsApisForApi = JSON.parse(JSON.stringify(cloneAppsApis));
-      for (let f = 0; f < cloneAppsApisForApi.length; f++) {
-        const apisApp = cloneAppsApisForApi[f];
-
-        if (apisApp.apis.includes(api.name.replace(".", ""))) {
-          result[dataType.name].count++;
-
-          const index = cloneAppsApis.findIndex(
-            (item) => item.name === apisApp.name
-          );
-          cloneAppsApis.splice(index, 1);
-        }
-      }
-
       let indexApi = result[dataType.name].apis.findIndex(
         (item) => item.name === api.name
       );
       if (indexApi === -1)
         result[dataType.name].apis.push({
           ...api,
+          count: 0,
           classes: [],
         });
       indexApi = result[dataType.name].apis.findIndex(
         (item) => item.name === api.name
       );
+
+      // count
+      for (let f = 0; f < appsApis.length; f++) {
+        const apisApp = appsApis[f];
+
+        if (apisApp.apis.includes(api.name.replace(".", ""))) {
+          result[dataType.name].apis[indexApi].count++;
+        }
+      }
 
       // classes
       const classes = await Models.Tree.find({
@@ -181,7 +175,7 @@ async function main() {
 
   let stt = 1;
   for (const dataType in result) {
-    const { count, apis } = result[dataType];
+    const { apis } = result[dataType];
 
     apis.forEach((api) => {
       const { classes } = api;
@@ -197,7 +191,7 @@ async function main() {
             api: api.name,
             class: class1.name,
             function: function1.name,
-            count,
+            count: api.count,
           });
         });
       });
@@ -241,7 +235,7 @@ async function main1() {
     const app = JSON.parse(line);
 
     // console.log(app);
-    rows;
+    rows.push();
   })
     .on("error", function (e) {
       // something went wrong
