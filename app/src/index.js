@@ -110,7 +110,7 @@ async function main() {
     });
 
     for (let j = 0; j < apis.length; j++) {
-      const api = apis[j];
+      const api = apis[j].toJSON();
 
       const cloneAppsApisForApi = JSON.parse(JSON.stringify(cloneAppsApis));
       for (let f = 0; f < cloneAppsApisForApi.length; f++) {
@@ -139,7 +139,7 @@ async function main() {
         parent: api.id,
       });
       for (let k = 0; k < classes.length; k++) {
-        const class1 = classes[k];
+        const class1 = classes[k].toJSON();
 
         let indexClass = result[dataType.name].apis[indexApi].classes.findIndex(
           (item) => item.name === class1.name
@@ -158,7 +158,7 @@ async function main() {
         });
 
         for (let l = 0; l < functions.length; l++) {
-          const function1 = functions[l];
+          const function1 = functions[l].toJSON();
 
           result[dataType.name].apis[indexApi].classes[
             indexClass
