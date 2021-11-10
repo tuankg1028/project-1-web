@@ -76,7 +76,7 @@ async function main() {
   }).cache(60 * 60 * 24 * 30);
 
   let skip = 0;
-  let apps = await Models.App.find({}).limit(100).skip(skip);
+  let apps = await Models.App.find({}).limit(1000).skip(skip);
   let appsApis = [];
   while (apps.length) {
     const appApis = apps.map((app) => {
@@ -95,8 +95,8 @@ async function main() {
 
     appsApis = [...appsApis, ...appApis];
 
-    skip += 100;
-    apps = await Models.App.find({}).limit(100).skip(skip);
+    skip += 1000;
+    apps = await Models.App.find({}).limit(1000).skip(skip);
   }
 
   console.log("RUNNING data TYpe");
