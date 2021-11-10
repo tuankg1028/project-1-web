@@ -76,7 +76,10 @@ async function main() {
   }).cache(60 * 60 * 24 * 30);
 
   let skip = 0;
-  let apps = await Models.App.find({}).limit(100).skip(skip);
+  let apps = await Models.App.find({})
+    .limit(100)
+    .skip(skip)
+    .cache(60 * 60 * 24 * 30);
   let appsApis = [];
   while (apps.length) {
     const appApis = apps.map((app) => {
@@ -93,7 +96,10 @@ async function main() {
     appsApis = [...appsApis, ...appApis];
 
     skip += 100;
-    apps = await Models.App.find({}).limit(100).skip(skip);
+    apps = await Models.App.find({})
+      .limit(100)
+      .skip(skip)
+      .cache(60 * 60 * 24 * 30);
   }
 
   for (let i = 0; i < 1; i++) {
@@ -116,8 +122,7 @@ async function main() {
       for (let f = 0; f < cloneAppsApisForApi.length; f++) {
         const apisApp = cloneAppsApisForApi[f];
 
-        console.log(1, api.name, apisApp);
-        if (apisApp.includes(api.name)) {
+        if (apisApp.includes(api.name.replace(".", ""))) {
           result[dataType.name].count++;
           cloneAppsApis.splice(f, 1);
         }
