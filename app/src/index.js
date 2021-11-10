@@ -78,7 +78,7 @@ async function main() {
   let skip = 0;
   let apps = await Models.App.find({}).limit(100).skip(skip);
   let appsApis = [];
-  while (app.length) {
+  while (apps.length) {
     const appApis = apps.map((app) => {
       const apis = JSON.parse(app.apisModel);
       const apisUsed = Object.entries(apis).reduce((acc, [key, value]) => {
