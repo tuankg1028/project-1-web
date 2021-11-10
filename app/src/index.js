@@ -90,7 +90,10 @@ async function main() {
         return acc;
       }, []);
 
-      return apisUsed;
+      return {
+        ...app,
+        apis: apisUsed,
+      };
     });
 
     appsApis = [...appsApis, ...appApis];
@@ -103,8 +106,9 @@ async function main() {
   }
 
   for (let i = 0; i < 1; i++) {
-    const cloneAppsApis = JSON.parse(JSON.stringify(appsApis));
     const dataType = tree[i];
+    const cloneAppsApis = JSON.parse(JSON.stringify(appsApis));
+
     !result[dataType.name] &&
       (result[dataType.name] = {
         count: 0,
@@ -122,9 +126,13 @@ async function main() {
       for (let f = 0; f < cloneAppsApisForApi.length; f++) {
         const apisApp = cloneAppsApisForApi[f];
 
-        if (apisApp.includes(api.name.replace(".", ""))) {
+        if (apisApp.apis.includes(api.name.replace(".", ""))) {
           result[dataType.name].count++;
-          cloneAppsApis.splice(f, 1);
+
+          const index = cloneAppsApis.findIndex(
+            (item) => item.name === apisApp.name
+          );
+          cloneAppsApis.splice(index, 1);
         }
       }
 
