@@ -10,7 +10,7 @@
     "build-babel": "babel ./src -s -d ./dist --copy-files",
     "build": "npm run clean && npm run build-babel",
     "start": "node --max-old-space-size=30000 dist/index.js",
-    "dev": "babel-watch --max-old-space-size=30000 src/index.js",
+    "dev": "babel-node --max-old-space-size=30000 src/index.js",
     "category": "babel-watch test/category.js",
     "keyword": "babel-watch src/modules/keyword.js",
     "stas": "babel-watch src/modules/stas.js",
