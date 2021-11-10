@@ -93,8 +93,7 @@ async function main() {
     appsApis = [...appsApis, ...appApis];
 
     skip += 100;
-    apps = [];
-    // apps = await Models.App.find({}).limit(100).skip(skip);
+    apps = await Models.App.find({}).limit(100).skip(skip);
   }
 
   for (let i = 0; i < 1; i++) {
