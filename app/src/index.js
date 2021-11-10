@@ -80,7 +80,7 @@ async function main() {
   let appsApis = [];
   while (apps.length) {
     const appApis = apps.map((app) => {
-      const apis = JSON.parse(app.apisModel);
+      const apis = app.apisModel ? JSON.parse(app.apisModel) : {};
       const apisUsed = Object.entries(apis).reduce((acc, [key, value]) => {
         if (value == 1) acc.push(key);
 
