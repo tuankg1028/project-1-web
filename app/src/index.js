@@ -118,7 +118,7 @@ async function main() {
         const apisApp = cloneAppsApisForApi[f];
 
         if (apisApp.includes(api.name)) {
-          result[dataType.name]++;
+          result[dataType.name].count++;
           cloneAppsApis.splice(f, 1);
         }
       }
