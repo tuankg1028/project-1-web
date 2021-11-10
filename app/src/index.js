@@ -76,10 +76,7 @@ async function main() {
   }).cache(60 * 60 * 24 * 30);
 
   let skip = 0;
-  let apps = await Models.App.find({})
-    .limit(100)
-    .skip(skip)
-    .cache(60 * 60 * 24 * 30);
+  let apps = await Models.App.find({}).limit(100).skip(skip);
   let appsApis = [];
   while (apps.length) {
     const appApis = apps.map((app) => {
@@ -99,14 +96,13 @@ async function main() {
     appsApis = [...appsApis, ...appApis];
 
     skip += 100;
-    apps = await Models.App.find({})
-      .limit(100)
-      .skip(skip)
-      .cache(60 * 60 * 24 * 30);
+    apps = await Models.App.find({}).limit(100).skip(skip);
   }
 
+  console.log("RUNNING data TYpe");
   for (let i = 0; i < 1; i++) {
     const dataType = tree[i];
+    console.log(dataType.name);
     const cloneAppsApis = JSON.parse(JSON.stringify(appsApis));
 
     !result[dataType.name] &&
