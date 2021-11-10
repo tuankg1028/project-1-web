@@ -83,7 +83,8 @@ async function main() {
       console.log(1, app.apisModel);
       const apis = JSON.parse(app.apisModel);
       console.log(2, apis);
-      const apisUsed = JSON.enties(apis).reduce((acc, [key, value]) => {
+      const apisUsed = JSON.entries(apis).reduce((acc, [key, value]) => {
+        console.log(3, [key, value]);
         if (value == 1) acc.push(key);
 
         return acc;
