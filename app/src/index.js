@@ -107,7 +107,7 @@ async function main() {
     // apis
     const apis = await Models.Tree.find({
       parent: dataType.id,
-    });
+    }).cache(60 * 60 * 24 * 30);
 
     for (let j = 0; j < apis.length; j++) {
       const api = apis[j].toJSON();
@@ -116,6 +116,7 @@ async function main() {
       for (let f = 0; f < cloneAppsApisForApi.length; f++) {
         const apisApp = cloneAppsApisForApi[f];
 
+        console.log(1, api.name, apisApp);
         if (apisApp.includes(api.name)) {
           result[dataType.name].count++;
           cloneAppsApis.splice(f, 1);
@@ -137,7 +138,7 @@ async function main() {
       // classes
       const classes = await Models.Tree.find({
         parent: api.id,
-      });
+      }).cache(60 * 60 * 24 * 30);
       for (let k = 0; k < classes.length; k++) {
         const class1 = classes[k].toJSON();
 
@@ -155,7 +156,7 @@ async function main() {
         // functions
         const functions = await Models.Tree.find({
           parent: class1.id,
-        });
+        }).cache(60 * 60 * 24 * 30);
 
         for (let l = 0; l < functions.length; l++) {
           const function1 = functions[l].toJSON();
