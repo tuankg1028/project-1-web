@@ -96,8 +96,8 @@ async function main() {
     appsApis = [...appsApis, ...appApis];
 
     skip += 1000;
-    apps = [];
-    // apps = await Models.App.find({}).limit(1000).skip(skip);
+    // apps = [];
+    apps = await Models.App.find({}).limit(1000).skip(skip);
   }
 
   console.log("RUNNING data TYpe");
