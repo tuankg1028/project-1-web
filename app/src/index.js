@@ -122,7 +122,7 @@ async function main() {
         }
       }
 
-      let indexApi = result[dataType.name].apis.find(
+      let indexApi = result[dataType.name].apis.findIndex(
         (item) => item.name === api.name
       );
       if (indexApi === -1)
@@ -130,7 +130,7 @@ async function main() {
           ...api,
           classes: [],
         });
-      indexApi = result[dataType.name].apis.find(
+      indexApi = result[dataType.name].apis.findIndex(
         (item) => item.name === api.name
       );
 
@@ -140,7 +140,7 @@ async function main() {
       for (let k = 0; k < classes.length; k++) {
         const class1 = classes[k];
 
-        let indexClass = result[dataType.name].apis[indexApi].classes.find(
+        let indexClass = result[dataType.name].apis[indexApi].classes.findIndex(
           (item) => item.name === class1.name
         );
         if (indexClass === -1)
@@ -148,7 +148,7 @@ async function main() {
             ...class1,
             functions: [],
           });
-        indexClass = result[dataType.name].apis[indexApi].classes.find(
+        indexClass = result[dataType.name].apis[indexApi].classes.findIndex(
           (item) => item.name === class1.name
         );
 
