@@ -106,7 +106,7 @@ async function main() {
   }
 
   console.log("RUNNING data TYpe");
-  for (let i = 5; i < tree.length; i++) {
+  for (let i = 4; i < 5; i++) {
     const dataType = tree[i];
     console.log(dataType.name);
 
