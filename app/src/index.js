@@ -146,7 +146,7 @@ async function main() {
         if (api.name === "com.google.android.gms.fitness.data") {
           console.log(
             apisApp.apis.includes(api.name.trim().replace(".", "")),
-            apisApp.apis;
+            apisApp.apis
           );
         }
       }
