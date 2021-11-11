@@ -77,11 +77,7 @@ async function main() {
   });
 
   let skip = 0;
-  let apps = await Models.App.find({
-    _id: "6029eff1163e554ddd9bf9b9",
-  })
-    .limit(1000)
-    .skip(skip);
+  let apps = await Models.App.find({}).limit(1000).skip(skip);
   let appsApis = [];
   while (apps.length) {
     const appApis = apps.map((app) => {
@@ -101,12 +97,12 @@ async function main() {
     appsApis = [...appsApis, ...appApis];
 
     skip += 1000;
-    apps = [];
-    // apps = await Models.App.find({}).limit(1000).skip(skip);
+    // apps = [];
+    apps = await Models.App.find({}).limit(1000).skip(skip);
   }
 
   console.log("RUNNING data TYpe");
-  for (let i = 2; i < 3; i++) {
+  for (let i = 0; i < dataType.length; i++) {
     const dataType = tree[i];
     console.log(dataType.name);
 
@@ -141,14 +137,6 @@ async function main() {
 
         if (apisApp.apis.includes(api.name.trim().replace(/\./g, ""))) {
           result[dataType.name].apis[indexApi].count++;
-        }
-
-        if (api.name === "com.google.android.gms.fitness.data") {
-          console.log(
-            apisApp.apis.includes(api.name.trim().replace(/\./g, "")),
-            api.name.trim().replace(/\./g, ""),
-            apisApp.apis
-          );
         }
       }
 
