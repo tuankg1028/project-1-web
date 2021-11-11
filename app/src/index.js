@@ -77,8 +77,13 @@ async function main() {
   });
 
   let skip = 0;
-  let apps = await Models.App.find({}).limit(1000).skip(skip);
+  let apps = await Models.App.find({
+    _id: "6029eff1163e554ddd9bf9b9",
+  })
+    .limit(1000)
+    .skip(skip);
   let appsApis = [];
+  console.log(apps);
   while (apps.length) {
     const appApis = apps.map((app) => {
       const apis = app.apisModel ? JSON.parse(app.apisModel) : {};
@@ -98,9 +103,10 @@ async function main() {
 
     skip += 1000;
     // apps = [];
-    apps = await Models.App.find({}).limit(1000).skip(skip);
+    // apps = await Models.App.find({}).limit(1000).skip(skip);
   }
-
+  console.log(appsApis);
+  return;
   console.log("RUNNING data TYpe");
   for (let i = 0; i < tree.length; i++) {
     const dataType = tree[i];
