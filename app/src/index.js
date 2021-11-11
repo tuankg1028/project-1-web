@@ -38,9 +38,7 @@ async function initData() {
 // initData();
 
 async function main() {
-  // var data = require("/Users/a1234/Downloads/data_what_why_json.json");
-
-  // console.log(1,  config);
+  const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
   const header = [
     {
@@ -222,7 +220,7 @@ async function main1() {
     },
     {
       id: "type",
-      title: "Purpose",
+      title: "type",
     },
     {
       id: "count",
