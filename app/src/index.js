@@ -87,7 +87,7 @@ async function main() {
     const appApis = apps.map((app) => {
       const apis = app.apisModel ? JSON.parse(app.apisModel) : {};
       const apisUsed = Object.entries(apis).reduce((acc, [key, value]) => {
-        if (value == 1) acc.push(key.trim().replace(".", ""));
+        if (value == 1) acc.push(key.trim().replace(/\./g, ""));
 
         return acc;
       }, []);
@@ -139,14 +139,14 @@ async function main() {
       for (let f = 0; f < appsApis.length; f++) {
         const apisApp = appsApis[f];
 
-        if (apisApp.apis.includes(api.name.trim().replace(".", ""))) {
+        if (apisApp.apis.includes(api.name.trim().replace(/\./g, ""))) {
           result[dataType.name].apis[indexApi].count++;
         }
 
         if (api.name === "com.google.android.gms.fitness.data") {
           console.log(
-            apisApp.apis.includes(api.name.trim().replace(".", "")),
-            api.name.trim().replace(".", ""),
+            apisApp.apis.includes(api.name.trim().replace(/\./g, "")),
+            api.name.trim().replace(/\./g, ""),
             apisApp.apis
           );
         }
