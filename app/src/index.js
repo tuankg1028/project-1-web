@@ -83,7 +83,6 @@ async function main() {
     .limit(1000)
     .skip(skip);
   let appsApis = [];
-  console.log(apps);
   while (apps.length) {
     const appApis = apps.map((app) => {
       const apis = app.apisModel ? JSON.parse(app.apisModel) : {};
@@ -94,7 +93,7 @@ async function main() {
       }, []);
 
       return {
-        ...app,
+        ...app.toJSON(),
         apis: apisUsed,
       };
     });
@@ -105,10 +104,9 @@ async function main() {
     apps = [];
     // apps = await Models.App.find({}).limit(1000).skip(skip);
   }
-  console.log(appsApis);
-  return;
+
   console.log("RUNNING data TYpe");
-  for (let i = 0; i < tree.length; i++) {
+  for (let i = 5; i < tree.length; i++) {
     const dataType = tree[i];
     console.log(dataType.name);
 
