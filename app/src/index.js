@@ -143,8 +143,8 @@ async function main() {
       for (let f = 0; f < appsApis.length; f++) {
         const apisApp = appsApis[f];
 
-        console.log(api.name.trim.replace(".", ""), apisApp.apis);
-        if (apisApp.apis.includes(api.name.trim.replace(".", ""))) {
+        console.log(api.name.trim().replace(".", ""), apisApp.apis);
+        if (apisApp.apis.includes(api.name.trim().replace(".", ""))) {
           result[dataType.name].apis[indexApi].count++;
         }
       }
