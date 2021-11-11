@@ -83,7 +83,7 @@ async function main() {
     const appApis = apps.map((app) => {
       const apis = app.apisModel ? JSON.parse(app.apisModel) : {};
       const apisUsed = Object.entries(apis).reduce((acc, [key, value]) => {
-        if (value == 1) acc.push(key);
+        if (value == 1) acc.push(key.trim().replace(".", ""));
 
         return acc;
       }, []);
@@ -135,7 +135,7 @@ async function main() {
       for (let f = 0; f < appsApis.length; f++) {
         const apisApp = appsApis[f];
 
-        if (apisApp.apis.includes(api.name.replace(".", ""))) {
+        if (apisApp.apis.includes(api.name.trim().replace(".", ""))) {
           result[dataType.name].apis[indexApi].count++;
         }
       }
@@ -212,7 +212,7 @@ main();
 
 async function main1() {
   const createCsvWriter = require("csv-writer").createObjectCsvWriter;
-
+  console.log(1);
   const header = [
     {
       id: "stt",
@@ -226,6 +226,10 @@ async function main1() {
       id: "count",
       title: "so lan xuat hien",
     },
+    {
+      id: "keyvalue",
+      title: "Key & Value",
+    },
   ];
   const result = {};
   var readline = require("linebyline"),
@@ -236,17 +240,21 @@ async function main1() {
     if (app && app.data) {
       const values = Object.values(app.data);
 
-      values.forEach((item) => {
-        let valType = item.split("|");
+      for (const key in app.data) {
+        const value = app.data[key];
+        let valType = value.split("|");
+        const valueOfKey = valType[0];
 
-        // valType.splice(0, 1);
-        // valType.splice(-1, 1);
+        valType.splice(0, 1);
+        valType.splice(-1, 1);
 
-        // const key = valType.join("|").trim();
+        const typeVAlue = valType.join("|").trim();
 
-        const key = valType[valType.length - 1].trim();
-        result[key] ? result[key]++ : (result[key] = 1);
-      });
+        // const key = valType[valType.length - 1].trim();
+        result[typeVAlue + "&&&" + `${key}: ${valueOfKey}`]
+          ? result[typeVAlue + "&&&" + `${key}: ${valueOfKey}`]++
+          : (result[typeVAlue + "&&&" + `${key}: ${valueOfKey}`] = 1);
+      }
     }
   })
     .on("error", function (e) {
@@ -256,15 +264,18 @@ async function main1() {
       const rows = Object.entries(result).map((item, index) => {
         return {
           stt: index + 1,
-          type: item[0],
+          type: item[0].split("&&&")[0],
           count: item[1],
+          keyvalue: item[0].split("&&&")[1],
         };
       });
       const csvWriterNo = createCsvWriter({
-        path: "file1-purpose.csv",
+        path: "file1-type.csv",
         header,
       });
       csvWriterNo.writeRecords(rows);
+
+      console.log("DONE");
     });
 }
 // main1();
