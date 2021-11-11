@@ -77,7 +77,11 @@ async function main() {
   }).cache(60 * 60 * 24 * 30);
 
   let skip = 0;
-  let apps = await Models.App.find({}).limit(1000).skip(skip);
+  let apps = await Models.App.find({
+    categoryName: "Health & Fitness",
+  })
+    .limit(1000)
+    .skip(skip);
   let appsApis = [];
   while (apps.length) {
     const appApis = apps.map((app) => {
@@ -98,7 +102,11 @@ async function main() {
 
     skip += 1000;
     // apps = [];
-    apps = await Models.App.find({}).limit(1000).skip(skip);
+    apps = await Models.App.find({
+      categoryName: "Health & Fitness",
+    })
+      .limit(1000)
+      .skip(skip);
   }
 
   console.log("RUNNING data TYpe");
@@ -135,7 +143,8 @@ async function main() {
       for (let f = 0; f < appsApis.length; f++) {
         const apisApp = appsApis[f];
 
-        if (apisApp.apis.includes(api.name.trim().replace(".", ""))) {
+        console.log(api.name.trim.replace(".", ""), apisApp.apis);
+        if (apisApp.apis.includes(api.name.trim.replace(".", ""))) {
           result[dataType.name].apis[indexApi].count++;
         }
       }
