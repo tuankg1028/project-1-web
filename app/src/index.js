@@ -74,14 +74,10 @@ async function main() {
   const result = {};
   const tree = await Models.Tree.find({
     parent: "602951a2163e554ddd9a1262",
-  }).cache(60 * 60 * 24 * 30);
+  });
 
   let skip = 0;
-  let apps = await Models.App.find({
-    categoryName: "Health & Fitness",
-  })
-    .limit(1000)
-    .skip(skip);
+  let apps = await Models.App.find({}).limit(1000).skip(skip);
   let appsApis = [];
   while (apps.length) {
     const appApis = apps.map((app) => {
@@ -102,11 +98,7 @@ async function main() {
 
     skip += 1000;
     // apps = [];
-    apps = await Models.App.find({
-      categoryName: "Health & Fitness",
-    })
-      .limit(1000)
-      .skip(skip);
+    apps = await Models.App.find({}).limit(1000).skip(skip);
   }
 
   console.log("RUNNING data TYpe");
@@ -121,7 +113,7 @@ async function main() {
     // apis
     const apis = await Models.Tree.find({
       parent: dataType.id,
-    }).cache(60 * 60 * 24 * 30);
+    });
 
     for (let j = 0; j < apis.length; j++) {
       const api = apis[j].toJSON();
@@ -143,7 +135,6 @@ async function main() {
       for (let f = 0; f < appsApis.length; f++) {
         const apisApp = appsApis[f];
 
-        console.log(api.name.trim().replace(".", ""), apisApp.apis);
         if (apisApp.apis.includes(api.name.trim().replace(".", ""))) {
           result[dataType.name].apis[indexApi].count++;
         }
@@ -152,7 +143,7 @@ async function main() {
       // classes
       const classes = await Models.Tree.find({
         parent: api.id,
-      }).cache(60 * 60 * 24 * 30);
+      });
       for (let k = 0; k < classes.length; k++) {
         const class1 = classes[k].toJSON();
 
@@ -170,7 +161,7 @@ async function main() {
         // functions
         const functions = await Models.Tree.find({
           parent: class1.id,
-        }).cache(60 * 60 * 24 * 30);
+        });
 
         for (let l = 0; l < functions.length; l++) {
           const function1 = functions[l].toJSON();
