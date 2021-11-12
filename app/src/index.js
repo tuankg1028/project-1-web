@@ -35,7 +35,7 @@ async function initData() {
   // await Helpers.Init.getAppsUninstall();
   // await Helpers.Init.updateApps();
 }
-// initData();
+initData();
 
 async function main() {
   const createCsvWriter = require("csv-writer").createObjectCsvWriter;
@@ -208,7 +208,7 @@ async function main() {
 
   console.log("DONE");
 }
-main();
+// main();
 
 async function main1() {
   const createCsvWriter = require("csv-writer").createObjectCsvWriter;
@@ -279,6 +279,27 @@ async function main1() {
     });
 }
 // main1();
+
+async function main2() {
+  const result = [];
+  var readline = require("linebyline"),
+    rl = readline("/Users/a1234/Downloads/data_collect_purpose.json");
+  rl.on("line", function (line, lineCount, byteCount) {
+    // do something with the line of text
+    const app = JSON.parse(line);
+
+    result.push(app.app);
+  })
+    .on("error", function (e) {
+      // something went wrong
+    })
+    .on("close", function (e) {
+      console.log(result);
+
+      console.log("DONE");
+    });
+}
+// main2();
 app.get("/", function (req, res) {
   res.render("pages/index");
 });
