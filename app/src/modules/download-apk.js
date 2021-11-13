@@ -9,9 +9,10 @@ async function main() {
   Helpers.Logger.info("Running");
   const apps = await Models.App.find({
     supplier: "mobipurpose",
-  }).limit(1);
+  });
 
   for (let i = 0; i < apps.length; i++) {
+    await sleep(1000);
     const app = apps[i];
     const { appName, id } = app;
     console.log(`Running ${i}/${apps.length}`);
@@ -43,4 +44,7 @@ async function main() {
   }
 }
 
+function sleep(time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
 main();
