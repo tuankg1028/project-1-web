@@ -127,5 +127,6 @@ async function main2() {
 
   console.log("Creating apps into db");
   await Promise.all(apps.map((app) => Models.App.create(app)));
+  console.log("Done");
 }
 main2();
