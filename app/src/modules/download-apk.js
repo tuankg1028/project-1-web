@@ -23,7 +23,7 @@ async function main() {
 
       const appAPKPureId = listAppIdsFromAPKPure[0];
       console.log(appAPKPureId);
-      return;
+
       await Models.App.updateOne(
         {
           _id: id,
