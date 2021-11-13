@@ -17,11 +17,12 @@ async function main() {
     const apps = await Models.App.find({
       supplier: "mobipurpose",
       isCompletedJVCode: false,
-    });
+    }).limit(1);
 
     for (let i = 0; i < apps.length; i++) {
       const app = apps[i];
 
+      console.log(app.appName);
       await _createNodes(app.id);
     }
   } catch (err) {
