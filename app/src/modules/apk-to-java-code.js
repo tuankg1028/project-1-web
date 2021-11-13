@@ -13,11 +13,12 @@ const slug = require("slug");
 
 async function main() {
   try {
-    const limit = 100;
+    const limit = 10;
     let skip = 0;
     const contition = {
       supplier: "mobipurpose",
       isCompleted: false,
+      appAPKPureId: { $exists: true },
     };
     let apps = await Models.App.find(contition).limit(limit).skip(skip);
 
