@@ -4,12 +4,11 @@ const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 import Models from "../models";
-import Helpers from "../helpers"
+import Helpers from "../helpers";
 
 const csv = require("csvtojson");
 const _ = require("lodash");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
-const Helpers = require("../helpers");
 const Services = require("../services");
 const slug = require("slug");
 
