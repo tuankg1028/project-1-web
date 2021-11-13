@@ -110,7 +110,7 @@ async function main2() {
   apps = apps.filter((app) => !app.isExisted);
   console.log("Total apps not in db", apps.length.length);
   apps = apps.map((app) => ({
-    appName: app.title,
+    appName: app.title.toLowerCase(),
     categoryName: app.categoryName,
     developer: app.developer,
     updatedDate: moment(app.updated).utc().format("MMMM DD, YYYY"),
