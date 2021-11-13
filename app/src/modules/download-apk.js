@@ -22,8 +22,6 @@ async function main() {
         throw new Error("No app found from APK Pure");
 
       const appAPKPureId = listAppIdsFromAPKPure[0];
-      console.log(appAPKPureId);
-
       await Models.App.updateOne(
         {
           _id: id,
@@ -37,9 +35,7 @@ async function main() {
         (err, data) =>
           Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
       );
-
       Helpers.Logger.step("Step 2: Download apk");
-
       await Services.APKPure.download(appName, appAPKPureId, id, apkSourcePath);
     } catch (err) {
       Helpers.Logger.error(err.message);
