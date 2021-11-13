@@ -75,9 +75,7 @@ async function main2() {
 
   let apps = await Promise.all(
     packageIds.map((packageId) =>
-      gplay
-        .app({ appId: packageId.trim().toLowerCase() })
-        .catch((error) => null)
+      gplay.app({ appId: packageId.trim().toLowerCase() }).catch((_) => null)
     )
   );
   // filter not found app
@@ -108,7 +106,7 @@ async function main2() {
 
   // filter out not existed
   apps = apps.filter((app) => !app.isExisted);
-  console.log("Total apps not in db", apps.length.length);
+  console.log("Total apps not in db", apps.length);
   apps = apps.map((app) => ({
     appName: app.title.toLowerCase(),
     categoryName: app.categoryName,
