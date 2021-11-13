@@ -65,7 +65,7 @@ function getCategoryName(originalCategoryName) {
   }
   return;
 }
-async function main2() {
+async function main() {
   console.log("RUNNING");
   var gplay = require("google-play-scraper");
   let packageIds = require("../../data/packageIds.json");
@@ -129,4 +129,4 @@ async function main2() {
   await Promise.all(apps.map((app) => Models.App.create(app)));
   console.log("Done");
 }
-main2();
+main();
