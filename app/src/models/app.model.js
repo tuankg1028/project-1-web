@@ -13,6 +13,7 @@ var schema = new Schema(
     currentVersion: String,
     size: String,
     installs: String,
+    minInstalls: String,
     maxInstalls: String,
     privacyLink: String,
     chplayLink: String,
