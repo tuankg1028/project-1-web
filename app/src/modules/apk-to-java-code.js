@@ -5,18 +5,17 @@ const fs = require("fs");
 const path = require("path");
 import Models from "../models";
 import Helpers from "../helpers";
-
+import Services from "../services";
 const csv = require("csvtojson");
 const _ = require("lodash");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
-const Services = require("../services");
 const slug = require("slug");
 
 async function main() {
   try {
     const apps = await Models.App.find({
       supplier: "mobipurpose",
-      isCompletedJVCode: false,
+      isCompleted: false,
     }).limit(1);
 
     for (let i = 0; i < apps.length; i++) {
