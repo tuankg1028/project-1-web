@@ -17,8 +17,14 @@ var schema = new Schema(
     maxInstalls: String,
     privacyLink: String,
     chplayLink: String,
-    isCompleted: Boolean,
-    isCompletedJVCode: Boolean,
+    isCompleted: {
+      default: false,
+      type: Boolean,
+    },
+    isCompletedJVCode: {
+      default: false,
+      type: Boolean,
+    },
     appAPKPureId: String,
     appIdCHPlay: String,
     CHPlayLink: String,
