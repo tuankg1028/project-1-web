@@ -13,6 +13,7 @@ var schema = new Schema(
     currentVersion: String,
     size: String,
     installs: String,
+    maxInstalls: String,
     privacyLink: String,
     chplayLink: String,
     isCompleted: Boolean,
@@ -22,6 +23,7 @@ var schema = new Schema(
     CHPlayLink: String,
     apisModel: String,
     PPModel: String,
+    supplier: String,
     nodes: [
       {
         id: Schema.Types.ObjectId,
