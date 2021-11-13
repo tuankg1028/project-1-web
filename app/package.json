@@ -21,7 +21,8 @@
     "apktojava": "babel-watch src/modules/apk_to_java.js",
     "computingDistance": "babel-watch src/modules/distance-app.js",
     "getAppInfo": "babel-node --max-old-space-size=30000 src/modules/get-appInfo-from-packageId.js",
-    "downloadApk": "babel-node --max-old-space-size=30000 src/modules/download-apk.js"
+    "downloadApk": "babel-node --max-old-space-size=30000 src/modules/download-apk.js",
+    "apkToJavaCode": "babel-node --max-old-space-size=30000 src/modules/apk-to-java-code.js"
   },
   "keywords": [],
   "author": "",
