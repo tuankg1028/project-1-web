@@ -13,7 +13,7 @@ const slug = require("slug");
 
 async function main() {
   try {
-    const limit = 10;
+    const limit = 3;
     let skip = 0;
     const contition = {
       supplier: "mobipurpose",
