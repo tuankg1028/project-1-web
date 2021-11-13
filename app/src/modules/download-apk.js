@@ -4,7 +4,7 @@ import Models from "../models";
 import Services from "../services";
 import Helpers from "../helpers";
 
-const apkSourcePath = "/Users/a1234/individual/abc/project-1-web/app/apks";
+const apkSourcePath = "/data/apkfile/mobipurpose";
 async function main() {
   Helpers.Logger.info("Running");
   const apps = await Models.App.find({
