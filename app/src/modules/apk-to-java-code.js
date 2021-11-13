@@ -13,17 +13,20 @@ const slug = require("slug");
 
 async function main() {
   try {
-    const apps = await Models.App.find({
+    const limit = 100;
+    let skip = 0;
+    const contition = {
       supplier: "mobipurpose",
       isCompleted: false,
-    }).limit(1);
+    };
+    let apps = await Models.App.find(contition).limit(limit).skip(skip);
 
-    for (let i = 0; i < apps.length; i++) {
-      const app = apps[i];
+    do {
+      await Promise.all(apps.map((app) => _createNodes(app.id)));
 
-      console.log(app.appName);
-      await _createNodes(app.id);
-    }
+      skip += limit;
+      apps = await Models.App.find(contition).limit(limit).skip(skip);
+    } while (apps && apps.length);
   } catch (err) {
     Helpers.Logger.error(err.message);
   }
