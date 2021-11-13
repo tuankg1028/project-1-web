@@ -9,6 +9,7 @@ async function main() {
   Helpers.Logger.info("Running");
   const apps = await Models.App.find({
     supplier: "mobipurpose",
+    appAPKPureId: { $exists: false },
   });
 
   for (let i = 0; i < apps.length; i++) {
