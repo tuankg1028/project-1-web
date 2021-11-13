@@ -57,10 +57,10 @@ const _createNodes = async (appIdDB) => {
     });
     await Models.App.updateOne(
       {
-        isCompletedJVCode: true,
+        _id: appIdDB,
       },
       {
-        _id: appIdDB,
+        isCompletedJVCode: true,
       }
     );
 
