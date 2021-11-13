@@ -12,7 +12,7 @@ async function main() {
   });
 
   for (let i = 0; i < apps.length; i++) {
-    await sleep(1000);
+    await sleep(5000);
     const app = apps[i];
     const { appName, id } = app;
     console.log(`Running ${i}/${apps.length}`);
