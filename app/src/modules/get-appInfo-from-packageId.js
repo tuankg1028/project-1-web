@@ -78,6 +78,8 @@ async function main() {
   // update functions and apis for app
   getFunctionsApisForApps();
 }
+main();
+
 async function getInfoForApp() {
   console.log("RUNNING");
 
