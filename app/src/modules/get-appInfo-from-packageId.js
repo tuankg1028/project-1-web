@@ -70,7 +70,15 @@ function getCategoryName(originalCategoryName) {
   }
   return;
 }
+
 async function main() {
+  // getInfoForApp();
+  // getLabelsAndKeyValueForApp();
+
+  // update functions and apis for app
+  getFunctionsApisForApps();
+}
+async function getInfoForApp() {
   console.log("RUNNING");
 
   let packageIds = require("../../data/packageIds.json");
@@ -153,7 +161,7 @@ async function main() {
   }
   console.log("Done");
 }
-// main();
+// getInfoForApp();
 
 async function getLabelsAndKeyValueForApp() {
   console.log("Running");
@@ -255,30 +263,28 @@ async function getLabelsAndKeyValueForApp() {
   console.log("DONE");
   return;
 }
-getLabelsAndKeyValueForApp();
+// getLabelsAndKeyValueForApp();
 
 // getFunctionsApisForApps();
 async function getFunctionsApisForApps() {
+  console.log("Running");
   let file2 = await csv({
     noheader: true,
     output: "csv",
   }).fromFile(path.join(__dirname, "../../data/file2.csv"));
-  console.log(1);
   const apps = await Models.App.find({
     isExistedMobiPurpose: true,
     isCompleted: true,
     nodes: { $exists: true }, //
     dataTypes: { $exists: true }, //
-  }).limit(1);
-  console.log(apps);
+  });
   for (let i = 0; i < apps.length; i++) {
     const app = apps[i];
-    console.log(app.appName);
+    console.log(`Running ${i}/${apps.length}`);
 
     const { nodes, dataTypes } = app;
     let functionsInfiles = [];
 
-    console.log("nodes", nodes.length);
     file2.forEach((item, index) => {
       const [, , , , functionItem] = item;
       if (index === 0 || !functionItem) return;
@@ -292,12 +298,10 @@ async function getFunctionsApisForApps() {
     const functionsInfiles2 = functionsInfiles.filter((item) =>
       dataTypes.includes(item[7].trim())
     );
-    console.log("functionsInfiles2", functionsInfiles2.length);
 
     const functionsInfiles1 = functionsInfiles.filter(
       (item) => !dataTypes.includes(item[7].trim())
     );
-    console.log("functionsInfiles1", functionsInfiles1.length);
 
     const dynamicFunctions = _.uniq(_.map(functionsInfiles1, 4));
     const dynamicApis = _.uniq(_.map(functionsInfiles1, 2));
