@@ -267,7 +267,7 @@ async function getLabelsAndKeyValueForApp() {
 
 // getFunctionsApisForApps();
 async function getFunctionsApisForApps() {
-  console.log("Running");
+  console.log("Running getFunctionsApisForApps");
   let file2 = await csv({
     noheader: true,
     output: "csv",
@@ -278,6 +278,8 @@ async function getFunctionsApisForApps() {
     nodes: { $exists: true }, //
     dataTypes: { $exists: true }, //
   });
+
+  console.log("Total apps: {getFunctionsApisForApps}");
   for (let i = 0; i < apps.length; i++) {
     const app = apps[i];
     console.log(`Running ${i}/${apps.length}`);
