@@ -161,12 +161,14 @@ async function getLabelsAndKeyValueForApp() {
     noheader: true,
     output: "csv",
   }).fromFile(path.join(__dirname, "../../data/file2.csv"));
+  console.log(1);
 
   let file1 = await csv({
     noheader: true,
     output: "csv",
   }).fromFile(path.join(__dirname, "../../data/file1-key-value-type.csv"));
   const appsKeyValues = {};
+  console.log(2);
 
   await new Promise((resolve, reject) => {
     var readline = require("linebyline"),
@@ -193,7 +195,7 @@ async function getLabelsAndKeyValueForApp() {
         resolve();
       });
   });
-
+  console.log(3);
   const apps = await Models.App.find({
     isExistedMobiPurpose: true,
     isCompleted: true,
@@ -257,12 +259,25 @@ async function getLabelsAndKeyValueForApp() {
 }
 getLabelsAndKeyValueForApp();
 
+// getFunctionsApisForApps();
 async function getFunctionsApisForApps() {
-  const apps = await Models.App.find({ _id: "618f4a5337d00825b236e015" });
-
+  let file2 = await csv({
+    noheader: true,
+    output: "csv",
+  }).fromFile(path.join(__dirname, "../../data/file2.csv"));
+  console.log(1);
+  const apps = await Models.App.find({
+    isExistedMobiPurpose: true,
+    isCompleted: true,
+    nodes: { $exists: true }, //
+    dataTypes: { $exists: true }, //
+  }).limit(1);
+  console.log(apps);
   for (let i = 0; i < apps.length; i++) {
     const app = apps[i];
-    const { nodes, labels } = app;
+    console.log(app.appName);
+
+    const { nodes, dataTypes } = app;
     let functionsInfiles = [];
 
     console.log("nodes", nodes.length);
@@ -277,21 +292,33 @@ async function getFunctionsApisForApps() {
 
     // filter functions has lables
     const functionsInfiles2 = functionsInfiles.filter((item) =>
-      labels.includes(item[7].trim())
+      dataTypes.includes(item[7].trim())
     );
     console.log("functionsInfiles2", functionsInfiles2.length);
 
     const functionsInfiles1 = functionsInfiles.filter(
-      (item) => !labels.includes(item[7].trim())
+      (item) => !dataTypes.includes(item[7].trim())
     );
     console.log("functionsInfiles1", functionsInfiles1.length);
 
-    const dynamicFunctions = _.map(functionsInfiles1, 4);
-    const dynamicApis = _.map(functionsInfiles1, 2);
+    const dynamicFunctions = _.uniq(_.map(functionsInfiles1, 4));
+    const dynamicApis = _.uniq(_.map(functionsInfiles1, 2));
 
-    const staticFunctions = _.map(functionsInfiles2, 4);
-    const staticApis = _.map(functionsInfiles2, 2);
+    const staticFunctions = _.uniq(_.map(functionsInfiles2, 4));
+    const staticApis = _.uniq(_.map(functionsInfiles2, 2));
 
-    console.log({ dynamicFunctions, dynamicApis, staticFunctions, staticApis });
+    await Models.App.updateOne(
+      {
+        _id: app.id,
+      },
+      {
+        $set: { dynamicFunctions, dynamicApis, staticFunctions, staticApis },
+      },
+      {},
+      (err, data) =>
+        Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
+    );
   }
+
+  console.log("Done");
 }
