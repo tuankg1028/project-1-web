@@ -161,14 +161,12 @@ async function getLabelsAndKeyValueForApp() {
     noheader: true,
     output: "csv",
   }).fromFile(path.join(__dirname, "../../data/file2.csv"));
-  console.log(1);
 
   let file1 = await csv({
     noheader: true,
     output: "csv",
   }).fromFile(path.join(__dirname, "../../data/file1-key-value-type.csv"));
   const appsKeyValues = {};
-  console.log(2);
 
   await new Promise((resolve, reject) => {
     var readline = require("linebyline"),
@@ -195,7 +193,7 @@ async function getLabelsAndKeyValueForApp() {
         resolve();
       });
   });
-  console.log(3);
+
   const apps = await Models.App.find({
     isExistedMobiPurpose: true,
     isCompleted: true,

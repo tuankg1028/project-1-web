@@ -52,6 +52,13 @@ var schema = new Schema(
     collectionData: String,
     thirdPartyData: String,
     retentionData: String,
+    isExistedMobiPurpose: Boolean,
+    dataTypes: [String],
+    keyAndValue: [String],
+    dynamicFunctions: [String],
+    dynamicApis: [String],
+    staticFunctions: [String],
+    staticApis: [String],
   },
   {
     timestamps: true,
