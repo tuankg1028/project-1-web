@@ -34,13 +34,15 @@ const seach = async (appName) => {
     Helpers.Logger.error(`ERROR: seach APK for ${appName} app`);
   }
 };
-
+function sleep(time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
 const download = async (appName, appIdFromAPKPure, id, apkSourcePath) => {
   try {
     let pathFile = path.join(apkSourcePath, "/" + id + ".apk");
     // STEP 1: GET Link to download
     const response = await API.get(`${appIdFromAPKPure}/versions`);
-
+    await sleep(3000);
     const $ = cheerio.load(response.data);
     let downloadLink;
     $(".ver-wrap li").each(function () {
@@ -58,6 +60,7 @@ const download = async (appName, appIdFromAPKPure, id, apkSourcePath) => {
 
     // get download link
     const downloadPageResponse = await API.get(downloadLink);
+    await sleep(3000);
     const $DownloadLink = cheerio.load(downloadPageResponse.data);
     const downloadLinkTmp = $DownloadLink("#download_link").attr("href");
 
@@ -65,6 +68,7 @@ const download = async (appName, appIdFromAPKPure, id, apkSourcePath) => {
     if (!downloadLinkTmp) {
       // go to list of download page (ex: https://apkpure.com/facebook/com.facebook.katana/variant/304.0.0.39.118-APK#variants)
       const downloadListResponse = await API.get(downloadLink);
+      await sleep(3000);
       const $DownloadList = cheerio.load(downloadListResponse.data);
       const downloadPageLink = $DownloadList(".table .table-row")
         .last()
@@ -74,6 +78,7 @@ const download = async (appName, appIdFromAPKPure, id, apkSourcePath) => {
 
       // get link on "click here" button
       const downloadPageResponse1 = await API.get(downloadLink);
+      await sleep(3000);
       const $DownloadLink1 = cheerio.load(downloadPageResponse1.data);
       const downloadLinkTmp1 = $DownloadLink1("#download_link").attr("href");
 
