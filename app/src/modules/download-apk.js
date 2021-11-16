@@ -5,6 +5,8 @@ import Services from "../services";
 import Helpers from "../helpers";
 import _ from "lodash";
 import fs from "fs";
+import path from "path";
+
 const apkSourcePath = "/data/apkfile/mobipurpose-apks";
 async function main() {
   Helpers.Logger.info("Running");
