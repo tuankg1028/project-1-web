@@ -3,7 +3,8 @@ import "../configs/mongoose.config";
 import Models from "../models";
 import Services from "../services";
 import Helpers from "../helpers";
-
+import _ from "lodash";
+import fs from "fs";
 const apkSourcePath = "/data/apkfile/mobipurpose-apks";
 async function main() {
   Helpers.Logger.info("Running");
@@ -11,7 +12,17 @@ async function main() {
     supplier: "mobipurpose",
     appAPKPureId: { $exists: false },
   });
+  const appChunk = _.chunk(_.map(apps, "appName"), 200);
 
+  appChunk.forEach((appNames, index) => {
+    fs.writeFile(
+      path.join(__dirname, `/mobipurpose-apps/list_apps${index + 1}.txt`),
+      JSON.stringify(appNames),
+      null,
+      () => {}
+    );
+  });
+  return;
   for (let i = 0; i < apps.length; i++) {
     // await sleep(10000 * 6);
     const app = apps[i];
