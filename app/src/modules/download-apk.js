@@ -13,6 +13,16 @@ async function main() {
   const apps = await Models.App.find({
     supplier: "mobipurpose",
     appAPKPureId: { $exists: false },
+    categoryName: {
+      $in: [
+        "Communication",
+        "Books & Reference",
+        "Lifestyle",
+        "Photography",
+        "News & Magazines",
+        "Pretend Play",
+      ],
+    },
   });
   // const appChunk = _.chunk(_.map(apps, "appName"), 200);
 
@@ -26,7 +36,7 @@ async function main() {
   // });
   // return;
   for (let i = 0; i < apps.length; i++) {
-    await sleep(10000 * 6);
+    await sleep(10000 * 5);
     const app = apps[i];
     const { appName, id } = app;
     console.log(`Running ${i}/${apps.length}`);
