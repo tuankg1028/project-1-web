@@ -440,7 +440,7 @@ async function computingDistance() {
     const testingApps = await Models.App.find({
       isExistedMobiPurpose: true,
       isCompleted: true,
-    }).limit(1);
+    });
 
     for (let k = 0; k < testingApps.length; k++) {
       try {
