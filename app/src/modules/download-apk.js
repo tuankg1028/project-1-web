@@ -13,16 +13,6 @@ async function main() {
   const apps = await Models.App.find({
     supplier: "mobipurpose",
     appAPKPureId: { $exists: false },
-    categoryName: {
-      $in: [
-        "Communication",
-        "Books & Reference",
-        "Lifestyle",
-        "Photography",
-        "News & Magazines",
-        "Pretend Play",
-      ],
-    },
   });
   // const appChunk = _.chunk(_.map(apps, "appName"), 200);
 

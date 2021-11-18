@@ -19,16 +19,6 @@ async function main() {
       supplier: "mobipurpose",
       isCompleted: false,
       appAPKPureId: { $exists: true },
-      categoryName: {
-        $in: [
-          "Communication",
-          "Books & Reference",
-          "Lifestyle",
-          "Photography",
-          "News & Magazines",
-          "Pretend Play",
-        ],
-      },
     };
     let apps = await Models.App.find(contition).limit(limit).skip(skip);
 
