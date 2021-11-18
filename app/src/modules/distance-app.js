@@ -417,26 +417,30 @@ async function computingDistance() {
     //   // categoryName: category,
     //   // isCompleted: true,
     // });
-    let beginApps = await Models.BeginDataset.find()
-      .sort({
-        createdAt: "desc",
-      })
-      .limit(200);
-    beginApps = _.map(beginApps, (app) => {
-      app = app.toJSON();
-      return { ...app, type: "begin" };
-    });
-    let maliciousApps = await Models.MaliciousDataset.find()
-      .sort({
-        createdAt: "desc",
-      })
-      .limit(829);
-    maliciousApps = _.map(maliciousApps, (app) => {
-      app = app.toJSON();
-      return { ...app, type: "malicious" };
-    });
-    const testingApps = [...beginApps, ...maliciousApps];
-    console.log(testingApps);
+    // let beginApps = await Models.BeginDataset.find()
+    //   .sort({
+    //     createdAt: "desc",
+    //   })
+    //   .limit(200);
+    // beginApps = _.map(beginApps, (app) => {
+    //   app = app.toJSON();
+    //   return { ...app, type: "begin" };
+    // });
+    // let maliciousApps = await Models.MaliciousDataset.find()
+    //   .sort({
+    //     createdAt: "desc",
+    //   })
+    //   .limit(829);
+    // maliciousApps = _.map(maliciousApps, (app) => {
+    //   app = app.toJSON();
+    //   return { ...app, type: "malicious" };
+    // });
+    // const testingApps = [...beginApps, ...maliciousApps];
+
+    const testingApps = await Models.App.find({
+      isExistedMobiPurpose: true,
+      isCompleted: true,
+    }).limit(1);
 
     for (let k = 0; k < testingApps.length; k++) {
       try {
@@ -501,15 +505,17 @@ async function computingDistance() {
                       (1 - vN2) * disN2 * (1 - vCaa) +
                       2 * (1 - vCaa) * depthCaa) || 0);
 
-                // giai thuat ban đầu
-                // const result =
-                // 1 -
-                // ((2 * (1 - vRoot) * (1 - vCaa) * depthCaa) /
-                //   ((1 - vN1) * disN1 * (1 - vCaa) +
-                //     (1 - vN2) * disN2 * (1 - vCaa) +
-                //     2 * (1 - vRoot) * (1 - vCaa) * depthCaa) || 0);
+                if (
+                  app.dynamicFunctions.includes(comparingNode.name) ||
+                  app.dynamicApis.includes(comparingNode.name)
+                ) {
+                  console.log(111, comparingNode.name);
+                  result =
+                    result +
+                    (app.dynamicFunctions.length / app.staticFunctions.length) *
+                      result;
+                }
               }
-              // console.log(vRoot, vCaa, depthCaa, vN1, vN2, disN1, disN2, result);
             }
             // not exist
             else {
