@@ -3,6 +3,7 @@ app/dist
 app/data/apps
 app/sourceTemp
 app/apkTemp
+app/.env
 .docker
 app/jadx
 fogify-test/application/code/dist

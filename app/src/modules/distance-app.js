@@ -438,7 +438,7 @@ async function computingDistance() {
     // const testingApps = [...beginApps, ...maliciousApps];
 
     const testingApps = await Models.App.find({
-      $or: [{ supplier: "mobipurpose", isExistedMobiPurpose: true }],
+      $or: [{ supplier: "mobipurpose" }, { isExistedMobiPurpose: true }],
       isCompleted: true,
     });
 
