@@ -216,6 +216,8 @@ async function getLabelsAndKeyValueForApp() {
     const { nodes } = app;
     const functionsInfiles = [];
 
+    if (!appsKeyValues[app.appIdCHPlay]) continue;
+
     file2.forEach((item, index) => {
       const [, , , , functionItem] = item;
       if (index === 0 || !functionItem) return;
