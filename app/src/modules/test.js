@@ -192,12 +192,13 @@ async function main2() {
 
   let apps = [...app1, ...app2].map((app) => ({
     // ...app,
+    id: app.id,
     appName: app.appName,
     distance: app.distance,
     categoryName: getCategoryNameBy(app.categoryName),
   }));
+  console.log(app1.length, apps2.length, apps.length);
   apps = _.uniqBy(apps, "id");
-
   console.log(apps.length);
   const appsByGroup = _.groupBy(apps, "categoryName");
 
