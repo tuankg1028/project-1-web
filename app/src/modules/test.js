@@ -197,7 +197,7 @@ async function main2() {
     distance: app.distance,
     categoryName: getCategoryNameBy(app.categoryName),
   }));
-  console.log(app1.length, apps2.length, apps.length);
+  console.log(app1.length, app2.length, apps.length);
   apps = _.uniqBy(apps, "id");
   console.log(apps.length);
   const appsByGroup = _.groupBy(apps, "categoryName");
