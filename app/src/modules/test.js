@@ -208,7 +208,6 @@ async function main2() {
     distance: app.distance,
     categoryName: getCategoryNameBy(app.categoryName),
   }));
-  console.log(app1.length, app2.length, apps.length);
   apps = _.uniqBy(apps, "appName");
   console.log(apps.length);
   const appsByGroup = _.groupBy(apps, "categoryName");
@@ -229,15 +228,13 @@ async function main2() {
       }
     );
 
-    console.log(1, maxDistance, minDistance, ranges);
+    console.log(1, categoryName, ranges);
 
     apps.forEach((app) => {
       const { distance } = app;
 
       ranges.forEach((range, index) => {
         if (_.inRange(distance, ...range)) {
-          console.log("inRange", distance, range, index + 1);
-
           Models.App.updateOne(
             {
               _id: app.id,
@@ -247,11 +244,7 @@ async function main2() {
                 riskLevel: index + 1,
               },
             },
-            {},
-            (err, data) =>
-              Helpers.Logger.info(
-                `Data saved: ${JSON.stringify(data, null, 2)}`
-              )
+            {}
           );
         }
       });
