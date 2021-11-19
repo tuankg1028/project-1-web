@@ -525,9 +525,8 @@ async function computingDistance() {
           }
         }
         const distance = totalDistance / totalLeafNode;
-        const Model =
-          app.type === "begin" ? Models.BeginDataset : Models.MaliciousDataset;
-        await Model.updateOne(
+
+        await Models.App.updateOne(
           {
             _id: app.id,
           },
