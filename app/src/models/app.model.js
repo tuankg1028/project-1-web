@@ -59,6 +59,7 @@ var schema = new Schema(
     dynamicApis: [String],
     staticFunctions: [String],
     staticApis: [String],
+    riskLevel: Number,
   },
   {
     timestamps: true,

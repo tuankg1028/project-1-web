@@ -225,7 +225,23 @@ async function main2() {
 
       ranges.forEach((range, index) => {
         if (_.inRange(distance, ...range)) {
-          console.log("inRange", distance, range);
+          console.log("inRange", distance, range, index + 1);
+
+          Models.App.updateOne(
+            {
+              _id: app.id,
+            },
+            {
+              $set: {
+                riskLevel: index + 1,
+              },
+            },
+            {},
+            (err, data) =>
+              Helpers.Logger.info(
+                `Data saved: ${JSON.stringify(data, null, 2)}`
+              )
+          );
         }
       });
     });
