@@ -183,10 +183,16 @@ async function main2() {
     Models.App.find({
       supplier: "mobipurpose",
       isCompleted: true,
+      distance: {
+        $exists: true,
+      },
     }).cache(60 * 60 * 24 * 30),
     Models.App.find({
       isExistedMobiPurpose: true,
       isCompleted: true,
+      distance: {
+        $exists: true,
+      },
     }).cache(60 * 60 * 24 * 30),
   ]);
 
