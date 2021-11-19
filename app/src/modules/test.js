@@ -87,6 +87,10 @@ async function main() {
       id: "distance",
       title: "Distance",
     },
+    {
+      id: "risk",
+      title: "riskLevel",
+    },
   ];
 
   let apps = await Models.App.find({
@@ -148,32 +152,32 @@ async function main() {
     appName: app.appName,
     distance: app.distance,
     categoryName: getCategoryNameBy(app.categoryName),
+    riskLevel: app.riskLevel,
   }));
-  console.log(apps);
 
   const appsByGroup = _.groupBy(apps, "categoryName");
 
-  // for (const categoryName in appsByGroup) {
-  //   appsByGroup[categoryName].splice(0, 10);
-  // }
-  console.log(appsByGroup);
-  // for (const categoryName in appsByGroup) {
-  //   const apps = appsByGroup[categoryName]
-  //   const maxDistance = _.maxBy(apps, 'distance')
-  //   const minDistance = _.minBy(apps, 'distance')
+  const rows = [];
+  let stt = 1;
+  for (const categoryName in appsByGroup) {
+    const apps = appsByGroup[categoryName];
 
-  //   const = Array.from({
-  //     length: 5
-  //   }, (_, index) => {
-  //     const i = (maxDistance - minDistance) / 5
-  //   })
-  // }
+    apps.forEach((app) => {
+      rows.push({
+        stt: stt++,
+        appName: app.appName,
+        category: app.categoryName,
+        distance: app.distance,
+        risk: app.riskLevel,
+      });
+    });
+  }
 
-  // const csvWriterNo = createCsvWriter({
-  //   path: "./apps_categories(2-15).csv",
-  //   header,
-  // });
-  // await csvWriterNo.writeRecords(rows);
+  const csvWriterNo = createCsvWriter({
+    path: "./apps_categories(2-15).csv",
+    header,
+  });
+  await csvWriterNo.writeRecords(rows);
   console.log("DONE");
 }
 
@@ -187,14 +191,14 @@ async function main2() {
       distance: {
         $exists: true,
       },
-    }).cache(60 * 60 * 24 * 30),
+    }),
     Models.App.find({
       isExistedMobiPurpose: true,
       isCompleted: true,
       distance: {
         $exists: true,
       },
-    }).cache(60 * 60 * 24 * 30),
+    }),
   ]);
 
   let apps = [...app1, ...app2].map((app) => ({
@@ -205,7 +209,7 @@ async function main2() {
     categoryName: getCategoryNameBy(app.categoryName),
   }));
   console.log(app1.length, app2.length, apps.length);
-  apps = _.uniqBy(apps, "id");
+  apps = _.uniqBy(apps, "appName");
   console.log(apps.length);
   const appsByGroup = _.groupBy(apps, "categoryName");
 
