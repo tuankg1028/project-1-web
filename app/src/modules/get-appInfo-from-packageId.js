@@ -171,7 +171,7 @@ async function getLabelsAndKeyValueForApp() {
     noheader: true,
     output: "csv",
   }).fromFile(path.join(__dirname, "../../data/file2.csv"));
-
+  const { DATA_COLLECTION_PURPOSE } = process.env;
   let file1 = await csv({
     noheader: true,
     output: "csv",
@@ -180,7 +180,7 @@ async function getLabelsAndKeyValueForApp() {
 
   await new Promise((resolve, reject) => {
     var readline = require("linebyline"),
-      rl = readline("/Users/a1234/Downloads/data_collect_purpose.json");
+      rl = readline(DATA_COLLECTION_PURPOSE);
     rl.on("line", function (line, lineCount, byteCount) {
       // do something with the line of text
       const app = JSON.parse(line);
@@ -205,7 +205,7 @@ async function getLabelsAndKeyValueForApp() {
   });
 
   const apps = await Models.App.find({
-    isExistedMobiPurpose: true,
+    $or: [{ supplier: "mobipurpose", isExistedMobiPurpose: true }],
     isCompleted: true,
     keyAndValue: { $exists: false },
   });
