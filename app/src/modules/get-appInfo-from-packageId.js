@@ -73,10 +73,10 @@ function getCategoryName(originalCategoryName) {
 
 async function main() {
   // getInfoForApp();
-  // getLabelsAndKeyValueForApp();
+  await getLabelsAndKeyValueForApp();
 
   // update functions and apis for app
-  getFunctionsApisForApps();
+  await getFunctionsApisForApps();
 }
 main();
 
