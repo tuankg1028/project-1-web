@@ -313,8 +313,75 @@ const categoriesThirdParty = [
     ]
   }
 ];
+
+
+const groupQuestions = {
+  1: [
+    // Food & Drink
+    "resep masakan",
+    "tip calculator : split tip",
+
+    //  Health & Fitness
+    "easy rise alarm clock",
+    "sports supplements",
+
+    // Maps & Navigation
+    "tc fuel consumption record",
+    "taiwan mrt info - taipei、taoyuan、kaohsiung",
+
+    // Music & Audio
+    "soul radio",
+    "find that song",
+
+    // Social
+    "facebook",
+    "chat rooms - find friends"
+  ],
+  2: [
+    // Beauty
+    "sweet macarons hd wallpapers",
+    "feeling of color combination",
+    // Business
+    "real estate auctions listings  - gsa listings",
+    "mobile inventory",
+    // Shopping
+    "brands for less",
+    "house of fraser",
+    // Entertainment
+    "christmas cards",
+    "sound view spectrum analyzer",
+
+    // Finance
+    "google news - daily headlines",
+    "habit calendar : track habits"
+  ],
+  3: [
+    // Sports
+    "football news - patriots",
+    "australian hunter magazine",
+
+    // Medical
+    "acupressure tips",
+    "nighttime speaking clock",
+
+    // Travel & Local
+    "walkway navi - gps for walking",
+    "google earth",
+
+    // Education
+    "brainwell mind & brain trainer",
+    "origami flower instructions 3d",
+
+    // Tools
+    "the ney is an end-blown flute sufi music wallpaper",
+    "calcnote - notepad calculator"
+  ]
+};
+
+
 export default {
   categoryGroups,
   categoriesCollection,
-  categoriesThirdParty
+  categoriesThirdParty,
+  groupQuestions
 };

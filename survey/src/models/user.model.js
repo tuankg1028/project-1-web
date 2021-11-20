@@ -56,7 +56,8 @@ var userSchema = new Schema(
     isPaid: {
       type: Boolean,
       default: false
-    }
+    },
+    group: String
   },
   {
     timestamps: true,

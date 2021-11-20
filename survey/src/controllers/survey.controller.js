@@ -106,89 +106,14 @@ class SurveyController {
       if (refreshUser.questionIds && refreshUser.questionIds.length)
         questionIdsForUser = refreshUser.questionIds;
       else {
-        const categories = _.sampleSize(
-          Object.keys(Utils.Constants.categoryGroups),
-          2
-        );
-        const categoriesForApproach1 = Object.keys(
-          Utils.Constants.categoryGroups
-        ).filter(item => !categories.includes(item));
-
-        const requiredConditions = {
-          collectionDataShowed: {
-            $ne: "[]",
-            $exists: true
-          },
-          thirdPartyDataShowed: {
-            $ne: "[]",
-            $exists: true
-          },
-          PPModel: {
-            $exists: true
-          },
-          apisModel: {
-            $exists: true
-          },
-          collectionData: {
-            $exists: true
-          },
-          thirdPartyData: {
-            $exists: true
+        const questions = await Models.App.find({
+          appName: {
+            $in: constants.groupQuestions[user.group]
           }
-        };
-        let questionIds = await Promise.all([
-          Models.App.aggregate([
-            {
-              $match: {
-                isCompleted: true,
-                categoryName: {
-                  $in: categoriesForApproach1
-                },
-                ...requiredConditions
-              }
-            },
-            { $sample: { size: 12 } },
-            { $project: { _id: 1 } }
-          ]),
+        }).select('_id');
 
-          Models.App.find({
-            isCompleted: true,
-            categoryName: {
-              $in: categories[0]
-              // Utils.Constants.categoryGroups[categories[0]]
-            },
-            ...requiredConditions
-          })
-            .select("_id")
-            .limit(7),
-          Models.App.find({
-            isCompleted: true,
-            categoryName: {
-              $in: categories[1]
-              // Utils.Constants.categoryGroups[categories[1]]
-            },
-            ...requiredConditions
-          })
-            .select("_id")
-            .limit(7)
-        ]);
-        questionIds[0] = _.map(questionIds[0], "_id");
-        questionIds[1] = _.map(questionIds[1], "_id");
-        questionIds[2] = _.map(questionIds[2], "_id");
-        questionIdsForUser = [
-          ...questionIds[1].splice(0, 5),
-          ...questionIds[2].splice(0, 5),
-          // approach 1
-          ...questionIds[0].splice(0, 4),
-          // approach 2
-          ...questionIds[1].splice(0, 2),
-          ...questionIds[2].splice(0, 2),
-          // approach 3
-          // approach 1
-          ...questionIds[0].splice(0, 8)
-        ];
+        questionIdsForUser = _.map(questions, '_id');
 
-        console.log(1, questionIdsForUser);
         await Models.User.updateOne(
           {
             _id: user.id
@@ -215,6 +140,7 @@ class SurveyController {
           console.log(item);
         }
       });
+
       const token = req.session.token;
       res.render("survey/templates/survey-question", {
         questions,

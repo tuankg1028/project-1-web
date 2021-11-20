@@ -35,6 +35,8 @@ class Authentication {
       let user = await Services.Authentication.verifyToken(token);
 
       user = await Models.User.findById(user.id);
+      if (!user) return res.redirect("/auth/login");
+
       req.user = user;
       next();
     } catch (error) {

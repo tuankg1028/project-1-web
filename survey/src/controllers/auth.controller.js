@@ -20,7 +20,7 @@ class AuthController {
   async signup(req, res, next) {
     try {
       const { campaignId, workerId, slotId } = req.params;
-
+      const { group } = req.query
       let type = campaignId && workerId && slotId ? "microworker" : "normal";
 
       const errors = req.session.errors;
@@ -32,7 +32,8 @@ class AuthController {
         campaignId,
         workerId,
         slotId,
-        type
+        type,
+        group
       });
     } catch (error) {
       next(error);
@@ -42,7 +43,7 @@ class AuthController {
   async signupHandle(req, res, next) {
     try {
       let errors = validationResult(req);
-      const { campaignId, workerId, slotId, type } = req.body;
+      const { campaignId, workerId, slotId, type, group } = req.body;
       if (!errors.isEmpty()) {
         req.session.errors = errors.array();
 
@@ -75,7 +76,8 @@ class AuthController {
         campaignId,
         workerId,
         slotId,
-        type
+        type,
+        group
       });
 
       if (!user) throw Error(res, "Create account failed");
