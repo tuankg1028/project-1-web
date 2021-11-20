@@ -517,7 +517,7 @@ class SurveyController {
         Utils.Logger.info(`getQuestion Step 3:: Prediction: ${ourPrediction}`);
         question.categoryName = category;
 
-        console.log("question",question)
+        console.log("question", Object.keys(question))
         // map group static and dynamic 
         question.dynamicGroup = JSON.parse(question.dynamicGroup || "{}")
         question.staticGroup = JSON.parse(question.staticGroup || "{}")
