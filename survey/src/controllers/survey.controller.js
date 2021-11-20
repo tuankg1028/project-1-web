@@ -219,7 +219,7 @@ class SurveyController {
       await Utils.Function.retry(async () => {
         const user = req.user;
         const { id, index } = req.params;
-        let question = await Models.App.findById(id).cache(60 * 60 * 24 * 30); // 1 month;
+        let question = await Models.App.findById(id)
         question = question.toJSON();
         question.PPModel = JSON.parse(question.PPModel || "{}");
         question.apisModel = JSON.parse(question.apisModel || "{}");
