@@ -8,8 +8,8 @@ services:
       - traefik-public
     depends_on:
       - redis
-    environment:
-      - REDIS_HOST=redis
+    # environment:
+      # - REDIS_HOST=redis
       # - MONGODB_URL=mongodb://admin:123123@mongodb:27017/project-1-web?authSource=admin
     # service deployment
     deploy:
@@ -49,14 +49,14 @@ services:
         # - traefik.http.routers.survey-web.middlewares=survey-strip-prefix
         - traefik.http.services.survey-web.loadbalancer.server.port=3333
 
-  redis:
-    image: "redis:alpine"
-    networks:
-      - webnet
-    ports:
-      - "6380:6379"
-    volumes:
-      - /home/$USER/redis-data:/var/lib/redis
+  # redis:
+  #   image: "redis:alpine"
+  #   networks:
+  #     - webnet
+  #   ports:
+  #     - "6380:6379"
+  #   volumes:
+  #     - /home/$USER/redis-data:/var/lib/redis
 
   # mongodb:
   #   image: mongo
