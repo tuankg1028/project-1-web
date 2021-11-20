@@ -326,7 +326,7 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
               b.awnser-filnal
               | &nbsp ?
             textarea(name="questions[" + question.id + "][comment]", cols="30", rows="5" required)
-              | #{userAnswer.comment || ""}
+              | #{isAnswered && userAnswer.comment ? userAnswer.comment : ""}
     if(!isAnswered)
       div.see-next-btn() Next
 

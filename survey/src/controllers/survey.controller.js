@@ -231,38 +231,39 @@ class SurveyController {
           return false;
         })[0];
 
-        // if (!question.personalDataTypes || !question.personalDataTypes.length) {
-        //   let apis = await Promise.all(
-        //     question.nodes.map(Utils.Function.getAPIFromNode)
-        //   );
-        //   apis = _.uniqBy(apis, "name");
+        // personalDataTypes
+        if (!question.personalDataTypes || !question.personalDataTypes.length) {
+          let apis = await Promise.all(
+            question.nodes.map(Utils.Function.getAPIFromNode)
+          );
+          apis = _.uniqBy(apis, "name");
 
-        //   const groupApis = _.groupBy(apis, "parent");
+          const groupApis = _.groupBy(apis, "parent");
 
-        //   let personalDataTypes = [];
-        //   for (const personalDataTypeId in groupApis) {
-        //     const parent = await Models.Tree.findById(personalDataTypeId);
+          let personalDataTypes = [];
+          for (const personalDataTypeId in groupApis) {
+            const parent = await Models.Tree.findById(personalDataTypeId);
 
-        //     const personalDataTypeApiIds = groupApis[personalDataTypeId];
+            const personalDataTypeApiIds = groupApis[personalDataTypeId];
 
-        //     const personalDataTypeApis = await Promise.all(
-        //       personalDataTypeApiIds.map(id =>
-        //         Models.Tree.findById(id).cache(60 * 60 * 24 * 30)
-        //       )
-        //     );
+            const personalDataTypeApis = await Promise.all(
+              personalDataTypeApiIds.map(id =>
+                Models.Tree.findById(id).cache(60 * 60 * 24 * 30)
+              )
+            );
 
-        //     personalDataTypes.push({
-        //       name: parent.name,
-        //       apis: personalDataTypeApis
-        //     });
-        //   }
+            personalDataTypes.push({
+              name: parent.name,
+              apis: personalDataTypeApis
+            });
+          }
 
-        //   question.personalDataTypes = personalDataTypes;
-        //   await Models.App.updateOne(
-        //     { _id: id },
-        //     { $set: { personalDataTypes } }
-        //   );
-        // }
+          question.personalDataTypes = personalDataTypes;
+          await Models.App.updateOne(
+            { _id: id },
+            { $set: { personalDataTypes } }
+          );
+        }
 
         question.personalDataTypes = question.personalDataTypes.map(
           personalDataType => {
@@ -517,7 +518,6 @@ class SurveyController {
         Utils.Logger.info(`getQuestion Step 3:: Prediction: ${ourPrediction}`);
         question.categoryName = category;
 
-        console.log("question", Object.keys(question))
         // map group static and dynamic 
         question.dynamicGroup = JSON.parse(question.dynamicGroup || "{}")
         question.staticGroup = JSON.parse(question.staticGroup || "{}")
