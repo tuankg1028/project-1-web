@@ -3,7 +3,7 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
   input(type="hidden" class="our-prediction" name="questions[" + question.id + "][ourPrediction]" value=ourPrediction)
   input(type="hidden" name="answer-installation" value=isAnswered && !userAnswer.agreePredict == 0 && userAnswer.install)
   input(type='hidden' class="final-question-in-form question-satisfaction" name="questions[" + question.id + "][satisfaction]" value=isAnswered &&userAnswer.satisfaction)
-  input(type='hidden' class="final-question-in-form question-comment" name="questions[" + question.id + "][comment]" value=isAnswered &&userAnswer.comment)
+  //- input(type='hidden' class="final-question-in-form question-comment" name="questions[" + question.id + "][comment]" value=isAnswered &&userAnswer.comment)
 
   button(type="submit" style="display='none';")
   if(indexQuestion <= 10) 
