@@ -12,7 +12,6 @@ mongoose.connect(process.env.MONGODB_URL, {
 });
 
 mongoose.connection.on("error", err => {
-  console.log("Connect MONDGODB ERROR");
   Utils.Logger.error(err);
 });
 
@@ -20,5 +19,5 @@ mongoose.set("debug", true);
 
 MongooseCache(
   mongoose,
-  `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`
+  `redis://:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`
 );
