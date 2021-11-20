@@ -111,7 +111,8 @@ async function main() {
         "easy rise alarm clock",
         "sports supplements",
         // Travel & Local
-        "walkway navi - gps for walking",
+        // "walkway navi - gps for walking",
+        "beijing metro map",
         "google earth",
         // Entertainment
         "christmas cards",
@@ -121,13 +122,15 @@ async function main() {
         "habit calendar : track habits",
         // Beauty
         "sweet macarons hd wallpapers",
-        "feeling of color combination",
+        "kuchen rezepte kochbuch",
+        // "feeling of color combination",
         // Education
         "brainwell mind & brain trainer",
         "origami flower instructions 3d",
         // Social
         "facebook",
-        "chat rooms - find friends",
+        // "chat rooms - find friends",
+        "my t-mobile - nederland",
         // Music & Audio
         "soul radio",
         "find that song",
@@ -181,8 +184,8 @@ async function main() {
   console.log("DONE");
 }
 
-// main();
-main2();
+main();
+// main2();
 async function main2() {
   const [app1, app2] = await Promise.all([
     Models.App.find({
@@ -233,21 +236,21 @@ async function main2() {
     apps.forEach((app) => {
       const { distance } = app;
 
-      ranges.forEach((range, index) => {
-        if (_.inRange(distance, ...range)) {
-          Models.App.updateOne(
-            {
-              _id: app.id,
-            },
-            {
-              $set: {
-                riskLevel: index + 1,
-              },
-            },
-            {}
-          );
-        }
-      });
+      // ranges.forEach((range, index) => {
+      //   if (_.inRange(distance, ...range)) {
+      //     Models.App.updateOne(
+      //       {
+      //         _id: app.id,
+      //       },
+      //       {
+      //         $set: {
+      //           riskLevel: index + 1,
+      //         },
+      //       },
+      //       {}
+      //     );
+      //   }
+      // });
     });
   }
 

@@ -335,12 +335,14 @@ const groupQuestions = {
 
     // Social
     "facebook",
-    "chat rooms - find friends"
+    // "chat rooms - find friends",
+    "my t-mobile - nederland",
   ],
   2: [
     // Beauty
     "sweet macarons hd wallpapers",
-    "feeling of color combination",
+    "kuchen rezepte kochbuch",
+    // "feeling of color combination",
     // Business
     "real estate auctions listings  - gsa listings",
     "mobile inventory",
@@ -365,7 +367,8 @@ const groupQuestions = {
     "nighttime speaking clock",
 
     // Travel & Local
-    "walkway navi - gps for walking",
+    // "walkway navi - gps for walking",
+    "beijing metro map",
     "google earth",
 
     // Education

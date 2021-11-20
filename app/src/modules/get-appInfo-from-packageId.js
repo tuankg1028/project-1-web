@@ -102,7 +102,8 @@ async function updateGroupStaticAndDynamic() {
         "easy rise alarm clock",
         "sports supplements",
         // Travel & Local
-        "walkway navi - gps for walking",
+        // "walkway navi - gps for walking",
+        "beijing metro map",
         "google earth",
         // Entertainment
         "christmas cards",
@@ -112,13 +113,15 @@ async function updateGroupStaticAndDynamic() {
         "habit calendar : track habits",
         // Beauty
         "sweet macarons hd wallpapers",
-        "feeling of color combination",
+        "kuchen rezepte kochbuch",
+        // "feeling of color combination",
         // Education
         "brainwell mind & brain trainer",
         "origami flower instructions 3d",
         // Social
         "facebook",
-        "chat rooms - find friends",
+        // "chat rooms - find friends",
+        "my t-mobile - nederland",
         // Music & Audio
         "soul radio",
         "find that song",
@@ -136,7 +139,7 @@ async function updateGroupStaticAndDynamic() {
         "calcnote - notepad calculator",
       ],
     },
-  }).cache(100000);
+  });
 
   let file2 = await csv({
     noheader: true,
