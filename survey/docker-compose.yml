@@ -10,6 +10,7 @@ services:
       - redis
     environment:
       - REDIS_HOST=redis
+      - MONGODB_URL=mongodb://admin:123123@mongodb:27017/project-1-web?authSource=admin
     # service deployment
     deploy:
       # service resource management
@@ -56,6 +57,19 @@ services:
       - "6380:6379"
     volumes:
       - /home/$USER/redis-data:/var/lib/redis
+
+  mongodb:
+    image: mongo
+    restart: always
+    networks:
+      - webnet
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=123123
+    volumes:
+      - /home/son.ha/mongodb/database:/data/db
+    ports:
+      - 193.206.183.134:27018:27017
 networks:
   webnet:
   traefik-public:
