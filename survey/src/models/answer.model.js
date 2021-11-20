@@ -100,4 +100,4 @@ answerSchema.virtual("user", {
   foreignField: "userId"
 });
 
-export default mongoose.model("answer", answerSchema);
+export default mongoose.model("answerT11", answerSchema);

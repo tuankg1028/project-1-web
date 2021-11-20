@@ -166,6 +166,7 @@ async function updateGroupStaticAndDynamic() {
               {
                 name: api,
                 constants: [],
+                subs: [],
               },
             ],
           });
@@ -173,6 +174,7 @@ async function updateGroupStaticAndDynamic() {
           groupStatic[dataTypeInGroupIndex].apis.push({
             name: api,
             constants: [],
+            subs: [],
           });
         }
       }
@@ -199,6 +201,12 @@ async function updateGroupStaticAndDynamic() {
         groupStatic[dataTypeInGroupIndex].apis[apiInGroupIndex].constants.push(
           constant
         );
+        groupStatic[dataTypeInGroupIndex].apis[apiInGroupIndex].subs.push(
+          constantRow[7]
+        );
+        groupStatic[dataTypeInGroupIndex].apis[apiInGroupIndex].subs = _.uniq(
+          groupStatic[dataTypeInGroupIndex].apis[apiInGroupIndex].subs
+        );
       }
     });
 
@@ -219,6 +227,7 @@ async function updateGroupStaticAndDynamic() {
               {
                 name: api,
                 constants: [],
+                subs: [],
               },
             ],
           });
@@ -226,6 +235,7 @@ async function updateGroupStaticAndDynamic() {
           groupDynamic[dataTypeInGroupIndex].apis.push({
             name: api,
             constants: [],
+            subs: [],
           });
         }
       }
@@ -251,6 +261,12 @@ async function updateGroupStaticAndDynamic() {
         );
         groupDynamic[dataTypeInGroupIndex].apis[apiInGroupIndex].constants.push(
           constant
+        );
+        groupDynamic[dataTypeInGroupIndex].apis[apiInGroupIndex].subs.push(
+          constantRow[7]
+        );
+        groupDynamic[dataTypeInGroupIndex].apis[apiInGroupIndex].subs = _.uniq(
+          groupDynamic[dataTypeInGroupIndex].apis[apiInGroupIndex].subs
         );
       }
     });

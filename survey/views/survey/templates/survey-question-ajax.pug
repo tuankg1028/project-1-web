@@ -82,11 +82,12 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
                   div.mt-2 - #{api.groupName}: 
                     div.pl-3  + #{api.mean}
 
-                if(personalDataType.staticApis.length)
-                  div 
-                    span.font-weight-bold * Local executing: 
+                div 
+                  span.font-weight-bold * Local executing: 
+                  if(personalDataType.staticApis.length)
+
                     each api, index1 in personalDataType.staticApis
-                      if(api.constants.length)
+                      if(api.subs.length)
                         | #{api.name}
                         if(index1 != personalDataType.staticApis.length - 1)
                           | #{", "}
@@ -94,21 +95,23 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
                           | #{"."}
 
                     each api, index1 in personalDataType.staticApis
-                      if(api.constants.length)
+                      if(api.subs.length)
                         div
                           span.mt-2 - #{api.name}: 
-                          each constant, index2 in api.constants
-                            | #{constant}
-                            if(index2 != api.constants.length - 1)
+                          each sub, index2 in api.subs
+                            | #{sub}
+                            if(index2 != api.subs.length - 1)
                               | #{", "}
                             else 
                               | #{"."}
+                  else 
+                    | None 
 
-                if(personalDataType.dynamicApis.length)
-                  div 
-                    span.font-weight-bold * Transferring the collected data: 
+                div 
+                  span.font-weight-bold * Transferring the collected data: 
+                  if(personalDataType.dynamicApis.length)
                     each api, index1 in personalDataType.dynamicApis
-                      if(api.constants.length)
+                      if(api.subs.length)
                         | #{api.name}
                         if(index1 != personalDataType.dynamicApis.length - 1)
                           | #{", "}
@@ -116,16 +119,17 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
                           | #{"."}
 
                     each api, index1 in personalDataType.dynamicApis
-                      if(api.constants.length)
+                      if(api.subs.length)
                         div
                           span.mt-2 - #{api.name}: 
-                          each constant, index2 in api.constants
-                            | #{constant}
-                            if(index2 != api.constants.length - 1)
+                          each sub, index2 in api.subs
+                            | #{sub}
+                            if(index2 != api.subs.length - 1)
                               | #{", "}
                             else 
                               | #{"."}
-
+                  else 
+                    | None 
     //- section(style= isAnswered ? "" : "display: none").section
       //- // Collection Personal Data
       //- .section2.mt-3
