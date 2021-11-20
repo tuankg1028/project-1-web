@@ -8,12 +8,13 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
   button(type="submit" style="display='none';")
   if(indexQuestion <= 10) 
     h5.text-center(style="text-transform: capitalize;") 
-      span.pagingInfo Training phase: 
+      span.pagingInfo 
+        //- | Training phase: 
         <span style="color: #FF9800; font-size: 30px">#{indexQuestion}</span> / 10
-  else if(indexQuestion > 10) 
-    h5.text-center(style="text-transform: capitalize;") 
-        span.pagingInfo Test phase: 
-          <span style="color: #FF9800; font-size: 30px">#{indexQuestion - 10}</span> / 16
+  //- else if(indexQuestion > 10) 
+  //-   h5.text-center(style="text-transform: capitalize;") 
+  //-       span.pagingInfo Test phase: 
+  //-         <span style="color: #FF9800; font-size: 30px">#{indexQuestion - 10}</span> / 16
     
   if(indexQuestion > 10 && indexQuestion <= 14) 
     h3.text-center(style="text-transform: capitalize;") The first prediction system
@@ -31,7 +32,7 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
   div.text-center
     | #{question.categoryName}
   div.section
-    span.font-weight-bold 1. The app description, as given in the app market, is the following: <br>
+    span.font-weight-bold I. The app description, as given in the app market, is the following: <br>
     | !{question.description}
   // category
   //- .category.text-center.mt-2
@@ -53,7 +54,7 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
         // label
         .section1-label 
           span.font-weight-bold 
-            | 2. Based on app source code analysis, this app might collect data of #{question.personalDataTypes.length} different data types, namely: &nbsp
+            | II. Based on app source code analysis, this app might collect data of #{question.personalDataTypes.length} different data types, namely: &nbsp
           each personalDataType, index in question.personalDataTypes
             | #{personalDataType.name}
             if(index != question.personalDataTypes.length - 1)
@@ -76,54 +77,98 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
                       | #{", "}
                     else 
                       | #{"."}
-              
-                
 
                 each api in personalDataType.apis
                   div.mt-2 - #{api.groupName}: 
                     div.pl-3  + #{api.mean}
 
-    section(style= isAnswered ? "" : "display: none").section
-      // Collection Personal Data
-      .section2.mt-3
-        // label
-        .section2-label.font-weight-bold
-          | 3. As declared in the app's privacy policy,  the purpose for data collection are the following:
-        // node data
-        .wrap-node
-          if(question.collectionData.length > 0)
-            ul 
-              each category in question.collectionData
-                if(category.type && category.type == "all") 
-                  li #{category.name}: &nbsp
-                    each sub1, indexSub1 in category.children
-                      each meaning, indexMeaning in sub1.meanings
-                        span.capitalizeFirst(style="list-style-type: square;") #{meaning.groupKeyword}
-                        if(indexMeaning != sub1.meanings.length - 1)
-                          | #{", "} 
+                if(personalDataType.staticApis.length)
+                  div 
+                    span.font-weight-bold * Local executing: 
+                    each api, index1 in personalDataType.staticApis
+                      if(api.constants.length)
+                        | #{api.name}
+                        if(index1 != personalDataType.staticApis.length - 1)
+                          | #{", "}
                         else 
-                          | #{""}
-                      if(indexSub1 != category.children.length - 1)
-                        | #{", "} 
-                      else 
-                        | #{"."}
-                else 
-                  //- li #{category.name}
-                  each sub1 in category.children
-                    li #{sub1.name}
-                      if(sub1.meanings && sub1.meanings.length > 0)
-                        ul
-                          li.capitalizeFirst(style="list-style-type: circle;") Collected data: 
-                            each meaning in sub1.meanings
-                              div - #{meaning.groupKeyword}: 
-                                each meaningText, indexMeaning in meaning.meanings
-                                  | #{meaningText}
-                                  if(indexMeaning != meaning.meanings.length - 1)
-                                    | #{", "} 
-                                  else 
-                                    | #{"."}
-          else 
-            | &nbsp Not collect any personal data
+                          | #{"."}
+
+                    each api, index1 in personalDataType.staticApis
+                      if(api.constants.length)
+                        div
+                          span.mt-2 - #{api.name}: 
+                          each constant, index2 in api.constants
+                            | #{constant}
+                            if(index2 != api.constants.length - 1)
+                              | #{", "}
+                            else 
+                              | #{"."}
+
+                if(personalDataType.dynamicApis.length)
+                  div 
+                    span.font-weight-bold * Transferring the collected data: 
+                    each api, index1 in personalDataType.dynamicApis
+                      if(api.constants.length)
+                        | #{api.name}
+                        if(index1 != personalDataType.dynamicApis.length - 1)
+                          | #{", "}
+                        else 
+                          | #{"."}
+
+                    each api, index1 in personalDataType.dynamicApis
+                      if(api.constants.length)
+                        div
+                          span.mt-2 - #{api.name}: 
+                          each constant, index2 in api.constants
+                            | #{constant}
+                            if(index2 != api.constants.length - 1)
+                              | #{", "}
+                            else 
+                              | #{"."}
+
+    //- section(style= isAnswered ? "" : "display: none").section
+      //- // Collection Personal Data
+      //- .section2.mt-3
+      //-   // label
+      //-   .section2-label.font-weight-bold
+      //-     | 3. As declared in the app's privacy policy,  the purpose for data collection are the following:
+      //-   // node data
+      //-   .wrap-node
+      //-     if(question.collectionData.length > 0)
+      //-       ul 
+      //-         each category in question.collectionData
+      //-           if(category.type && category.type == "all") 
+      //-             li #{category.name}: &nbsp
+      //-               each sub1, indexSub1 in category.children
+      //-                 each meaning, indexMeaning in sub1.meanings
+      //-                   span.capitalizeFirst(style="list-style-type: square;") #{meaning.groupKeyword}
+      //-                   if(indexMeaning != sub1.meanings.length - 1)
+      //-                     | #{", "} 
+      //-                   else 
+      //-                     | #{""}
+      //-                 if(indexSub1 != category.children.length - 1)
+      //-                   | #{", "} 
+      //-                 else 
+      //-                   | #{"."}
+      //-           else 
+      //-             //- li #{category.name}
+      //-             each sub1 in category.children
+      //-               li #{sub1.name}
+      //-                 if(sub1.meanings && sub1.meanings.length > 0)
+      //-                   ul
+      //-                     li.capitalizeFirst(style="list-style-type: circle;") Collected data: 
+      //-                       each meaning in sub1.meanings
+      //-                         div - #{meaning.groupKeyword}: 
+      //-                           each meaningText, indexMeaning in meaning.meanings
+      //-                             | #{meaningText}
+      //-                             if(indexMeaning != meaning.meanings.length - 1)
+      //-                               | #{", "} 
+      //-                             else 
+      //-                               | #{"."}
+      //-     else 
+      //-       | &nbsp Not collect any personal data
+
+      
           //-   ul.more
           //-     each sub1 in category.children
           //-       li(style="list-style-type: circle;") #{sub1.name}: 
@@ -141,43 +186,43 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
           //-   div.see-more-btn() Read more
 
       // Third party Data
-      .section2.mt-3
-        // label
-        .section2-label.font-weight-bold
-          | 4. As declared in the app's privacy policy, the third party service  could receive the collected data for the following purpose(s):
-        // node data
-        .wrap-node
-          if(question.thirdPartyData.length > 0)
-            ul 
-              each category in question.thirdPartyData
-                if(category.type && category.type == "all") 
-                  li #{category.name}: &nbsp
-                    each sub1, indexSub1 in category.children
-                      each meaning, indexMeaning in sub1.meanings
-                        span.capitalizeFirst(style="list-style-type: square;") #{meaning.groupKeyword}
-                        if(indexMeaning != sub1.meanings.length - 1)
-                          | #{", "} 
-                        else 
-                          | #{""}
-                      if(indexSub1 != category.children.length - 1)
-                        | #{", "} 
-                      else 
-                        | #{"."}
-                else 
-                  //- li #{category.name}
-                  each sub1 in category.children
-                    li #{sub1.name}
-                      if(sub1.meanings && sub1.meanings.length > 0)
-                        ul
-                          li.capitalizeFirst(style="list-style-type: circle;") Collected data: 
-                            each meaning in sub1.meanings
-                              div - #{meaning.groupKeyword}: 
-                                each meaningText, indexMeaning in meaning.meanings
-                                  | #{meaningText}
-                                  if(indexMeaning != meaning.meanings.length - 1)
-                                    | #{", "} 
-                                  else 
-                                    | #{"."}
+      //- .section2.mt-3
+      //-   // label
+      //-   .section2-label.font-weight-bold
+      //-     | 4. As declared in the app's privacy policy, the third party service  could receive the collected data for the following purpose(s):
+      //-   // node data
+      //-   .wrap-node
+      //-     if(question.thirdPartyData.length > 0)
+      //-       ul 
+      //-         each category in question.thirdPartyData
+      //-           if(category.type && category.type == "all") 
+      //-             li #{category.name}: &nbsp
+      //-               each sub1, indexSub1 in category.children
+      //-                 each meaning, indexMeaning in sub1.meanings
+      //-                   span.capitalizeFirst(style="list-style-type: square;") #{meaning.groupKeyword}
+      //-                   if(indexMeaning != sub1.meanings.length - 1)
+      //-                     | #{", "} 
+      //-                   else 
+      //-                     | #{""}
+      //-                 if(indexSub1 != category.children.length - 1)
+      //-                   | #{", "} 
+      //-                 else 
+      //-                   | #{"."}
+      //-           else 
+      //-             //- li #{category.name}
+      //-             each sub1 in category.children
+      //-               li #{sub1.name}
+      //-                 if(sub1.meanings && sub1.meanings.length > 0)
+      //-                   ul
+      //-                     li.capitalizeFirst(style="list-style-type: circle;") Collected data: 
+      //-                       each meaning in sub1.meanings
+      //-                         div - #{meaning.groupKeyword}: 
+      //-                           each meaningText, indexMeaning in meaning.meanings
+      //-                             | #{meaningText}
+      //-                             if(indexMeaning != meaning.meanings.length - 1)
+      //-                               | #{", "} 
+      //-                             else 
+      //-                               | #{"."}
 
                           //- // type is all
                           //- if(sub1.meanings[0].type && sub1.meanings[0].type == "all") 
@@ -233,73 +278,53 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
     // comments
     .comments-data-judgement.mt-3.section(style= isAnswered ? "" : "display: none")
       .final-judgement
-        //- // label
-        //- .comments-data-label.font-weight-bold.text-underline
-        //-   | II - Final judgment
-        // 4
-        if(indexQuestion > 10) 
-          // final question
-          .question-1.mt-2
-            .title.font-weight-bold 5. The system has taken the following action: 
-              span(style="color:#c80000") #{ourPrediction == 2 ? "maybe install" : (ourPrediction == 1 ? "install" : "non install")} 
-              span the application.
-            div Are you satisfied by the taken decision? Please select the following options:
-            // anwsers
-            .anwsers.mt-2
-              label.container-radio
-                | Yes
-                input(type='radio' class="predict-question" name="questions[" + question.id + "][agreePredict]" value="1" required checked=isAnswered && userAnswer.agreePredict == 1)
-                span.checkmark
+        // label
+        .comments-data-label.font-weight-bold.text-underline
+          | III - Final judgment
+        // final question
+        .question-1.mt-2
+          .title 1) Based on the fact that it could collect the all mentioned data above, do you think this app could be risky for your personal data?
+          // anwsers
+          .anwsers.mt-2
+            label.container-radio
+              | Very low
+              input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="1" required)
+              span.checkmark
 
-              label.container-radio
-                | No
-                input(type='radio' class="predict-question" name="questions[" + question.id + "][agreePredict]" value="0" checked=isAnswered && userAnswer.agreePredict == 0)
-                span.checkmark
-                
-          
-          
-          
-          //- if(indexQuestion == 10 || indexQuestion == 16 || indexQuestion == 22)
-            // final question
-            //- .question-1.mt-2
-            //-   .title.font-weight-bold What is your satisfaction level with our first classification model?
-            //-   // anwsers
-            //-   .anwsers.mt-2
-            //-     label.container-radio
-            //-       | Yes
-            //-       input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="1" required checked=isAnswered && userAnswer.satisfaction == 1)
-            //-       span.checkmark
+            label.container-radio
+              | Low
+              input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="2")
+              span.checkmark
 
-            //-     label.container-radio
-            //-       | No
-            //-       input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="0" checked=isAnswered && userAnswer.satisfaction == 0)
-            //-       span.checkmark
+            label.container-radio
+              | Neutral
+              input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="3")
+              span.checkmark
 
-            //-     label.container-radio
-            //-       | Maybe
-            //-       input(type='radio' class="final-question" name="questions[" + question.id + "][satisfaction]" value="2" checked=isAnswered && userAnswer.satisfaction == 2)
-            //-       span.checkmark
-        else 
-          // final question
-          .question-1.mt-2
-            .title.font-weight-bold 5. Do you want to install this application? Please select the following options:
-            // anwsers
-            .anwsers.mt-2
-              label.container-radio
-                | Yes
-                input(type='radio' class="final-question" name="questions[" + question.id + "][install]" value="1" required checked=isAnswered && userAnswer.install == 1)
-                span.checkmark
+            label.container-radio
+              | High
+              input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="4")
+              span.checkmark
+            
+            label.container-radio
+              | Very High
+              input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="5")
+              span.checkmark
 
-              label.container-radio
-                | No
-                input(type='radio' class="final-question" name="questions[" + question.id + "][install]" value="0" checked=isAnswered && userAnswer.install == 0)
-                span.checkmark
-
-              label.container-radio
-                | Maybe
-                input(type='radio' class="final-question" name="questions[" + question.id + "][install]" value="2" checked=isAnswered && userAnswer.install == 2)
-                span.checkmark
-    
+        // comments
+        div(class="mt-3 wrap-comment-final")
+          // label
+          .comments-data-label.font-weight-bold.text-underline
+            | IV - Participants comments
+            // question 
+          .comment-final.mt-3.comments-data
+            .title 1) 
+              | Can you please to give me the reason why you think the risk level of  &nbsp
+              b(style="text-transform: capitalize;") #{question.appName} &nbsp
+              | is 
+              b.awnser-filnal
+              | &nbsp ?
+            textarea(name="questions[" + question.id + "][comment]", cols="30", rows="5" required)
     if(!isAnswered)
       div.see-next-btn() Next
 

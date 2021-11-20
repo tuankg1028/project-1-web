@@ -517,6 +517,23 @@ class SurveyController {
         Utils.Logger.info(`getQuestion Step 3:: Prediction: ${ourPrediction}`);
         question.categoryName = category;
 
+        // map group static and dynamic 
+        question.dynamicGroup = JSON.parse(question.dynamicGroup)
+        question.staticGroup = JSON.parse(question.staticGroup)
+        question.personalDataTypes = question.personalDataTypes.map(personalDataType => {
+          const dataType = personalDataType.name
+
+          let dynamicDataType = question.dynamicGroup.find(item => item.name === dataType) || {}
+          const dynamicApis = (dynamicDataType.apis || []).filter(item => item.constants.length)
+          personalDataType.dynamicApis = dynamicApis
+
+
+          let staticDataType = question.staticGroup.find(item => item.name === dataType) || {}
+          const staticApis = (staticDataType.apis || []).filter(item => item.constants.length)
+          personalDataType.staticApis = staticApis
+
+          return personalDataType
+        })
         res.render("survey/templates/survey-question-ajax", {
           question,
           indexQuestion: index,

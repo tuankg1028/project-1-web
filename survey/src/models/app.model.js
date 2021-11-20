@@ -50,7 +50,9 @@ var schema = new Schema(
     collectionDataShowed: String,
     thirdPartyDataShowed: String,
     retentionData: String,
-    distance: Number
+    distance: Number,
+    dynamicGroup: String,
+    staticGroup: String,
   },
   {
     timestamps: true,

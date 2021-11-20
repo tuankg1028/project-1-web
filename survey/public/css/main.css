@@ -168,9 +168,7 @@ iframe {
   width: 100%;
   margin: 0 auto;
 }
-b {
-  text-transform: none!important;
-}
+
 .container-login100{
   width: 100%;  
   min-height: 100vh;

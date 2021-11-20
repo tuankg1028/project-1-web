@@ -73,13 +73,201 @@ function getCategoryName(originalCategoryName) {
 
 async function main() {
   // getInfoForApp();
-  await getLabelsAndKeyValueForApp();
-
+  // await getLabelsAndKeyValueForApp();
   // update functions and apis for app
-  await getFunctionsApisForApps();
+  // await getFunctionsApisForApps();
+  // update group static and dynamic
+  updateGroupStaticAndDynamic();
 }
 main();
 
+async function updateGroupStaticAndDynamic() {
+  console.log("Running");
+
+  let apps = await Models.App.find({
+    // $or: [{ supplier: "mobipurpose" }, { isExistedMobiPurpose: true }],
+    // isCompleted: true,
+    appName: {
+      $in: [
+        // Sports
+        "football news - patriots",
+        "australian hunter magazine",
+        // Maps & Navigation
+        "tc fuel consumption record",
+        "taiwan mrt info - taipei、taoyuan、kaohsiung",
+        // Medical
+        "acupressure tips",
+        "nighttime speaking clock",
+        //  Health & Fitness
+        "easy rise alarm clock",
+        "sports supplements",
+        // Travel & Local
+        "walkway navi - gps for walking",
+        "google earth",
+        // Entertainment
+        "christmas cards",
+        "sound view spectrum analyzer",
+        // Finance
+        "google news - daily headlines",
+        "habit calendar : track habits",
+        // Beauty
+        "sweet macarons hd wallpapers",
+        "feeling of color combination",
+        // Education
+        "brainwell mind & brain trainer",
+        "origami flower instructions 3d",
+        // Social
+        "facebook",
+        "chat rooms - find friends",
+        // Music & Audio
+        "soul radio",
+        "find that song",
+        // Food & Drink
+        "resep masakan",
+        "tip calculator : split tip",
+        // Shopping
+        "brands for less",
+        "house of fraser",
+        // Business
+        "real estate auctions listings  - gsa listings",
+        "mobile inventory",
+        // Tools
+        "the ney is an end-blown flute sufi music wallpaper",
+        "calcnote - notepad calculator",
+      ],
+    },
+  }).cache(100000);
+
+  let file2 = await csv({
+    noheader: true,
+    output: "csv",
+  }).fromFile(path.join(__dirname, "../../data/file2.csv"));
+
+  for (let i = 0; i < apps.length; i++) {
+    const app = apps[i];
+
+    let groupStatic = [];
+    let groupDynamic = [];
+
+    // static
+    app.staticApis.forEach((api) => {
+      const apiRow = file2.find((item) => item[2] === api);
+
+      if (apiRow) {
+        const dataType = apiRow[1];
+        const dataTypeInGroupIndex = groupStatic.findIndex(
+          (item) => item.name === dataType
+        );
+
+        if (dataTypeInGroupIndex === -1) {
+          groupStatic.push({
+            name: dataType,
+            apis: [
+              {
+                name: api,
+                constants: [],
+              },
+            ],
+          });
+        } else {
+          groupStatic[dataTypeInGroupIndex].apis.push({
+            name: api,
+            constants: [],
+          });
+        }
+      }
+    });
+
+    app.staticFunctions.forEach((constant) => {
+      const constantRow = file2.find(
+        (item) => item[4] === constant && app.staticApis.includes(item[2])
+      );
+
+      if (constantRow) {
+        const dataType = constantRow[1];
+
+        const api = constantRow[2];
+
+        const dataTypeInGroupIndex = groupStatic.findIndex(
+          (item) => item.name === dataType
+        );
+
+        const dataTypeInGroup = groupStatic[dataTypeInGroupIndex];
+        const apiInGroupIndex = dataTypeInGroup.apis.findIndex(
+          (item) => item.name === api
+        );
+        groupStatic[dataTypeInGroupIndex].apis[apiInGroupIndex].constants.push(
+          constant
+        );
+      }
+    });
+
+    // dynamic
+    app.dynamicApis.forEach((api) => {
+      const apiRow = file2.find((item) => item[2] === api);
+
+      if (apiRow) {
+        const dataType = apiRow[1];
+        const dataTypeInGroupIndex = groupDynamic.findIndex(
+          (item) => item.name === dataType
+        );
+
+        if (dataTypeInGroupIndex === -1) {
+          groupDynamic.push({
+            name: dataType,
+            apis: [
+              {
+                name: api,
+                constants: [],
+              },
+            ],
+          });
+        } else {
+          groupDynamic[dataTypeInGroupIndex].apis.push({
+            name: api,
+            constants: [],
+          });
+        }
+      }
+    });
+
+    app.dynamicFunctions.forEach((constant) => {
+      const constantRow = file2.find(
+        (item) => item[4] === constant && app.dynamicApis.includes(item[2])
+      );
+
+      if (constantRow) {
+        const dataType = constantRow[1];
+
+        const api = constantRow[2];
+
+        const dataTypeInGroupIndex = groupDynamic.findIndex(
+          (item) => item.name === dataType
+        );
+
+        const dataTypeInGroup = groupDynamic[dataTypeInGroupIndex];
+        const apiInGroupIndex = dataTypeInGroup.apis.findIndex(
+          (item) => item.name === api
+        );
+        groupDynamic[dataTypeInGroupIndex].apis[apiInGroupIndex].constants.push(
+          constant
+        );
+      }
+    });
+
+    await Models.App.updateOne(
+      {
+        _id: app.id,
+      },
+      {
+        dynamicGroup: JSON.stringify(groupDynamic),
+        staticGroup: JSON.stringify(groupStatic),
+      }
+    );
+  }
+
+  console.log("DONE");
+}
 async function getInfoForApp() {
   console.log("RUNNING");
 

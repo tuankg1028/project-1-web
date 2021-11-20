@@ -60,6 +60,8 @@ var schema = new Schema(
     staticFunctions: [String],
     staticApis: [String],
     riskLevel: Number,
+    dynamicGroup: String,
+    staticGroup: String,
   },
   {
     timestamps: true,
