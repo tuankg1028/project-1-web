@@ -500,6 +500,7 @@
       "height",
       $(".slick-active form").height() + 50 + "px"
     );
+    $("body .final-question").trigger("change");
   }
   // radio change
   $("body").on("change", ".final-question", function() {
@@ -543,4 +544,5 @@
       $(".slick-active form").height() + 50 + "px"
     );
   });
+  
 })(jQuery);
