@@ -52,7 +52,7 @@ class SurveyController {
       const answers = await Models.Answer.findOne({
         userId
       });
-      if (type === "microworker" && answers && answers.questions.length === 26)
+      if (type === "microworker" && answers && answers.questions.length === 10)
         await rq({
           method: "PUT",
           uri: `https://ttv.microworkers.com/api/v2/slots/${slotId}/submitProof`,
@@ -196,6 +196,30 @@ class SurveyController {
         {}
       );
 
+      if (user.type === "microworker" && newQuestions.length === 10)
+      await rq({
+        method: "PUT",
+        uri: `https://ttv.microworkers.com/api/v2/slots/${slotId}/submitProof`,
+        headers: {
+          MicroworkersApiKey:
+            "0b699dd430dfdea18466d2ea36967022652f9bcb6114c5977066518e1ecd5314"
+        },
+        form: "{}"
+      })
+        .then(function(data) {
+          Models.User.update(
+            {
+              _id: userId
+            },
+            {
+              isPaid: true
+            }
+          );
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+        
       res.json({});
     } catch (error) {
       next(error);
