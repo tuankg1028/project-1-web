@@ -47,7 +47,14 @@ services:
         # - traefik.http.routers.survey-web.middlewares=survey-strip-prefix
         - traefik.http.services.survey-web.loadbalancer.server.port=3333
 
-
+  redis:
+    image: "redis:alpine"
+    ports:
+     - "6379:6379"
+    environment:
+      - REDIS_HOST=redis
+    volumes:
+      - $PWD/redis-data:/var/lib/redis
 networks:
   webnet:
   traefik-public:
