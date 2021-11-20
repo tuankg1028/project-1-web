@@ -504,6 +504,8 @@
   }
   // radio change
   $("body").on("change", ".final-question", function() {
+    if(!$(".slick-active .final-question:checked").val()) return
+
     const value = $(this).val();
     let text = "";
 
