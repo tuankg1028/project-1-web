@@ -27,11 +27,17 @@ router.get(
   Controllers.Survey.getQuestion
 );
 
+router.get(
+  "/group",
+  [Middlewares.Auth.isUser],
+  Controllers.Survey.getSurvey
+);
+
 router.get("/success", Controllers.Survey.getSuccess);
 
 router.post(
   "/handle-intro",
-  // [Middlewares.Auth.isUser],
+  [Middlewares.Auth.isUser],
   Controllers.Survey.handleIntroSurvey
 );
 

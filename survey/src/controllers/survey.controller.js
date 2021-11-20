@@ -11,10 +11,8 @@ class SurveyController {
   async getSurvey(req, res, next) {
     try {
       const { email } = req.session.user || {};
-      if (!email) res.redirect("/auth/login");
 
       res.render("survey/templates/survey-intro", {
-        pageName: "Basic information",
         email
       });
     } catch (error) {
@@ -25,29 +23,16 @@ class SurveyController {
   async handleIntroSurvey(req, res, next) {
     try {
       const {
-        email,
-        age,
-        gender,
-        education,
-        occupation,
-        fieldOfWork,
-        country
+        group
       } = req.body;
+      const user = req.user
 
-      const user = await Models.User.create(
-        email,
-        age,
-        gender,
-        education,
-        occupation,
-        fieldOfWork,
-        country
+      await Models.User.updateOne(
+       {_id: user.id},
+       {group}
       );
 
-      const token = Services.Authentication.genToken(user.toJSON());
-      req.session.token = token;
-
-      res.redirect("/questions");
+      res.redirect("/");
     } catch (error) {
       next(error);
     }
@@ -101,6 +86,8 @@ class SurveyController {
     try {
       const user = req.user;
       let questionIdsForUser;
+      
+      if(!user.group) res.redirect("/group");
 
       const refreshUser = await Models.User.findById(user.id);
       if (refreshUser.questionIds && refreshUser.questionIds.length)
