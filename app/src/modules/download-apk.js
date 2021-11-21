@@ -11,7 +11,7 @@ const apkSourcePath = "/data/apkfile/mobipurpose-apks";
 async function main() {
   Helpers.Logger.info("Running");
   const apps = await Models.App.find({
-    supplier: "mobipurpose",
+    isExistedMobiPurpose: true,
     appAPKPureId: { $exists: false },
   });
   // const appChunk = _.chunk(_.map(apps, "appName"), 200);
