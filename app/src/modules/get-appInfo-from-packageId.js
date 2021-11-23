@@ -224,7 +224,7 @@ async function updateGroupStaticAndDynamic() {
       }
     });
 
-    const isExisted = await Models.AppFunction.findIndex(app.id)
+    const isExisted = await Models.AppFunction.findById(app.id)
     if(isExisted) {
       await Models.AppFunction.updateOne(
         {
@@ -486,7 +486,7 @@ async function getFunctionsApisForApps() {
 
     
 
-    const isExisted = await Models.AppFunction.findIndex(app.id)
+    const isExisted = await Models.AppFunction.findById(app.id)
     if(isExisted) {
       await Models.AppFunction.updateOne(
         {
