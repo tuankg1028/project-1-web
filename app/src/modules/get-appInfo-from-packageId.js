@@ -75,9 +75,9 @@ async function main() {
   // getInfoForApp();
   // await getLabelsAndKeyValueForApp();
   // update functions and apis for app
-  // await getFunctionsApisForApps();
+  await getFunctionsApisForApps();
   // update group static and dynamic
-  updateGroupStaticAndDynamic();
+  await updateGroupStaticAndDynamic();
 }
 main();
 
@@ -85,60 +85,10 @@ async function updateGroupStaticAndDynamic() {
   console.log("Running");
 
   let apps = await Models.App.find({
-    // $or: [{ supplier: "mobipurpose" }, { isExistedMobiPurpose: true }],
-    // isCompleted: true,
-    appName: {
-      $in: [
-        // Sports
-        "football news - patriots",
-        "australian hunter magazine",
-        // Maps & Navigation
-        "tc fuel consumption record",
-        "taiwan mrt info - taipei、taoyuan、kaohsiung",
-        // Medical
-        "acupressure tips",
-        "nighttime speaking clock",
-        //  Health & Fitness
-        "easy rise alarm clock",
-        "sports supplements",
-        // Travel & Local
-        // "walkway navi - gps for walking",
-        "beijing metro map",
-        "google earth",
-        // Entertainment
-        "christmas cards",
-        "sound view spectrum analyzer",
-        // Finance
-        "google news - daily headlines",
-        "habit calendar : track habits",
-        // Beauty
-        "sweet macarons hd wallpapers",
-        "kuchen rezepte kochbuch",
-        // "feeling of color combination",
-        // Education
-        "brainwell mind & brain trainer",
-        "origami flower instructions 3d",
-        // Social
-        "facebook",
-        // "chat rooms - find friends",
-        "my t-mobile - nederland",
-        // Music & Audio
-        "soul radio",
-        "find that song",
-        // Food & Drink
-        "resep masakan",
-        "tip calculator : split tip",
-        // Shopping
-        "brands for less",
-        "house of fraser",
-        // Business
-        "real estate auctions listings  - gsa listings",
-        "mobile inventory",
-        // Tools
-        "the ney is an end-blown flute sufi music wallpaper",
-        "calcnote - notepad calculator",
-      ],
-    },
+    isExistedMobiPurpose: true,
+    isCompleted: true,
+    nodes: { $exists: true }, //
+    dataTypes: { $exists: true }, //
   });
 
   let file2 = await csv({
@@ -274,15 +224,27 @@ async function updateGroupStaticAndDynamic() {
       }
     });
 
-    await Models.App.updateOne(
-      {
-        _id: app.id,
-      },
-      {
-        dynamicGroup: JSON.stringify(groupDynamic),
-        staticGroup: JSON.stringify(groupStatic),
-      }
-    );
+    const isExisted = await Models.AppFunction.findIndex(app.id)
+    if(isExisted) {
+      await Models.AppFunction.updateOne(
+        {
+          _id: app.id,
+        },
+        {
+          dynamicGroup: JSON.stringify(groupDynamic),
+          staticGroup: JSON.stringify(groupStatic),
+        }
+      );
+    } else {
+      await Models.AppFunction.create(
+        {
+          _id: app.id,
+          dynamicGroup: JSON.stringify(groupDynamic),
+          staticGroup: JSON.stringify(groupStatic),
+        },
+      );
+    }
+    
   }
 
   console.log("DONE");
@@ -522,17 +484,29 @@ async function getFunctionsApisForApps() {
     const staticFunctions = _.uniq(_.map(functionsInfiles2, 4));
     const staticApis = _.uniq(_.map(functionsInfiles2, 2));
 
-    await Models.App.updateOne(
-      {
-        _id: app.id,
-      },
-      {
-        $set: { dynamicFunctions, dynamicApis, staticFunctions, staticApis },
-      },
-      {},
-      (err, data) =>
-        Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
-    );
+    
+
+    const isExisted = await Models.AppFunction.findIndex(app.id)
+    if(isExisted) {
+      await Models.AppFunction.updateOne(
+        {
+          _id: app.id,
+        },
+        {
+          $set: { dynamicFunctions, dynamicApis, staticFunctions, staticApis },
+        },
+        {},
+        (err, data) =>
+          Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
+      );
+    } else {
+      await Models.AppFunction.create(
+        {
+          _id: app.id,
+          dynamicFunctions, dynamicApis, staticFunctions, staticApis
+        },
+      );
+    }
   }
 
   console.log("Done");

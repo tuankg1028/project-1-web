@@ -8,6 +8,7 @@ import MPDroidDataset from "./MPDroidDataset";
 import OurMaliciousDataset from "./ourMaliciousDataset.model";
 import BeginDataset from "./beginDataset";
 import MaliciousDataset from "./maliciousDataset";
+import AppFunction from "./app-functions.model";
 class Model {
   constructor() {
     this.Tree = Tree;
@@ -20,6 +21,7 @@ class Model {
     this.BeginDataset = BeginDataset;
     this.MaliciousDataset = MaliciousDataset;
     this.CategoryDataset = CategoryDataset;
+    this.AppFunction = AppFunction
   }
 }
 export default new Model();

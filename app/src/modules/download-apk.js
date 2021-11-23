@@ -7,7 +7,7 @@ import _ from "lodash";
 import fs from "fs";
 import path from "path";
 
-const apkSourcePath = "/data/apkfile/mobipurpose-apks";
+const apkSourcePath = "/home/son/apkfile/mobipurpose-apks";
 async function main() {
   Helpers.Logger.info("Running");
   const apps = await Models.App.find({

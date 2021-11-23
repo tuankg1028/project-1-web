@@ -314,7 +314,6 @@ const categoriesThirdParty = [
   }
 ];
 
-
 const groupQuestions = {
   1: [
     // Food & Drink
@@ -336,7 +335,7 @@ const groupQuestions = {
     // Social
     "facebook",
     // "chat rooms - find friends",
-    "my t-mobile - nederland",
+    "my t-mobile - nederland"
   ],
   2: [
     // Beauty
@@ -380,7 +379,6 @@ const groupQuestions = {
     "calcnote - notepad calculator"
   ]
 };
-
 
 export default {
   categoryGroups,

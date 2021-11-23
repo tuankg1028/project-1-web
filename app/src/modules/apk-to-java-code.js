@@ -16,7 +16,7 @@ async function main() {
     const limit = 3;
     let skip = 0;
     const contition = {
-      supplier: "mobipurpose",
+      isExistedMobiPurpose: true,
       isCompleted: false,
       appAPKPureId: { $exists: true },
     };
@@ -135,11 +135,13 @@ function _getApkFileFromSource(appId, appName) {
   );
   const apkFilesInFolder2 = ThroughDirectory("/data/apkfile/top_apps_Download");
   const apkFilesInFolder3 = ThroughDirectory("/data/apkfile/mobipurpose-apks");
-
+  const apkFilesInFolder4 = ThroughDirectory("/home/son/apkfile/mobipurpose-apks");
+  
   const apkFiles = [
     ...apkFilesInFolder1,
     ...apkFilesInFolder2,
     ...apkFilesInFolder3,
+    ...apkFilesInFolder4
   ];
 
   // find in folder
