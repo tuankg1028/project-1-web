@@ -96,6 +96,7 @@ async function updateGroupStaticAndDynamic() {
     output: "csv",
   }).fromFile(path.join(__dirname, "../../data/file2.csv"));
 
+  const promises = []
   for (let i = 0; i < apps.length; i++) {
     const app = apps[i];
 
@@ -228,7 +229,7 @@ async function updateGroupStaticAndDynamic() {
     delete app.updatedAt
     const isExisted = await Models.AppFunction.findById(app.id)
     if(isExisted) {
-      await Models.AppFunction.updateOne(
+      promises.push(Models.AppFunction.updateOne(
         {
           _id: app.id,
         },
@@ -237,20 +238,21 @@ async function updateGroupStaticAndDynamic() {
           dynamicGroup: JSON.stringify(groupDynamic),
           staticGroup: JSON.stringify(groupStatic),
         }
-      );
+      ))
     } else {
-      await Models.AppFunction.create(
+      promises.push(Models.AppFunction.create(
         {
           _id: app.id,
           ...app,
           dynamicGroup: JSON.stringify(groupDynamic),
           staticGroup: JSON.stringify(groupStatic),
         },
-      );
+      ))
     }
     
   }
 
+  await Promise.all(promises)
   console.log("DONE");
 }
 async function getInfoForApp() {
@@ -454,8 +456,9 @@ async function getFunctionsApisForApps() {
     nodes: { $exists: true }, //
     dataTypes: { $exists: true }, //
   });
-
+  
   console.log("Total apps: {getFunctionsApisForApps}");
+  const promises = []
   for (let i = 0; i < apps.length; i++) {
     const app = apps[i];
     console.log(`Running ${i}/${apps.length}`);
@@ -492,7 +495,7 @@ async function getFunctionsApisForApps() {
     delete app.updatedAt
     const isExisted = await Models.AppFunction.findById(app.id)
     if(isExisted) {
-      await Models.AppFunction.updateOne(
+      promises.push(Models.AppFunction.updateOne(
         {
           _id: app.id,
         },
@@ -502,17 +505,18 @@ async function getFunctionsApisForApps() {
         {},
         (err, data) =>
           Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
-      );
+      ))
     } else {
-      await Models.AppFunction.create(
+      promises.push(Models.AppFunction.create(
         {
           _id: app.id,
           ...app, 
           dynamicFunctions, dynamicApis, staticFunctions, staticApis
         },
-      );
+      ));
     }
   }
 
+  await Promise.all(promises)
   console.log("Done");
 }

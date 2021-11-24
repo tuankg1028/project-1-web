@@ -184,7 +184,7 @@ async function main() {
   console.log("DONE");
 }
 
-main();
+// main();
 // main2();
 async function main2() {
   const [app1, app2] = await Promise.all([
@@ -260,4 +260,71 @@ async function main2() {
   // });
   // await csvWriterNo.writeRecords(rows);
   console.log("DONE");
+}
+
+main3()
+async function main3() {
+
+  // const appsInFile1 = [];
+  // await new Promise((resolve, reject) => {
+  //   var readline = require("linebyline"),
+  //     rl = readline("/Users/xander/Downloads/data_collect_purpose.json");
+  //   rl.on("line", function (line, lineCount, byteCount) {
+  //     // do something with the line of text
+  //     const app = JSON.parse(line);
+  //     if(app) appsInFile1.push(app)
+  //   })
+  //     .on("error", function (e) {})
+  //     .on("close", function (e) {
+  //       resolve();
+  //     });
+  // });
+
+
+  // const apps = await Models.App.find({
+  //   isExistedMobiPurpose: true,
+  //   isCompleted: true,
+  //   nodes: { $exists: true }, //
+  //   dataTypes: { $exists: true }, //
+  // }).cache(10000);
+  // const appIdCHPlays = _.map(apps, "appIdCHPlay")
+  // console.log(appIdCHPlays)
+  // let total = 0
+  
+  // appsInFile1.forEach(item => {
+  //   if(_.includes(appIdCHPlays, item.app)) total++;
+  // })
+  // console.log(total)
+
+
+  const keyValue = []
+  // ===========
+  await new Promise((resolve, reject) => {
+    var readline = require("linebyline"),
+      rl = readline("/Users/xander/Downloads/data_collect_purpose.json");
+    rl.on("line", function (line, lineCount, byteCount) {
+      // do something with the line of text
+      const app = JSON.parse(line);
+      if (app && app.data) {
+        for (const key in app.data) {
+          const value = app.data[key];
+          let valType = value.split("|");
+          const valueOfKey = valType[0];
+
+          valType.splice(0, 1);
+          valType.splice(-1, 1);
+
+          keyValue.push(`${key.trim()}: ${valueOfKey.trim()}`)
+        }
+      }
+    })
+      .on("error", function (e) {})
+      .on("close", function (e) {
+        resolve();
+      });
+  });
+
+  console.log("not unique", keyValue.length)
+  console.log("unique", _.uniq(keyValue).length)
+
 }
