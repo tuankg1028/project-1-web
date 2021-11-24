@@ -224,6 +224,8 @@ async function updateGroupStaticAndDynamic() {
       }
     });
 
+    delete app.createdAt
+    delete app.updatedAt
     const isExisted = await Models.AppFunction.findById(app.id)
     if(isExisted) {
       await Models.AppFunction.updateOne(
@@ -231,6 +233,7 @@ async function updateGroupStaticAndDynamic() {
           _id: app.id,
         },
         {
+          ...app,
           dynamicGroup: JSON.stringify(groupDynamic),
           staticGroup: JSON.stringify(groupStatic),
         }
@@ -239,6 +242,7 @@ async function updateGroupStaticAndDynamic() {
       await Models.AppFunction.create(
         {
           _id: app.id,
+          ...app,
           dynamicGroup: JSON.stringify(groupDynamic),
           staticGroup: JSON.stringify(groupStatic),
         },
@@ -417,7 +421,6 @@ async function getLabelsAndKeyValueForApp() {
         ? result.in.push(label)
         : result.out.push(label);
     });
-
     await Models.App.updateOne(
       {
         _id: app.id,
@@ -485,7 +488,8 @@ async function getFunctionsApisForApps() {
     const staticApis = _.uniq(_.map(functionsInfiles2, 2));
 
     
-
+    delete app.createdAt
+    delete app.updatedAt
     const isExisted = await Models.AppFunction.findById(app.id)
     if(isExisted) {
       await Models.AppFunction.updateOne(
@@ -493,7 +497,7 @@ async function getFunctionsApisForApps() {
           _id: app.id,
         },
         {
-          $set: { dynamicFunctions, dynamicApis, staticFunctions, staticApis },
+          $set: { ...app, dynamicFunctions, dynamicApis, staticFunctions, staticApis },
         },
         {},
         (err, data) =>
@@ -503,6 +507,7 @@ async function getFunctionsApisForApps() {
       await Models.AppFunction.create(
         {
           _id: app.id,
+          ...app, 
           dynamicFunctions, dynamicApis, staticFunctions, staticApis
         },
       );
