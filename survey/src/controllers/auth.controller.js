@@ -76,7 +76,7 @@ class AuthController {
         campaignId,
         workerId,
         slotId,
-        type,
+        type: group ? 'microworker' : "normal",
         group
       });
 
