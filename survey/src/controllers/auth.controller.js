@@ -20,7 +20,7 @@ class AuthController {
   async signup(req, res, next) {
     try {
       const { campaignId, workerId, slotId } = req.params;
-      const { group } = req.query
+      const { group } = req.query;
       let type = campaignId && workerId && slotId ? "microworker" : "normal";
 
       const errors = req.session.errors;
@@ -76,7 +76,7 @@ class AuthController {
         campaignId,
         workerId,
         slotId,
-        type: group ? 'microworker' : "normal",
+        type: group ? "microworker" : "normal",
         group
       });
 
@@ -105,8 +105,8 @@ class AuthController {
         return res.redirect("/auth/login");
       }
 
-      if (user.type === "microworker")
-        return res.redirect(`/microworker/${email}`);
+      // if (user.type === "microworker")
+      //   return res.redirect(`/microworker/${email}`);
       // generate token
       const token = Services.Authentication.genToken(user.toJSON());
       req.session.token = token;
