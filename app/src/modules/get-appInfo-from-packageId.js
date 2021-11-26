@@ -77,7 +77,7 @@ async function main() {
   // update functions and apis for app
   await getFunctionsApisForApps();
   // update group static and dynamic
-  await updateGroupStaticAndDynamic();
+  // await updateGroupStaticAndDynamic();
 }
 main();
 

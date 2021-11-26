@@ -504,6 +504,17 @@ async function computingDistance() {
                     ((1 - vN1) * disN1 * (1 - vCaa) +
                       (1 - vN2) * disN2 * (1 - vCaa) +
                       2 * (1 - vCaa) * depthCaa) || 0);
+
+                if (
+                  app.dynamicFunctions.includes(comparingNode.name) ||
+                  app.dynamicApis.includes(comparingNode.name)
+                ) {
+                  console.log(111, comparingNode.name);
+                  result =
+                    result +
+                    (app.dynamicFunctions.length / app.staticFunctions.length) *
+                      result;
+                }
               }
             }
             // not exist
