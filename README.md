@@ -32,28 +32,13 @@ _If you wish to run the tutorial, you can use the following commands_
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-
-
 ## Usage
 Available methods:
-- [Function and Constanst](#FunctionandConstanst): Retrieves the Function/Constanst of an application.
+- [Function and Constanst](#function-and-constanst): Retrieves the Function/Constanst of an application.
 
 ### Function and Constanst
 
-Retrieves the full detail of an application. Options:
-
-* `appId`: the Google Play id of the application (the `?id=` parameter on the url).
-* `lang` (optional, defaults to `'en'`): the two letter language code in which to fetch the app page.
-* `country` (optional, defaults to `'us'`): the two letter country code used to retrieve the applications. Needed when the app is available only in some countries.
+Retrieves the Function/Constanst of an application.
 
 Command:
 
