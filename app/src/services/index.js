@@ -4,6 +4,8 @@ import BaseLine from "./baseLine.service";
 import CHPLAY from "./chplay.service";
 import APKDownloader from "./apkDownloader.service";
 import APKSupport from "./apkSupport.service";
+import Prediction from "./prediction.service";
+
 export default {
   APKPure,
   DAP,
@@ -11,4 +13,5 @@ export default {
   CHPLAY,
   APKDownloader,
   APKSupport,
+  Prediction
 };
