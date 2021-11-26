@@ -35,7 +35,9 @@ _If you wish to run the tutorial, you can use the following commands_
 ## Usage
 Available methods:
 - [Function and Constanst](#function-and-constanst): Retrieves the Function/Constanst of an application.
-
+- [Privacy policy analysis](#privacy-policy-analysis): Retrieves the privacy policy of an application.
+- [Calculate distance](#calculate-distance): Calculate the distance of an application.
+- [Calculate distance v2](#calculate-distance-v2): Calculate the distance of an application.
 ### Function and Constanst
 
 Retrieves the Function/Constanst of an application.
@@ -44,4 +46,32 @@ Command:
 
 ```sh
 npm run getAppInfo
+```
+### Privacy policy analysis
+
+Retrieves the privacy policy of an application.
+
+Command:
+
+```sh
+npm run privacyPolicyAnalysis
+```
+### Calculate distance
+
+Calculate the distance of an application.
+
+Command:
+
+```sh
+npm run computingDistance
+```
+
+### Calculate distance v2
+
+Calculate the distance of an application.
+
+Command:
+
+```sh
+npm run computingDistanceV2
 ```
