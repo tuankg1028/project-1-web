@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken";
 import axios from "axios";
 class Prediction {
   constructor() {
