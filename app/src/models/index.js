@@ -9,8 +9,12 @@ import OurMaliciousDataset from "./ourMaliciousDataset.model";
 import BeginDataset from "./beginDataset";
 import MaliciousDataset from "./maliciousDataset";
 import AppFunction from "./app-functions.model";
+import answerModel from "./answer.model";
+import userModel from "./user.model";
 class Model {
   constructor() {
+    this.User = userModel;
+    this.Answer = answerModel;
     this.Tree = Tree;
     this.App = App;
     this.AppTemp = AppTemp;
