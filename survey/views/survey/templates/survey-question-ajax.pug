@@ -82,6 +82,39 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
                   div.mt-2 - #{api.groupName}: 
                     div.pl-3  + #{api.mean}
 
+                    div.ml-3
+                      | How do you rate the necessity of 
+                      span.font-weight-bold #{api.groupName} 
+                      | in 
+                      span.font-weight-bold(style="text-transform: capitalize;") #{question.appName} 
+                      | app?
+
+                    .anwsers.mt-2
+                      label.container-radio
+                        | Very unnecessary
+                        input(type='radio' class="type-question" name="questions[" + question.id + "][" + api.groupName +"]" value="1" required checked=isAnswered && userAnswer.type == 1)
+                        span.checkmark
+
+                      label.container-radio
+                        | Unnecessary
+                        input(type='radio' class="type-question" name="questions[" + question.id + "][" + api.groupName +"]" value="2" checked=isAnswered && userAnswer.type == 2)
+                        span.checkmark
+
+                      label.container-radio
+                        | Neutral
+                        input(type='radio' class="type-question" name="questions[" + question.id + "][" + api.groupName +"]" value="3" checked=isAnswered && userAnswer.type == 3)
+                        span.checkmark
+
+                      label.container-radio
+                        | Necessary
+                        input(type='radio' class="type-question" name="questions[" + question.id + "][" + api.groupName +"]" value="4" checked=isAnswered && userAnswer.type == 4)
+                        span.checkmark
+                      
+                      label.container-radio
+                        | Very necessary
+                        input(type='radio' class="type-question" name="questions[" + question.id + "][" + api.groupName +"]" value="5" checked=isAnswered && userAnswer.type == 5)
+                        span.checkmark
+
                 div 
                   span.font-weight-bold * Local executing: 
                   if(personalDataType.staticApis.length)
@@ -128,6 +161,36 @@ form(action="/main-action", method="POST", isLastSection=false, isAnswered=isAns
                               | #{", "}
                             else 
                               | #{"."}
+                    div.ml-2
+                      | How do you rate the necessity of transferring the collected data in 
+                      span.font-weight-bold(style="text-transform: capitalize;") #{question.appName} 
+                      | app?
+
+                      .anwsers.mt-2
+                        label.container-radio
+                          | Very unnecessary
+                          input(type='radio' class="type-question" name="questions[" + question.id + "][transferring]" value="1" required checked=isAnswered && userAnswer.type == 1)
+                          span.checkmark
+
+                        label.container-radio
+                          | Unnecessary
+                          input(type='radio' class="type-question" name="questions[" + question.id + "][Transferring]" value="2" checked=isAnswered && userAnswer.type == 2)
+                          span.checkmark
+
+                        label.container-radio
+                          | Neutral
+                          input(type='radio' class="type-question" name="questions[" + question.id + "][Transferring]" value="3" checked=isAnswered && userAnswer.type == 3)
+                          span.checkmark
+
+                        label.container-radio
+                          | Necessary
+                          input(type='radio' class="type-question" name="questions[" + question.id + "][Transferring]" value="4" checked=isAnswered && userAnswer.type == 4)
+                          span.checkmark
+                        
+                        label.container-radio
+                          | Very necessary
+                          input(type='radio' class="type-question" name="questions[" + question.id + "][Transferring]" value="5" checked=isAnswered && userAnswer.type == 5)
+                          span.checkmark
                   else 
                     | None 
     //- section(style= isAnswered ? "" : "display: none").section
