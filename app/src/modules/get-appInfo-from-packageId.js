@@ -77,7 +77,7 @@ async function main() {
   // update functions and apis for app
   await getFunctionsApisForApps();
   // update group static and dynamic
-  // await updateGroupStaticAndDynamic();
+  await updateGroupStaticAndDynamic();
 }
 main();
 
@@ -228,6 +228,16 @@ async function updateGroupStaticAndDynamic() {
     delete app.createdAt
     delete app.updatedAt
     const isExisted = await Models.AppFunction.findById(app.id)
+
+    promises.push(Models.App.updateOne(
+      {
+        _id: app.id,
+      },
+      {
+        dynamicGroup: JSON.stringify(groupDynamic),
+        staticGroup: JSON.stringify(groupStatic),
+      }
+    ))
     if(isExisted) {
       promises.push(Models.AppFunction.updateOne(
         {
@@ -494,6 +504,18 @@ async function getFunctionsApisForApps() {
     delete app.createdAt
     delete app.updatedAt
     const isExisted = await Models.AppFunction.findById(app.id)
+
+    promises.push(Models.App.updateOne(
+      {
+        _id: app.id,
+      },
+      {
+        $set: { dynamicFunctions, dynamicApis, staticFunctions, staticApis },
+      },
+      {},
+      (err, data) =>
+        Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
+    ))
     if(isExisted) {
       promises.push(Models.AppFunction.updateOne(
         {
