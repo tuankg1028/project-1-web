@@ -22,15 +22,10 @@ class SurveyController {
 
   async handleIntroSurvey(req, res, next) {
     try {
-      const {
-        group
-      } = req.body;
-      const user = req.user
+      const { group } = req.body;
+      const user = req.user;
 
-      await Models.User.updateOne(
-       {_id: user.id},
-       {group}
-      );
+      await Models.User.updateOne({ _id: user.id }, { group });
 
       res.redirect("/");
     } catch (error) {
@@ -86,8 +81,8 @@ class SurveyController {
     try {
       const user = req.user;
       let questionIdsForUser;
-      
-      if(!user.group) res.redirect("/group");
+
+      if (!user.group) res.redirect("/group");
 
       const refreshUser = await Models.User.findById(user.id);
       if (refreshUser.questionIds && refreshUser.questionIds.length)
@@ -97,9 +92,9 @@ class SurveyController {
           appName: {
             $in: constants.groupQuestions[user.group]
           }
-        }).select('_id');
+        }).select("_id");
 
-        questionIdsForUser = _.map(questions, '_id');
+        questionIdsForUser = _.map(questions, "_id");
 
         await Models.User.updateOne(
           {
@@ -115,9 +110,7 @@ class SurveyController {
       }
 
       const questions = await Promise.all(
-        questionIdsForUser.map(id =>
-          Models.App.findById(id).cache(60 * 60 * 24 * 30)
-        )
+        questionIdsForUser.map(id => Models.App.findById(id))
       );
 
       questions.forEach(item => {
@@ -128,6 +121,7 @@ class SurveyController {
         }
       });
 
+      console.log("questionIdsForUser", questionIdsForUser);
       const token = req.session.token;
       res.render("survey/templates/survey-question", {
         questions,
@@ -197,29 +191,29 @@ class SurveyController {
       );
 
       if (user.type === "microworker" && newQuestions.length === 10)
-      await rq({
-        method: "PUT",
-        uri: `https://ttv.microworkers.com/api/v2/slots/${slotId}/submitProof`,
-        headers: {
-          MicroworkersApiKey:
-            "0b699dd430dfdea18466d2ea36967022652f9bcb6114c5977066518e1ecd5314"
-        },
-        form: "{}"
-      })
-        .then(function(data) {
-          Models.User.update(
-            {
-              _id: userId
-            },
-            {
-              isPaid: true
-            }
-          );
+        await rq({
+          method: "PUT",
+          uri: `https://ttv.microworkers.com/api/v2/slots/${slotId}/submitProof`,
+          headers: {
+            MicroworkersApiKey:
+              "0b699dd430dfdea18466d2ea36967022652f9bcb6114c5977066518e1ecd5314"
+          },
+          form: "{}"
         })
-        .catch(function(err) {
-          console.log(err);
-        });
-        
+          .then(function(data) {
+            Models.User.update(
+              {
+                _id: userId
+              },
+              {
+                isPaid: true
+              }
+            );
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+
       res.json({});
     } catch (error) {
       next(error);
@@ -230,7 +224,7 @@ class SurveyController {
       await Utils.Function.retry(async () => {
         const user = req.user;
         const { id, index } = req.params;
-        let question = await Models.App.findById(id)
+        let question = await Models.App.findById(id);
         question = question.toJSON();
         question.PPModel = JSON.parse(question.PPModel || "{}");
         question.apisModel = JSON.parse(question.apisModel || "{}");
@@ -529,23 +523,31 @@ class SurveyController {
         Utils.Logger.info(`getQuestion Step 3:: Prediction: ${ourPrediction}`);
         question.categoryName = category;
 
-        // map group static and dynamic 
-        question.dynamicGroup = JSON.parse(question.dynamicGroup || "{}")
-        question.staticGroup = JSON.parse(question.staticGroup || "{}")
-        question.personalDataTypes = question.personalDataTypes.map(personalDataType => {
-          const dataType = personalDataType.name
+        // map group static and dynamic
+        question.dynamicGroup = JSON.parse(question.dynamicGroup || "{}");
+        question.staticGroup = JSON.parse(question.staticGroup || "{}");
+        question.personalDataTypes = question.personalDataTypes.map(
+          personalDataType => {
+            const dataType = personalDataType.name;
 
-          let dynamicDataType = question.dynamicGroup.find(item => item.name === dataType) || {}
-          const dynamicApis = (dynamicDataType.apis || []).filter(item => item.constants.length)
-          personalDataType.dynamicApis = dynamicApis
+            let dynamicDataType =
+              question.dynamicGroup.find(item => item.name === dataType) || {};
+            const dynamicApis = (dynamicDataType.apis || []).filter(
+              item => (item.subs || []).filter(item1 => !!item1).length
+            );
+            personalDataType.dynamicApis = dynamicApis;
 
+            let staticDataType =
+              question.staticGroup.find(item => item.name === dataType) || {};
+            const staticApis = (staticDataType.apis || []).filter(
+              item => (item.subs || []).filter(item1 => !!item1).length
+            );
+            personalDataType.staticApis = staticApis;
 
-          let staticDataType = question.staticGroup.find(item => item.name === dataType) || {}
-          const staticApis = (staticDataType.apis || []).filter(item => item.constants.length)
-          personalDataType.staticApis = staticApis
+            return personalDataType;
+          }
+        );
 
-          return personalDataType
-        })
         res.render("survey/templates/survey-question-ajax", {
           question,
           indexQuestion: index,
