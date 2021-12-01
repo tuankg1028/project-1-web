@@ -73,7 +73,7 @@ function getCategoryName(originalCategoryName) {
 
 async function main() {
   // getInfoForApp();
-  // await getLabelsAndKeyValueForApp();
+  await getLabelsAndKeyValueForApp();
   // update functions and apis for app
   await getFunctionsApisForApps();
   // update group static and dynamic
@@ -244,7 +244,7 @@ async function updateGroupStaticAndDynamic() {
           _id: app.id,
         },
         {
-          ...app,
+          ...app.toJSON(),
           dynamicGroup: JSON.stringify(groupDynamic),
           staticGroup: JSON.stringify(groupStatic),
         }
@@ -253,7 +253,7 @@ async function updateGroupStaticAndDynamic() {
       promises.push(Models.AppFunction.create(
         {
           _id: app.id,
-          ...app,
+          ...app.toJSON(),
           dynamicGroup: JSON.stringify(groupDynamic),
           staticGroup: JSON.stringify(groupStatic),
         },
@@ -390,7 +390,7 @@ async function getLabelsAndKeyValueForApp() {
   });
 
   const apps = await Models.App.find({
-    $or: [{ supplier: "mobipurpose", isExistedMobiPurpose: true }],
+    isExistedMobiPurpose: true,
     isCompleted: true,
     keyAndValue: { $exists: false },
   });
