@@ -509,11 +509,38 @@ async function computingDistance() {
                   app.dynamicFunctions.includes(comparingNode.name) ||
                   app.dynamicApis.includes(comparingNode.name)
                 ) {
-                  console.log(111, comparingNode.name);
-                  result =
-                    result +
-                    (app.dynamicFunctions.length / app.staticFunctions.length) *
-                      result;
+                  const dataTypes = ['User Profile', 'Location', 'Media', 'Health & Fitness', 'Hardware', 'Connection', 'Telephony']
+
+                  const dynamicGroup = JSON.parse(app.dynamicGroup)
+                  const staticGroup = JSON.parse(app.staticGroup)
+
+                  let dataTypeValue = 0
+                  for (const dataType of dataTypes) {
+                    const dataTypeDynamic = dynamicGroup.find(item => item.name === dataType)
+                    const dataTypeStatic = staticGroup.find(item => item.name === dataType)
+
+                    let dynamicFunctionsByDataType = []
+                    if(dataTypeDynamic)  {
+                      // get dynamic constants by data type
+                      dynamicFunctionsByDataType = (dataTypeDynamic.apis || []).reduce((acc, api) => {
+                        acc = [...acc, ...(api.constants || [])]
+                        return acc
+                      }, [])
+                    }
+
+                    let staticFunctionsByDataType = []
+                    if(dataTypeStatic)  {
+                      // get static constants by data type
+                      staticFunctionsByDataType = (dataTypeStatic.apis || []).reduce((acc, api) => {
+                        acc = [...acc, ...(api.constants || [])]
+                        return acc
+                      }, [])
+                    }
+                    
+                    const weight = dynamicFunctionsByDataType.length / staticFunctionsByDataType.length
+                    dataTypeValue += (result + weight)
+                  }
+                  result = dataTypeValue / 7
                 }
               }
             }

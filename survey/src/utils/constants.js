@@ -379,10 +379,21 @@ const groupQuestions = {
     "calcnote - notepad calculator"
   ]
 };
-
+const groupCategory = {
+  1: [
+    "Food & Drink",
+    "Health & Fitness",
+    "Map & Navigation",
+    "Music & Audio",
+    "Social"
+  ],
+  2: ["Beauty", "Business", "Shopping", "Entertainment", "Finance"],
+  3: ["Medical", "Tools", "Sports", "Travel & Local", "Education"]
+};
 export default {
   categoryGroups,
   categoriesCollection,
   categoriesThirdParty,
-  groupQuestions
+  groupQuestions,
+  groupCategory
 };

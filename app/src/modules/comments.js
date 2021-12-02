@@ -1,3 +1,5 @@
+require("dotenv").config();
+import "../configs/mongoose.config";
 import _ from 'lodash';
 import Models from "../models";
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
@@ -17,13 +19,13 @@ async function main() {
         }
     });
 
-    for (let i = 0; i < allAnswers.length; i++) {
-      const answer = allAnswers[i];
+    // for (let i = 0; i < allAnswers.length; i++) {
+    //   const answer = allAnswers[i];
   
-      const user = await Models.User.findById(answer.userId);
+    //   const user = await Models.User.findById(answer.userId);
   
-      if (user.type === type) answers.push(answer);
-    }
+    //   if (user.type === type) answers.push(answer);
+    // }
   
     const header = [
       {
@@ -40,10 +42,10 @@ async function main() {
       }
     ];
     let rows = [];
+    let stt = 1
     for (let j = 0; j < answers.length; j++) {
       const answer = answers[j];
       let { questions, userId } = answer;
-      questions = [questions[13], questions[17], questions[21], questions[25]];
       const user = await Models.User.findById(userId);
   
       questions.forEach((question, i) => {
@@ -51,13 +53,13 @@ async function main() {
         const indexComment = responses.findIndex(item => item.name === "comment");
   
         rows.push({
-          stt: i + 1,
+          stt: stt++,
           email: user.email,
           comment: responses[indexComment].value
         });
       });
     }
-    rows = _.orderBy(rows, "stt");
+    // rows = _.orderBy(rows, "stt");
   
     const csvWriter = createCsvWriter({
       path: `comments (${type === "microworker" ? "microworker" : "expert"}).csv`,

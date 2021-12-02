@@ -88,11 +88,33 @@ class SurveyController {
       if (refreshUser.questionIds && refreshUser.questionIds.length)
         questionIdsForUser = refreshUser.questionIds;
       else {
-        const questions = await Models.App.find({
-          appName: {
-            $in: constants.groupQuestions[user.group]
-          }
-        }).select("_id");
+        const categories = constants.groupCategory[user.group];
+        let questions = await Promise.all(
+          categories.map(category =>
+            Models.App.aggregate([
+              {
+                $match: {
+                  isCompleted: true,
+                  categoryName: category,
+                  isExistedMobiPurpose: true
+                }
+              },
+              { $sample: { size: 2 } },
+              { $project: { _id: 1 } }
+            ])
+          )
+        );
+
+        questions = questions.reduce((acc, item) => {
+          acc = [...acc, ...item];
+          return acc;
+        }, []);
+
+        // const questions = await Models.App.find({
+        //   appName: {
+        //     $in: constants.groupQuestions[user.group]
+        //   }
+        // }).select("_id");
 
         questionIdsForUser = _.map(questions, "_id");
 
@@ -163,7 +185,6 @@ class SurveyController {
             value: answerValue
           });
         }
-        console.log(1, answerData);
         const indexQuestion = newQuestions.findIndex(
           item => item.id.toString() === questionId
         );
