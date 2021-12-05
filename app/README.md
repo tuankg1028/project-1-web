@@ -9,6 +9,7 @@ Make sure you have installed all of the following prerequisites on your developm
 * Node >= 10
 * Redis
 * Mongodb
+
 ### Installation
 
 _If you wish to run the tutorial, you can use the following commands_

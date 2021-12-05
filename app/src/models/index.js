@@ -11,6 +11,7 @@ import MaliciousDataset from "./maliciousDataset";
 import AppFunction from "./app-functions.model";
 import answerModel from "./answer.model";
 import userModel from "./user.model";
+import EDAModel from "./eda.model"
 class Model {
   constructor() {
     this.User = userModel;
@@ -26,6 +27,7 @@ class Model {
     this.MaliciousDataset = MaliciousDataset;
     this.CategoryDataset = CategoryDataset;
     this.AppFunction = AppFunction
+    this.EDA = EDAModel
   }
 }
 export default new Model();

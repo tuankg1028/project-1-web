@@ -4,6 +4,8 @@ import Models from "../models";
 import _ from "lodash";
 import { app } from "google-play-scraper";
 import Helpers from "../helpers";
+import { v4 as uuidv4, validate as uuidValidate } from "uuid";
+import fs from "fs";
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
 const categoryGroups = {
@@ -262,7 +264,7 @@ async function main2() {
   console.log("DONE");
 }
 
-main3()
+// main3()
 async function main3() {
 
   // const appsInFile1 = [];
@@ -327,4 +329,204 @@ async function main3() {
   console.log("not unique", keyValue.length)
   console.log("unique", _.uniq(keyValue).length)
 
+}
+
+// console.log(genFields(['field1', 'field2', 'field3', 'field4', 'field5'], 3, [['field1'], ['field2', 'field3']]))
+function genFields(fields, num, existedFields) {
+  if(!num || num <= 0) return
+  let result = []
+  
+  for (let i = 0; i < 1000; i++) {
+    result.push(_.sampleSize(fields, num));
+  }
+
+  result = result.map(item => JSON.stringify(item.sort()))
+  result = _.union(result)
+  result = result.map(item => JSON.parse(item))
+
+  result = result.filter(item => {
+    let isExisted = false
+
+    existedFields.forEach(existedField => {
+      console.log(1, existedField)
+      if(isExisted) return
+
+      let hasFields = true
+      existedField.forEach(fileName => {
+        if(!item.includes(fileName)) hasFields = false
+      })
+      
+      if(hasFields) isExisted = true
+    })
+
+    return !isExisted
+  })
+  return result
+}
+main4()
+async function main4() {
+  // const edaCount = await Models.EDA.find().distinct('user_id')
+  // console.log("edaCount", edaCount.length)
+
+  const edas = await Models.EDA.find()
+  
+
+  let edaGroup = _.groupBy(edas, 'type');
+
+  let riskFields = {}
+  // console.log("edaGroup", JSON.stringify(edaGroup, null, 2))
+  // const edaGroup = {
+  //   "participations": [
+  //     {
+  //       "_id": "619d297bce31879b3f1fa385",
+  //       "user_id": "619d2977ce31879b3f1fa385",
+  //       "type": "participations",
+  //       "color": "yellow",
+  //       "data": {
+  //         "challenge_id": "f10ada41-bfb8-11eb-8f93-0242465fb250",
+  //         "type": "GOAL_DAY1",
+  //         "type_composite": "TODAY1",
+  //         "start": "2021-05-27T21:00:00.000+00:00",
+  //         "end": "2021-05-28T20:59:59.999+00:00",
+  //         "achievement_type": null
+  //       },
+  //       "id": "619d297bce31879b3f1fa385"
+  //     },
+  //     {
+  //       "_id": "619d297bce31879b3f1fa386",
+  //       "user_id": "619d2977ce31879b3f1fa386",
+  //       "type": "participations",
+  //       "color": "yellow",
+  //       "data": {
+  //         "challenge_id": "f10ada41-bfb8-11eb-8f93-0242465fb250",
+  //         "type": "GOAL_DAY",
+  //         "type_composite": "TODAY1",
+  //         "start": "2021-05-27T21:00:00.000+00:00",
+  //         "end": "2021-05-28T20:59:59.999+00:00",
+  //         "achievement_type": null
+  //       },
+  //       "id": "619d297bce31879b3f1fa386"
+  //     },
+  //     {
+  //       "_id": "619d297bce31879b3f1fa388",
+  //       "user_id": "619d2977ce31879b3f1fa388",
+  //       "type": "participations",
+  //       "color": "yellow",
+  //       "data": {
+  //         "challenge_id": "0cf761d1-c67e-11eb-9029-0242ba7820cc",
+  //         "type": "GOAL_DAY1",
+  //         "type_composite": "TODAY2",
+  //         "start": "2021-06-05T21:00:00.000+00:00",
+  //         "end": "2021-06-06T21:00:00.000+00:00",
+  //         "achievement_type": null
+  //       },
+  //       "id": "619d297bce31879b3f1fa388"
+  //     },
+  //     {
+  //       "_id": "619d297bce31879b3f1fa387",
+  //       "user_id": "619d2977ce31879b3f1fa387",
+  //       "type": "participations",
+  //       "color": "yellow",
+  //       "data": {
+  //         "challenge_id": "0cf761d1-c67e-11eb-9029-0242ba7820cc",
+  //         "type": "GOAL_DAY",
+  //         "type_composite": "TODAY3",
+  //         "start": "2021-06-05T21:00:00.000+00:00",
+  //         "end": "2021-06-06T21:00:00.000+00:00",
+  //         "achievement_type": null
+  //       },
+  //       "id": "619d297bce31879b3f1fa387"
+  //     }
+  //   ],
+  //   "message_cheers": [
+  //     {
+  //       "_id": "619d297bce31879b3f1fa388",
+  //       "user_id": "619d2977ce31879b3f1fa386",
+  //       "type": "message_cheers",
+  //       "color": "yellow",
+  //       "data": {
+  //         "message_id": "03dea589-c0a2-11eb-b6da-02424ba6cac3",
+  //         "challenge_id": "8ffc0329-c04b-11eb-8ff4-02422db7ea84",
+  //         "wall": "8ffc0329-c04b-11eb-8ff4-02422db7ea84"
+  //       },
+  //       "id": "619d297bce31879b3f1fa388"
+  //     },
+  //     {
+  //       "_id": "619d297bce31879b3f1fa389",
+  //       "user_id": "619d2977ce31879b3f1fa386",
+  //       "type": "message_cheers",
+  //       "color": "yellow",
+  //       "data": {
+  //         "message_id": "9391eb62-c05c-11eb-a64e-02429fdbdaaf",
+  //         "challenge_id": "8ffc0329-c04b-11eb-8ff4-02422db7ea84",
+  //         "wall": "8ffc0329-c04b-11eb-8ff4-02422db7ea84"
+  //       },
+  //       "id": "619d297bce31879b3f1fa389"
+  //     }
+  //   ]
+  // }
+  for (const type in edaGroup) {
+    console.log('type', type)
+    riskFields[type] = []
+    const edasOfType = edaGroup[type];
+    
+    edasOfType.forEach(eda => {
+
+      const riskFieldsExists = _.map(riskFields[type], 'fieldName')
+      // filter not uuid
+      const fields = Object.entries(eda.data).reduce((acc, item) => {
+        if(!uuidValidate(item[1]) && !_.includes(riskFieldsExists, item[0])) acc.push(item[0])
+        return acc
+      }, [])
+      if(!fields.length) return
+
+      const comparedEdas = edasOfType.filter(item => item.id !== eda.id && item.user_id !== eda.user_id)
+
+      for (let i = 1; i <= fields.length; i++) {
+        const existedFields = JSON.parse(JSON.stringify(_.map(riskFields[type], 'fieldNames')))
+
+        const genedFields = genFields(fields, i, [])
+
+        genedFields.forEach(fieldNames => {
+          
+          let isRisk = true
+          comparedEdas.forEach(comparedEda => {
+            if(!isRisk) return
+
+            let isEqual = true
+            fieldNames.forEach(fieldName => {
+              if(!isEqual) return
+              const value1 = eda.data[fieldName]
+              const value2 = comparedEda.data[fieldName]
+              
+              if(value1 !== value2) return isEqual = false
+            })
+            
+            if(isEqual) return isRisk = false
+          })
+          console.log(eda.id)
+          // if this field is risk
+          if(isRisk) riskFields[type].push({
+            fieldNames,
+            id: eda.id
+          })
+        })
+      }
+    })
+  }
+  // console.log('riskFields', JSON.stringify(riskFields, null, 2))
+  let result = {};
+  for (const type in riskFields) {
+    const elements = riskFields[type];
+
+    elements = _.uniqBy(elements, (item) => JSON.stringify(item.fieldNames))
+    const elementGroup = _.groupBy(elements, (item) => item.fieldNames.length)
+
+
+    result[type] = elementGroup
+  }
+
+  fs.writeFileSync('./eda.txt', JSON.stringify(result, null, 2), 'utf8')
+
+  console.log("Done")
 }

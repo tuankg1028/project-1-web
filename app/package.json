@@ -26,7 +26,8 @@
     "downloadApk": "babel-node --max-old-space-size=30000 src/modules/download-apk.js",
     "apkToJavaCode": "babel-node --max-old-space-size=30000 src/modules/apk-to-java-code.js",
     "getPrediction": "babel-node --max-old-space-size=30000 src/modules/algorithm.js",
-    "comment": "babel-node --max-old-space-size=30000 src/modules/comments.js"
+    "comment": "babel-node --max-old-space-size=30000 src/modules/comments.js",
+    "userAnswer": "babel-node --max-old-space-size=30000 src/modules/user-answer.js"
   },
   "keywords": [],
   "author": "",
