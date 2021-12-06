@@ -16,7 +16,7 @@
     "stas": "babel-watch src/modules/stas.js",
     "changeDesc": "node --max-old-space-size=30000 dist/modules/changeDesc.js",
     "appsByCategories": "babel-watch src/modules/apps_by_categories.js",
-    "testData": "babel-node --max-old-space-size=30000 src/modules/test.js",
+    "testData": "babel-node --max-old-space-size=100000 src/modules/test.js",
     "em": "babel-watch src/modules/em.js",
     "apktojava": "babel-watch src/modules/apk_to_java.js",
     "computingDistance": "babel-watch src/modules/distance-app.js",
