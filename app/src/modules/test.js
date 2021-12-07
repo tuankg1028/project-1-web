@@ -363,27 +363,73 @@ function genFields(fields, num, existedFields) {
   })
   return result
 }
+
+const types = [ 'Afib ECG Readings',
+'Computed Temperature',
+'Daily Heart Rate Variability Summary',
+'Daily SpO2',
+'Feed Cheers',
+'Feed Comments',
+'Feed Posts',
+'Groups',
+'Heart Rate Variability Details',
+'Heart Rate Variability Histogram',
+'Profile',
+'Respiratory Rate Summary',
+'Stress Score',
+'Trackers',
+'Wrist Temperature',
+'altitude',
+'badge',
+'calories',
+'demographic_vo2_max',
+'distance',
+'estimated_oxygen_variation',
+'exercise',
+'games',
+'heart_rate',
+'height',
+'lightly_active_minutes',
+'menstrual_health_birth_control',
+'menstrual_health_cycles',
+'menstrual_health_settings',
+'menstrual_health_symptoms',
+'message_cheers',
+'mindfulness_eda_data_sessions',
+'mindfulness_goals',
+'moderately_active_minutes',
+'participations',
+'resting_heart_rate',
+'sedentary_minutes',
+'sleep',
+'steps',
+'swim_lengths_data',
+'time_in_heart_rate_zones',
+'trophy',
+'very_active_minutes',
+'water_logs' ]
 main4()
 async function main4() {
-  // const edaCount = await Models.EDA.find().distinct('user_id')
-  // console.log("edaCount", edaCount.length)
-  const limit = 1000000;
+  // const edaCount = await Models.EDA.find().distinct('type')
+  // console.log("edaCount", edaCount)
 
-  const promisses = []
-  for (let i = 0; i < 61; i++) {
-    const skip = limit * i;
+  // const limit = 1000000;
 
-    promisses.push(Models.EDA.find().limit(limit).skip(skip))
-  }
-  const edaChunk = await Promise.all(promisses);
-  const edas = edaChunk.reduce((result, item) => {
-    return [...result, ...item]
-  }, [])
+  // const promisses = []
+  // for (let i = 0; i < 61; i++) {
+  //   const skip = limit * i;
 
-  console.log("Finished get data from db")
-  let edaGroup = _.groupBy(edas, 'type');
+  //   promisses.push(Models.EDA.find().limit(limit).skip(skip))
+  // }
+  // const edaChunk = await Promise.all(promisses);
+  // const edas = edaChunk.reduce((result, item) => {
+  //   return [...result, ...item]
+  // }, [])
 
-  let riskFields = {}
+  // console.log("Finished get data from db")
+  // let edaGroup = _.groupBy(edas, 'type');
+
+  // let riskFields = {}
   // console.log("edaGroup", JSON.stringify(edaGroup, null, 2))
   // const edaGroup = {
   //   "participations": [
@@ -475,10 +521,12 @@ async function main4() {
   //     }
   //   ]
   // }
-  for (const type in edaGroup) {
+  for (const type of type) {
     console.log('type', type)
     riskFields[type] = []
-    const edasOfType = edaGroup[type];
+    const edasOfType = await Models.EDA.find({
+      type
+    })
     
     edasOfType.forEach(eda => {
 
@@ -524,7 +572,7 @@ async function main4() {
       }
     })
   }
-  // console.log('riskFields', JSON.stringify(riskFields, null, 2))
+
   let result = {};
   for (const type in riskFields) {
     const elements = riskFields[type];
