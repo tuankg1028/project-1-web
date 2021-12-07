@@ -429,7 +429,6 @@ async function main4() {
   // console.log("Finished get data from db")
   // let edaGroup = _.groupBy(edas, 'type');
 
-  // let riskFields = {}
   // console.log("edaGroup", JSON.stringify(edaGroup, null, 2))
   // const edaGroup = {
   //   "participations": [
@@ -521,7 +520,8 @@ async function main4() {
   //     }
   //   ]
   // }
-  for (const type of type) {
+  let riskFields = {}
+  for (const type of types) {
     console.log('type', type)
     riskFields[type] = []
     const edasOfType = await Models.EDA.find({
