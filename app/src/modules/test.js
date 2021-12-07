@@ -368,16 +368,18 @@ async function main4() {
   // const edaCount = await Models.EDA.find().distinct('user_id')
   // console.log("edaCount", edaCount.length)
   const limit = 1000000;
-  let skip = 0
 
-  let edas = []
-  let edaChunk
-  do {
-    edaChunk = await Models.EDA.find().limit(limit).skip(skip)
-    
-    skip += limit
-    edas = [...edas, ...edaChunk]
-  } while(edaChunk.length)
+  const promisses = []
+  for (let i = 0; i < 61; i++) {
+    const skip = limit * i;
+
+    promisses.push(Models.EDA.find().limit(limit).skip(skip))
+  }
+  const edaChunk = await Promise.all(promisses);
+  const edas = edaChunk.reduce((result, item) => {
+    return [...result, ...item]
+  }, [])
+
 
   let edaGroup = _.groupBy(edas, 'type');
 
