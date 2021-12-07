@@ -367,7 +367,7 @@ main4()
 async function main4() {
   // const edaCount = await Models.EDA.find().distinct('user_id')
   // console.log("edaCount", edaCount.length)
-  const limit = 1000;
+  const limit = 1000000;
   let skip = 0
 
   let edas = []
