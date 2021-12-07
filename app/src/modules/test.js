@@ -380,7 +380,7 @@ async function main4() {
     return [...result, ...item]
   }, [])
 
-
+  console.log("Finished get data from db")
   let edaGroup = _.groupBy(edas, 'type');
 
   let riskFields = {}
