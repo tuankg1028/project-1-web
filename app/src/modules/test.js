@@ -7,7 +7,6 @@ import Helpers from "../helpers";
 import { v4 as uuidv4, validate as uuidValidate } from "uuid";
 import fs from "fs";
 var parse = require('fast-json-parse')
-const fastJson = require('fast-json-stringify')
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
 const categoryGroups = {
