@@ -411,6 +411,25 @@ const types = [
 'very_active_minutes',
 'water_logs'
  ]
+ const retry = async (promise, time = 20) => {
+  let counter = 1
+  let status = false
+  let result
+
+  do {
+    try {
+      result = await promise
+      status = true
+    } catch (error) {
+      result = error
+      counter++
+    }
+  } while (!status && counter <= time)
+
+  if (!status) throw result
+
+  return result
+}
 
 main4()
 async function main4() {
@@ -524,82 +543,96 @@ async function main4() {
   //     }
   //   ]
   // }
+  
   let riskFields = {}
   let promisses = []
   for (const type of types) {
     console.log('type', type)
     
-    promisses.push(getEdaByGroup(type, riskFields))
+    promisses.push(retry(getEdaByGroup(type)))
   }
   await Promise.all(promisses)
 
-  let result = {};
-  for (const type in riskFields) {
-    const elements = riskFields[type];
+  // let result = {};
+  // for (const type in riskFields) {
+  //   const elements = riskFields[type];
 
-    elements = _.uniqBy(elements, (item) => JSON.stringify(item.fieldNames))
-    const elementGroup = _.groupBy(elements, (item) => item.fieldNames.length)
+  //   elements = _.uniqBy(elements, (item) => JSON.stringify(item.fieldNames))
+  //   const elementGroup = _.groupBy(elements, (item) => item.fieldNames.length)
 
 
-    result[type] = elementGroup
-  }
+  //   result[type] = elementGroup
+  // }
 
-  fs.writeFileSync('./eda.txt', JSON.stringify(result, null, 2), 'utf8')
+  // fs.writeFileSync('./eda.txt', JSON.stringify(result, null, 2), 'utf8')
 
   console.log("Done")
 }
 
-async function getEdaByGroup(type, riskFields) {
+
+
+async function getEdaByGroup(type) {
   try {
+    if(fs.existsSync(`./eda/${type}.txt`)) return
+
+    let riskFields = {};
+    riskFields[type] = []
+    const edasOfType = await Models.EDA.find({
+      type
+    })
     
-  riskFields[type] = []
-  const edasOfType = await Models.EDA.find({
-    type
-  })
-  
-  edasOfType.forEach((eda, index) => {
-    console.log(`Running ${index + 1}/${edasOfType.length} on ${type}`)
-    const riskFieldsExists = _.map(riskFields[type], 'fieldName')
-    // filter not uuid
-    const fields = Object.entries(eda.data).reduce((acc, item) => {
-      if(!uuidValidate(item[1]) && !_.includes(riskFieldsExists, item[0])) acc.push(item[0])
-      return acc
-    }, [])
-    if(!fields.length) return
+    edasOfType.forEach((eda, index) => {
+      console.log(`Running ${index + 1}/${edasOfType.length} on ${type}`)
+      const riskFieldsExists = _.map(riskFields[type], 'fieldName')
+      // filter not uuid
+      const fields = Object.entries(eda.data).reduce((acc, item) => {
+        if(!uuidValidate(item[1]) && !_.includes(riskFieldsExists, item[0])) acc.push(item[0])
+        return acc
+      }, [])
+      if(!fields.length) return
 
-    const comparedEdas = edasOfType.filter(item => item.id !== eda.id && item.user_id !== eda.user_id)
+      const comparedEdas = edasOfType.filter(item => item.id !== eda.id && item.user_id !== eda.user_id)
 
-    for (let i = 1; i <= fields.length; i++) {
+      for (let i = 1; i <= fields.length; i++) {
 
-      // const existedFields = JSON.parse(JSON.stringify(_.map(riskFields[type], 'fieldNames')))
+        // const existedFields = JSON.parse(JSON.stringify(_.map(riskFields[type], 'fieldNames')))
 
-      const genedFields = genFields(fields, i, [])
+        const genedFields = genFields(fields, i, [])
 
-      genedFields.forEach(fieldNames => {
-        
-        let isRisk = true
-        comparedEdas.forEach(comparedEda => {
-          if(!isRisk) return
-
-          let isEqual = true
-          fieldNames.forEach(fieldName => {
-            if(!isEqual) return
-            const value1 = eda.data[fieldName]
-            const value2 = comparedEda.data[fieldName]
-            
-            if(value1 !== value2) return isEqual = false
-          })
+        genedFields.forEach(fieldNames => {
           
-          if(isEqual) return isRisk = false
+          let isRisk = true
+          comparedEdas.forEach(comparedEda => {
+            if(!isRisk) return
+
+            let isEqual = true
+            fieldNames.forEach(fieldName => {
+              if(!isEqual) return
+              const value1 = eda.data[fieldName]
+              const value2 = comparedEda.data[fieldName]
+              
+              if(value1 !== value2) return isEqual = false
+            })
+            
+            if(isEqual) return isRisk = false
+          })
+          // if this field is risk
+          if(isRisk) riskFields[type].push({
+            fieldNames,
+            id: eda.id
+          })
         })
-        // if this field is risk
-        if(isRisk) riskFields[type].push({
-          fieldNames,
-          id: eda.id
-        })
-      })
+      }
+    })
+
+    for (const type in riskFields) {
+      const elements = riskFields[type];
+
+      elements = _.uniqBy(elements, (item) => JSON.stringify(item.fieldNames))
+      const elementGroup = _.groupBy(elements, (item) => item.fieldNames.length)
+
+      fs.writeFileSync(`./eda/${type}.txt`, JSON.stringify(elementGroup, null, 2), 'utf8')
     }
-  })
   } catch(e) {
     console.log(e)
   }
