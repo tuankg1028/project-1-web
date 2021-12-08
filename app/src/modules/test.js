@@ -6,6 +6,8 @@ import { app } from "google-play-scraper";
 import Helpers from "../helpers";
 import { v4 as uuidv4, validate as uuidValidate } from "uuid";
 import fs from "fs";
+var parse = require('fast-json-parse')
+const fastJson = require('fast-json-stringify')
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
 const categoryGroups = {
@@ -342,7 +344,7 @@ function genFields(fields, num, existedFields) {
 
   result = result.map(item => JSON.stringify(item.sort()))
   result = _.union(result)
-  result = result.map(item => JSON.parse(item))
+  result = result.map(item => parse(item).value)
 
   result = result.filter(item => {
     let isExisted = false
@@ -364,7 +366,8 @@ function genFields(fields, num, existedFields) {
   return result
 }
 
-const types = [ 'Afib ECG Readings',
+const types = [ 
+  'Afib ECG Readings',
 'Computed Temperature',
 'Daily Heart Rate Variability Summary',
 'Daily SpO2',
@@ -407,7 +410,9 @@ const types = [ 'Afib ECG Readings',
 'time_in_heart_rate_zones',
 'trophy',
 'very_active_minutes',
-'water_logs' ]
+'water_logs'
+ ]
+
 main4()
 async function main4() {
   // const edaCount = await Models.EDA.find().distinct('type')
@@ -564,7 +569,8 @@ async function getEdaByGroup(type, riskFields) {
     const comparedEdas = edasOfType.filter(item => item.id !== eda.id && item.user_id !== eda.user_id)
 
     for (let i = 1; i <= fields.length; i++) {
-      const existedFields = JSON.parse(JSON.stringify(_.map(riskFields[type], 'fieldNames')))
+
+      // const existedFields = JSON.parse(JSON.stringify(_.map(riskFields[type], 'fieldNames')))
 
       const genedFields = genFields(fields, i, [])
 
