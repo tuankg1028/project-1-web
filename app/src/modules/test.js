@@ -550,6 +550,8 @@ async function main4() {
 }
 
 async function getEdaByGroup(type, riskFields) {
+  try {
+    
   riskFields[type] = []
   const edasOfType = await Models.EDA.find({
     type
@@ -598,4 +600,7 @@ async function getEdaByGroup(type, riskFields) {
       })
     }
   })
+  } catch(e) {
+    console.log(e)
+  }
 }
