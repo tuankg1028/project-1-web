@@ -13,7 +13,10 @@ function getRegionByCampaignId(campaignId) {
     "99cf426fa790": "Latin America",
     "7cfcb3709b44": "Europe West",
     "4d74caeee538": "Asia - Africa",
-    e0a4b9cf46eb: "USA - Western"
+    "e0a4b9cf46eb": "USA - Western",
+    //
+    "4b9b971132f5": "Latin America",
+    "1ab92b836867": "Asia - Africa",
   };
   return regions[campaignId];
 }

@@ -16,4 +16,4 @@ mongoose.connection.on("error", (err) => {
 });
 mongoose.set("debug", true);
 
-// MongooseCache(mongoose, `redis://${REDIS_HOST}:${REDIS_PORT}`);
+MongooseCache(mongoose, `redis://${REDIS_HOST}:${REDIS_PORT}`);

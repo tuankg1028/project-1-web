@@ -11,3 +11,4 @@ fogify-test/application/code/node_modules
 validation-process/application/code/dist
 validation-process/application/code/node_modules
 survey/.env
+survey/node_modules
