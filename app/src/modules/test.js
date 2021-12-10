@@ -548,10 +548,10 @@ async function main4() {
   let promisses = []
   for (const type of types) {
     console.log('type', type)
-    await retry(getEdaByGroup(type))
-    // promisses.push(retry(getEdaByGroup(type)))
+    // await retry(getEdaByGroup(type))
+    promisses.push(retry(getEdaByGroup(type)))
   }
-  // await Promise.all(promisses)
+  await Promise.all(promisses)
 
   // let result = {};
   // for (const type in riskFields) {
