@@ -2,7 +2,7 @@ const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, "../../.env") });
 import mongoose from "mongoose";
 import Helpers from "../helpers";
-// import MongooseCache from "mongoose-redis";
+import MongooseCache from "mongoose-redis";
 
 const { MONGODB_URL, REDIS_HOST, REDIS_PORT } = process.env;
 
