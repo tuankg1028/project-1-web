@@ -578,7 +578,7 @@ async function getEdaByGroup(type) {
     riskFields[type] = []
     const edasOfType = await Models.EDA.find({
       type
-    })
+    }).limit(1000000);
 
     edasOfType.forEach((eda, index) => {
       console.log(`Running ${index + 1}/${edasOfType.length} on ${type}`)
