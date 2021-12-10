@@ -572,15 +572,14 @@ async function main4() {
 
 
 async function getEdaByGroup(type) {
-  try {
     if(fs.existsSync(`./eda/${type}.txt`)) return
 
     let riskFields = {};
     riskFields[type] = []
     const edasOfType = await Models.EDA.find({
       type
-    }).cache(60 * 60 * 24 * 30)
-    return
+    })
+
     edasOfType.forEach((eda, index) => {
       console.log(`Running ${index + 1}/${edasOfType.length} on ${type}`)
       const riskFieldsExists = _.map(riskFields[type], 'fieldName')
@@ -633,7 +632,5 @@ async function getEdaByGroup(type) {
 
       fs.writeFileSync(`./eda/${type}.txt`, JSON.stringify(elementGroup, null, 2), 'utf8')
     }
-  } catch(e) {
-    console.log(e)
-  }
+  
 }
