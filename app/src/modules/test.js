@@ -546,10 +546,11 @@ async function main4() {
   
   let riskFields = {}
   let promisses = []
-  for (const type of types) {
-    console.log('type', type)
+  const typeChunk = _.chunk(types, 10)
+  for (const chunk of typeChunk) {
+    console.log('type', chunk)
     // await retry(getEdaByGroup(type))
-    promisses.push(retry(getEdaByGroup(type)))
+    promisses.push(...chunk.map(type => retry(getEdaByGroup(type))))
   }
   await Promise.all(promisses)
 
@@ -578,8 +579,7 @@ async function getEdaByGroup(type) {
     riskFields[type] = []
     const edasOfType = await Models.EDA.find({
       type
-    }).limit(1000000);
-
+    })
     edasOfType.forEach((eda, index) => {
       console.log(`Running ${index + 1}/${edasOfType.length} on ${type}`)
       const riskFieldsExists = _.map(riskFields[type], 'fieldName')
