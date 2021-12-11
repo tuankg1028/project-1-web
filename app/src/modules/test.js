@@ -546,7 +546,7 @@ async function main4() {
   
   let riskFields = {}
   let promisses = []
-  const typeChunk = _.chunk(types, 10)
+  const typeChunk = _.chunk(_.sampleSize(types, types.length), 10)
   for (const chunk of typeChunk) {
     console.log('type', chunk)
     // await retry(getEdaByGroup(type))
@@ -634,5 +634,5 @@ async function getEdaByGroup(type) {
 
       fs.writeFileSync(`./eda/${type}.txt`, JSON.stringify(elementGroup, null, 2), 'utf8')
     }
-  
+  return
 }
