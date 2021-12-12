@@ -431,7 +431,7 @@ const types = [
   return result
 }
 
-main4()
+// main4()
 async function main4() {
   // const edaCount = await Models.EDA.find().distinct('type')
   // console.log("edaCount", edaCount)
@@ -572,8 +572,6 @@ async function main4() {
   console.log("Done")
 }
 
-
-
 async function getEdaByGroup(type) {
     if(fs.existsSync(`./eda/${type}.txt`)) return
 
@@ -635,4 +633,52 @@ async function getEdaByGroup(type) {
       fs.writeFileSync(`./eda/${type}.txt`, JSON.stringify(elementGroup, null, 2), 'utf8')
     }
   return
+}
+
+main5()
+async function main5() {
+  const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+  const header = [
+    {
+      id: "stt",
+      title: "STT"
+    },
+    {
+      id: "user_id",
+      title: "User Id"
+    },
+    {
+      id: "num",
+      title: "Number of questions"
+    }
+  ];
+
+  const typeChunk = _.chunk(types, 4)
+
+  for (const types of typeChunk) {
+    await Promise.all(types.map(async type => {
+      if(!fs.existsSync(`./eda/num-question-types/${type}.csv`)) {
+        const edaInType = await Models.EDA.find({
+          type
+        })
+        const edaGroupUser = _.groupBy(edaInType, 'user_id')
+    
+        const rows = Object.entries(edaGroupUser).map((item, index) => {
+          return {
+            stt: index + 1,
+            user_id: item[0],
+            num: item[1].length
+          }
+        })
+    
+        const csvWriter = createCsvWriter({
+          path: `./eda/num-question-types/${type}.csv`,
+          header: header
+        });
+        await csvWriter.writeRecords(rows);
+      }
+    }))
+  }
+  
+  console.log("Done")
 }
