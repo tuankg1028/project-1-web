@@ -1,0 +1,34 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "timestamp"
+      ],
+      "id": "619d2991ce31879b3f3349b6"
+    },
+    {
+      "fieldNames": [
+        "mood"
+      ],
+      "id": "619d2991ce31879b3f3349b6"
+    },
+    {
+      "fieldNames": [
+        "flow"
+      ],
+      "id": "619d2b39ce31879b3fee2a82"
+    },
+    {
+      "fieldNames": [
+        "conditions"
+      ],
+      "id": "619d2b39ce31879b3fee2a86"
+    },
+    {
+      "fieldNames": [
+        "sex"
+      ],
+      "id": "619d2b89ce31879b3f43316c"
+    }
+  ]
+}

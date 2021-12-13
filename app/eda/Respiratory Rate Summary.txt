@@ -1,0 +1,64 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "timestamp"
+      ],
+      "id": "619d298fce31879b3f32381d"
+    },
+    {
+      "fieldNames": [
+        "rem_sleep_signal_to_noise"
+      ],
+      "id": "619d298fce31879b3f32381d"
+    },
+    {
+      "fieldNames": [
+        "deep_sleep_signal_to_noise"
+      ],
+      "id": "619d298fce31879b3f32381d"
+    },
+    {
+      "fieldNames": [
+        "full_sleep_signal_to_noise"
+      ],
+      "id": "619d298fce31879b3f32381d"
+    },
+    {
+      "fieldNames": [
+        "rem_sleep_standard_deviation"
+      ],
+      "id": "619d29b8ce31879b3f5bfbe5"
+    },
+    {
+      "fieldNames": [
+        "rem_sleep_breathing_rate"
+      ],
+      "id": "619d29c8ce31879b3f6deb36"
+    },
+    {
+      "fieldNames": [
+        "deep_sleep_standard_deviation"
+      ],
+      "id": "619d2a75ce31879b3f381647"
+    },
+    {
+      "fieldNames": [
+        "full_sleep_breathing_rate"
+      ],
+      "id": "619d2a75ce31879b3f38165f"
+    },
+    {
+      "fieldNames": [
+        "deep_sleep_breathing_rate"
+      ],
+      "id": "619d2a76ce31879b3f39406f"
+    },
+    {
+      "fieldNames": [
+        "full_sleep_standard_deviation"
+      ],
+      "id": "619d2ba7ce31879b3f6371a3"
+    }
+  ]
+}

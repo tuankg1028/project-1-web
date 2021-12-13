@@ -1,0 +1,112 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "activityLevel"
+      ],
+      "id": "619d297ece31879b3f226fc0"
+    },
+    {
+      "fieldNames": [
+        "steps"
+      ],
+      "id": "619d297ece31879b3f226fc0"
+    },
+    {
+      "fieldNames": [
+        "originalStartTime"
+      ],
+      "id": "619d297ece31879b3f226fc0"
+    },
+    {
+      "fieldNames": [
+        "heartRateZones"
+      ],
+      "id": "619d297ece31879b3f226fc0"
+    },
+    {
+      "fieldNames": [
+        "logId"
+      ],
+      "id": "619d297ece31879b3f226fc0"
+    },
+    {
+      "fieldNames": [
+        "activeZoneMinutes"
+      ],
+      "id": "619d297ece31879b3f226fc0"
+    },
+    {
+      "fieldNames": [
+        "lastModified"
+      ],
+      "id": "619d297ece31879b3f226fc0"
+    },
+    {
+      "fieldNames": [
+        "manualValuesSpecified"
+      ],
+      "id": "619d297ece31879b3f226fc0"
+    },
+    {
+      "fieldNames": [
+        "startTime"
+      ],
+      "id": "619d297ece31879b3f226fc0"
+    },
+    {
+      "fieldNames": [
+        "activeDuration"
+      ],
+      "id": "619d297ece31879b3f226fc7"
+    },
+    {
+      "fieldNames": [
+        "duration"
+      ],
+      "id": "619d297ece31879b3f226fc7"
+    },
+    {
+      "fieldNames": [
+        "originalDuration"
+      ],
+      "id": "619d297ece31879b3f226fc7"
+    },
+    {
+      "fieldNames": [
+        "elevationGain"
+      ],
+      "id": "619d297ece31879b3f226fd3"
+    },
+    {
+      "fieldNames": [
+        "calories"
+      ],
+      "id": "619d297ece31879b3f226fd6"
+    },
+    {
+      "fieldNames": [
+        "activityName"
+      ],
+      "id": "619d2992ce31879b3f34f17d"
+    },
+    {
+      "fieldNames": [
+        "activityTypeId"
+      ],
+      "id": "619d29b9ce31879b3f5e712c"
+    },
+    {
+      "fieldNames": [
+        "averageHeartRate"
+      ],
+      "id": "619d2a04ce31879b3fb851c9"
+    },
+    {
+      "fieldNames": [
+        "logType"
+      ],
+      "id": "619d2cb1ce31879b3f55e30c"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "value"
+      ],
+      "id": "619d2980ce31879b3f25497c"
+    },
+    {
+      "fieldNames": [
+        "dateTime"
+      ],
+      "id": "619d29dace31879b3f7eb47d"
+    }
+  ]
+}

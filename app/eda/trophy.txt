@@ -1,0 +1,34 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "title"
+      ],
+      "id": "619d2b2ace31879b3fe8dcb3"
+    },
+    {
+      "fieldNames": [
+        "description"
+      ],
+      "id": "619d2b2ace31879b3fe8dcb3"
+    },
+    {
+      "fieldNames": [
+        "challengeName"
+      ],
+      "id": "619d2b2ace31879b3fe8dcb3"
+    },
+    {
+      "fieldNames": [
+        "challengeType"
+      ],
+      "id": "619d2b2ace31879b3fe8dcb3"
+    },
+    {
+      "fieldNames": [
+        "lastEarned"
+      ],
+      "id": "619d2b2ace31879b3fe8dcb3"
+    }
+  ]
+}

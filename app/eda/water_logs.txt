@@ -1,0 +1,22 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "id"
+      ],
+      "id": "619d298fce31879b3f31927f"
+    },
+    {
+      "fieldNames": [
+        "date"
+      ],
+      "id": "619d29d4ce31879b3f76fb05"
+    },
+    {
+      "fieldNames": [
+        "waterAmount"
+      ],
+      "id": "619d29d4ce31879b3f76fb15"
+    }
+  ]
+}

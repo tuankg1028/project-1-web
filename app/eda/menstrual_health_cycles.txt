@@ -1,0 +1,58 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "ovulation_start_date"
+      ],
+      "id": "619d2991ce31879b3f3349b7"
+    },
+    {
+      "fieldNames": [
+        "cycle_start_date"
+      ],
+      "id": "619d2991ce31879b3f3349b7"
+    },
+    {
+      "fieldNames": [
+        "fertile_end_date"
+      ],
+      "id": "619d2991ce31879b3f3349b7"
+    },
+    {
+      "fieldNames": [
+        "fertile_start_date"
+      ],
+      "id": "619d2991ce31879b3f3349b7"
+    },
+    {
+      "fieldNames": [
+        "id"
+      ],
+      "id": "619d2991ce31879b3f3349b7"
+    },
+    {
+      "fieldNames": [
+        "period_start_date"
+      ],
+      "id": "619d2991ce31879b3f3349b7"
+    },
+    {
+      "fieldNames": [
+        "cycle_end_date"
+      ],
+      "id": "619d2991ce31879b3f3349b7"
+    },
+    {
+      "fieldNames": [
+        "ovulation_end_date"
+      ],
+      "id": "619d2991ce31879b3f3349b7"
+    },
+    {
+      "fieldNames": [
+        "period_end_date"
+      ],
+      "id": "619d2991ce31879b3f3349b8"
+    }
+  ]
+}

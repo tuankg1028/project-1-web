@@ -1,0 +1,28 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "nremhr"
+      ],
+      "id": "619d298fce31879b3f321aef"
+    },
+    {
+      "fieldNames": [
+        "rmssd"
+      ],
+      "id": "619d298fce31879b3f321aef"
+    },
+    {
+      "fieldNames": [
+        "entropy"
+      ],
+      "id": "619d298fce31879b3f321af0"
+    },
+    {
+      "fieldNames": [
+        "timestamp"
+      ],
+      "id": "619d2a5bce31879b3f221e5e"
+    }
+  ]
+}

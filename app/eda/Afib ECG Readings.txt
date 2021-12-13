@@ -1,0 +1,34 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "waveform_samples"
+      ],
+      "id": "619d299ece31879b3f433c92"
+    },
+    {
+      "fieldNames": [
+        "reading_time"
+      ],
+      "id": "619d299ece31879b3f433c92"
+    },
+    {
+      "fieldNames": [
+        "heart_rate"
+      ],
+      "id": "619d29b8ce31879b3f5c9262"
+    },
+    {
+      "fieldNames": [
+        "wire_id"
+      ],
+      "id": "619d29b8ce31879b3f5c9262"
+    },
+    {
+      "fieldNames": [
+        "result_classification"
+      ],
+      "id": "619d2adece31879b3fa2bf07"
+    }
+  ]
+}

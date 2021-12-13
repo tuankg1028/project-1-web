@@ -1,0 +1,34 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "UPDATED_AT"
+      ],
+      "id": "619d2991ce31879b3f3351be"
+    },
+    {
+      "fieldNames": [
+        "DATE"
+      ],
+      "id": "619d299ece31879b3f433c94"
+    },
+    {
+      "fieldNames": [
+        "STRESS_SCORE"
+      ],
+      "id": "619d29c8ce31879b3f6ded1f"
+    },
+    {
+      "fieldNames": [
+        "EXERTION_POINTS"
+      ],
+      "id": "619d2a7bce31879b3f3acf91"
+    },
+    {
+      "fieldNames": [
+        "RESPONSIVENESS_POINTS"
+      ],
+      "id": "619d2bddce31879b3f8fd818"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "nightly_temperature"
+      ],
+      "id": "619d297cce31879b3f210cfe"
+    },
+    {
+      "fieldNames": [
+        "sleep_end"
+      ],
+      "id": "619d297cce31879b3f210cfe"
+    },
+    {
+      "fieldNames": [
+        "sleep_start"
+      ],
+      "id": "619d297cce31879b3f210cfe"
+    },
+    {
+      "fieldNames": [
+        "baseline_relative_sample_standard_deviation"
+      ],
+      "id": "619d297cce31879b3f210d00"
+    },
+    {
+      "fieldNames": [
+        "baseline_relative_nightly_standard_deviation"
+      ],
+      "id": "619d297cce31879b3f210d00"
+    },
+    {
+      "fieldNames": [
+        "baseline_relative_sample_sum_of_squares"
+      ],
+      "id": "619d297cce31879b3f210d00"
+    },
+    {
+      "fieldNames": [
+        "baseline_relative_sample_sum"
+      ],
+      "id": "619d297cce31879b3f210d00"
+    },
+    {
+      "fieldNames": [
+        "temperature_samples"
+      ],
+      "id": "619d297cce31879b3f2117ee"
+    }
+  ]
+}

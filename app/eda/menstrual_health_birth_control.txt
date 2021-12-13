@@ -1,0 +1,16 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "event_date"
+      ],
+      "id": "619d2c6fce31879b3f1aa577"
+    },
+    {
+      "fieldNames": [
+        "birth_control_type"
+      ],
+      "id": "619d2c6fce31879b3f1aa577"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "end"
+      ],
+      "id": "619d29d4ce31879b3f76facf"
+    },
+    {
+      "fieldNames": [
+        "start"
+      ],
+      "id": "619d29d4ce31879b3f76facf"
+    },
+    {
+      "fieldNames": [
+        "type"
+      ],
+      "id": "619d29d4ce31879b3f76fad1"
+    },
+    {
+      "fieldNames": [
+        "type_composite"
+      ],
+      "id": "619d29d4ce31879b3f76fb02"
+    }
+  ]
+}

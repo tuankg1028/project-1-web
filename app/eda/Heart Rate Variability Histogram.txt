@@ -1,0 +1,16 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "timestamp"
+      ],
+      "id": "619d298fce31879b3f3221b9"
+    },
+    {
+      "fieldNames": [
+        "bucket_values"
+      ],
+      "id": "619d298fce31879b3f3221b9"
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "full_name"
+      ],
+      "id": "619d297bce31879b3f1fa3a1"
+    },
+    {
+      "fieldNames": [
+        "stride_length_walking"
+      ],
+      "id": "619d297bce31879b3f1fa3a1"
+    },
+    {
+      "fieldNames": [
+        "first_name"
+      ],
+      "id": "619d297bce31879b3f1fa3a1"
+    },
+    {
+      "fieldNames": [
+        "last_name"
+      ],
+      "id": "619d297bce31879b3f1fa3a1"
+    },
+    {
+      "fieldNames": [
+        "stride_length_running"
+      ],
+      "id": "619d297bce31879b3f1fa3a1"
+    },
+    {
+      "fieldNames": [
+        "email_address"
+      ],
+      "id": "619d297bce31879b3f1fa3a1"
+    },
+    {
+      "fieldNames": [
+        "display_name"
+      ],
+      "id": "619d297bce31879b3f1fa3a1"
+    },
+    {
+      "fieldNames": [
+        "id"
+      ],
+      "id": "619d297bce31879b3f1fa3a1"
+    },
+    {
+      "fieldNames": [
+        "date_of_birth"
+      ],
+      "id": "619d297bce31879b3f1fa3a1"
+    },
+    {
+      "fieldNames": [
+        "height"
+      ],
+      "id": "619d297bce31879b3f1fa3a1"
+    },
+    {
+      "fieldNames": [
+        "member_since"
+      ],
+      "id": "619d298fce31879b3f319283"
+    },
+    {
+      "fieldNames": [
+        "weight"
+      ],
+      "id": "619d298fce31879b3f319283"
+    },
+    {
+      "fieldNames": [
+        "country"
+      ],
+      "id": "619d29d4ce31879b3f76fb19"
+    },
+    {
+      "fieldNames": [
+        "username"
+      ],
+      "id": "619d2a6fce31879b3f364162"
+    },
+    {
+      "fieldNames": [
+        "locale"
+      ],
+      "id": "619d2a9bce31879b3f62136f"
+    },
+    {
+      "fieldNames": [
+        "timezone"
+      ],
+      "id": "619d2ac9ce31879b3f8de9d5"
+    },
+    {
+      "fieldNames": [
+        "sleep_tracking"
+      ],
+      "id": "619d2cefce31879b3f967695"
+    }
+  ],
+  "2": [
+    {
+      "fieldNames": [
+        "glucose_unit",
+        "time_display_format"
+      ],
+      "id": "619d2ca8ce31879b3f4f1f46"
+    }
+  ],
+  "3": [
+    {
+      "fieldNames": [
+        "gender",
+        "glucose_unit",
+        "start_of_week"
+      ],
+      "id": "619d2b2ace31879b3fe8dcf3"
+    }
+  ],
+  "4": [
+    {
+      "fieldNames": [
+        "gender",
+        "start_of_week",
+        "swim_unit",
+        "time_display_format"
+      ],
+      "id": "619d2b96ce31879b3f526919"
+    }
+  ]
+}

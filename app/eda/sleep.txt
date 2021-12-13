@@ -1,0 +1,76 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "levels"
+      ],
+      "id": "619d297cce31879b3f208c35"
+    },
+    {
+      "fieldNames": [
+        "startTime"
+      ],
+      "id": "619d297cce31879b3f208c35"
+    },
+    {
+      "fieldNames": [
+        "endTime"
+      ],
+      "id": "619d297cce31879b3f208c35"
+    },
+    {
+      "fieldNames": [
+        "logId"
+      ],
+      "id": "619d297cce31879b3f208c35"
+    },
+    {
+      "fieldNames": [
+        "minutesAsleep"
+      ],
+      "id": "619d298fce31879b3f32a916"
+    },
+    {
+      "fieldNames": [
+        "timeInBed"
+      ],
+      "id": "619d298fce31879b3f32a931"
+    },
+    {
+      "fieldNames": [
+        "duration"
+      ],
+      "id": "619d298fce31879b3f32a931"
+    },
+    {
+      "fieldNames": [
+        "dateOfSleep"
+      ],
+      "id": "619d299ece31879b3f432926"
+    },
+    {
+      "fieldNames": [
+        "minutesAwake"
+      ],
+      "id": "619d29c8ce31879b3f6deb9f"
+    },
+    {
+      "fieldNames": [
+        "minutesToFallAsleep"
+      ],
+      "id": "619d29d4ce31879b3f77af05"
+    },
+    {
+      "fieldNames": [
+        "efficiency"
+      ],
+      "id": "619d2ca8ce31879b3f500253"
+    },
+    {
+      "fieldNames": [
+        "minutesAfterWakeup"
+      ],
+      "id": "619d2cf0ce31879b3f97caff"
+    }
+  ]
+}

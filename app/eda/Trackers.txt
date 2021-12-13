@@ -1,0 +1,40 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "last_sync_date_time"
+      ],
+      "id": "619d297bce31879b3f1fa39f"
+    },
+    {
+      "fieldNames": [
+        "alarm_update_time"
+      ],
+      "id": "619d297bce31879b3f1fa39f"
+    },
+    {
+      "fieldNames": [
+        "batt_level"
+      ],
+      "id": "619d297bce31879b3f1fa39f"
+    },
+    {
+      "fieldNames": [
+        "heart_rate_tracking_update_time"
+      ],
+      "id": "619d297bce31879b3f1fa39f"
+    },
+    {
+      "fieldNames": [
+        "tracker_id"
+      ],
+      "id": "619d297bce31879b3f1fa39f"
+    },
+    {
+      "fieldNames": [
+        "date_added"
+      ],
+      "id": "619d298fce31879b3f319281"
+    }
+  ]
+}

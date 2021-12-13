@@ -1,0 +1,28 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "average_value"
+      ],
+      "id": "619d29c8ce31879b3f6d90f2"
+    },
+    {
+      "fieldNames": [
+        "timestamp"
+      ],
+      "id": "619d2a58ce31879b3f21e925"
+    },
+    {
+      "fieldNames": [
+        "lower_bound"
+      ],
+      "id": "619d2a75ce31879b3f38333b"
+    },
+    {
+      "fieldNames": [
+        "upper_bound"
+      ],
+      "id": "619d2ab6ce31879b3f7ae746"
+    }
+  ]
+}
