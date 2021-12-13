@@ -593,6 +593,7 @@ async function getEdaByGroup(type) {
       const existedFields = JSON.parse(JSON.stringify(_.map(riskFields[type], 'fieldNames')))
       const genedFields = genFields(fields, i, existedFields)
 
+      if(!genedFields.length) continue;
       edasOfType.forEach((eda, index) => {
         
         const comparedEdas = edasOfType.filter(item => item.id !== eda.id && item.user_id !== eda.user_id)
