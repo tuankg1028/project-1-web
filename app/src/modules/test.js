@@ -349,7 +349,6 @@ function genFields(fields, num, existedFields) {
     let isExisted = false
 
     existedFields.forEach(existedField => {
-      console.log(1, existedField)
       if(isExisted) return
 
       let hasFields = true
@@ -431,7 +430,7 @@ const types = [
   return result
 }
 
-// main4()
+main4()
 async function main4() {
   // const edaCount = await Models.EDA.find().distinct('type')
   // console.log("edaCount", edaCount)
@@ -594,9 +593,8 @@ async function getEdaByGroup(type) {
 
       for (let i = 1; i <= fields.length; i++) {
 
-        // const existedFields = JSON.parse(JSON.stringify(_.map(riskFields[type], 'fieldNames')))
-
-        const genedFields = genFields(fields, i, [])
+        const existedFields = JSON.parse(JSON.stringify(_.map(riskFields[type], 'fieldNames')))
+        const genedFields = genFields(fields, i, existedFields)
 
         genedFields.forEach(fieldNames => {
           
@@ -635,8 +633,9 @@ async function getEdaByGroup(type) {
   return
 }
 
-main5()
+// main5()
 async function main5() {
+  console.log("main5")
   const createCsvWriter = require("csv-writer").createObjectCsvWriter;
   const header = [
     {
