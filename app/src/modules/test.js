@@ -430,7 +430,7 @@ const types = [
   return result
 }
 
-// main4()
+main4()
 async function main4() {
   // const edaCount = await Models.EDA.find().distinct('type')
   // console.log("edaCount", edaCount)
@@ -634,7 +634,7 @@ async function getEdaByGroup(type) {
   return
 }
 
-main5()
+// main5()
 async function main5() {
   console.log("main5")
   const createCsvWriter = require("csv-writer").createObjectCsvWriter;
