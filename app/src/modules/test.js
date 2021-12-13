@@ -332,7 +332,7 @@ async function main3() {
 
 }
 
-// console.log(genFields(['field1', 'field2', 'field3', 'field4', 'field5'], 3, [['field1'], ['field2', 'field3']]))
+// console.log(genFields(['field1', 'field2'], 2, [['field1'], ['field2']]))
 function genFields(fields, num, existedFields) {
   if(!num || num <= 0) return
   let result = []
@@ -579,25 +579,25 @@ async function getEdaByGroup(type) {
     const edasOfType = await Models.EDA.find({
       type
     })
-    edasOfType.forEach((eda, index) => {
-      console.log(`Running ${index + 1}/${edasOfType.length} on ${type}`)
-      const riskFieldsExists = _.map(riskFields[type], 'fieldName')
-      // filter not uuid
-      const fields = Object.entries(eda.data).reduce((acc, item) => {
-        if(!uuidValidate(item[1]) && !_.includes(riskFieldsExists, item[0])) acc.push(item[0])
-        return acc
-      }, [])
-      if(!fields.length) return
+    
+    // filter not uuid
+    const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
+      if(!uuidValidate(item[1])) acc.push(item[0])
+      return acc
+    }, [])
 
-      const comparedEdas = edasOfType.filter(item => item.id !== eda.id && item.user_id !== eda.user_id)
+    if(!fields.length) return
+    for (let i = 1; i <= fields.length; i++) {
+      console.log(`Running ${i}/${fields.length} on ${type}`)
+      // const riskFieldsExists = _.map(riskFields[type], 'fieldName')
+      const existedFields = JSON.parse(JSON.stringify(_.map(riskFields[type], 'fieldNames')))
+      const genedFields = genFields(fields, i, existedFields)
 
-      for (let i = 1; i <= fields.length; i++) {
-
-        const existedFields = JSON.parse(JSON.stringify(_.map(riskFields[type], 'fieldNames')))
-        const genedFields = genFields(fields, i, existedFields)
-
+      edasOfType.forEach((eda, index) => {
+        
+        const comparedEdas = edasOfType.filter(item => item.id !== eda.id && item.user_id !== eda.user_id)
         genedFields.forEach(fieldNames => {
-          
+
           let isRisk = true
           comparedEdas.forEach(comparedEda => {
             if(!isRisk) return
@@ -619,8 +619,8 @@ async function getEdaByGroup(type) {
             id: eda.id
           })
         })
-      }
-    })
+      })
+    }
 
     for (const type in riskFields) {
       const elements = riskFields[type];
@@ -653,13 +653,13 @@ async function main5() {
   ];
 
   const typeChunk = _.chunk(types, 4)
-
   for (const types of typeChunk) {
     await Promise.all(types.map(async type => {
       if(!fs.existsSync(`./eda/num-question-types/${type}.csv`)) {
         const edaInType = await Models.EDA.find({
           type
         })
+        console.log("queried")
         const edaGroupUser = _.groupBy(edaInType, 'user_id')
     
         const rows = Object.entries(edaGroupUser).map((item, index) => {
