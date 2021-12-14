@@ -1,0 +1,26 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "scl_avg"
+      ],
+      "id": "619d297ece31879b3f217974"
+    }
+  ],
+  "2": [
+    {
+      "fieldNames": [
+        "timestamp",
+        "valid_data"
+      ],
+      "id": "619d297ece31879b3f217976"
+    },
+    {
+      "fieldNames": [
+        "activation",
+        "timestamp"
+      ],
+      "id": "619d2991ce31879b3f334a05"
+    }
+  ]
+}
