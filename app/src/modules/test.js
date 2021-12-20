@@ -594,10 +594,14 @@ async function getEdaByGroup(type) {
       const genedFields = genFields(fields, i, existedFields)
 
       if(!genedFields.length) continue;
+
+      const existedFieldInTurn = []
       edasOfType.forEach((eda, index) => {
+
         console.log(`Running ${index}/${edasOfType.length} on ${type}`)
-        const comparedEdas = edasOfType.filter(item => item.id !== eda.id && item.user_id !== eda.user_id)
+        const comparedEdas = edasOfType.filter(item => item.user_id !== eda.user_id)
         genedFields.forEach(fieldNames => {
+          if(_.includes(existedFieldInTurn, fieldNames)) return
 
           let isRisk = true
           comparedEdas.forEach(comparedEda => {
@@ -615,10 +619,13 @@ async function getEdaByGroup(type) {
             if(isEqual) return isRisk = false
           })
           // if this field is risk
-          if(isRisk) riskFields[type].push({
-            fieldNames,
-            id: eda.id
-          })
+          if(isRisk) {
+            existedFieldInTurn.push(fieldNames)
+            riskFields[type].push({
+              fieldNames,
+              id: eda.id
+            })
+          }
         })
       })
     }
