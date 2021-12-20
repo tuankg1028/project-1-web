@@ -582,6 +582,7 @@ async function getEdaByGroup(type) {
     const edasOfType = await Models.EDA.find({
       type
     })
+    if(fs.existsSync(`./eda/${type}.txt`)) return
     
     // filter not uuid
     const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
