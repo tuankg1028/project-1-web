@@ -614,10 +614,10 @@ async function getEdaByGroup(type) {
               const value2 = comparedEda.data[fieldName]
 
               // test
-              if(fieldName === 'dataTime' && value1 === value2) {
+              if(fieldName === 'dateTime' && value1 === value2) {
                 console.log(value1 === value2)
               }
-              
+
               if(value1 !== value2) return isEqual = false
             })
             if(isEqual) return isRisk = false
