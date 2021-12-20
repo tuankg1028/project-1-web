@@ -432,6 +432,11 @@ const types = [
 
 main4()
 async function main4() {
+  // const edaCount = await Models.EDA.find({
+  //   type: "badge"
+  // }).distinct('data.dateTime')
+
+    // console.log(edaCount)
   // const edaCount = await Models.EDA.find().distinct('type')
   // console.log("edaCount", edaCount)
 
@@ -574,15 +579,62 @@ function sleep (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
+
+async function getEdaByGroupV2(type, riskFields, edasOfType) {
+  const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
+    if(!uuidValidate(item[1])) acc.push(item[0])
+    return acc
+  }, [])
+
+  if(!fields.length) return
+  
+  
+  const genedFields = genFields(fields, 1, [])
+
+  if(!genedFields.length) return
+
+
+  for (let k = 0; k < genedFields.length; k++) {
+    const fieldNames = genedFields[k]
+    const fieldName = fieldNames[0];
+
+    const distintValues = await Models.EDA.find({
+        type
+      }).distinct(`data.${fieldName}`)
+    console.log(distintValues)
+
+    const edasByUnique = await Promise.all(distintValues.map(value => Models.EDA.find({
+      type,
+      [`data.${fieldName}`]: value
+    }).limit(2)))
+
+    
+    const itemUnique = edasByUnique.find(item => item.length === 1);
+    if(!edasByUnique) continue
+
+    riskFields[type].push({
+      fieldNames,
+      id: itemUnique[0].id
+    })
+  }
+  
+  return
+}
+
 async function getEdaByGroup(type) {
     if(fs.existsSync(`./eda/${type}.txt`)) return
 
     let riskFields = {};
     riskFields[type] = []
+
     const edasOfType = await Models.EDA.find({
       type
     })
     if(fs.existsSync(`./eda/${type}.txt`)) return
+
+
+    await getEdaByGroupV2(type, riskFields, edasOfType)
+    console.log("riskFields", riskFields)
 
     // filter not uuid
     const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
@@ -591,7 +643,8 @@ async function getEdaByGroup(type) {
     }, [])
 
     if(!fields.length) return
-    for (let i = 1; i <= fields.length; i++) {
+
+    for (let i = 2; i <= fields.length; i++) {
       console.log(`Running ${i}/${fields.length} on ${type}`)
       // const riskFieldsExists = _.map(riskFields[type], 'fieldName')
       const existedFields = JSON.parse(JSON.stringify(_.map(riskFields[type], 'fieldNames')))
@@ -656,7 +709,7 @@ async function getEdaByGroup(type) {
       elements = _.uniqBy(elements, (item) => JSON.stringify(item.fieldNames))
       const elementGroup = _.groupBy(elements, (item) => item.fieldNames.length)
 
-      fs.writeFileSync(`./eda/${type}(*).txt`, JSON.stringify(elementGroup, null, 2), 'utf8')
+      fs.writeFileSync(`./eda/${type}.txt`, JSON.stringify(elementGroup, null, 2), 'utf8')
     }
   return
 }
