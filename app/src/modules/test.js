@@ -365,50 +365,50 @@ function genFields(fields, num, existedFields) {
 }
 
 const types = [ 
-//   'Afib ECG Readings',
-// 'Computed Temperature',
-// 'Daily Heart Rate Variability Summary',
-// 'Daily SpO2',
-// 'Feed Cheers',
-// 'Feed Comments',
-// 'Feed Posts',
-// 'Groups',
-// 'Heart Rate Variability Details',
-// 'Heart Rate Variability Histogram',
-// 'Profile',
-// 'Respiratory Rate Summary',
-// 'Stress Score',
-// 'Trackers',
-// 'Wrist Temperature',
-// 'altitude',
-// 'badge',
-// 'calories',
-// 'demographic_vo2_max',
+  'Afib ECG Readings',
+'Computed Temperature',
+'Daily Heart Rate Variability Summary',
+'Daily SpO2',
+'Feed Cheers',
+'Feed Comments',
+'Feed Posts',
+'Groups',
+'Heart Rate Variability Details',
+'Heart Rate Variability Histogram',
+'Profile',
+'Respiratory Rate Summary',
+'Stress Score',
+'Trackers',
+'Wrist Temperature',
+'altitude',
+'badge',
+'calories',
+'demographic_vo2_max',
 'distance',
-// 'estimated_oxygen_variation',
-// 'exercise',
-// 'games',
-// 'heart_rate',
-// 'height',
-// 'lightly_active_minutes',
-// 'menstrual_health_birth_control',
-// 'menstrual_health_cycles',
-// 'menstrual_health_settings',
-// 'menstrual_health_symptoms',
-// 'message_cheers',
-// 'mindfulness_eda_data_sessions',
-// 'mindfulness_goals',
-// 'moderately_active_minutes',
-// 'participations',
-// 'resting_heart_rate',
-// 'sedentary_minutes',
-// 'sleep',
-// 'steps',
-// 'swim_lengths_data',
-// 'time_in_heart_rate_zones',
-// 'trophy',
-// 'very_active_minutes',
-// 'water_logs'
+'estimated_oxygen_variation',
+'exercise',
+'games',
+'heart_rate',
+'height',
+'lightly_active_minutes',
+'menstrual_health_birth_control',
+'menstrual_health_cycles',
+'menstrual_health_settings',
+'menstrual_health_symptoms',
+'message_cheers',
+'mindfulness_eda_data_sessions',
+'mindfulness_goals',
+'moderately_active_minutes',
+'participations',
+'resting_heart_rate',
+'sedentary_minutes',
+'sleep',
+'steps',
+'swim_lengths_data',
+'time_in_heart_rate_zones',
+'trophy',
+'very_active_minutes',
+'water_logs'
  ]
  const retry = async (promise, time = 20) => {
   let counter = 1
@@ -570,6 +570,9 @@ async function main4() {
 
   console.log("Done")
 }
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
 
 async function getEdaByGroup(type) {
     if(fs.existsSync(`./eda/${type}.txt`)) return
@@ -604,7 +607,6 @@ async function getEdaByGroup(type) {
 
         for (let k = 0; k < genedFields.length; k++) {
           const fieldNames = genedFields[k];
-          
           if(_.includes(existedFieldInTurn, fieldNames.join(','))) continue;
 
           let isRisk = true
@@ -615,19 +617,13 @@ async function getEdaByGroup(type) {
             let isEqual = true
             for (let f = 0; f < fieldNames.length; f++) {
               const fieldName = fieldNames[f];
-              
               if(!isEqual) continue
+
               const value1 = eda.data[fieldName]
               const value2 = comparedEda.data[fieldName]
 
-              // test
-              if(fieldName === 'dateTime' && value1 === value2) {
-                console.log(value1, value2)
-              }
-
               if(value1 !== value2) {
                 isEqual = false
-                continue
               }
             }
             if(isEqual) {
