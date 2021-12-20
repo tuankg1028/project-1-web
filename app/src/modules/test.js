@@ -578,7 +578,7 @@ async function getEdaByGroup(type) {
     riskFields[type] = []
     const edasOfType = await Models.EDA.find({
       type
-    }).limit(100000)
+    })
     
     // filter not uuid
     const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
