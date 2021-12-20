@@ -606,7 +606,7 @@ async function getEdaByGroup(type) {
 
         console.log(`Running ${j}/${edasOfType.length} on ${type}`, existedFieldInTurn, genedFields)
         if(existedFieldInTurn.length === fields.length) continue;
-        
+
         filterInPlace(originalCompareEdas, obj => obj.id !== eda.id)
         const comparedEdas = originalCompareEdas.filter(item => item.user_id !== eda.user_id)
 
@@ -655,7 +655,7 @@ async function getEdaByGroup(type) {
       elements = _.uniqBy(elements, (item) => JSON.stringify(item.fieldNames))
       const elementGroup = _.groupBy(elements, (item) => item.fieldNames.length)
 
-      fs.writeFileSync(`./eda/${type}.txt`, JSON.stringify(elementGroup, null, 2), 'utf8')
+      fs.writeFileSync(`./eda/${type}(*).txt`, JSON.stringify(elementGroup, null, 2), 'utf8')
     }
   return
 }
