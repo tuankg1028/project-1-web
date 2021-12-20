@@ -598,7 +598,7 @@ async function getEdaByGroup(type) {
       const existedFieldInTurn = []
       edasOfType.forEach((eda, index) => {
 
-        console.log(`Running ${index}/${edasOfType.length} on ${type}`)
+        console.log(`Running ${index}/${edasOfType.length} on ${type}`, existedFieldInTurn, genedFields)
         const comparedEdas = edasOfType.filter(item => item.user_id !== eda.user_id)
         genedFields.forEach(fieldNames => {
           if(_.includes(existedFieldInTurn, fieldNames.join(','))) return
