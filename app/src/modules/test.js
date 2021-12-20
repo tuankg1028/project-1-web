@@ -601,7 +601,7 @@ async function getEdaByGroup(type) {
         console.log(`Running ${index}/${edasOfType.length} on ${type}`)
         const comparedEdas = edasOfType.filter(item => item.user_id !== eda.user_id)
         genedFields.forEach(fieldNames => {
-          if(_.includes(existedFieldInTurn, fieldNames)) return
+          if(_.includes(existedFieldInTurn, fieldNames.join(','))) return
 
           let isRisk = true
           comparedEdas.forEach(comparedEda => {
@@ -620,7 +620,7 @@ async function getEdaByGroup(type) {
           })
           // if this field is risk
           if(isRisk) {
-            existedFieldInTurn.push(fieldNames)
+            existedFieldInTurn.push(fieldNames.join(','));
             riskFields[type].push({
               fieldNames,
               id: eda.id
