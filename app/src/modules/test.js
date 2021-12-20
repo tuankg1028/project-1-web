@@ -643,7 +643,7 @@ async function getEdaByGroup(type) {
         }
       }
     }
-    return
+
     for (const type in riskFields) {
       const elements = riskFields[type];
 
