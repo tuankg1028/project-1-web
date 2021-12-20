@@ -599,11 +599,13 @@ async function getEdaByGroup(type) {
       if(!genedFields.length) continue;
 
       const existedFieldInTurn = []
+      const runedIds = []
       for (let j = 0; j < edasOfType.length; j++) {
         const eda = edasOfType[j];
-        
+        runedIds.push(id)
+
         console.log(`Running ${j}/${edasOfType.length} on ${type}`, existedFieldInTurn, genedFields)
-        const comparedEdas = edasOfType.filter(item => item.user_id !== eda.user_id)
+        const comparedEdas = edasOfType.filter(item => item.user_id !== eda.user_id && !runedIds.includes(eda.id))
 
         for (let k = 0; k < genedFields.length; k++) {
           const fieldNames = genedFields[k];
