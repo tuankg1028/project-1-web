@@ -605,7 +605,7 @@ async function getEdaByGroup(type) {
         const eda = edasOfType[j];
 
         console.log(`Running ${j}/${edasOfType.length} on ${type}`, existedFieldInTurn, genedFields)
-        if(existedFieldInTurn.length === fields.length) continue;
+        if(existedFieldInTurn.length === genedFields.length) continue;
 
         filterInPlace(originalCompareEdas, obj => obj.id !== eda.id)
         const comparedEdas = originalCompareEdas.filter(item => item.user_id !== eda.user_id)
