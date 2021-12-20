@@ -583,7 +583,7 @@ async function getEdaByGroup(type) {
       type
     })
     if(fs.existsSync(`./eda/${type}.txt`)) return
-    
+
     // filter not uuid
     const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
       if(!uuidValidate(item[1])) acc.push(item[0])
@@ -600,16 +600,16 @@ async function getEdaByGroup(type) {
       if(!genedFields.length) continue;
 
       const existedFieldInTurn = []
-
-      const originalCompareEdas = [...edasOfType]
+      const runnedIds = []
+      // const originalCompareEdas = [...edasOfType]
       for (let j = 0; j < edasOfType.length; j++) {
         const eda = edasOfType[j];
-
+        runnedIds.push(eda.id)
         console.log(`Running ${j}/${edasOfType.length} on ${type}`, existedFieldInTurn, genedFields)
         if(existedFieldInTurn.length === genedFields.length) continue;
 
-        filterInPlace(originalCompareEdas, obj => obj.id !== eda.id)
-        const comparedEdas = originalCompareEdas.filter(item => item.user_id !== eda.user_id)
+        // filterInPlace(originalCompareEdas, obj => obj.id !== eda.id)
+        const comparedEdas = edasOfType.filter(item => item.user_id !== eda.user_id && !_.includes(runnedIds, item.id))
 
         for (let k = 0; k < genedFields.length; k++) {
           const fieldNames = genedFields[k];
