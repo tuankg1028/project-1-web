@@ -615,7 +615,7 @@ async function getEdaByGroup(type) {
 
               // test
               if(fieldName === 'dateTime' && value1 === value2) {
-                console.log(value1 === value2)
+                console.log(value1, value2)
               }
 
               if(value1 !== value2) return isEqual = false
