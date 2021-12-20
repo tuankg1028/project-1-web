@@ -596,20 +596,27 @@ async function getEdaByGroup(type) {
       if(!genedFields.length) continue;
 
       const existedFieldInTurn = []
-      edasOfType.forEach((eda, index) => {
-
-        console.log(`Running ${index}/${edasOfType.length} on ${type}`, existedFieldInTurn, genedFields)
+      for (let j = 0; j < edasOfType.length; j++) {
+        const eda = edasOfType[j];
+        
+        console.log(`Running ${j}/${edasOfType.length} on ${type}`, existedFieldInTurn, genedFields)
         const comparedEdas = edasOfType.filter(item => item.user_id !== eda.user_id)
-        genedFields.forEach(fieldNames => {
-          if(_.includes(existedFieldInTurn, fieldNames.join(','))) return
+
+        for (let k = 0; k < genedFields.length; k++) {
+          const fieldNames = genedFields[k];
+          
+          if(_.includes(existedFieldInTurn, fieldNames.join(','))) continue;
 
           let isRisk = true
-          comparedEdas.forEach(comparedEda => {
-            if(!isRisk) return
+          for (let g = 0; g < comparedEdas.length; g++) {
+            const comparedEda = comparedEdas[g];
+            if(!isRisk) continue
 
             let isEqual = true
-            fieldNames.forEach(fieldName => {
-              if(!isEqual) return
+            for (let f = 0; f < fieldNames.length; f++) {
+              const fieldName = fieldNames[f];
+              
+              if(!isEqual) continue
               const value1 = eda.data[fieldName]
               const value2 = comparedEda.data[fieldName]
 
@@ -618,12 +625,17 @@ async function getEdaByGroup(type) {
                 console.log(value1, value2)
               }
 
-              if(value1 !== value2) return isEqual = false
-            })
-            if(isEqual) return isRisk = false
-          })
+              if(value1 !== value2) {
+                isEqual = false
+                continue
+              }
+            }
+            if(isEqual) {
+              isRisk = false
+              continue
+            }
+          }
 
-          console.log(1, isRisk, fieldNames)
           // if this field is risk
           if(isRisk) {
             existedFieldInTurn.push(fieldNames.join(','));
@@ -632,8 +644,8 @@ async function getEdaByGroup(type) {
               id: eda.id
             })
           }
-        })
-      })
+        }
+      }
     }
     return
     for (const type in riskFields) {
