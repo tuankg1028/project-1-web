@@ -601,7 +601,7 @@ async function getEdaByGroupV2(type, riskFields, edasOfType) {
     const distintValues = await Models.EDA.find({
         type
       }).distinct(`data.${fieldName}`)
-    const distintValuesChunk = _.chunk(distintValues, 1000)
+    const distintValuesChunk = _.chunk(distintValues, 100)
 
     let isExisted = false
     for (let i = 0; i < distintValuesChunk.length; i++) {
