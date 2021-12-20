@@ -601,21 +601,28 @@ async function getEdaByGroupV2(type, riskFields, edasOfType) {
     const distintValues = await Models.EDA.find({
         type
       }).distinct(`data.${fieldName}`)
-    console.log(distintValues)
+    const distintValuesChunk = _.chunk(distintValues, 1000)
 
-    const edasByUnique = await Promise.all(distintValues.map(value => Models.EDA.find({
-      type,
-      [`data.${fieldName}`]: value
-    }).limit(2)))
+    let isExisted = false
+    for (let i = 0; i < distintValuesChunk.length; i++) {
+      if(isExisted) continue
+      const chunkValues = distintValuesChunk[i];
+      
+      const edasByUnique = await Promise.all(chunkValues.map(value => Models.EDA.find({
+        type,
+        [`data.${fieldName}`]: value
+      }).limit(2)))
 
-    
-    const itemUnique = edasByUnique.find(item => item.length === 1);
-    if(!edasByUnique) continue
 
-    riskFields[type].push({
-      fieldNames,
-      id: itemUnique[0].id
-    })
+      const itemUnique = edasByUnique.find(item => item.length === 1);
+      if(!edasByUnique) continue
+
+      isExisted = true
+      riskFields[type].push({
+        fieldNames,
+        id: itemUnique[0].id
+      })
+    }
   }
   
   return
