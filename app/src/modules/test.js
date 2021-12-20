@@ -612,12 +612,12 @@ async function getEdaByGroup(type) {
               if(!isEqual) return
               const value1 = eda.data[fieldName]
               const value2 = comparedEda.data[fieldName]
-              console.log(1, value1, value2)
               if(value1 !== value2) return isEqual = false
             })
-            console.log(2, isEqual)
             if(isEqual) return isRisk = false
           })
+
+          console.log(1, isRisk, fieldNames)
           // if this field is risk
           if(isRisk) {
             existedFieldInTurn.push(fieldNames.join(','));
