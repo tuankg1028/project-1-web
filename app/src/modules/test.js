@@ -488,6 +488,7 @@ async function getEdaByGroupV2(type, riskFields, edasOfType) {
 
 
   for (let k = 0; k < genedFields.length; k++) {
+    console.log(`getEdaByGroupV2 ${k}/${genedFields.length}`)
     const fieldNames = genedFields[k]
     const fieldName = fieldNames[0];
 
