@@ -436,118 +436,12 @@ async function main4() {
   //   type: "badge"
   // }).distinct('data.dateTime')
 
-    // console.log(edaCount)
-  // const edaCount = await Models.EDA.find().distinct('type')
+  //   console.log(edaCount)
+  // const edaCount = await Models.EDA.find({
+  //   "data.shareText": "I took 25,000 steps and earned the Classics badge! #Fitbit"
+  // })
   // console.log("edaCount", edaCount)
-
-  // const limit = 1000000;
-
-  // const promisses = []
-  // for (let i = 0; i < 61; i++) {
-  //   const skip = limit * i;
-
-  //   promisses.push(Models.EDA.find().limit(limit).skip(skip))
-  // }
-  // const edaChunk = await Promise.all(promisses);
-  // const edas = edaChunk.reduce((result, item) => {
-  //   return [...result, ...item]
-  // }, [])
-
-  // console.log("Finished get data from db")
-  // let edaGroup = _.groupBy(edas, 'type');
-
-  // console.log("edaGroup", JSON.stringify(edaGroup, null, 2))
-  // const edaGroup = {
-  //   "participations": [
-  //     {
-  //       "_id": "619d297bce31879b3f1fa385",
-  //       "user_id": "619d2977ce31879b3f1fa385",
-  //       "type": "participations",
-  //       "color": "yellow",
-  //       "data": {
-  //         "challenge_id": "f10ada41-bfb8-11eb-8f93-0242465fb250",
-  //         "type": "GOAL_DAY1",
-  //         "type_composite": "TODAY1",
-  //         "start": "2021-05-27T21:00:00.000+00:00",
-  //         "end": "2021-05-28T20:59:59.999+00:00",
-  //         "achievement_type": null
-  //       },
-  //       "id": "619d297bce31879b3f1fa385"
-  //     },
-  //     {
-  //       "_id": "619d297bce31879b3f1fa386",
-  //       "user_id": "619d2977ce31879b3f1fa386",
-  //       "type": "participations",
-  //       "color": "yellow",
-  //       "data": {
-  //         "challenge_id": "f10ada41-bfb8-11eb-8f93-0242465fb250",
-  //         "type": "GOAL_DAY",
-  //         "type_composite": "TODAY1",
-  //         "start": "2021-05-27T21:00:00.000+00:00",
-  //         "end": "2021-05-28T20:59:59.999+00:00",
-  //         "achievement_type": null
-  //       },
-  //       "id": "619d297bce31879b3f1fa386"
-  //     },
-  //     {
-  //       "_id": "619d297bce31879b3f1fa388",
-  //       "user_id": "619d2977ce31879b3f1fa388",
-  //       "type": "participations",
-  //       "color": "yellow",
-  //       "data": {
-  //         "challenge_id": "0cf761d1-c67e-11eb-9029-0242ba7820cc",
-  //         "type": "GOAL_DAY1",
-  //         "type_composite": "TODAY2",
-  //         "start": "2021-06-05T21:00:00.000+00:00",
-  //         "end": "2021-06-06T21:00:00.000+00:00",
-  //         "achievement_type": null
-  //       },
-  //       "id": "619d297bce31879b3f1fa388"
-  //     },
-  //     {
-  //       "_id": "619d297bce31879b3f1fa387",
-  //       "user_id": "619d2977ce31879b3f1fa387",
-  //       "type": "participations",
-  //       "color": "yellow",
-  //       "data": {
-  //         "challenge_id": "0cf761d1-c67e-11eb-9029-0242ba7820cc",
-  //         "type": "GOAL_DAY",
-  //         "type_composite": "TODAY3",
-  //         "start": "2021-06-05T21:00:00.000+00:00",
-  //         "end": "2021-06-06T21:00:00.000+00:00",
-  //         "achievement_type": null
-  //       },
-  //       "id": "619d297bce31879b3f1fa387"
-  //     }
-  //   ],
-  //   "message_cheers": [
-  //     {
-  //       "_id": "619d297bce31879b3f1fa388",
-  //       "user_id": "619d2977ce31879b3f1fa386",
-  //       "type": "message_cheers",
-  //       "color": "yellow",
-  //       "data": {
-  //         "message_id": "03dea589-c0a2-11eb-b6da-02424ba6cac3",
-  //         "challenge_id": "8ffc0329-c04b-11eb-8ff4-02422db7ea84",
-  //         "wall": "8ffc0329-c04b-11eb-8ff4-02422db7ea84"
-  //       },
-  //       "id": "619d297bce31879b3f1fa388"
-  //     },
-  //     {
-  //       "_id": "619d297bce31879b3f1fa389",
-  //       "user_id": "619d2977ce31879b3f1fa386",
-  //       "type": "message_cheers",
-  //       "color": "yellow",
-  //       "data": {
-  //         "message_id": "9391eb62-c05c-11eb-a64e-02429fdbdaaf",
-  //         "challenge_id": "8ffc0329-c04b-11eb-8ff4-02422db7ea84",
-  //         "wall": "8ffc0329-c04b-11eb-8ff4-02422db7ea84"
-  //       },
-  //       "id": "619d297bce31879b3f1fa389"
-  //     }
-  //   ]
-  // }
-  
+  // return
   let riskFields = {}
   let promisses = []
   const typeChunk = _.chunk(_.sampleSize(types, types.length), 10)
@@ -579,7 +473,6 @@ function sleep (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-
 async function getEdaByGroupV2(type, riskFields, edasOfType) {
   const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
     if(!uuidValidate(item[1])) acc.push(item[0])
@@ -598,31 +491,31 @@ async function getEdaByGroupV2(type, riskFields, edasOfType) {
     const fieldNames = genedFields[k]
     const fieldName = fieldNames[0];
 
-    const distintValues = await Models.EDA.find({
-        type
-      }).distinct(`data.${fieldName}`)
-    const distintValuesChunk = _.chunk(distintValues, 100)
+    const distintValues = _.uniq(_.map(edasOfType, `data.${fieldName}`))
 
-    let isExisted = false
-    for (let i = 0; i < distintValuesChunk.length; i++) {
-      if(isExisted) continue
-      const chunkValues = distintValuesChunk[i];
+    const edasByUnique = distintValues.map(value => {
+      const result = []
+      edasOfType.forEach(item => {
+        if(result.length >= 2) return
+        
+        if(item.data[fieldName] === value) {
+          result.push(item)
+        }
+      })
       
-      const edasByUnique = await Promise.all(chunkValues.map(value => Models.EDA.find({
-        type,
-        [`data.${fieldName}`]: value
-      }).limit(2)))
+
+      return result
+    })
 
 
       const itemUnique = edasByUnique.find(item => item.length === 1);
-      if(!edasByUnique) continue
+      if(!itemUnique) continue
 
-      isExisted = true
       riskFields[type].push({
         fieldNames,
+        values: fieldNames.map(fieldName => itemUnique[0].data[fieldName]).join(' - '),
         id: itemUnique[0].id
       })
-    }
   }
   
   return
@@ -635,13 +528,12 @@ async function getEdaByGroup(type) {
     riskFields[type] = []
 
     const edasOfType = await Models.EDA.find({
-      type
+      type,
     })
     if(fs.existsSync(`./eda/${type}.txt`)) return
 
-
     await getEdaByGroupV2(type, riskFields, edasOfType)
-    console.log("riskFields", riskFields)
+    console.log("riskFields", JSON.stringify(riskFields, null, 2))
 
     // filter not uuid
     const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
@@ -703,6 +595,7 @@ async function getEdaByGroup(type) {
             existedFieldInTurn.push(fieldNames.join(','));
             riskFields[type].push({
               fieldNames,
+              values: fieldNames.map(fieldName => itemUnique[0].data[fieldName]).join(' - '),
               id: eda.id
             })
           }
