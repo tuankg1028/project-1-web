@@ -474,6 +474,7 @@ function sleep (time) {
 }
 
 async function getEdaByGroupV2(type, riskFields, edasOfType) {
+  console.log(`Running ${type}`)
   const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
     if(!uuidValidate(item[1])) acc.push(item[0])
     return acc
@@ -491,19 +492,25 @@ async function getEdaByGroupV2(type, riskFields, edasOfType) {
     console.log(`getEdaByGroupV2 ${k}/${genedFields.length}`)
     const fieldNames = genedFields[k]
     const fieldName = fieldNames[0];
-
+    
+    console.time("getDistintValues")
     const distintValues = _.uniq(_.map(edasOfType, `data.${fieldName}`))
+    console.timeEnd("getDistintValues")
 
-    const edasByUnique = distintValues.map(value => {
+    const edasByUnique = distintValues.map((value, index) => {
+      console.log(`Running ${index}/${distintValues.length} on ${type}`)
       const result = []
       edasOfType.forEach(item => {
         if(result.length >= 2) return
         
         if(item.data[fieldName] === value) {
-          result.push(item)
+          const isExisted = result.find(item2 => item2.user_id === item.user_id)
+
+          if(!isExisted) {
+            result.push(item)
+          }
         }
       })
-      
 
       return result
     })
