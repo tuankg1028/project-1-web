@@ -494,36 +494,25 @@ async function getEdaByGroupV2(type, riskFields, edasOfType) {
     const fieldName = fieldNames[0];
     
     console.time("getDistintValues")
-    const distintValues = _.uniq(_.map(edasOfType, `data.${fieldName}`))
+    const valuesOfField = _.map(_.uniqWith(edasOfType,  (obj1, obj2) => obj1.user_id === obj2.user_id && obj1.data[fieldName] === obj2.data[fieldName]), `data.${fieldName}`)
     console.timeEnd("getDistintValues")
 
-    const edasByUnique = distintValues.map((value, index) => {
-      console.log(`Running ${index}/${distintValues.length} on ${type}`)
-      const result = []
-      edasOfType.forEach(item => {
-        if(result.length >= 2) return
-        
-        if(item.data[fieldName] === value) {
-          const isExisted = result.find(item2 => item2.user_id === item.user_id)
 
-          if(!isExisted) {
-            result.push(item)
-          }
-        }
-      })
-
-      return result
+    let uniqueValue
+    Object.entries(_.countBy(valuesOfField)).forEach(([value, numberOfOccurrences]) => {
+      if(uniqueValue) return
+      if (numberOfOccurrences === 1) uniqueValue = value
     })
 
+    if(!uniqueValue) continue
+    const uniqueEda = edasOfType.find(item => item.data[fieldName] == uniqueValue);
 
-      const itemUnique = edasByUnique.find(item => item.length === 1);
-      if(!itemUnique) continue
+    riskFields[type].push({
+      fieldNames,
+      values: fieldNames.map(fieldName => uniqueEda.data[fieldName]).join(' - '),
+      id: uniqueEda.id
+    })
 
-      riskFields[type].push({
-        fieldNames,
-        values: fieldNames.map(fieldName => itemUnique[0].data[fieldName]).join(' - '),
-        id: itemUnique[0].id
-      })
   }
   
   return
@@ -603,7 +592,7 @@ async function getEdaByGroup(type) {
             existedFieldInTurn.push(fieldNames.join(','));
             riskFields[type].push({
               fieldNames,
-              values: fieldNames.map(fieldName => itemUnique[0].data[fieldName]).join(' - '),
+              values: fieldNames.map(fieldName => eda.data[fieldName]).join(' - '),
               id: eda.id
             })
           }
