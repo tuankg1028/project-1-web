@@ -487,16 +487,24 @@ async function getEdaByGroupV2(type, riskFields, edasOfType) {
 
   if(!genedFields.length) return
 
+  const totalRows = edasOfType.length
 
   for (let k = 0; k < genedFields.length; k++) {
     console.log(`getEdaByGroupV2 ${k}/${genedFields.length}`)
     const fieldNames = genedFields[k]
     const fieldName = fieldNames[0];
     
-    console.time("getDistintValues")
-    const valuesOfField = _.map(_.uniqWith(edasOfType,  (obj1, obj2) => obj1.user_id === obj2.user_id && obj1.data[fieldName] === obj2.data[fieldName]), `data.${fieldName}`)
-    console.timeEnd("getDistintValues")
+    console.time("getUniqueValuesByUser")
+    let count = 0
+    const uniqueValuesByUser = _.uniqWith(edasOfType, (obj1, obj2) => {
+      console.log(`${++count}/${totalRows}`)
+      return obj1.user_id === obj2.user_id && obj1.data[fieldName] === obj2.data[fieldName]
+    })
+    console.timeEnd("getUniqueValuesByUser")
 
+    console.time("getValuesOfField")
+    const valuesOfField = _.map(uniqueValuesByUser, `data.${fieldName}`)
+    console.timeEnd("getValuesOfField")
 
     let uniqueValue
     Object.entries(_.countBy(valuesOfField)).forEach(([value, numberOfOccurrences]) => {
@@ -512,7 +520,6 @@ async function getEdaByGroupV2(type, riskFields, edasOfType) {
       values: fieldNames.map(fieldName => uniqueEda.data[fieldName]).join(' - '),
       id: uniqueEda.id
     })
-
   }
   
   return
