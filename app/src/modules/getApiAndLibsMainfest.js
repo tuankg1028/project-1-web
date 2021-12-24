@@ -140,11 +140,11 @@ async function main() {
             })
         }
     
-        const csvWriterHas = createCsvWriter({
+        const csvWriterLib = createCsvWriter({
             path: `./api-libs-keyword/libs(${category}).csv`,
             header,
         });
-        await csvWriterHas.writeRecords(rowsLibs);
+        await csvWriterLib.writeRecords(rowsLibs);
     }
 
    
