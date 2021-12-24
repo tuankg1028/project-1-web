@@ -536,8 +536,8 @@ async function getEdaByGroup(type) {
     })
     if(fs.existsSync(`./eda/${type}.txt`)) return
 
-    await getEdaByGroupV2(type, riskFields, edasOfType)
-    console.log("riskFields", JSON.stringify(riskFields, null, 2))
+    // await getEdaByGroupV2(type, riskFields, edasOfType)
+    // console.log("riskFields", JSON.stringify(riskFields, null, 2))
 
     // filter not uuid
     const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
@@ -547,7 +547,7 @@ async function getEdaByGroup(type) {
 
     if(!fields.length) return
 
-    for (let i = 2; i <= fields.length; i++) {
+    for (let i = 1; i <= fields.length; i++) {
       console.log(`Running ${i}/${fields.length} on ${type}`)
       // const riskFieldsExists = _.map(riskFields[type], 'fieldName')
       const existedFields = JSON.parse(JSON.stringify(_.map(riskFields[type], 'fieldNames')))
