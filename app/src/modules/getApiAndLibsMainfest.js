@@ -95,7 +95,7 @@ async function main() {
 
         for (let i = 0; i < apps.length; i++) {
             const app = apps[i];
-            console.log(1, fs.existsSync(`${sourceCodePath}/${app.id}/AndroidManifest.xml`))
+            console.log(1, fs.existsSync(`${sourceCodePath}/${app.id}/resources/AndroidManifest.xml`))
             const mainFestPath = `${sourceCodePath}/${app.id}/AndroidManifest.xml`
             if(fs.existsSync(mainFestPath)) {
                 const [apis, libs] = await getApisAndLibs(mainFestPath)
@@ -141,7 +141,7 @@ async function main() {
         }
     
         const csvWriterLib = createCsvWriter({
-            path: `./api-libs-keyword/libs(${category}).csv`,
+            path: `./api-keyword/libs(${category}).csv`,
             header,
         });
         await csvWriterLib.writeRecords(rowsLibs);
