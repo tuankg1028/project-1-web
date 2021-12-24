@@ -113,7 +113,7 @@ async function main() {
     
             rowsApi.push({
                 stt: i++,
-                api: apiName,
+                name: apiName,
                 numberOfOccurrences
             })
         }
@@ -134,7 +134,7 @@ async function main() {
     
             rowsLibs.push({
                 stt: i++,
-                lib: libName,
+                name: libName,
                 numberOfOccurrences
             })
         }
