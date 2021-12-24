@@ -157,11 +157,11 @@ function getApisAndLibs(xmlPath) {
 
     return new Promise((resolve, reject) => {
         parseString(xml, function (err, result) {
-            const apis = result.manifest.application[0]['activity'].map(item => {
+            const apis = (result.manifest.application[0]['activity'] || []).map(item => {
                 return item['$']['android:name']
             })
 
-            const libs = result.manifest.application[0]['service'].map(item => {
+            const libs = (result.manifest.application[0]['service'] || []).map(item => {
                 return item['$']['android:name']
             })
 
