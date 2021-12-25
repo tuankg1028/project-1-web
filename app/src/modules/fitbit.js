@@ -103,8 +103,12 @@ const types = [
 
   return result
 }
+main()
+async function main() {
+  // await main4Eda()
+  await main4Survey()
+}
 
-// main4Eda()
 async function main4Eda() {
   // const edaCount = await Models.EDA.find({
   //   type: "badge"
