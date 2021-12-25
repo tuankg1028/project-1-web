@@ -435,6 +435,28 @@ async function main4() {
   // const edaCount = await Models.EDA.find({
   //   type: "badge"
   // }).distinct('data.dateTime')
+// const eda = await Models.EDA.aggregate([
+//   {
+//     $match: {
+//       type: "estimated_oxygen_variation"
+//     }
+//   },
+//   { "$group": {
+//     "_id": {
+//         "user_id": "$user_id",
+//         "data": "$data.Infrared to Red Signal Ratio"
+//     },
+//     total:{$sum :1}
+//   }},
+
+//   {$sort:{total:-1}},
+
+//   {$group:{_id:'$_id.data', totalData: {$sum :1}}}
+// ])
+
+// const eda = await Models.EDA.find({type: 'badge', 'data.dateTime': '2021-07-11'})
+// console.log(eda)
+//   return 
 
   //   console.log(edaCount)
   // const edaCount = await Models.EDA.find({
@@ -525,6 +547,64 @@ async function getEdaByGroupV2(type, riskFields, edasOfType) {
   return
 }
 
+
+async function getEdaByGroupV3(type, riskFields, edasOfType) {
+  console.log(`Running ${type}`)
+  const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
+    if(!uuidValidate(item[1])) acc.push(item[0])
+    return acc
+  }, [])
+
+  if(!fields.length) return
+  
+  
+  const genedFields = genFields(fields, 1, [])
+
+  if(!genedFields.length) return
+
+  for (let k = 0; k < genedFields.length; k++) {
+    console.log(`getEdaByGroupV2 ${k}/${genedFields.length}`)
+    const fieldNames = genedFields[k]
+    const fieldName = fieldNames[0];
+    
+    const valuesCounted = await Models.EDA.aggregate([
+      {
+        $match: {
+          type
+        }
+      },
+      { "$group": {
+        "_id": {
+            "user_id": "$user_id",
+            "data": `$data.${fieldName}`
+        },
+        total:{$sum :1}
+      }},
+
+      {$sort:{total:-1}},
+
+      {$group:{_id:'$_id.data', totalData: {$sum :1}}}
+    ])
+
+
+    const uniqueValue = valuesCounted.find(item => item.totalData == 1);
+    if(!uniqueValue) continue
+
+    const eda = await Models.EDA.findOne({
+      type, 
+      [`data.${fieldName}`]: uniqueValue._id
+    })
+
+    riskFields[type].push({
+      fieldNames,
+      values: fieldNames.map(fieldName => eda.data[fieldName]).join(' - '),
+      id: eda.id
+    })
+  }
+  
+  return
+}
+
 async function getEdaByGroup(type) {
     if(fs.existsSync(`./eda/${type}.txt`)) return
 
@@ -536,8 +616,8 @@ async function getEdaByGroup(type) {
     })
     if(fs.existsSync(`./eda/${type}.txt`)) return
 
-    // await getEdaByGroupV2(type, riskFields, edasOfType)
-    // console.log("riskFields", JSON.stringify(riskFields, null, 2))
+    await getEdaByGroupV3(type, riskFields, edasOfType)
+    console.log("riskFields", JSON.stringify(riskFields, null, 2))
 
     // filter not uuid
     const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
