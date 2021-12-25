@@ -623,9 +623,13 @@ async function getEdaByGroup(type) {
     await getEdaByGroupV3(type, riskFields)
     console.log("riskFields", JSON.stringify(riskFields, null, 2))
 
-    const edasOfType = await Models.EDA.find({
-      type,
-    })
+    const edasOfType = await Models.EDA.aggregate([
+      {
+        $match: {
+          type,
+        }
+      }
+    ]).allowDiskUse(true)
 
     // filter not uuid
     const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
