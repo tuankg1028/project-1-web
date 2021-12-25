@@ -2,335 +2,9 @@ require("dotenv").config();
 import "../configs/mongoose.config";
 import Models from "../models";
 import _ from "lodash";
-import { app } from "google-play-scraper";
-import Helpers from "../helpers";
 import { v4 as uuidv4, validate as uuidValidate } from "uuid";
 import fs from "fs";
 var parse = require('fast-json-parse')
-const createCsvWriter = require("csv-writer").createObjectCsvWriter;
-
-const categoryGroups = {
-  Beauty: ["Beauty", "Lifestyle"],
-  Business: ["Business"],
-  Education: ["Education", "Educational"],
-  Entertainment: ["Entertainment", "Photography"],
-  Finance: [
-    "Finance",
-    "Events",
-    "Action",
-    "Action & Adventure",
-    "Adventure",
-    "Arcade",
-    "Art & Design",
-    "Auto & Vehicles",
-    "Board",
-    "Books & Reference",
-    "Brain Games",
-    "Card",
-    "Casino",
-    "Casual",
-    "Comics",
-    "Creativity",
-    "House & Home",
-    "Libraries & Demo",
-    "News & Magazines",
-    "Parenting",
-    "Pretend Play",
-    "Productivity",
-    "Puzzle",
-    "Racing",
-    "Role Playing",
-    "Simulation",
-    "Strategy",
-    "Trivia",
-    "Weather",
-    "Word",
-  ],
-  "Food & Drink": ["Food & Drink"],
-  "Health & Fitness": ["Health & Fitness"],
-  "Maps & Navigation": ["Maps & Navigation"],
-  Medical: ["Medical"],
-  "Music & Audio": [
-    "Music & Audio",
-    "Video Players & Editors",
-    "Music & Video",
-    "Music",
-  ],
-  Shopping: ["Shopping"],
-  Social: ["Social", "Dating", "Communication"],
-  Sports: ["Sports"],
-  Tools: ["Tools", "Personalization"],
-  "Travel & Local": ["Travel & Local"],
-};
-
-function getCategoryNameBy(sub) {
-  for (const categoyName in categoryGroups) {
-    const subs = categoryGroups[categoyName];
-
-    if (subs.includes(sub)) return categoyName;
-  }
-
-  return;
-}
-async function main() {
-  const header = [
-    {
-      id: "stt",
-      title: "#",
-    },
-    {
-      id: "appName",
-      title: "App name",
-    },
-    {
-      id: "category",
-      title: "Category",
-    },
-    {
-      id: "distance",
-      title: "Distance",
-    },
-    {
-      id: "risk",
-      title: "riskLevel",
-    },
-  ];
-
-  let apps = await Models.App.find({
-    // $or: [{ supplier: "mobipurpose" }, { isExistedMobiPurpose: true }],
-    // isCompleted: true,
-    appName: {
-      $in: [
-        // Sports
-        "football news - patriots",
-        "australian hunter magazine",
-        // Maps & Navigation
-        "tc fuel consumption record",
-        "taiwan mrt info - taipei、taoyuan、kaohsiung",
-        // Medical
-        "acupressure tips",
-        "nighttime speaking clock",
-        //  Health & Fitness
-        "easy rise alarm clock",
-        "sports supplements",
-        // Travel & Local
-        // "walkway navi - gps for walking",
-        "beijing metro map",
-        "google earth",
-        // Entertainment
-        "christmas cards",
-        "sound view spectrum analyzer",
-        // Finance
-        "google news - daily headlines",
-        "habit calendar : track habits",
-        // Beauty
-        "sweet macarons hd wallpapers",
-        "kuchen rezepte kochbuch",
-        // "feeling of color combination",
-        // Education
-        "brainwell mind & brain trainer",
-        "origami flower instructions 3d",
-        // Social
-        "facebook",
-        // "chat rooms - find friends",
-        "my t-mobile - nederland",
-        // Music & Audio
-        "soul radio",
-        "find that song",
-        // Food & Drink
-        "resep masakan",
-        "tip calculator : split tip",
-        // Shopping
-        "brands for less",
-        "house of fraser",
-        // Business
-        "real estate auctions listings  - gsa listings",
-        "mobile inventory",
-        // Tools
-        "the ney is an end-blown flute sufi music wallpaper",
-        "calcnote - notepad calculator",
-      ],
-    },
-  });
-
-  apps = apps.map((app) => ({
-    // ...app,
-    appName: app.appName,
-    distance: app.distance,
-    categoryName: getCategoryNameBy(app.categoryName),
-    riskLevel: app.riskLevel,
-  }));
-
-  const appsByGroup = _.groupBy(apps, "categoryName");
-
-  const rows = [];
-  let stt = 1;
-  for (const categoryName in appsByGroup) {
-    const apps = appsByGroup[categoryName];
-
-    apps.forEach((app) => {
-      rows.push({
-        stt: stt++,
-        appName: app.appName,
-        category: app.categoryName,
-        distance: app.distance,
-        risk: app.riskLevel,
-      });
-    });
-  }
-
-  const csvWriterNo = createCsvWriter({
-    path: "./apps_categories(2-15).csv",
-    header,
-  });
-  await csvWriterNo.writeRecords(rows);
-  console.log("DONE");
-}
-
-// main();
-// main2();
-async function main2() {
-  const [app1, app2] = await Promise.all([
-    Models.App.find({
-      supplier: "mobipurpose",
-      isCompleted: true,
-      distance: {
-        $exists: true,
-      },
-    }),
-    Models.App.find({
-      isExistedMobiPurpose: true,
-      isCompleted: true,
-      distance: {
-        $exists: true,
-      },
-    }),
-  ]);
-
-  let apps = [...app1, ...app2].map((app) => ({
-    // ...app,
-    id: app.id,
-    appName: app.appName,
-    distance: app.distance,
-    categoryName: getCategoryNameBy(app.categoryName),
-  }));
-  apps = _.uniqBy(apps, "appName");
-  console.log(apps.length);
-  const appsByGroup = _.groupBy(apps, "categoryName");
-
-  for (const categoryName in appsByGroup) {
-    const apps = appsByGroup[categoryName];
-    const maxDistance = _.maxBy(apps, "distance").distance;
-    const minDistance = _.minBy(apps, "distance").distance;
-
-    const ranges = Array.from(
-      {
-        length: 5,
-      },
-      (_, index) => {
-        const value = (maxDistance - minDistance) / 5;
-
-        return [minDistance + index * value, minDistance + (index + 1) * value];
-      }
-    );
-
-    console.log(1, categoryName, ranges);
-
-    apps.forEach((app) => {
-      const { distance } = app;
-
-      // ranges.forEach((range, index) => {
-      //   if (_.inRange(distance, ...range)) {
-      //     Models.App.updateOne(
-      //       {
-      //         _id: app.id,
-      //       },
-      //       {
-      //         $set: {
-      //           riskLevel: index + 1,
-      //         },
-      //       },
-      //       {}
-      //     );
-      //   }
-      // });
-    });
-  }
-
-  // const csvWriterNo = createCsvWriter({
-  //   path: "./apps_categories(2-15).csv",
-  //   header,
-  // });
-  // await csvWriterNo.writeRecords(rows);
-  console.log("DONE");
-}
-
-// main3()
-async function main3() {
-
-  // const appsInFile1 = [];
-  // await new Promise((resolve, reject) => {
-  //   var readline = require("linebyline"),
-  //     rl = readline("/Users/xander/Downloads/data_collect_purpose.json");
-  //   rl.on("line", function (line, lineCount, byteCount) {
-  //     // do something with the line of text
-  //     const app = JSON.parse(line);
-  //     if(app) appsInFile1.push(app)
-  //   })
-  //     .on("error", function (e) {})
-  //     .on("close", function (e) {
-  //       resolve();
-  //     });
-  // });
-
-
-  // const apps = await Models.App.find({
-  //   isExistedMobiPurpose: true,
-  //   isCompleted: true,
-  //   nodes: { $exists: true }, //
-  //   dataTypes: { $exists: true }, //
-  // }).cache(10000);
-  // const appIdCHPlays = _.map(apps, "appIdCHPlay")
-  // console.log(appIdCHPlays)
-  // let total = 0
-  
-  // appsInFile1.forEach(item => {
-  //   if(_.includes(appIdCHPlays, item.app)) total++;
-  // })
-  // console.log(total)
-
-
-  const keyValue = []
-  // ===========
-  await new Promise((resolve, reject) => {
-    var readline = require("linebyline"),
-      rl = readline("/Users/xander/Downloads/data_collect_purpose.json");
-    rl.on("line", function (line, lineCount, byteCount) {
-      // do something with the line of text
-      const app = JSON.parse(line);
-      if (app && app.data) {
-        for (const key in app.data) {
-          const value = app.data[key];
-          let valType = value.split("|");
-          const valueOfKey = valType[0];
-
-          valType.splice(0, 1);
-          valType.splice(-1, 1);
-
-          keyValue.push(`${key.trim()}: ${valueOfKey.trim()}`)
-        }
-      }
-    })
-      .on("error", function (e) {})
-      .on("close", function (e) {
-        resolve();
-      });
-  });
-
-  console.log("not unique", keyValue.length)
-  console.log("unique", _.uniq(keyValue).length)
-
-}
 
 // console.log(genFields(['field1', 'field2'], 2, [['field1'], ['field2']]))
 function genFields(fields, num, existedFields) {
@@ -494,17 +168,14 @@ async function main4Eda() {
 
 
 async function main4Survey() {
-  
+  const types = await Models.Survey.distinct("type")
 
   let riskFields = {}
-  let promisses = []
   const typeChunk = _.chunk(_.sampleSize(types, types.length), 10)
   for (const chunk of typeChunk) {
     console.log('type', chunk)
-    // await retry(getEdaByGroup(type))
-    // promisses.push()
 
-    await Promise.all(chunk.map(type => retry(getEdaByGroup(type))))
+    await Promise.all(chunk.map(type => retry(getSurveyByGroup(type))))
   }
  
 
@@ -631,6 +302,167 @@ async function getEdaByGroupV3(type, riskFields) {
   return
 }
 
+async function getSurveyByGroupV3(type, riskFields) {
+  console.log(`Running ${type}`)
+
+  const surveyOfType = await Models.Survey.findOne({
+    type
+  });
+
+  const fields = Object.entries(surveyOfType.data).reduce((acc, item) => {
+    if(!uuidValidate(item[1])) acc.push(item[0])
+    return acc
+  }, [])
+
+  if(!fields.length) return
+  
+  
+  const genedFields = genFields(fields, 1, [])
+
+  if(!genedFields.length) return
+
+  for (let k = 0; k < genedFields.length; k++) {
+    console.log(`getSurveyByGroupV2 ${k}/${genedFields.length}`)
+    const fieldNames = genedFields[k]
+    const fieldName = fieldNames[0];
+    
+    const valuesCounted = await Models.Survey.aggregate([
+      {
+        $match: {
+          type
+        }
+      },
+      { "$group": {
+        "_id": {
+            "user_id": "$user_id",
+            "data": `$data.${fieldName}`
+        },
+        total:{$sum :1}
+      }},
+
+      {$sort:{total:-1}},
+
+      {$group:{_id:'$_id.data', totalData: {$sum :1}}},
+     
+    ]).allowDiskUse(true)
+
+
+    const uniqueValue = valuesCounted.find(item => item.totalData == 1);
+    if(!uniqueValue) continue
+
+    const survey = await Models.Survey.findOne({
+      type, 
+      [`data.${fieldName}`]: uniqueValue._id
+    })
+
+    riskFields[type].push({
+      fieldNames,
+      values: fieldNames.map(fieldName => survey.data[fieldName]).join(' - '),
+      id: survey.id
+    })
+  }
+  
+  return
+}
+
+
+async function getSurveyByGroup(type) {
+  if(fs.existsSync(`./survey/${type}.txt`)) return
+
+  let riskFields = {};
+  riskFields[type] = []
+
+  
+  if(fs.existsSync(`./survey/${type}.txt`)) return
+
+  await getSurveyByGroupV3(type, riskFields)
+  console.log("riskFields", JSON.stringify(riskFields, null, 2))
+
+  const surveysOfType = await Models.Survey.aggregate([
+    {
+      $match: {
+        type,
+      }
+    }
+  ]).allowDiskUse(true)
+
+  // filter not uuid
+  const fields = Object.entries(surveysOfType[0].data).reduce((acc, item) => {
+    if(!uuidValidate(item[1])) acc.push(item[0])
+    return acc
+  }, [])
+
+  if(!fields.length) return
+
+  for (let i = 1; i <= fields.length; i++) {
+    console.log(`Running ${i}/${fields.length} on ${type}`)
+    // const riskFieldsExists = _.map(riskFields[type], 'fieldName')
+    const existedFields = JSON.parse(JSON.stringify(_.map(riskFields[type], 'fieldNames')))
+    const genedFields = genFields(fields, i, existedFields)
+
+    if(!genedFields.length) continue;
+
+    const existedFieldInTurn = []
+    const runnedIds = []
+    for (let j = 0; j < surveysOfType.length; j++) {
+      const survey = surveysOfType[j];
+      runnedIds.push(survey.id)
+      console.log(`Running ${j}/${surveysOfType.length} on ${type}`, existedFieldInTurn, genedFields)
+      if(existedFieldInTurn.length === genedFields.length) continue;
+
+      const comparedSurveys = surveysOfType.filter(item => item.user_id !== survey.user_id && !_.includes(runnedIds, item.id))
+
+      for (let k = 0; k < genedFields.length; k++) {
+        const fieldNames = genedFields[k];
+        if(_.includes(existedFieldInTurn, fieldNames.join(','))) continue;
+
+        let isRisk = true
+        for (let g = 0; g < comparedSurveys.length; g++) {
+          const comparedSurvey = comparedSurveys[g];
+          if(!isRisk) continue
+
+          let isEqual = true
+          for (let f = 0; f < fieldNames.length; f++) {
+            const fieldName = fieldNames[f];
+            if(!isEqual) continue
+
+            const value1 = survey.data[fieldName]
+            const value2 = comparedSurvey.data[fieldName]
+
+            if(value1 !== value2) {
+              isEqual = false
+            }
+          }
+          if(isEqual) {
+            isRisk = false
+            continue
+          }
+        }
+
+        // if this field is risk
+        if(isRisk) {
+          existedFieldInTurn.push(fieldNames.join(','));
+          riskFields[type].push({
+            fieldNames,
+            values: fieldNames.map(fieldName => survey.data[fieldName]).join(' - '),
+            id: survey.id
+          })
+        }
+      }
+    }
+  }
+
+  for (const type in riskFields) {
+    const elements = riskFields[type];
+
+    elements = _.uniqBy(elements, (item) => JSON.stringify(item.fieldNames))
+    const elementGroup = _.groupBy(elements, (item) => item.fieldNames.length)
+
+    fs.writeFileSync(`./survey/${type}.txt`, JSON.stringify(elementGroup, null, 2), 'utf8')
+  }
+return
+}
+
 async function getEdaByGroup(type) {
     if(fs.existsSync(`./eda/${type}.txt`)) return
 
@@ -730,64 +562,3 @@ async function getEdaByGroup(type) {
   return
 }
 
-const filterInPlace = (array, predicate) => {
-  let end = 0;
-
-  for (let i = 0; i < array.length; i++) {
-      const obj = array[i];
-
-      if (predicate(obj)) {
-          array[end++] = obj;
-      }
-  }
-
-  array.length = end;
-};
-// main5()
-async function main5() {
-  console.log("main5")
-  const createCsvWriter = require("csv-writer").createObjectCsvWriter;
-  const header = [
-    {
-      id: "stt",
-      title: "STT"
-    },
-    {
-      id: "user_id",
-      title: "User Id"
-    },
-    {
-      id: "num",
-      title: "Number of questions"
-    }
-  ];
-
-  const typeChunk = _.chunk(types, 4)
-  for (const types of typeChunk) {
-    await Promise.all(types.map(async type => {
-      if(!fs.existsSync(`./eda/num-question-types/${type}.csv`)) {
-        const edaInType = await Models.EDA.find({
-          type
-        })
-        console.log("queried")
-        const edaGroupUser = _.groupBy(edaInType, 'user_id')
-    
-        const rows = Object.entries(edaGroupUser).map((item, index) => {
-          return {
-            stt: index + 1,
-            user_id: item[0],
-            num: item[1].length
-          }
-        })
-    
-        const csvWriter = createCsvWriter({
-          path: `./eda/num-question-types/${type}.csv`,
-          header: header
-        });
-        await csvWriter.writeRecords(rows);
-      }
-    }))
-  }
-  
-  console.log("Done")
-}

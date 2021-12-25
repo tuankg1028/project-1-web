@@ -12,6 +12,7 @@ import AppFunction from "./app-functions.model";
 import answerModel from "./answer.model";
 import userModel from "./user.model";
 import EDAModel from "./eda.model"
+import Survey from "./survey.model"
 class Model {
   constructor() {
     this.User = userModel;
@@ -28,6 +29,7 @@ class Model {
     this.CategoryDataset = CategoryDataset;
     this.AppFunction = AppFunction
     this.EDA = EDAModel
+    this.Survey = Survey
   }
 }
 export default new Model();
