@@ -13,6 +13,7 @@ import answerModel from "./answer.model";
 import userModel from "./user.model";
 import EDAModel from "./eda.model"
 import Survey from "./survey.model"
+import Sema from "./sema.model"
 class Model {
   constructor() {
     this.User = userModel;
@@ -30,6 +31,7 @@ class Model {
     this.AppFunction = AppFunction
     this.EDA = EDAModel
     this.Survey = Survey
+    this.Sema = Sema
   }
 }
 export default new Model();

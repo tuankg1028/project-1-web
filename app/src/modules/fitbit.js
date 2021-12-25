@@ -105,75 +105,31 @@ const types = [
 }
 main()
 async function main() {
-  // await main4Eda()
-  await main4Survey()
+  
+
+  await Promise.all([
+     main4Eda()
+    main4Survey()
+    main4Sema()
+  ])
 }
 
 async function main4Eda() {
-  // const edaCount = await Models.EDA.find({
-  //   type: "badge"
-  // }).distinct('data.dateTime')
-// const eda = await Models.EDA.aggregate([
-//   {
-//     $match: {
-//       type: "estimated_oxygen_variation"
-//     }
-//   },
-//   { "$group": {
-//     "_id": {
-//         "user_id": "$user_id",
-//         "data": "$data.Infrared to Red Signal Ratio"
-//     },
-//     total:{$sum :1}
-//   }},
-
-//   {$sort:{total:-1}},
-
-//   {$group:{_id:'$_id.data', totalData: {$sum :1}}}
-// ])
-
-// const eda = await Models.EDA.find({type: 'badge', 'data.dateTime': '2021-07-11'})
-// console.log(eda)
-//   return 
-
-  //   console.log(edaCount)
-  // const edaCount = await Models.EDA.find({
-  //   "data.shareText": "I took 25,000 steps and earned the Classics badge! #Fitbit"
-  // })
-  // console.log("edaCount", edaCount)
-  // return
-  let riskFields = {}
-  let promisses = []
   const typeChunk = _.chunk(_.sampleSize(types, types.length), 10)
   for (const chunk of typeChunk) {
     console.log('type', chunk)
-    // await retry(getEdaByGroup(type))
-    // promisses.push()
 
     await Promise.all(chunk.map(type => retry(getEdaByGroup(type))))
   }
-  // await Promise.all(promisses)
 
-  // let result = {};
-  // for (const type in riskFields) {
-  //   const elements = riskFields[type];
-
-  //   elements = _.uniqBy(elements, (item) => JSON.stringify(item.fieldNames))
-  //   const elementGroup = _.groupBy(elements, (item) => item.fieldNames.length)
-
-
-  //   result[type] = elementGroup
-  // }
-
-  // fs.writeFileSync('./eda.txt', JSON.stringify(result, null, 2), 'utf8')
-
-  console.log("Done")
+  console.log("Done EDA")
 }
 
 
 async function main4Survey() {
-  const types = await Models.Survey.distinct("type")
+  // const types = await Models.Survey.distinct("type")
 
+  const types = ['parq']
   let riskFields = {}
   const typeChunk = _.chunk(_.sampleSize(types, types.length), 10)
   for (const chunk of typeChunk) {
@@ -183,7 +139,93 @@ async function main4Survey() {
   }
  
 
-  console.log("Done")
+  console.log("Done SurVey")
+}
+
+async function main4Sema() {
+  let riskFields = []
+
+  await getSemaByGroupV3(riskFields)
+  console.log("riskFields", JSON.stringify(riskFields, null, 2))
+  
+  const semasOfType = await Models.Sema.find().limit(1000)
+
+  // filter not uuid
+  const fields = Object.entries(semasOfType[0].data).reduce((acc, item) => {
+    if(!uuidValidate(item[1])) acc.push(item[0])
+    return acc
+  }, [])
+
+  if(!fields.length) return
+
+  for (let i = 2; i <= fields.length; i++) {
+    console.log(`Running ${i}/${fields.length}`)
+    // const riskFieldsExists = _.map(riskFields[type], 'fieldName')
+    const existedFields = JSON.parse(JSON.stringify(_.map(riskFields, 'fieldNames')))
+    const genedFields = genFields(fields, i, existedFields)
+
+    if(!genedFields.length) continue;
+
+    const existedFieldInTurn = []
+    const runnedIds = []
+    for (let j = 0; j < semasOfType.length; j++) {
+      const sema = semasOfType[j];
+      runnedIds.push(sema.id)
+      console.log(`Running ${j}/${semasOfType.length}`, existedFieldInTurn, genedFields)
+      if(existedFieldInTurn.length === genedFields.length) continue;
+
+      const comparedSemas = semasOfType.filter(item => item.user_id !== sema.user_id && !_.includes(runnedIds, item.id))
+
+      for (let k = 0; k < genedFields.length; k++) {
+        const fieldNames = genedFields[k];
+        if(_.includes(existedFieldInTurn, fieldNames.join(','))) continue;
+
+        let isRisk = true
+        for (let g = 0; g < comparedSemas.length; g++) {
+          const comparedSema = comparedSemas[g];
+          if(!isRisk) continue
+
+          let isEqual = true
+          for (let f = 0; f < fieldNames.length; f++) {
+            const fieldName = fieldNames[f];
+            if(!isEqual) continue
+
+            const value1 = sema.data[fieldName]
+            const value2 = comparedSema.data[fieldName]
+
+            if(value1 !== value2) {
+              isEqual = false
+            }
+          }
+          if(isEqual) {
+            isRisk = false
+            continue
+          }
+        }
+
+        // if this field is risk
+        if(isRisk) {
+
+          existedFieldInTurn.push(fieldNames.join(','));
+          riskFields.push({
+            fieldNames,
+            values: fieldNames.map(fieldName => sema.data[fieldName]).join(' - '),
+            id: sema.id
+          })
+        }
+      }
+    }
+  }
+
+  let elements = riskFields;
+
+  elements = _.uniqBy(elements, (item) => JSON.stringify(item.fieldNames))
+  const elementGroup = _.groupBy(elements, (item) => item.fieldNames.length)
+
+  fs.writeFileSync(`./sema/index.txt`, JSON.stringify(elementGroup, null, 2), 'utf8')
+
+  console.log("DONE SEMA")
+  return
 }
 
 function sleep (time) {
@@ -359,6 +401,7 @@ async function getSurveyByGroupV3(type, riskFields) {
       [`data.${fieldName}`]: uniqueValue._id
     })
 
+    console.log(1, survey)
     riskFields[type].push({
       fieldNames,
       values: fieldNames.map(fieldName => survey.data[fieldName]).join(' - '),
@@ -369,19 +412,74 @@ async function getSurveyByGroupV3(type, riskFields) {
   return
 }
 
+async function getSemaByGroupV3(riskFields) {
+  console.log(`Running Sema`)
+
+  const semaOfType = await Models.Sema.findOne({
+  });
+
+  const fields = Object.entries(semaOfType.data).reduce((acc, item) => {
+    if(!uuidValidate(item[1])) acc.push(item[0])
+    return acc
+  }, [])
+
+  if(!fields.length) return
+  
+  
+  const genedFields = genFields(fields, 1, [])
+
+  if(!genedFields.length) return
+
+  for (let k = 0; k < genedFields.length; k++) {
+    console.log(`getSemaByGroupV2 ${k}/${genedFields.length}`)
+    const fieldNames = genedFields[k]
+    const fieldName = fieldNames[0];
+    
+    const valuesCounted = await Models.Sema.aggregate([
+      { "$group": {
+        "_id": {
+            "user_id": "$user_id",
+            "data": `$data.${fieldName}`
+        },
+        total:{$sum :1}
+      }},
+
+      {$sort:{total:-1}},
+
+      {$group:{_id:'$_id.data', totalData: {$sum :1}}},
+     
+    ]).allowDiskUse(true)
+
+
+    const uniqueValue = valuesCounted.find(item => item.totalData == 1);
+    if(!uniqueValue) continue
+
+    const sema = await Models.Sema.findOne({
+      [`data.${fieldName}`]: uniqueValue._id
+    })
+
+    riskFields.push({
+      fieldNames,
+      values: fieldNames.map(fieldName => sema.data[fieldName]).join(' - '),
+      id: sema.id
+    })
+  }
+  
+  return
+}
 
 async function getSurveyByGroup(type) {
-  if(fs.existsSync(`./survey/${type}.txt`)) return
+  // if(fs.existsSync(`./survey/${type}.txt`)) return
 
   let riskFields = {};
   riskFields[type] = []
 
   
-  if(fs.existsSync(`./survey/${type}.txt`)) return
+  // if(fs.existsSync(`./survey/${type}.txt`)) return
 
   await getSurveyByGroupV3(type, riskFields)
   console.log("riskFields", JSON.stringify(riskFields, null, 2))
-
+  
   const surveysOfType = await Models.Survey.aggregate([
     {
       $match: {
@@ -398,7 +496,7 @@ async function getSurveyByGroup(type) {
 
   if(!fields.length) return
 
-  for (let i = 1; i <= fields.length; i++) {
+  for (let i = 2; i <= fields.length; i++) {
     console.log(`Running ${i}/${fields.length} on ${type}`)
     // const riskFieldsExists = _.map(riskFields[type], 'fieldName')
     const existedFields = JSON.parse(JSON.stringify(_.map(riskFields[type], 'fieldNames')))
@@ -411,7 +509,7 @@ async function getSurveyByGroup(type) {
     for (let j = 0; j < surveysOfType.length; j++) {
       const survey = surveysOfType[j];
       runnedIds.push(survey.id)
-      console.log(`Running ${j}/${surveysOfType.length} on ${type}`, existedFieldInTurn, genedFields)
+      console.log(`Running ${j}/${surveysOfType.length} on ${type}`)
       if(existedFieldInTurn.length === genedFields.length) continue;
 
       const comparedSurveys = surveysOfType.filter(item => item.user_id !== survey.user_id && !_.includes(runnedIds, item.id))
@@ -449,7 +547,7 @@ async function getSurveyByGroup(type) {
           riskFields[type].push({
             fieldNames,
             values: fieldNames.map(fieldName => survey.data[fieldName]).join(' - '),
-            id: survey.id
+            id: survey._id
           })
         }
       }
@@ -468,13 +566,13 @@ return
 }
 
 async function getEdaByGroup(type) {
-    if(fs.existsSync(`./eda/${type}.txt`)) return
+    // if(fs.existsSync(`./eda/${type}.txt`)) return
 
     let riskFields = {};
     riskFields[type] = []
 
     
-    if(fs.existsSync(`./eda/${type}.txt`)) return
+    // if(fs.existsSync(`./eda/${type}.txt`)) return
 
     await getEdaByGroupV3(type, riskFields)
     console.log("riskFields", JSON.stringify(riskFields, null, 2))
@@ -495,7 +593,7 @@ async function getEdaByGroup(type) {
 
     if(!fields.length) return
 
-    for (let i = 1; i <= fields.length; i++) {
+    for (let i = 2; i <= fields.length; i++) {
       console.log(`Running ${i}/${fields.length} on ${type}`)
       // const riskFieldsExists = _.map(riskFields[type], 'fieldName')
       const existedFields = JSON.parse(JSON.stringify(_.map(riskFields[type], 'fieldNames')))
