@@ -61,6 +61,52 @@ const categoryGroups = {
     // "Travel & Local": ["Travel & Local"],
   };
 const sourceCodePath = `/data/JavaCode`;
+
+function countAPIs(apis) {
+    const result = []
+    apis.forEach(({name, functions}) => {
+        const apiIndex = result.findIndex(item => item.name === name)
+
+        if(~apiIndex) {
+            const originalApi = result[apiIndex]
+            originalApi.count++
+
+            functions.forEach(functionName => {
+                const functionIndex = originalApi.functions.findIndex(item => item.name === functionName)
+
+                if(~functionIndex) {
+                    const originalfunction = originalApi.functions[functionIndex]
+                    originalfunction.count++
+                } else {
+                    originalApi.functions.push({
+                        name: functionName,
+                        count: 1,
+                    })
+                }
+            })
+        } else {
+            result.push({
+                name,
+                count: 1,
+                functions: functions.map(functionName => ({
+                    name: functionName,
+                    count : 1
+                }))
+            })
+        }
+    })
+
+    return result
+}
+
+// getApisAndLibs("/Users/xander/Downloads/AndroidManifest.xml").then(result => {
+//     const originalApis = result[0]
+
+//     const apis = countAPIs(originalApis)
+
+//     console.log(JSON.stringify(apis, null, 2))
+// })
+
 main()
 async function main() {
     const header = [
@@ -75,6 +121,10 @@ async function main() {
         {
             id: "numberOfOccurrences",
             title: "Number of occurrences"
+        },
+        {
+            id: "functions",
+            title: "Functions"
         }
     ];
 
@@ -106,15 +156,15 @@ async function main() {
         }
 
         const rowsApi = []
-        const apisCounted = _.countBy(result.apis)
+        const apisCounted = countAPIs(result.apis)
         let i = 1
-        for (const apiName in apisCounted) {
-            const numberOfOccurrences = apisCounted[apiName];
+        for (const api of apisCounted) {
     
             rowsApi.push({
                 stt: i++,
-                name: apiName,
-                numberOfOccurrences
+                name: api.name,
+                numberOfOccurrences: api.count,
+                functions: api.functions.map(item => `${item.name}: ${item.count}`).join("\n")
             })
         }
     
@@ -157,11 +207,29 @@ function getApisAndLibs(xmlPath) {
 
     return new Promise((resolve, reject) => {
         parseString(xml, function (err, result) {
-            const apis = (result.manifest.application[0]['activity'] || []).map(item => {
-                return item['$']['android:name']
-            })
+            const functions = []
+            const apis = (result.manifest.application[0]['activity'] || []).reduce((acc, item) => {
+                const names = item['$']['android:name'].split('.')
+                const functionName = names.pop()
+               
+                const apiName = names.join('.')
 
-            const libs = (result.manifest.application[0]['service'] || []).map(item => {
+                const index = acc.findIndex(item => item.name === apiName)
+                
+                if(~index) {
+                    acc[index].functions.push(functionName)
+                    acc[index].functions = _.uniq(acc[index].functions)
+                } else {
+                    acc.push({
+                        name: apiName,
+                        functions: [functionName]
+                    })
+                }
+
+                return acc
+            }, [])
+
+            const libs = ([...result.manifest.application[0]['service'] || [], ...result.manifest.application[0]['provider'] || []]).map(item => {
                 return item['$']['android:name']
             })
 
