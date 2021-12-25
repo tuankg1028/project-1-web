@@ -585,7 +585,7 @@ async function getEdaByGroupV3(type, riskFields, edasOfType) {
 
       {$group:{_id:'$_id.data', totalData: {$sum :1}}},
      
-    ],  {allowDiskUse: true})
+    ]).allowDiskUse(true)
 
 
     const uniqueValue = valuesCounted.find(item => item.totalData == 1);
