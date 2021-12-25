@@ -1,0 +1,39 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "coverage"
+      ],
+      "values": "1.033",
+      "id": "619d298fce31879b3f322169"
+    },
+    {
+      "fieldNames": [
+        "low_frequency"
+      ],
+      "values": "578.495",
+      "id": "619d298fce31879b3f321ae6"
+    },
+    {
+      "fieldNames": [
+        "high_frequency"
+      ],
+      "values": "264.641",
+      "id": "619d298fce31879b3f321ae8"
+    },
+    {
+      "fieldNames": [
+        "timestamp"
+      ],
+      "values": "2021-05-18T21:25:00",
+      "id": "619d298fce31879b3f321b95"
+    },
+    {
+      "fieldNames": [
+        "rmssd"
+      ],
+      "values": "48.904",
+      "id": "619d298fce31879b3f321af2"
+    }
+  ]
+}

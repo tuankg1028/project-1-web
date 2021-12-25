@@ -1,0 +1,18 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "timestamp"
+      ],
+      "values": "01/01/21 00:00:30",
+      "id": "619d2a70ce31879b3f367840"
+    },
+    {
+      "fieldNames": [
+        "Infrared to Red Signal Ratio"
+      ],
+      "values": "-100",
+      "id": "619d2c57ce31879b3f03ffcd"
+    }
+  ]
+}

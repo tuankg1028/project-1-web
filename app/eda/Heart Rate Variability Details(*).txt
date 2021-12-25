@@ -1,0 +1,34 @@
+{
+  "1": [
+    {
+      "fieldNames": [
+        "low_frequency"
+      ],
+      "id": "619d298fce31879b3f321ae6"
+    },
+    {
+      "fieldNames": [
+        "high_frequency"
+      ],
+      "id": "619d298fce31879b3f321ae8"
+    },
+    {
+      "fieldNames": [
+        "rmssd"
+      ],
+      "id": "619d298fce31879b3f321af2"
+    },
+    {
+      "fieldNames": [
+        "timestamp"
+      ],
+      "id": "619d298fce31879b3f321b95"
+    },
+    {
+      "fieldNames": [
+        "coverage"
+      ],
+      "id": "619d298fce31879b3f322169"
+    }
+  ]
+}
