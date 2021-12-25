@@ -108,8 +108,8 @@ async function main() {
   
 
   await Promise.all([
-     main4Eda()
-    main4Survey()
+    main4Eda(),
+    main4Survey(),
     main4Sema()
   ])
 }
