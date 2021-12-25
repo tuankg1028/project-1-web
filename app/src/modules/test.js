@@ -551,11 +551,11 @@ async function getEdaByGroupV2(type, riskFields, edasOfType) {
 async function getEdaByGroupV3(type, riskFields) {
   console.log(`Running ${type}`)
 
-  const edasOfType = await Models.EDA.findOne({
+  const edaOfType = await Models.EDA.findOne({
     type
   });
 
-  const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
+  const fields = Object.entries(edaOfType.data).reduce((acc, item) => {
     if(!uuidValidate(item[1])) acc.push(item[0])
     return acc
   }, [])
