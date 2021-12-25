@@ -548,8 +548,13 @@ async function getEdaByGroupV2(type, riskFields, edasOfType) {
 }
 
 
-async function getEdaByGroupV3(type, riskFields, edasOfType) {
+async function getEdaByGroupV3(type, riskFields) {
   console.log(`Running ${type}`)
+
+  const edasOfType = await Models.EDA.findOne({
+    type
+  });
+
   const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
     if(!uuidValidate(item[1])) acc.push(item[0])
     return acc
@@ -612,13 +617,15 @@ async function getEdaByGroup(type) {
     let riskFields = {};
     riskFields[type] = []
 
+    
+    if(fs.existsSync(`./eda/${type}.txt`)) return
+
+    await getEdaByGroupV3(type, riskFields)
+    console.log("riskFields", JSON.stringify(riskFields, null, 2))
+
     const edasOfType = await Models.EDA.find({
       type,
     })
-    if(fs.existsSync(`./eda/${type}.txt`)) return
-
-    await getEdaByGroupV3(type, riskFields, edasOfType)
-    console.log("riskFields", JSON.stringify(riskFields, null, 2))
 
     // filter not uuid
     const fields = Object.entries(edasOfType[0].data).reduce((acc, item) => {
