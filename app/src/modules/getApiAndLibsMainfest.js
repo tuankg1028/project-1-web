@@ -221,7 +221,7 @@ async function main() {
 }
 
 
-function getApisAndLibs(xmlPath, sourceCodeJavaPath) {
+async function getApisAndLibs(xmlPath, sourceCodeJavaPath) {
     const xml = fs.readFileSync(xmlPath)
 
     const [apis, libs] = await new Promise((resolve, reject) => {
