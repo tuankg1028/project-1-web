@@ -276,7 +276,7 @@ async function getApisAndLibs(xmlPath, sourceCodeJavaPath) {
         }
   
         apis.forEach((api) => {
-          const { name: className, functions } = api;
+          let { name: className, functions } = api;
           if (
             line &&
             ~line.indexOf(`${className}.`) &&
