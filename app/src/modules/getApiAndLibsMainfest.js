@@ -156,9 +156,9 @@ async function main() {
         for (let i = 0; i < apps.length; i++) {
             const app = apps[i];
 
-            const sourceCodePath = `${sourceCodePath}/${app.id}`
-            const mainFestPath = `${sourceCodePath}/resources/AndroidManifest.xml`;
-            const sourceCodeJavaPath = `${sourceCodePath}/${app.id}/sources`
+            const sourceCodeAppPath = `${sourceCodePath}/${app.id}`
+            const mainFestPath = `${sourceCodeAppPath}/resources/AndroidManifest.xml`;
+            const sourceCodeJavaPath = `${sourceCodeAppPath}/${app.id}/sources`
 
             console.log(fs.existsSync(mainFestPath) , fs.existsSync(sourceCodeJavaPath))
 
