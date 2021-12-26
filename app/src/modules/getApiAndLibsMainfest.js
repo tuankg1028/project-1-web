@@ -67,7 +67,7 @@ const sourceCodePath = `/data/JavaCode`;
 
 function countAPIs(apis) {
     const result = []
-    apis.forEach(({name, functions}) => {
+    apis.forEach(({name, functions, classes}) => {
         const apiIndex = result.findIndex(item => item.name === name)
 
         if(~apiIndex) {
@@ -87,12 +87,30 @@ function countAPIs(apis) {
                     })
                 }
             })
+
+            classes.forEach(className => {
+                const classIndex = originalApi.classes.findIndex(item => item.name === className)
+
+                if(~classIndex) {
+                    const originalclass = originalApi.classes[classIndex]
+                    originalclass.count++
+                } else {
+                    originalApi.classes.push({
+                        name: className,
+                        count: 1,
+                    })
+                }
+            })
         } else {
             result.push({
                 name,
                 count: 1,
                 functions: functions.map(functionName => ({
                     name: functionName,
+                    count : 1
+                })),
+                classes: classes.map(className => ({
+                    name: className,
                     count : 1
                 }))
             })
@@ -147,7 +165,7 @@ async function main() {
             categoryName: {
                 $in: subCategories
             }
-        })
+        }).limit(100)
 
         console.log(category, apps.length)
 
