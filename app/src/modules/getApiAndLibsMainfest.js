@@ -5,6 +5,9 @@ const path = require("path");
 var parseString = require('xml2js').parseString;
 const _ = require("lodash");
 import Models from "../models";
+import Helpers from "../helpers";
+const { execSync } = require("child_process");
+
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
 const categoryGroups = {
@@ -123,6 +126,10 @@ async function main() {
             title: "Number of occurrences"
         },
         {
+            id: "classes",
+            title: "Classes"
+        },
+        {
             id: "functions",
             title: "Functions"
         }
@@ -143,15 +150,22 @@ async function main() {
             }
         })
 
+        let totalRows = 0
         for (let i = 0; i < apps.length; i++) {
             const app = apps[i];
-            const mainFestPath = `${sourceCodePath}/${app.id}/resources/AndroidManifest.xml`
-            if(fs.existsSync(mainFestPath)) {
-                const [apis, libs] = await getApisAndLibs(mainFestPath)
+
+            const sourceCodePath = `${sourceCodePath}/${app.id}`
+            const mainFestPath = `${sourceCodePath}/resources/AndroidManifest.xml`;
+            const sourceCodeJavaPath = `${sourceCodePath}/${app.id}/sources`
+
+            if(fs.existsSync(mainFestPath) && fs.existsSync(sourceCodeJavaPath)) {
+                const [apis, libs] = await getApisAndLibs(mainFestPath, sourceCodeJavaPath)
 
 
                 result.apis = [...result.apis, ...apis]
                 result.libs = [...result.libs, ...libs]
+
+                totalRows++
             }
         }
 
@@ -164,12 +178,17 @@ async function main() {
                 stt: i++,
                 name: api.name,
                 numberOfOccurrences: api.count,
+                classes: api.classes.map(item => `${item.name}: ${item.count}`).join("\n"),
                 functions: api.functions.map(item => `${item.name}: ${item.count}`).join("\n")
             })
         }
-    
+        
+        const categoryPath = path.join(__dirname, `../../api-keyword/${category}`)
+        if(!fs.existsSync(categoryPath)) {
+            execSync(`mkdir ${categoryPath}`);
+        }
         const csvWriterHas = createCsvWriter({
-            path: `./api-keyword/apis(${category}).csv`,
+            path: `${categoryPath}/apis(${totalRows}).csv`,
             header
         });
         await csvWriterHas.writeRecords(rowsApi);
@@ -190,7 +209,7 @@ async function main() {
         }
     
         const csvWriterLib = createCsvWriter({
-            path: `./api-keyword/libs(${category}).csv`,
+            path: `${categoryPath}/libs(${totalRows}).csv`,
             header,
         });
         await csvWriterLib.writeRecords(rowsLibs);
@@ -202,27 +221,28 @@ async function main() {
 }
 
 
-function getApisAndLibs(xmlPath) {
+function getApisAndLibs(xmlPath, sourceCodeJavaPath) {
     const xml = fs.readFileSync(xmlPath)
 
-    return new Promise((resolve, reject) => {
+    const [apis, libs] = await new Promise((resolve, reject) => {
         parseString(xml, function (err, result) {
-            const functions = []
+            const classes = []
             const apis = (result.manifest.application[0]['activity'] || []).reduce((acc, item) => {
                 const names = item['$']['android:name'].split('.')
-                const functionName = names.pop()
+                const className = names.pop()
                
                 const apiName = names.join('.')
 
                 const index = acc.findIndex(item => item.name === apiName)
                 
                 if(~index) {
-                    acc[index].functions.push(functionName)
-                    acc[index].functions = _.uniq(acc[index].functions)
+                    acc[index].classes.push(className)
+                    acc[index].classes = _.uniq(acc[index].classes)
                 } else {
                     acc.push({
                         name: apiName,
-                        functions: [functionName]
+                        classes: [className],
+                        functions: [className]
                     })
                 }
 
@@ -236,4 +256,49 @@ function getApisAndLibs(xmlPath) {
             resolve([_.uniq(apis), _.uniq(libs)])
         });
     })
+
+
+    // get functions 
+    let contents = await Helpers.File.getContentOfFolder(sourceCodeJavaPath);
+    contents = contents.split("\n");
+    
+    
+    // get Function
+    contents.forEach((line) => {
+        // remove comment
+        const test = line;
+        if (~line.indexOf("//")) {
+          line = line.slice(0, line.indexOf("//"));
+        }
+  
+        apis.forEach((api) => {
+          const { name: className, functions } = api;
+          if (
+            line &&
+            ~line.indexOf(`${className}.`) &&
+            !~line.indexOf("import")
+          ) {
+            const index = line.lastIndexOf(`${className}`) + className.length;
+            line = line.replace(line.slice(0, index), "");
+  
+            if (
+              line &&
+              line[0] === "." &&
+              ~line.indexOf("(") &&
+              ~line.indexOf(")")
+            ) {
+                line = line.slice(0, line.indexOf("("));
+                line = line.replace(".", "");
+    
+                functions.push(line);
+                functions = _.uniq(functions)   
+            }
+          }
+        });
+      });
+
+
+    return [apis, libs]
 }
+
+
