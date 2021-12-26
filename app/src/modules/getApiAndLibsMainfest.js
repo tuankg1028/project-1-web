@@ -158,7 +158,7 @@ async function main() {
 
             const sourceCodeAppPath = `${sourceCodePath}/${app.id}`
             const mainFestPath = `${sourceCodeAppPath}/resources/AndroidManifest.xml`;
-            const sourceCodeJavaPath = `${sourceCodeAppPath}/${app.id}/sources`
+            const sourceCodeJavaPath = `${sourceCodeAppPath}/sources`
 
             console.log(fs.existsSync(mainFestPath) , fs.existsSync(sourceCodeJavaPath))
 
