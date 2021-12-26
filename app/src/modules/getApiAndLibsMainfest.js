@@ -165,7 +165,7 @@ async function main() {
             categoryName: {
                 $in: subCategories
             }
-        }).limit(100)
+        })
 
         console.log(category, apps.length)
 
