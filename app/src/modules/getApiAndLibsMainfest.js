@@ -140,7 +140,6 @@ async function main() {
         libs: []
     }
     for (const category in categoryGroups) {
-        console.log(category)
         const subCategories = categoryGroups[category];
 
 
@@ -149,6 +148,9 @@ async function main() {
                 $in: subCategories
             }
         })
+
+        console.log(category, apps.length)
+
 
         let totalRows = 0
         for (let i = 0; i < apps.length; i++) {
