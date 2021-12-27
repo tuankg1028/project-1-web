@@ -175,13 +175,11 @@ async function main() {
             const app = apps[i];
 
             const sourceCodeAppPath = `${sourceCodePath}/${app.id}`
-            const mainFestPath = `${sourceCodeAppPath}/resources/AndroidManifest.xml`;
             const sourceCodeJavaPath = `${sourceCodeAppPath}/sources`
-
             console.log(`Running ${i}/${apps.length}`)
 
-            if(fs.existsSync(mainFestPath) && fs.existsSync(sourceCodeJavaPath)) {
-                const [apis, libs] = await getApisAndLibs(mainFestPath, sourceCodeJavaPath)
+            if(fs.existsSync(sourceCodeJavaPath)) {
+                const [apis, libs] = await getApisAndLibs(sourceCodeJavaPath)
 
 
                 result.apis = [...result.apis, ...apis]
