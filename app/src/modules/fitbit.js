@@ -108,9 +108,9 @@ async function main() {
   
 
   await Promise.all([
-    main4Eda(),
+    // main4Eda(),
     main4Survey(),
-    main4Sema()
+    // main4Sema()
   ])
 }
 
@@ -127,9 +127,9 @@ async function main4Eda() {
 
 
 async function main4Survey() {
-  // const types = await Models.Survey.distinct("type")
+  const types = await Models.Survey.distinct("type")
 
-  const types = ['parq']
+  // const types = ['parq']
   let riskFields = {}
   const typeChunk = _.chunk(_.sampleSize(types, types.length), 10)
   for (const chunk of typeChunk) {
