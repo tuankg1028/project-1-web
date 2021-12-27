@@ -273,7 +273,7 @@ async function getApisAndLibs(sourceCodeJavaPath) {
       });
 
 
-    return [apis, libs]
+    return []
 }
 
 
