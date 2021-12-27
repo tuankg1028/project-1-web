@@ -128,7 +128,7 @@ async function main4Eda() {
 
 async function main4Survey() {
   const types = await Models.Survey.distinct("type")
-
+  console.log(types)
   // const types = ['parq']
   let riskFields = {}
   const typeChunk = _.chunk(_.sampleSize(types, types.length), 10)
