@@ -240,9 +240,9 @@ async function getApisAndLibs(sourceCodeJavaPath) {
             line = line.split('.');
 
             console.log(0, line)
-            const apiName = line.splice(0, line.length - 2)
-            const className = line.splice(0, 1)
-            const functionName = line.splice(0, 1)
+            const apiName = line.splice(0, line.length - 2).join('.')
+            const className = line.splice(0, 1).join('.')
+            const functionName = line.splice(0, 1).join('.')
 
             console.log(1, apiName, className, functionName)
             const apiIndex = apis.findIndex(item => item.name === apiName)
