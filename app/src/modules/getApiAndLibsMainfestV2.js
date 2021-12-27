@@ -179,7 +179,7 @@ async function main() {
             console.log(`Running ${i}/${apps.length}`)
 
             if(fs.existsSync(sourceCodeJavaPath)) {
-                constapis = await getApisAndLibs(sourceCodeJavaPath)
+                const apis = await getApisAndLibs(sourceCodeJavaPath)
 
 
                 result.apis = [...result.apis, ...apis]
