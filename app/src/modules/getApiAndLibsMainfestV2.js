@@ -179,12 +179,10 @@ async function main() {
             console.log(`Running ${i}/${apps.length}`)
 
             if(fs.existsSync(sourceCodeJavaPath)) {
-                const [apis, libs] = await getApisAndLibs(sourceCodeJavaPath)
+                constapis = await getApisAndLibs(sourceCodeJavaPath)
 
 
                 result.apis = [...result.apis, ...apis]
-                result.libs = [...result.libs, ...libs]
-
                 totalRows++
             }
         }
@@ -212,27 +210,6 @@ async function main() {
             header
         });
         await csvWriterHas.writeRecords(rowsApi);
-
-
-        // libs
-        const rowsLibs = []
-        const libsCounted = _.countBy(result.libs)
-        i = 1
-        for (const libName in libsCounted) {
-            const numberOfOccurrences = libsCounted[libName];
-    
-            rowsLibs.push({
-                stt: i++,
-                name: libName,
-                numberOfOccurrences
-            })
-        }
-    
-        const csvWriterLib = createCsvWriter({
-            path: `${categoryPath}/libs(${totalRows}).csv`,
-            header,
-        });
-        await csvWriterLib.writeRecords(rowsLibs);
     }
 
    
@@ -244,6 +221,7 @@ async function main() {
 async function getApisAndLibs(sourceCodeJavaPath) {
     
 
+    const apis = []
     // get functions 
     let contents = await Helpers.File.getContentOfFolder(sourceCodeJavaPath);
     contents = contents.split("\n");
@@ -255,25 +233,51 @@ async function getApisAndLibs(sourceCodeJavaPath) {
             line &&
             ~line.indexOf("import")
           ) {
-            console.log(line)
-            // const index = line.lastIndexOf(`${className}`) + className.length;
-            // line = line.replace(line.slice(0, index), "");
-  
-            // if (
-            //   line &&
-            //   line[0] === "." &&
-            //   ~line.indexOf("(") &&
-            //   ~line.indexOf(")")
-            // ) {
-            //     line = line.slice(0, line.indexOf("("));
-            //     line = line.replace(".", "");
-            // }
+            line = line.replace(";", "");
+            line = line.replace("import", "");
+            line = line.trim();
+            
+            line = line.split('.');
+
+            const apiName = line.splice(0, line.length - 2)
+            const className = line.splice(line.length - 2, 1)
+            const functionName = line.splice(line.length - 1, 1)
+
+            console.log(1, line, apiName, className, functionName)
+            const apiIndex = apis.findIndex(item => item.name === apiName)
+
+            if(~apiIndex) {
+                const api = apis[apiIndex]
+
+                const functionIndex = api.functions.findIndex(item => item.name === functionName)
+                const classIndex = api.classes.findIndex(item => item.name === className)
+                if(!~functionIndex) {
+                    api.functions.push(functionName)
+                    api.functions = _.uniq(api.functions)
+                }
+
+                if(!~classIndex) {
+                    api.classes.push(className)
+                    api.classes = _.uniq(api.classes)
+                }
+
+                console.log(2, api)
+            }
+            else {
+                apis.push({
+                    name: apiName,
+                    classes: [className],
+                    functions: [functionName]
+                })
+            }
+            
+
           }
 
       });
 
 
-    return []
+    return apis
 }
 
 
