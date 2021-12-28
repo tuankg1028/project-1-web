@@ -28,7 +28,7 @@
     "getPrediction": "babel-node --max-old-space-size=30000 src/modules/algorithm.js",
     "comment": "babel-node --max-old-space-size=30000 src/modules/comments.js",
     "userAnswer": "babel-node --max-old-space-size=30000 src/modules/user-answer.js",
-    "getApis": "babel-node --max-old-space-size=30000 src/modules/getApiAndLibsMainfestV2.js",
+    "getApis": "babel-node --expose_gc --max-old-space-size=30000 src/modules/getApiAndLibsMainfestV2.js",
     "fitbit": "babel-node --max-old-space-size=100000 src/modules/fitbit.js"
   },
   "keywords": [],
