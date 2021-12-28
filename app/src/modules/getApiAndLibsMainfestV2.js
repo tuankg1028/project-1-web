@@ -189,7 +189,6 @@ async function main() {
 
             console.log((JSON.stringify(result.apis).replace(/[\[\]\,\"]/g,'').length / (1000 * 1000 * 1000)).toFixed(2))
 
-            await sleep(300)
         }
 
         const rowsApi = []
