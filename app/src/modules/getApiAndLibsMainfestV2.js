@@ -279,9 +279,8 @@ async function getApisAndLibs(sourceCodeJavaPath) {
       });
 
 
-    contents = undefined
-    global.gc();
-    
+    delete contents
+
     return apis
 }
 
