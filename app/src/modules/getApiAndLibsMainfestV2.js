@@ -187,7 +187,7 @@ async function main() {
             }
 
 
-            console.log((JSON.stringify(myBigNestedarray).replace(/[\[\]\,\"]/g,'').length / (1000 * 1000 * 1000)).toFixed(2))
+            console.log((JSON.stringify(result.apis).replace(/[\[\]\,\"]/g,'').length / (1000 * 1000 * 1000)).toFixed(2))
         }
 
         const rowsApi = []
