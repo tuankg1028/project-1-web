@@ -188,6 +188,8 @@ async function main() {
 
 
             console.log((JSON.stringify(result.apis).replace(/[\[\]\,\"]/g,'').length / (1000 * 1000 * 1000)).toFixed(2))
+
+            await sleep(300)
         }
 
         const rowsApi = []
@@ -281,3 +283,7 @@ async function getApisAndLibs(sourceCodeJavaPath) {
 }
 
 
+function sleep(delay) {
+    var start = new Date().getTime();
+    while (new Date().getTime() < start + delay);
+}
