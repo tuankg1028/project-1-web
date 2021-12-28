@@ -185,6 +185,9 @@ async function main() {
                 result.apis = [...result.apis, ...apis]
                 totalRows++
             }
+
+
+            console.log((JSON.stringify(myBigNestedarray).replace(/[\[\]\,\"]/g,'').length / (1000 * 1000 * 1000)).toFixed(2))
         }
 
         const rowsApi = []
