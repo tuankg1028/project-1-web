@@ -171,7 +171,7 @@ async function main() {
 
 
         let totalRows = 0
-        for (let i = 0; i < apps.length; i++) {
+        for (let i = 1525; i < apps.length; i++) {
             const app = apps[i];
 
             const sourceCodeAppPath = `${sourceCodePath}/${app.id}`

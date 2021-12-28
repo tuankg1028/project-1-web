@@ -5,6 +5,7 @@ import _ from "lodash";
 import { v4 as uuidv4, validate as uuidValidate } from "uuid";
 import fs from "fs";
 var parse = require('fast-json-parse')
+const { execSync } = require("child_process");
 
 // console.log(genFields(['field1', 'field2'], 2, [['field1'], ['field2']]))
 function genFields(fields, num, existedFields) {
@@ -108,6 +109,9 @@ async function main() {
   
 
   await Promise.all([
+    getNumQuestionTypes('EDA'),
+    getNumQuestionTypes('Survey'),
+    getNumQuestionTypes('Sema'),
     // main4Eda(),
     main4Survey(),
     // main4Sema()
@@ -664,3 +668,81 @@ async function getEdaByGroup(type) {
   return
 }
 
+
+
+async function getNumQuestionTypes(modelName) {
+  console.log("Running getNumQuestionTypes")
+  const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+  const header = [
+    {
+      id: "stt",
+      title: "STT"
+    },
+    {
+      id: "user_id",
+      title: "User Id"
+    },
+    {
+      id: "num",
+      title: "Number of questions"
+    },
+    {
+      id: "type",
+      title: "Type"
+    }
+  ];
+
+  const folderPath = `./${modelName.toLowerCase()}/num-question-types`
+  if(!fs.existsSync(folderPath)) {
+    execSync(`mkdir ${folderPath}`);
+  }
+  const types = await Models[modelName].distinct('type');
+  let rows = []
+
+  if(types.length) {
+    const typeChunk = _.chunk(types, 4)
+    for (const types of typeChunk) {
+      await Promise.all(types.map(async type => {
+        const edaInType = await Models[modelName].find({
+          type
+        })
+        console.log("queried")
+        const edaGroupUser = _.groupBy(edaInType, 'user_id')
+    
+        const rowsByType = Object.entries(edaGroupUser).map((item, index) => {
+          return {
+            stt: index + 1,
+            user_id: item[0],
+            num: item[1].length,
+            type
+          }
+        })
+    
+        rows = [...rows, ...rowsByType]
+      }))
+    }
+  } else {
+    const edaInType = await Models[modelName].find()
+    console.log("queried")
+    const edaGroupUser = _.groupBy(edaInType, 'user_id')
+
+    const rowsByType = Object.entries(edaGroupUser).map((item, index) => {
+      return {
+        stt: index + 1,
+        user_id: item[0],
+        num: item[1].length,
+      }
+    })
+
+    rows = [...rows, ...rowsByType]
+  }
+ 
+
+  const csvWriter = createCsvWriter({
+    path: `${folderPath}/index.csv`,
+    header: header
+  });
+  await csvWriter.writeRecords(rows);
+  
+  console.log("Done getNumQuestionTypes")
+}
