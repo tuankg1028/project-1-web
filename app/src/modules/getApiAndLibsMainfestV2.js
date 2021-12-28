@@ -179,16 +179,15 @@ async function main() {
             console.log(`Running ${i}/${apps.length}`)
 
             if(fs.existsSync(sourceCodeJavaPath)) {
-                const apis = await getApisAndLibs(sourceCodeJavaPath)
+                let apis = await getApisAndLibs(sourceCodeJavaPath)
 
 
                 result.apis = [...result.apis, ...apis]
                 totalRows++
+
+                apis = undefined
+                global.gc();
             }
-
-
-            console.log((JSON.stringify(result.apis).replace(/[\[\]\,\"]/g,'').length / (1000 * 1000 * 1000)).toFixed(2))
-
         }
 
         const rowsApi = []
