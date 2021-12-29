@@ -184,8 +184,6 @@ async function main() {
 
             if(app.apisFromSource && app.apisFromSource.length) {
                 result.apis = [...result.apis, ...app.apisFromSource]
-
-                console.log("Size", getObjectSize(result.apis))
                 continue;
             }
 
@@ -198,9 +196,6 @@ async function main() {
 
                 apis = undefined
                 global.gc();
-
-                console.log("Size", getObjectSize(result.apis))
-
 
                 await Models.App.updateOne(
                     {
