@@ -128,6 +128,9 @@ function countAPIs(apis) {
 //     console.log(JSON.stringify(apis, null, 2))
 // })
 
+//Settings Default Size to 0
+var bytes = 0;
+
 main()
 async function main() {
     const header = [
@@ -173,7 +176,8 @@ async function main() {
         let totalRows = 0
         for (let i = 0; i < apps.length; i++) {
             const app = apps[i];
-
+            
+            bytes = 0;
             const sourceCodeAppPath = `${sourceCodePath}/${app.id}`
             const sourceCodeJavaPath = `${sourceCodeAppPath}/sources`
             console.log(`Running ${i}/${apps.length}`)
@@ -187,6 +191,8 @@ async function main() {
 
                 apis = undefined
                 global.gc();
+
+                console.log("Size", getObjectSize(result.apis))
             }
         }
 
@@ -288,3 +294,29 @@ function sleep(delay) {
     var start = new Date().getTime();
     while (new Date().getTime() < start + delay);
 }
+
+
+ 
+//Caclulate each object size using Javascript 
+function getObjectSize(obj)
+{
+	
+    if(obj !== null && obj !== undefined) {
+		var objClass = Object.prototype.toString.call(obj).slice(8, -1);
+	 
+		if(objClass === 'Object' || objClass === 'Array') {
+		  for(var key in obj) {
+			 if(!obj.hasOwnProperty(key)) continue;
+				getObjectSize(obj[key]);
+		  }
+		} else {
+			 bytes += obj.toString().length * 2;
+			 
+		}
+	}
+	
+	if(bytes < 1024) return bytes + " bytes";
+        else if(bytes < 1048576) return(bytes / 1024).toFixed(3) + " KB";
+        else if(bytes < 1073741824) return(bytes / 1048576).toFixed(3) + " MB";
+        else return(bytes / 1073741824).toFixed(3) + " GB";
+} 
