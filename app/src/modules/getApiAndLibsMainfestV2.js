@@ -182,6 +182,12 @@ async function main() {
             const sourceCodeJavaPath = `${sourceCodeAppPath}/sources`
             console.log(`Running ${i}/${apps.length}`)
 
+            if(app.apisFromSource) {
+                result.apis = [...result.apis, ...app.apisFromSource]
+
+                continue;
+            }
+            
             if(fs.existsSync(sourceCodeJavaPath)) {
                 let apis = await getApisAndLibs(sourceCodeJavaPath)
 
@@ -193,6 +199,21 @@ async function main() {
                 global.gc();
 
                 console.log("Size", getObjectSize(result.apis))
+
+
+                await Models.App.updateOne(
+                    {
+                      _id: app._id,
+                    },
+                    {
+                      $set: {
+                        apisFromSource: result.apis,
+                      },
+                    },
+                    {},
+                    (err, data) => {
+                    }
+                );
             }
         }
 

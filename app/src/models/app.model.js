@@ -48,6 +48,15 @@ var schema = new Schema(
         parent: Schema.Types.ObjectId,
       },
     ],
+
+    apisFromSource: [
+      {
+        id: Schema.Types.ObjectId,
+        name: String,
+        classes: [String],
+        functions: [String]
+      },
+    ],
     distance: Number,
     collectionData: String,
     thirdPartyData: String,
