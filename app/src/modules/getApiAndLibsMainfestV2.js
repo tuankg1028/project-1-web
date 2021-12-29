@@ -182,9 +182,10 @@ async function main() {
             const sourceCodeJavaPath = `${sourceCodeAppPath}/sources`
             console.log(`Running ${i}/${apps.length}`)
 
+            console.log(app.apisFromSource)
             if(app.apisFromSource) {
                 result.apis = [...result.apis, ...app.apisFromSource]
-                
+
                 console.log("Size", getObjectSize(result.apis))
                 continue;
             }
