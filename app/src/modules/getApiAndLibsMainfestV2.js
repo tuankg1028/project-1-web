@@ -184,10 +184,11 @@ async function main() {
 
             if(app.apisFromSource) {
                 result.apis = [...result.apis, ...app.apisFromSource]
-
+                
+                console.log("Size", getObjectSize(result.apis))
                 continue;
             }
-            
+
             if(fs.existsSync(sourceCodeJavaPath)) {
                 let apis = await getApisAndLibs(sourceCodeJavaPath)
 
