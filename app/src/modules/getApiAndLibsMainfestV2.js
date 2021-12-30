@@ -134,6 +134,10 @@ var bytes = 0;
 
 main()
 async function main() {
+    // const contentResponse = await axios.get(`http://localhost:4444/content/602a89d3163e554ddd9e306c`)
+
+    // console.log(contentResponse.data)
+    // return
     const header = [
         {
           id: "stt",
@@ -190,7 +194,7 @@ async function main() {
 
             // if(fs.existsSync(sourceCodeJavaPath)) {
             const contentResponse = await axios.get(`http://localhost:4444/content/${app.id}`)
-            let content = contentResponse && contentResponse.data
+            let content = contentResponse.data
             console.log(1, content)
             if(content) {
                 let apis = await getApisAndLibs(content)
