@@ -1,5 +1,6 @@
 require("dotenv").config();
 import "../configs/mongoose.config";
+import axios from "axios";
 const fs = require("fs");
 const path = require("path");
 var parseString = require('xml2js').parseString;
