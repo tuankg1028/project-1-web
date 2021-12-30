@@ -187,8 +187,12 @@ async function main() {
                 continue;
             }
 
-            if(fs.existsSync(sourceCodeJavaPath)) {
-                let apis = await getApisAndLibs(sourceCodeJavaPath)
+            // if(fs.existsSync(sourceCodeJavaPath)) {
+            let content = await axios.get(`http://localhost:3333/content/${app.id}`)
+
+            console.log(1, content)
+            if(content) {
+                let apis = await getApisAndLibs(content)
 
 
                 result.apis = [...result.apis, ...apis]
@@ -211,6 +215,8 @@ async function main() {
                     }
                 );
             }
+            contents = undefined
+            global.gc();
         }
 
         const rowsApi = []
@@ -244,12 +250,12 @@ async function main() {
 }
 
 
-async function getApisAndLibs(sourceCodeJavaPath) {
+async function getApisAndLibs(contents) {
     
 
     const apis = []
     // get functions 
-    let contents = await Helpers.File.getContentOfFolder(sourceCodeJavaPath);
+    // let contents = await Helpers.File.getContentOfFolder(sourceCodeJavaPath);
     contents = contents.split("\n");
     
     
@@ -298,11 +304,6 @@ async function getApisAndLibs(sourceCodeJavaPath) {
           }
 
       });
-
-
-    contents = undefined
-    global.gc();
-    
     return apis
 }
 

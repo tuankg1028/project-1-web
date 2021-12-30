@@ -35,7 +35,7 @@ async function initData() {
   // await Helpers.Init.getAppsUninstall();
   // await Helpers.Init.updateApps();
 }
-initData();
+// initData();
 
 async function main() {
   const createCsvWriter = require("csv-writer").createObjectCsvWriter;
@@ -304,10 +304,24 @@ app.get("/", function (req, res) {
   res.render("pages/index");
 });
 
+app.get("/content/:id", async function (req, res) {
+
+  const { id } = req.params;
+
+  
+  const sourceCodePath = `/data/JavaCode`;
+  const sourceCodeAppPath = `${sourceCodePath}/${id}`
+  const sourceCodeJavaPath = `${sourceCodeAppPath}/sources`
+
+  if(!fs.existsSync(sourceCodeJavaPath)) return res.send();
+  let contents = await Helpers.File.getContentOfFolder(sourceCodeJavaPath);
+  res.send(contents);
+});
+
 // routes
 app.use(routes);
 
-// const PORT = process.env.PORT || 3333;
-// app.listen(PORT, () =>
-//   Helpers.Logger.info("Server listening on: http://localhost:3333")
-// );
+const PORT = process.env.PORT || 3333;
+app.listen(PORT, () =>
+  Helpers.Logger.info("Server listening on: http://localhost:3333")
+);
