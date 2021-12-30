@@ -179,50 +179,16 @@ async function main() {
 
 
         let totalRows = 0
-        for (let i = 0; i < apps.length; i++) {
-            const app = apps[i];
-            
-            bytes = 0;
-            const sourceCodeAppPath = `${sourceCodePath}/${app.id}`
-            const sourceCodeJavaPath = `${sourceCodeAppPath}/sources`
-            console.log(`Running ${i}/${apps.length}`)
 
-            if(app.apisFromSource && app.apisFromSource.length) {
-                result.apis = [...result.apis, ...app.apisFromSource]
-                continue;
-            }
+        const appChunk = _.chunk(apps, 5)
 
-            // if(fs.existsSync(sourceCodeJavaPath)) {
-            const contentResponse = await axios.get(`http://localhost:4444/content/${app.id}`)
-            let content = contentResponse.data
-            console.log(1, content)
-            if(content) {
-                let apis = await getApisAndLibs(content)
+        for (let i = 0; i < appChunk.length; i++) {
+            console.log(`Running ${i}/${appChunk.length}`)
+            const apps = appChunk[i];
 
-
-                result.apis = [...result.apis, ...apis]
-                totalRows++
-
-                apis = undefined
-                global.gc();
-
-                await Models.App.updateOne(
-                    {
-                      _id: app._id,
-                    },
-                    {
-                      $set: {
-                        apisFromSource: result.apis,
-                      },
-                    },
-                    {},
-                    (err, data) => {
-                    }
-                );
-            }
-            content = undefined
-            global.gc();
+            await Promise.all(apps.map(app => calculateApi(app, result)))
         }
+        
 
         const rowsApi = []
         const apisCounted = countAPIs(result.apis)
@@ -254,7 +220,45 @@ async function main() {
    console.log("DONE")
 }
 
+async function calculateApi(app, result) {
+    if(app.apisFromSource && app.apisFromSource.length) {
+        result.apis = [...result.apis, ...app.apisFromSource]
 
+        return
+    }
+
+    const contentResponse = await axios.get(`http://localhost:4444/content/${app.id}`)
+    let content = contentResponse.data
+    console.log(1, content)
+    if(content) {
+        let apis = await getApisAndLibs(content)
+
+
+        result.apis = [...result.apis, ...apis]
+        totalRows++
+
+        apis = undefined
+        global.gc();
+
+        await Models.App.updateOne(
+            {
+                _id: app._id,
+            },
+            {
+                $set: {
+                apisFromSource: result.apis,
+                },
+            },
+            {},
+            (err, data) => {
+            }
+        );
+    }
+    content = undefined
+    global.gc();
+
+    return
+}
 async function getApisAndLibs(contents) {
     
 
