@@ -216,7 +216,7 @@ async function main() {
                     }
                 );
             }
-            contents = undefined
+            content = undefined
             global.gc();
         }
 
