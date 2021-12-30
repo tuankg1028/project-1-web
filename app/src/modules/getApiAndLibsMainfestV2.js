@@ -189,8 +189,8 @@ async function main() {
             }
 
             // if(fs.existsSync(sourceCodeJavaPath)) {
-            let content = await axios.get(`http://localhost:4444/content/${app.id}`)
-
+            const contentResponse = await axios.get(`http://localhost:4444/content/${app.id}`)
+            let content = contentResponse && contentResponse.data
             console.log(1, content)
             if(content) {
                 let apis = await getApisAndLibs(content)
