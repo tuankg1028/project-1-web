@@ -186,7 +186,7 @@ async function main() {
             console.log(`Running ${i}/${appChunk.length}`)
             const apps = appChunk[i];
 
-            await Promise.all(apps.map(app => calculateApi(app, result)))
+            await Promise.all(apps.map(app => calculateApi(app, result, totalRows)))
         }
         
 
@@ -220,7 +220,7 @@ async function main() {
    console.log("DONE")
 }
 
-async function calculateApi(app, result) {
+async function calculateApi(app, result, totalRows) {
     if(app.apisFromSource && app.apisFromSource.length) {
         result.apis = [...result.apis, ...app.apisFromSource]
 
