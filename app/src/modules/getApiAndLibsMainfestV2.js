@@ -237,7 +237,7 @@ async function calculateApi(app, result, totalRows) {
         result.apis = [...result.apis, ...apis]
         totalRows++
 
-        apis = undefined
+        apis = null
         global.gc();
 
         await Models.App.updateOne(
@@ -254,7 +254,7 @@ async function calculateApi(app, result, totalRows) {
             }
         );
     }
-    content = undefined
+    content = null
     global.gc();
 
     return
