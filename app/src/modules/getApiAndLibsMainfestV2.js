@@ -206,11 +206,12 @@ async function main() {
             },
             { $skip: page * limit },
             { $limit: limit },
-            { $project: { id: 1, apisFromSource: 1 } }
+            { $project: { _id: 1, id: 1, apisFromSource: 1 } }
             ]);
 
             page++;
 
+            console.log(apps)
             for (let i = 0; i < apps.length; i++) {
                 const app = apps[i];
                 console.log(`Running ${(i + 1) + (page * limit)}/${total}`)
@@ -273,7 +274,7 @@ async function calculateApi(app, result, totalRows) {
     // const contentResponse = await axios.get(`http://localhost:4444/content/${app.id}`)
     // let content = contentResponse.data
 
-    const sourceCodeAppPath = `${sourceCodePath}/${app.id}`
+    const sourceCodeAppPath = `${sourceCodePath}/${app._id}`
     const sourceCodeJavaPath = `${sourceCodeAppPath}/sources`
     console.log(fs.existsSync(sourceCodeJavaPath), sourceCodeJavaPath)
     if(!fs.existsSync(sourceCodeJavaPath)) return
