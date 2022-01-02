@@ -43,7 +43,6 @@ async function main() {
         console.log("Prediction Approach 4 is: ", ourPredictionApproach4)
     } catch (err) {
         console.log(err);
-        continue;
     }
 }
 
