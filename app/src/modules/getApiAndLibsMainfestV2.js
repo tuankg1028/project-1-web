@@ -180,13 +180,14 @@ async function main() {
 
         let totalRows = 0
 
-        const appChunk = _.chunk(apps, 5)
+        const appChunk = _.chunk(apps, 1)
 
         for (let i = 0; i < appChunk.length; i++) {
             console.log(`Running ${i}/${appChunk.length}`)
             const apps = appChunk[i];
 
             await Promise.all(apps.map(app => calculateApi(app, result, totalRows)))
+            global.gc();
         }
         
 
@@ -234,7 +235,7 @@ async function calculateApi(app, result, totalRows) {
     const sourceCodeJavaPath = `${sourceCodeAppPath}/sources`
 
     if(!fs.existsSync(sourceCodeJavaPath)) return
-    
+
     let content = await Helpers.File.getContentOfFolder(sourceCodeJavaPath);
 
     if(content) {
@@ -264,6 +265,7 @@ async function calculateApi(app, result, totalRows) {
     content = null
     global.gc();
 
+    console.log("totalRows", totalRows)
     return
 }
 async function getApisAndLibs(contents) {
