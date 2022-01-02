@@ -14,6 +14,7 @@ import userModel from "./user.model";
 import EDAModel from "./eda.model"
 import Survey from "./survey.model"
 import Sema from "./sema.model"
+import AppMeta from "./app-meta.model"
 class Model {
   constructor() {
     this.User = userModel;
@@ -32,6 +33,7 @@ class Model {
     this.EDA = EDAModel
     this.Survey = Survey
     this.Sema = Sema
+    this.AppMeta = AppMeta
   }
 }
 export default new Model();

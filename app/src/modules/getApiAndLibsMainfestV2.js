@@ -264,8 +264,26 @@ async function main() {
 }
 
 async function calculateApi(app, result, totalRows) {
-    if(app.apisFromSource && app.apisFromSource.length) {
-        result.apis = [...result.apis, ...app.apisFromSource]
+
+    let appMedata = await AppMeta.findOne({
+        appId: app._id,
+    })
+
+    if(!appMedata && app.apisFromSource && app.apisFromSource.length) {
+        await Models.AppMeta.create(
+            {
+                appId: app._id,
+                apisFromSource: app.apisFromSource,
+            },
+        );
+
+        appMedata = await AppMeta.findOne({
+            appId: app._id,
+        })
+    }
+
+    if(appMedata.apisFromSource && appMedata.apisFromSource.length) {
+        result.apis = [...result.apis, ...appMedata.apisFromSource]
 
         return
     }
@@ -289,17 +307,10 @@ async function calculateApi(app, result, totalRows) {
         totalRows++
 
         apis = null
-        await Models.App.updateOne(
+        await Models.AppMeta.create(
             {
-                _id: app._id,
-            },
-            {
-                $set: {
+                appId: app._id,
                 apisFromSource: result.apis,
-                },
-            },
-            {},
-            (err, data) => {
             }
         );
     }
