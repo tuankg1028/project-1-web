@@ -14,7 +14,7 @@ import userModel from "./user.model";
 import EDAModel from "./eda.model"
 import Survey from "./survey.model"
 import Sema from "./sema.model"
-import AppMeta from "./app-meta.model"
+import AppMeta from "./app-metadata.model"
 class Model {
   constructor() {
     this.User = userModel;
