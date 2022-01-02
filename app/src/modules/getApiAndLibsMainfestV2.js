@@ -206,7 +206,7 @@ async function main() {
             },
             { $skip: page * limit },
             { $limit: limit },
-            { $project: { _id: 1, apisFromSource: 1 } }
+            { $project: { id: 1, apisFromSource: 1 } }
             ]);
 
             page++;
