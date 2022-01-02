@@ -180,15 +180,21 @@ async function main() {
 
         let totalRows = 0
 
-        const appChunk = _.chunk(apps, 1)
 
-        for (let i = 0; i < appChunk.length; i++) {
-            console.log(`Running ${i}/${appChunk.length}`)
-            const apps = appChunk[i];
-
-            await Promise.all(apps.map(app => calculateApi(app, result, totalRows)))
+        for (let i = 0; i < apps.length; i++) {
+            const app = apps[i];
+            
+            await calculateApi(app, result, totalRows)
             global.gc();
         }
+        const appChunk = _.chunk(apps, 1)
+        // for (let i = 0; i < appChunk.length; i++) {
+        //     console.log(`Running ${i}/${appChunk.length}`)
+        //     const apps = appChunk[i];
+
+        //     await Promise.all(apps.map(app => calculateApi(app, result, totalRows)))
+        //     global.gc();
+        // }
         
 
         const rowsApi = []
@@ -233,7 +239,7 @@ async function calculateApi(app, result, totalRows) {
 
     const sourceCodeAppPath = `${sourceCodePath}/${app.id}`
     const sourceCodeJavaPath = `${sourceCodeAppPath}/sources`
-    console.log(fs.existsSync(sourceCodeJavaPath))
+    console.log(fs.existsSync(sourceCodeJavaPath), sourceCodeJavaPath)
     if(!fs.existsSync(sourceCodeJavaPath)) return
     
     let content = await Helpers.File.getContentOfFolder(sourceCodeJavaPath);
@@ -247,8 +253,6 @@ async function calculateApi(app, result, totalRows) {
         totalRows++
 
         apis = null
-        global.gc();
-
         await Models.App.updateOne(
             {
                 _id: app._id,
