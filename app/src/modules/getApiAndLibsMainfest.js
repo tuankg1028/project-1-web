@@ -189,6 +189,7 @@ async function main() {
 
                 totalRows++
             }
+            global.gc();
         }
 
         const rowsApi = []
