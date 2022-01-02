@@ -190,9 +190,9 @@ async function main() {
         let page = 0;
         let apps = []
 
-        const total = await Models[modelName].count()
+        const total = await Models.App.count()
         do {
-            apps = await Models[modelName].aggregate([
+            apps = await Models.App.aggregate([
             {
                 $match: {
                     categoryName: {
