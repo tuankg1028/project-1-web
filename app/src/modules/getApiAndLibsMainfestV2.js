@@ -169,26 +169,56 @@ async function main() {
         const subCategories = categoryGroups[category];
 
 
-        const apps = await Models.App.find({
-            categoryName: {
-                $in: subCategories
-            }
-        })
 
-        console.log(category, apps.length)
+
+
+        // const apps = await Models.App.aggregate([
+        //     {
+        //         $match: {
+        //             categoryName: {
+        //                 $in: subCategories
+        //             }
+        //         }
+        //     }
+        // ])
+
+        // console.log(category, apps.length)
 
 
         let totalRows = 0
+        const limit = 100000;
+        let page = 0;
+        let apps = []
 
+        const total = await Models[modelName].count()
+        do {
+            apps = await Models[modelName].aggregate([
+            {
+                $match: {
+                    categoryName: {
+                        $in: subCategories
+                    }
+                }
+            },
+            { $skip: page * limit },
+            { $limit: limit },
+            ]);
 
-        for (let i = 0; i < apps.length; i++) {
-            const app = apps[i];
-            console.log(`Running ${i}/${apps.length}`)
+            page++;
 
-            await calculateApi(app, result, totalRows)
+            for (let i = 0; i < apps.length; i++) {
+                const app = apps[i];
+                console.log(`Running ${i * page}/${total}`)
+    
+                await calculateApi(app, result, totalRows)
+                global.gc();
+            }
+
             global.gc();
-        }
-        const appChunk = _.chunk(apps, 1)
+        } while (apps.length);
+
+        
+        // const appChunk = _.chunk(apps, 1)
         // for (let i = 0; i < appChunk.length; i++) {
         //     console.log(`Running ${i}/${appChunk.length}`)
         //     const apps = appChunk[i];
