@@ -265,7 +265,7 @@ async function main() {
 
 async function calculateApi(app, result, totalRows) {
 
-    let appMedata = await AppMeta.findOne({
+    let appMedata = await Models.AppMeta.findOne({
         appId: app._id,
     })
 
@@ -277,7 +277,7 @@ async function calculateApi(app, result, totalRows) {
             },
         );
 
-        appMedata = await AppMeta.findOne({
+        appMedata = await Models.AppMeta.findOne({
             appId: app._id,
         })
     }
