@@ -161,11 +161,13 @@ async function main() {
         const subCategories = categoryGroups[category];
 
 
-        const apps = await Models.App.find({
-            categoryName: {
-                $in: subCategories
-            }
-        })
+        const apps = await Models.App.aggregate([
+            {$match: {
+                categoryName: {
+                    $in: subCategories
+                }
+            }}
+        ])
 
         console.log(category, apps.length)
 
