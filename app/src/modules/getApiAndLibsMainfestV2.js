@@ -183,7 +183,8 @@ async function main() {
 
         for (let i = 0; i < apps.length; i++) {
             const app = apps[i];
-            
+            console.log(`Running ${i}/${apps.length}`)
+
             await calculateApi(app, result, totalRows)
             global.gc();
         }
