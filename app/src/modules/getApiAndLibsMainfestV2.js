@@ -232,6 +232,9 @@ async function calculateApi(app, result, totalRows) {
 
     const sourceCodeAppPath = `${sourceCodePath}/${app.id}`
     const sourceCodeJavaPath = `${sourceCodeAppPath}/sources`
+
+    if(!fs.existsSync(sourceCodeJavaPath)) return
+    
     let content = await Helpers.File.getContentOfFolder(sourceCodeJavaPath);
 
     if(content) {
