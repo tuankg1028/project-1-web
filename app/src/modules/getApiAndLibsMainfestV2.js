@@ -206,13 +206,14 @@ async function main() {
             },
             { $skip: page * limit },
             { $limit: limit },
+            { $project: { _id: 1, apisFromSource: 1 } }
             ]);
 
             page++;
 
             for (let i = 0; i < apps.length; i++) {
                 const app = apps[i];
-                console.log(`Running ${i * page}/${total}`)
+                console.log(`Running ${(i + 1) + (page * limit)}/${total}`)
     
                 await calculateApi(app, result, totalRows)
                 global.gc();
