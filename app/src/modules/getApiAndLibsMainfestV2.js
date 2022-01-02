@@ -211,7 +211,6 @@ async function main() {
 
             page++;
 
-            console.log(apps)
             for (let i = 0; i < apps.length; i++) {
                 const app = apps[i];
                 console.log(`Running ${(i + 1) + (page * limit)}/${total}`)
