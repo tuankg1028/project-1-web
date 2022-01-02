@@ -282,7 +282,7 @@ async function calculateApi(app, result, totalRows) {
         })
     }
 
-    if(appMedata.apisFromSource && appMedata.apisFromSource.length) {
+    if(appMedata && appMedata.apisFromSource && appMedata.apisFromSource.length) {
         result.apis = [...result.apis, ...appMedata.apisFromSource]
 
         return
