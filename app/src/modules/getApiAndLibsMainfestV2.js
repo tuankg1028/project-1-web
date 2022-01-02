@@ -227,9 +227,13 @@ async function calculateApi(app, result, totalRows) {
         return
     }
 
-    const contentResponse = await axios.get(`http://localhost:4444/content/${app.id}`)
-    let content = contentResponse.data
-    console.log(1, content)
+    // const contentResponse = await axios.get(`http://localhost:4444/content/${app.id}`)
+    // let content = contentResponse.data
+
+    const sourceCodeAppPath = `${sourceCodePath}/${app.id}`
+    const sourceCodeJavaPath = `${sourceCodeAppPath}/sources`
+    let contents = await Helpers.File.getContentOfFolder(sourceCodeJavaPath);
+
     if(content) {
         let apis = await getApisAndLibs(content)
 
