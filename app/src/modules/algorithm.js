@@ -7,7 +7,7 @@ async function main() {
         const apps = await Models.Apps.find().limit(26)
         const answer = await Models.Answer.findOne()
         const tranningAppIds = _.map(apps, "id")
-        const apps = apps[0]
+        const app = apps[0]
 
         const ourPredictionApproach1 = await Helpers.Function.getOurPredictionApproach1(
             tranningAppIds,
