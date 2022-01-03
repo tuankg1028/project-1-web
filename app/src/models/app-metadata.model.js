@@ -10,7 +10,7 @@ var schema = new Schema(
         id: Schema.Types.ObjectId,
         name: String,
         classes: [String],
-        functions: [String]
+        functions: Schema.Types.Object
       },
     ],
   },
