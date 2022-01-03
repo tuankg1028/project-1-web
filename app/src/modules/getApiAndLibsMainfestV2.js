@@ -75,7 +75,7 @@ function countAPIs(apis) {
             const originalApi = result[apiIndex]
             originalApi.count++
 
-            functions.forEach(functionName => {
+            functions.forEach(({name: functionName}) => {
                 const functionIndex = originalApi.functions.findIndex(item => item.name === functionName)
 
                 if(~functionIndex) {
@@ -106,7 +106,7 @@ function countAPIs(apis) {
             result.push({
                 name,
                 count: 1,
-                functions: functions.map(functionName => ({
+                functions: functions.map(({name: functionName}) => ({
                     name: functionName,
                     count : 1
                 })),
@@ -195,7 +195,7 @@ async function main() {
                 $in: subCategories
             }
         })
-        do {
+        // do {
             apps = await Models.App.aggregate([
             {
                 $match: {
@@ -219,7 +219,7 @@ async function main() {
             }
             page++;
             global.gc();
-        } while (apps.length);
+        // } while (apps.length);
 
         
         // const appChunk = _.chunk(apps, 1)
@@ -324,12 +324,11 @@ async function getApisAndLibs(contents) {
     // let contents = await Helpers.File.getContentOfFolder(sourceCodeJavaPath);
     contents = contents.split("\n");
     
-    
     // get Function
     contents.forEach((line) => {
         if (
             line &&
-            ~line.indexOf("import")
+            ~line.indexOf("import ")
           ) {
             line = line.replace(";", "");
             line = line.replace("import", "");
@@ -346,11 +345,13 @@ async function getApisAndLibs(contents) {
             if(~apiIndex) {
                 const api = apis[apiIndex]
 
-                const functionIndex = api.functions.findIndex(item => item.name === functionName)
+                const functionIndex = api.functions.findIndex(item => item.name === functionName && item.className === className)
                 const classIndex = api.classes.findIndex(item => item.name === className)
                 if(!~functionIndex) {
-                    api.functions.push(functionName)
-                    api.functions = _.uniq(api.functions)
+                    api.functions.push({
+                        name: functionName,
+                        className
+                    })
                 }
 
                 if(!~classIndex) {
@@ -362,7 +363,10 @@ async function getApisAndLibs(contents) {
                 apis.push({
                     name: apiName,
                     classes: [className],
-                    functions: [functionName]
+                    functions: [{
+                        name: functionName,
+                        className
+                    }]
                 })
             }
             
