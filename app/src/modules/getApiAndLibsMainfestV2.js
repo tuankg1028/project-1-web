@@ -213,7 +213,8 @@ async function main() {
                 const app = apps[i];
                 console.log(`Running ${(i + 1) + (page * limit)}/${total}`)
     
-                await calculateApi(app, result, totalRows)
+                const isSuccess = await calculateApi(app, result)
+                if(isSuccess) totalRows++
                 global.gc();
             }
             page++;
@@ -261,7 +262,7 @@ async function main() {
    console.log("DONE")
 }
 
-async function calculateApi(app, result, totalRows) {
+async function calculateApi(app, result) {
 
     let appMedata = await Models.AppMeta.findOne({
         appId: app._id,
@@ -269,8 +270,7 @@ async function calculateApi(app, result, totalRows) {
 
     if(appMedata && appMedata.apisFromSource && appMedata.apisFromSource.length) {
         result.apis = [...result.apis, ...appMedata.apisFromSource]
-        totalRows++
-        return
+        return true
     }
 
     // const contentResponse = await axios.get(`http://localhost:4444/content/${app.id}`)
@@ -289,7 +289,6 @@ async function calculateApi(app, result, totalRows) {
 
 
         result.apis = [...result.apis, ...apis]
-        totalRows++
 
         await Models.AppMeta.create(
             {
@@ -298,12 +297,14 @@ async function calculateApi(app, result, totalRows) {
             }
         );
         apis = null
-    }
-    content = null
-    global.gc();
+        content = null
+        global.gc();
 
-    console.log("totalRows", totalRows)
-    return
+        return true
+    }
+    
+
+    return false
 }
 
 async function createApis (apis, appId) {
