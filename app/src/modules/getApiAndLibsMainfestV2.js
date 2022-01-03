@@ -329,7 +329,6 @@ async function getApisAndLibs(contents) {
             line &&
             ~line.indexOf("import ")
           ) {
-            console.log(line)
             line = line.replace(";", "");
             line = line.replace("import", "");
             line = line.trim();
