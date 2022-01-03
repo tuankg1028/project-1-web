@@ -264,14 +264,14 @@ async function main() {
 
 async function calculateApi(app, result) {
 
-    let appMedata = await Models.AppMeta.findOne({
-        appId: app._id,
-    })
+    // let appMedata = await Models.AppMeta.findOne({
+    //     appId: app._id,
+    // })
 
-    if(appMedata && appMedata.apisFromSource && appMedata.apisFromSource.length) {
-        result.apis = [...result.apis, ...appMedata.apisFromSource]
-        return true
-    }
+    // if(appMedata && appMedata.apisFromSource && appMedata.apisFromSource.length) {
+    //     result.apis = [...result.apis, ...appMedata.apisFromSource]
+    //     return true
+    // }
 
     // const contentResponse = await axios.get(`http://localhost:4444/content/${app.id}`)
     // let content = contentResponse.data
