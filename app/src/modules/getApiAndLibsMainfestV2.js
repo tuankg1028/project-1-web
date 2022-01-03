@@ -195,7 +195,7 @@ async function main() {
                 $in: subCategories
             }
         })
-        // do {
+        do {
             apps = await Models.App.aggregate([
             {
                 $match: {
@@ -219,7 +219,7 @@ async function main() {
             }
             page++;
             global.gc();
-        // } while (apps.length);
+        } while (apps.length);
 
         
         // const appChunk = _.chunk(apps, 1)
