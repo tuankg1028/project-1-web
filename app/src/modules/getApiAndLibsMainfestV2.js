@@ -206,7 +206,7 @@ async function main() {
             },
             { $skip: page * limit },
             { $limit: limit },
-            { $project: { _id: 1, id: 1, apisFromSource: 1 } }
+            { $project: { _id: 1, id: 1 } }
             ]);
 
             for (let i = 0; i < apps.length; i++) {
