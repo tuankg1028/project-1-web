@@ -278,7 +278,6 @@ async function calculateApi(app, result) {
 
     const sourceCodeAppPath = `${sourceCodePath}/${app._id}`
     const sourceCodeJavaPath = `${sourceCodeAppPath}/sources`
-    console.log(fs.existsSync(sourceCodeJavaPath), sourceCodeJavaPath)
     if(!fs.existsSync(sourceCodeJavaPath)) return
     
     let content = await Helpers.File.getContentOfFolder(sourceCodeJavaPath);
@@ -330,6 +329,7 @@ async function getApisAndLibs(contents) {
             line &&
             ~line.indexOf("import ")
           ) {
+            console.log(line)
             line = line.replace(";", "");
             line = line.replace("import", "");
             line = line.trim();
