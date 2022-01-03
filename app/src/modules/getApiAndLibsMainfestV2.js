@@ -187,7 +187,7 @@ async function main() {
 
         let totalRows = 0
         const limit = 100;
-        let page = 9;
+        let page = 8;
         let apps = []
 
         const total = await Models.App.count({
@@ -213,7 +213,7 @@ async function main() {
 
             for (let i = 0; i < apps.length; i++) {
                 const app = apps[i];
-                console.log(`Running ${(i + 1) + (page * limit)}/${total}`)
+                console.log(`Running ${(i) + (page * limit)}/${total}`)
     
                 await calculateApi(app, result, totalRows)
                 global.gc();
