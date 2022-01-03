@@ -187,7 +187,7 @@ async function main() {
 
         let totalRows = 0
         const limit = 100;
-        let page = 0;
+        let page = 9;
         let apps = []
 
         const total = await Models.App.count({

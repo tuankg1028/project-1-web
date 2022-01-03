@@ -7,6 +7,11 @@ const getContentOfFolder = async (dirPath) => {
   let fileNames = fs.readdirSync(dirPath);
   let subFolders = Helpers.Folder.getDirectories(dirPath);
   // folder
+
+  const byteValue = contents.length
+  let gbValue = (bytesValue / (1000 * 1000 * 1000)).toFixed(2);
+  console.log(`Content size: ${gbValue} GB`)
+  
   for (let i = 0; i < subFolders.length; i++) {
     const subFolder = subFolders[i];
 
