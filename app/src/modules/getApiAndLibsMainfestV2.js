@@ -209,16 +209,14 @@ async function main() {
             { $project: { _id: 1, id: 1, apisFromSource: 1 } }
             ]);
 
-            page++;
-
             for (let i = 0; i < apps.length; i++) {
                 const app = apps[i];
-                console.log(`Running ${(i) + (page * limit)}/${total}`)
+                console.log(`Running ${(i + 1) + (page * limit)}/${total}`)
     
                 await calculateApi(app, result, totalRows)
                 global.gc();
             }
-
+            page++;
             global.gc();
         } while (apps.length);
 
