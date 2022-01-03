@@ -267,19 +267,6 @@ async function calculateApi(app, result, totalRows) {
         appId: app._id,
     })
 
-    if(!appMedata && app.apisFromSource && app.apisFromSource.length) {
-        await Models.AppMeta.create(
-            {
-                appId: app._id,
-                apisFromSource: app.apisFromSource,
-            },
-        );
-
-        appMedata = await Models.AppMeta.findOne({
-            appId: app._id,
-        })
-    }
-
     if(appMedata && appMedata.apisFromSource && appMedata.apisFromSource.length) {
         result.apis = [...result.apis, ...appMedata.apisFromSource]
 
