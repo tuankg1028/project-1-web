@@ -304,19 +304,29 @@ async function calculateApi(app, result, totalRows) {
         result.apis = [...result.apis, ...apis]
         totalRows++
 
-        apis = null
         await Models.AppMeta.create(
             {
                 appId: app._id,
-                apisFromSource: result.apis,
+                apisFromSource: apis,
             }
         );
+        apis = null
     }
     content = null
     global.gc();
 
     console.log("totalRows", totalRows)
     return
+}
+
+async function createApis (apis, appId) {
+    for (let i = 0; i < apis.length; i++) {
+        const api = apis[i];
+        const apiDoc = await Models.Api.create({name: api.name, appId})
+        await Promise.all(api.functions.map(functionName => Models.Function.create({name: functionName, apiId: apiDoc.id, appId})))
+
+        await Promise.all(api.classes.map(className => Models.Class.create({name: className, apiId: apiDoc.id, appId})))
+    }
 }
 async function getApisAndLibs(contents) {
     
