@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import Helpers from "./";
-const getContentOfFolder = async (dirPath) => {
+const getContentOfFolder = async (dirPath, loop = 0) => {
   let contents = "";
   // // get java files
   let fileNames = fs.readdirSync(dirPath);
@@ -10,12 +10,12 @@ const getContentOfFolder = async (dirPath) => {
 
   const bytesValue = contents.length
   let gbValue = (bytesValue / (1000 * 1000 * 1000)).toFixed(2);
-  console.log(`Content size: ${gbValue} GB`)
+  console.log(`Content size: ${gbValue} GB with ${loop}`)
 
   for (let i = 0; i < subFolders.length; i++) {
     const subFolder = subFolders[i];
 
-    contents += await getContentOfFolder(dirPath + "/" + subFolder);
+    contents += await getContentOfFolder(dirPath + "/" + subFolder, loop + 1);
   }
 
   // file
