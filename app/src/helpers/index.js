@@ -4,12 +4,13 @@ import Init from "./init.helper";
 import Folder from "./folder.helper";
 import Tree from "./tree.helper";
 import Function from "./function.helper";
-
+import CHPLAY from "./chplay.helper";
 export default {
   File,
   Logger,
   Init,
   Folder,
   Tree,
-  Function
+  Function,
+  CHPLAY
 };
