@@ -791,3 +791,71 @@ async function main5() {
   
   console.log("Done")
 }
+
+getAppCategory()
+async function getAppCategory() {
+  const apps = await Models.App
+  .aggregate([
+    
+    {
+      $group: {
+        _id: {
+          categoryName: "$categoryName",
+        },
+        total: { $sum: 1 },
+      },
+    },
+  ])
+  .allowDiskUse(true);
+
+  const categoriesCount = apps.reduce((acc , item) => {
+    const category = Object.entries(categoryGroups).find(([_, subCategories]) => {
+      if(!subCategories.includes(item._id.categoryName)) return false 
+      
+      return true
+    })
+
+    const categoryName = category[0]
+    !acc[categoryName] && (acc[categoryName] = 0)
+
+    acc[categoryName] += item.total
+
+    return acc
+  }, {})
+
+
+  const header = [
+    {
+      id: "stt",
+      title: "#",
+    },
+    {
+      id: "category",
+      title: "Category",
+    },
+    {
+      id: "total",
+      title: "Total",
+    },
+    
+  ];
+
+  const rows = [];
+  let stt = 1;
+  for (const categoryName in categoriesCount) {
+    const total = categoriesCount[categoryName];
+
+      rows.push({
+        stt: stt++,
+        category: categoryName,
+        total
+      });
+  }
+
+  const csvWriterNo = createCsvWriter({
+    path: "./apps_category_total.csv",
+    header,
+  });
+  await csvWriterNo.writeRecords(rows);
+  console.log("DONE");
+}
