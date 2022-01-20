@@ -98,7 +98,7 @@ async function statCommentsUserByKeywords() {
 async function statCommentsUserByKeywordsV2() {
     
     let skip = 0;
-    let limit = 1000
+    let limit = 100000
     let comments1 = await Models.AppComment.find({
         textLower: { $exists: false }
     }).limit(limit).skip(skip * limit)
