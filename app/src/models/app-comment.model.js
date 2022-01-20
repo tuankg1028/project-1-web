@@ -14,6 +14,7 @@ var schema = new Schema(
     url: String,
     title: String,
     text: String,
+    textLower: String,
     replyDate: String,
     replyText: String,
     version: String,
