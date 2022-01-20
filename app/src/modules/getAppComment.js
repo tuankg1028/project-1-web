@@ -96,35 +96,6 @@ async function statCommentsUserByKeywords() {
 }
 
 async function statCommentsUserByKeywordsV2() {
-    
-    let skip = 0;
-    let limit = 10000
-    let comments1 = await Models.AppComment.find({
-        textLower: { $exists: false }
-    }).limit(limit).skip(skip * limit)
-    do {
-        await Promise.all(
-            comments1.map(item => {
-                return Models.AppComment.updateOne(
-                    {
-                      _id: item._id,
-                    },
-                    {
-                      $set: {
-                        textLower: item.text ? item.text.toLowerCase() : '',
-                      },
-                    }
-                  );
-            })
-        )
-
-        skip++;
-        comments1 = await Models.AppComment.find({
-            textLower: { $exists: false }
-        }).limit(limit).skip(skip * limit)
-    }
-    while(comments1.length) 
-
     const header = [
         {
           id: "stt",
@@ -149,139 +120,149 @@ async function statCommentsUserByKeywordsV2() {
         {    
             "$match": {
                 "$or": [
-                    { "textLower": { "$regex": "profile", "$options": 'i' } },
-                    { "textLower": { "$regex": "profiling", "$options": 'i' } },
+                    { "text": { "$regex": "Security", "$options": 'i' } },
+                    { "text": { "$regex": "privacy", "$options": 'i' } },
+                    { "text": { "$regex": "policy", "$options": 'i' } },
+                    { "text": { "$regex": "collection", "$options": 'i' } },
+                    { "text": { "$regex": "third-party", "$options": 'i' } },
+                    { "text": { "$regex": "share data", "$options": 'i' } },
+                    { "text": { "$regex": "collect data", "$options": 'i' } },
                     
-                    { "textLower": { "$regex": "analytics", "$options": 'i' } },
-                    { "textLower": { "$regex": "analysis", "$options": 'i' } },
-                    { "textLower": { "$regex": "analyze", "$options": 'i' } },
-                    { "textLower": { "$regex": "analyse", "$options": 'i' } },
-                    { "textLower": { "$regex": "analyzing", "$options": 'i' } },
+                    { "text": { "$regex": "profile", "$options": 'i' } },
+                    { "text": { "$regex": "profiling", "$options": 'i' } },
+                    
+                    { "text": { "$regex": "analytics", "$options": 'i' } },
+                    { "text": { "$regex": "analysis", "$options": 'i' } },
+                    { "text": { "$regex": "analyze", "$options": 'i' } },
+                    { "text": { "$regex": "analyse", "$options": 'i' } },
+                    { "text": { "$regex": "analyzing", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "statistical", "$options": 'i' } },
-                    { "textLower": { "$regex": "statistics", "$options": 'i' } },
+                    { "text": { "$regex": "statistical", "$options": 'i' } },
+                    { "text": { "$regex": "statistics", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "ads", "$options": 'i' } },
-                    { "textLower": { "$regex": "advertising", "$options": 'i' } },
-                    { "textLower": { "$regex": "advertisement", "$options": 'i' } },
-                    { "textLower": { "$regex": "advertisers", "$options": 'i' } },
+                    { "text": { "$regex": "ads", "$options": 'i' } },
+                    { "text": { "$regex": "advertising", "$options": 'i' } },
+                    { "text": { "$regex": "advertisement", "$options": 'i' } },
+                    { "text": { "$regex": "advertisers", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "maintain", "$options": 'i' } },
-                    { "textLower": { "$regex": "maintenance", "$options": 'i' } },
-                    { "textLower": { "$regex": "advertisement", "$options": 'i' } },
-                    { "textLower": { "$regex": "maintained", "$options": 'i' } },
+                    { "text": { "$regex": "maintain", "$options": 'i' } },
+                    { "text": { "$regex": "maintenance", "$options": 'i' } },
+                    { "text": { "$regex": "advertisement", "$options": 'i' } },
+                    { "text": { "$regex": "maintained", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "identifier", "$options": 'i' } },
-                    { "textLower": { "$regex": "identifying", "$options": 'i' } },
-                    { "textLower": { "$regex": "authentication", "$options": 'i' } },
-                    { "textLower": { "$regex": "authenticate", "$options": 'i' } },
-                    { "textLower": { "$regex": "authenticates", "$options": 'i' } },
-                    { "textLower": { "$regex": "identity", "$options": 'i' } },
-                    { "textLower": { "$regex": "identities", "$options": 'i' } },
-                    { "textLower": { "$regex": "identifiable", "$options": 'i' } },
-                    { "textLower": { "$regex": "identifies", "$options": 'i' } },
+                    { "text": { "$regex": "identifier", "$options": 'i' } },
+                    { "text": { "$regex": "identifying", "$options": 'i' } },
+                    { "text": { "$regex": "authentication", "$options": 'i' } },
+                    { "text": { "$regex": "authenticate", "$options": 'i' } },
+                    { "text": { "$regex": "authenticates", "$options": 'i' } },
+                    { "text": { "$regex": "identity", "$options": 'i' } },
+                    { "text": { "$regex": "identities", "$options": 'i' } },
+                    { "text": { "$regex": "identifiable", "$options": 'i' } },
+                    { "text": { "$regex": "identifies", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "troubleshooting", "$options": 'i' } },
-                    { "textLower": { "$regex": "tests", "$options": 'i' } },
-                    { "textLower": { "$regex": "testing", "$options": 'i' } },
-                    { "textLower": { "$regex": "troubleshoot", "$options": 'i' } },
+                    { "text": { "$regex": "troubleshooting", "$options": 'i' } },
+                    { "text": { "$regex": "tests", "$options": 'i' } },
+                    { "text": { "$regex": "testing", "$options": 'i' } },
+                    { "text": { "$regex": "troubleshoot", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "purchase", "$options": 'i' } },
-                    { "textLower": { "$regex": "purchasing", "$options": 'i' } },
-                    { "textLower": { "$regex": "payment", "$options": 'i' } },
+                    { "text": { "$regex": "purchase", "$options": 'i' } },
+                    { "text": { "$regex": "purchasing", "$options": 'i' } },
+                    { "text": { "$regex": "payment", "$options": 'i' } },
                    
                     
-                    { "textLower": { "$regex": "delivery", "$options": 'i' } },
-                    { "textLower": { "$regex": "shipping", "$options": 'i' } },
-                    { "textLower": { "$regex": "delivering", "$options": 'i' } },
+                    { "text": { "$regex": "delivery", "$options": 'i' } },
+                    { "text": { "$regex": "shipping", "$options": 'i' } },
+                    { "text": { "$regex": "delivering", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "contacting", "$options": 'i' } },
-                    { "textLower": { "$regex": "contacts", "$options": 'i' } },
-                    { "textLower": { "$regex": "contacted", "$options": 'i' } },
-                    { "textLower": { "$regex": "communications", "$options": 'i' } },
+                    { "text": { "$regex": "contacting", "$options": 'i' } },
+                    { "text": { "$regex": "contacts", "$options": 'i' } },
+                    { "text": { "$regex": "contacted", "$options": 'i' } },
+                    { "text": { "$regex": "communications", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "research", "$options": 'i' } },
-                    { "textLower": { "$regex": "researching", "$options": 'i' } },
+                    { "text": { "$regex": "research", "$options": 'i' } },
+                    { "text": { "$regex": "researching", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "survey", "$options": 'i' } },
+                    { "text": { "$regex": "survey", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "treatment", "$options": 'i' } },
+                    { "text": { "$regex": "treatment", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "diagnostics", "$options": 'i' } },
-                    { "textLower": { "$regex": "diagnosis", "$options": 'i' } },
+                    { "text": { "$regex": "diagnostics", "$options": 'i' } },
+                    { "text": { "$regex": "diagnosis", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "medical", "$options": 'i' } },
-                    { "textLower": { "$regex": "healthcare", "$options": 'i' } },
-                    { "textLower": { "$regex": "health", "$options": 'i' } },
-                    { "textLower": { "$regex": "care", "$options": 'i' } },
-                    { "textLower": { "$regex": "disease", "$options": 'i' } },
+                    { "text": { "$regex": "medical", "$options": 'i' } },
+                    { "text": { "$regex": "healthcare", "$options": 'i' } },
+                    { "text": { "$regex": "health", "$options": 'i' } },
+                    { "text": { "$regex": "care", "$options": 'i' } },
+                    { "text": { "$regex": "disease", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "improve", "$options": 'i' } },
-                    { "textLower": { "$regex": "improving", "$options": 'i' } },
-                    { "textLower": { "$regex": "improvement", "$options": 'i' } },
+                    { "text": { "$regex": "improve", "$options": 'i' } },
+                    { "text": { "$regex": "improving", "$options": 'i' } },
+                    { "text": { "$regex": "improvement", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "name", "$options": 'i' } },
-                    { "textLower": { "$regex": "contact", "$options": 'i' } },
-                    { "textLower": { "$regex": "email", "$options": 'i' } },
-                    { "textLower": { "$regex": "account", "$options": 'i' } },
-                    { "textLower": { "$regex": "identifiable", "$options": 'i' } },
-                    { "textLower": { "$regex": "identity", "$options": 'i' } },
-                    { "textLower": { "$regex": "social network", "$options": 'i' } },
-                    { "textLower": { "$regex": "behavioral", "$options": 'i' } },
-                    { "textLower": { "$regex": "behavior", "$options": 'i' } },
-                    { "textLower": { "$regex": "about you", "$options": 'i' } },
-                    { "textLower": { "$regex": "card", "$options": 'i' } },
+                    { "text": { "$regex": "name", "$options": 'i' } },
+                    { "text": { "$regex": "contact", "$options": 'i' } },
+                    { "text": { "$regex": "email", "$options": 'i' } },
+                    { "text": { "$regex": "account", "$options": 'i' } },
+                    { "text": { "$regex": "identifiable", "$options": 'i' } },
+                    { "text": { "$regex": "identity", "$options": 'i' } },
+                    { "text": { "$regex": "social network", "$options": 'i' } },
+                    { "text": { "$regex": "behavioral", "$options": 'i' } },
+                    { "text": { "$regex": "behavior", "$options": 'i' } },
+                    { "text": { "$regex": "about you", "$options": 'i' } },
+                    { "text": { "$regex": "card", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "location", "$options": 'i' } },
-                    { "textLower": { "$regex": "address", "$options": 'i' } },
+                    { "text": { "$regex": "location", "$options": 'i' } },
+                    { "text": { "$regex": "address", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "media", "$options": 'i' } },
-                    { "textLower": { "$regex": "video", "$options": 'i' } },
-                    { "textLower": { "$regex": "audio", "$options": 'i' } },
-                    { "textLower": { "$regex": "picture", "$options": 'i' } },
-                    { "textLower": { "$regex": "image", "$options": 'i' } },
+                    { "text": { "$regex": "media", "$options": 'i' } },
+                    { "text": { "$regex": "video", "$options": 'i' } },
+                    { "text": { "$regex": "audio", "$options": 'i' } },
+                    { "text": { "$regex": "picture", "$options": 'i' } },
+                    { "text": { "$regex": "image", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "health", "$options": 'i' } },
-                    { "textLower": { "$regex": "fitness", "$options": 'i' } },
-                    { "textLower": { "$regex": "blood", "$options": 'i' } },
-                    { "textLower": { "$regex": "step", "$options": 'i' } },
-                    { "textLower": { "$regex": "activity", "$options": 'i' } },
-                    { "textLower": { "$regex": "activities", "$options": 'i' } },
+                    { "text": { "$regex": "health", "$options": 'i' } },
+                    { "text": { "$regex": "fitness", "$options": 'i' } },
+                    { "text": { "$regex": "blood", "$options": 'i' } },
+                    { "text": { "$regex": "step", "$options": 'i' } },
+                    { "text": { "$regex": "activity", "$options": 'i' } },
+                    { "text": { "$regex": "activities", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "camera", "$options": 'i' } },
-                    { "textLower": { "$regex": "IP address", "$options": 'i' } },
-                    { "textLower": { "$regex": "MAC address", "$options": 'i' } },
-                    { "textLower": { "$regex": "sensor", "$options": 'i' } },
-                    { "textLower": { "$regex": "accelerometer", "$options": 'i' } },
-                    { "textLower": { "$regex": "gyroscope", "$options": 'i' } },
-                    { "textLower": { "$regex": "microphone", "$options": 'i' } },
-                    { "textLower": { "$regex": "volumn", "$options": 'i' } },
+                    { "text": { "$regex": "camera", "$options": 'i' } },
+                    { "text": { "$regex": "IP address", "$options": 'i' } },
+                    { "text": { "$regex": "MAC address", "$options": 'i' } },
+                    { "text": { "$regex": "sensor", "$options": 'i' } },
+                    { "text": { "$regex": "accelerometer", "$options": 'i' } },
+                    { "text": { "$regex": "gyroscope", "$options": 'i' } },
+                    { "text": { "$regex": "microphone", "$options": 'i' } },
+                    { "text": { "$regex": "volumn", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "Wifi", "$options": 'i' } },
-                    { "textLower": { "$regex": "Bluetooth", "$options": 'i' } },
-                    { "textLower": { "$regex": "NFC", "$options": 'i' } },
-                    { "textLower": { "$regex": "Cookie", "$options": 'i' } },
-                    { "textLower": { "$regex": "connections", "$options": 'i' } },
-                    { "textLower": { "$regex": "beacons", "$options": 'i' } },
+                    { "text": { "$regex": "Wifi", "$options": 'i' } },
+                    { "text": { "$regex": "Bluetooth", "$options": 'i' } },
+                    { "text": { "$regex": "NFC", "$options": 'i' } },
+                    { "text": { "$regex": "Cookie", "$options": 'i' } },
+                    { "text": { "$regex": "connections", "$options": 'i' } },
+                    { "text": { "$regex": "beacons", "$options": 'i' } },
 
-                    { "textLower": { "$regex": "call", "$options": 'i' } },
-                    { "textLower": { "$regex": "messager", "$options": 'i' } },
-                    { "textLower": { "$regex": "phone number", "$options": 'i' } },
-                    { "textLower": { "$regex": "phone calls", "$options": 'i' } },
+                    { "text": { "$regex": "call", "$options": 'i' } },
+                    { "text": { "$regex": "messager", "$options": 'i' } },
+                    { "text": { "$regex": "phone number", "$options": 'i' } },
+                    { "text": { "$regex": "phone calls", "$options": 'i' } },
                 ]
             }
         },
     ])
     
     const appCommentsGroup = _.groupBy(comments, 'appId')
-
     for (const appId in appCommentsGroup) {
         const appComments = appCommentsGroup[appId];
-        const app = Models.App.findById(appId).select('appName')
-        const totalComments = await Models.AppComment.count({
-            appId
-        })
 
+        const [app, totalComments] = await Promise.all([
+            Models.App.findById(appId).select('appName'),
+            Models.AppComment.count({
+                appId
+            })
+        ])
+        
         rows.push({
             appName: app.appName,
             totalComment: totalComments,
