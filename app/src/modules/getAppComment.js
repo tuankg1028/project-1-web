@@ -257,12 +257,12 @@ async function statCommentsUserByKeywordsV2() {
     
     const appCommentsGroup = _.groupBy(comments, 'appId')
 
-    // await Promise.all(Object.entries(appCommentsGroup).map(buildRow))
+    // const rows = await Promise.all(Object.entries(appCommentsGroup).map(buildRow))
 
     for (let i = 0; i < Object.entries(appCommentsGroup).length; i++) {
         const [appId, appComments] = Object.entries(appCommentsGroup)[i];
         
-        await buildRow(appId, appComments)
+        rows.push(await buildRow(appId, appComments))
     }
     
     
@@ -277,7 +277,7 @@ async function statCommentsUserByKeywordsV2() {
     console.log("DONE statCommentsUserByKeywords")
 }
 async function buildRow(appId, appComments) {
-    console.log(1, appId, appComments)
+    console.log(1, appId)
     let [app, totalComments] = await Promise.all([
         Models.App.findById(appId).select('appName'),
         Models.AppComment.find({
@@ -292,7 +292,6 @@ async function buildRow(appId, appComments) {
         if(text.split(' ').length <= 3) return true
 
         text = removeEmojis(text)
-        console.log(isEnglish(text), text)
         return isEnglish(text)
     })
 
