@@ -257,7 +257,13 @@ async function statCommentsUserByKeywordsV2() {
     
     const appCommentsGroup = _.groupBy(comments, 'appId')
 
-    await Promise.all(Object.entries(appCommentsGroup).map(buildRow))
+    // await Promise.all(Object.entries(appCommentsGroup).map(buildRow))
+
+    for (let i = 0; i < Object.entries(appCommentsGroup).length; i++) {
+        const [appId, appComments] = Object.entries(appCommentsGroup)[i];
+        
+        await buildRow(appId, appComments)
+    }
     
     
     rows = _.orderBy(rows, 'totalCommentKeywords', 'desc')
@@ -271,6 +277,7 @@ async function statCommentsUserByKeywordsV2() {
     console.log("DONE statCommentsUserByKeywords")
 }
 async function buildRow(appId, appComments) {
+    console.log(1, appId, appComments)
     let [app, totalComments] = await Promise.all([
         Models.App.findById(appId).select('appName'),
         Models.AppComment.find({
@@ -404,7 +411,6 @@ async function statCommentsByUsers() {
 async function getCommentFromCHplay() {
     const apps = await Models.App.find({appIdCHPlay : {$exists: true}}).select('appIdCHPlay')
     const appChunks = _.chunk(apps, 10)
-
 
     for (let i = 0; i < appChunks.length; i++) {
         const chunk = appChunks[i];
