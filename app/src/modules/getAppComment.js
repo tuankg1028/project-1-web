@@ -9,6 +9,8 @@ import Models from "../models";
 import Helpers from "../helpers";
 const { execSync } = require("child_process");
 var gplay = require('google-play-scraper');
+const LanguageDetect = require('languagedetect');
+const lngDetector = new LanguageDetect();
 
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
@@ -256,16 +258,23 @@ async function statCommentsUserByKeywordsV2() {
     for (const appId in appCommentsGroup) {
         const appComments = appCommentsGroup[appId];
 
-        const [app, totalComments] = await Promise.all([
+        let [app, totalComments] = await Promise.all([
             Models.App.findById(appId).select('appName'),
-            Models.AppComment.count({
+            Models.AppComment.find({
                 appId
-            })
+            }).select('text')
         ])
         
+        totalComments = totalComments.filter(item => {
+            const language = lngDetector.detect(item.text || '', 1)
+
+            if(language[0][0] !== 'english') console.log(item.text)
+            return language[0][0] === 'english'
+        })
+
         rows.push({
             appName: app.appName,
-            totalComment: totalComments,
+            totalComment: totalComments.length,
             totalCommentKeywords: appComments.length,
         })
     }
