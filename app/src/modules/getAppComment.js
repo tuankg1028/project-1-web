@@ -11,6 +11,7 @@ const { execSync } = require("child_process");
 var gplay = require('google-play-scraper');
 const LanguageDetect = require('languagedetect');
 const lngDetector = new LanguageDetect();
+const isEnglish = require("is-english");
 
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
@@ -269,10 +270,9 @@ async function statCommentsUserByKeywordsV2() {
             if(!item.text) return false
 
             if(item.text.split(' ').length <= 3) return true
-            const language = lngDetector.detect(item.text || '', 1)
 
-            if(language[0][0] !== 'english') console.log(item.text)
-            return language[0][0] === 'english'
+            if(!isEnglish(item.text)) console.log(isEnglish(item.text), item.text)
+            return isEnglish(item.text)
         })
 
         rows.push({
