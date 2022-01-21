@@ -282,7 +282,7 @@ async function statCommentsUserByKeywordsV2() {
     rows = _.orderBy(rows, 'totalCommentKeywords', 'desc')
     rows = rows.map((row, i) => ({...row, stt: i + 1}))
     const csvWriter = createCsvWriter({
-        path: `./output/comments-apps-by-keywords(v2).csv`,
+        path: `./output/comments-apps-by-keywords(v2-en).csv`,
         header
     });
     await csvWriter.writeRecords(rows);
