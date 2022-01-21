@@ -267,9 +267,8 @@ async function statCommentsUserByKeywordsV2() {
         ])
         
         totalComments = totalComments.filter(item => {
+            if(!item.text) return false
             const text = item.text.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
-
-            if(!text) return false
 
             if(text.split(' ').length <= 3) return true
 
