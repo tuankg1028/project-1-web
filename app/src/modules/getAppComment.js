@@ -267,12 +267,14 @@ async function statCommentsUserByKeywordsV2() {
         ])
         
         totalComments = totalComments.filter(item => {
-            if(!item.text) return false
+            const text = item.text.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
 
-            if(item.text.split(' ').length <= 3) return true
+            if(!text) return false
 
-            if(!isEnglish(item.text)) console.log(isEnglish(item.text), item.text)
-            return isEnglish(item.text)
+            if(text.split(' ').length <= 3) return true
+
+            if(!isEnglish(text)) console.log(isEnglish(text), text)
+            return isEnglish(text)
         })
 
         rows.push({
