@@ -267,6 +267,8 @@ async function statCommentsUserByKeywordsV2() {
         
         totalComments = totalComments.filter(item => {
             if(!item.text) return false
+
+            if(item.text.split(' ').length <= 3) return true
             const language = lngDetector.detect(item.text || '', 1)
 
             if(language[0][0] !== 'english') console.log(item.text)
