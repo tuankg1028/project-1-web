@@ -20,8 +20,8 @@ async function main() {
     // getCommentFromCHplay()
     // statCommentsByApps()
     // statCommentsByUsers()
-    // statCommentsUserByKeywords()
-    statCommentsUserByKeywordsV2()
+    statCommentsUserByKeywords()
+    // statCommentsUserByKeywordsV2()
 }
 
 async function statCommentsUserByKeywords() {
@@ -54,18 +54,151 @@ async function statCommentsUserByKeywords() {
     let rows = []
 
     const comments = await Models.AppComment.aggregate([
+        // {    
+        //     "$match": {
+        //         "$or": [
+        //             { "text": { "$regex": "security", "$options": 'i' } },
+        //             { "text": { "$regex": "security", "$options": 'i' } },
+                    
+        //             { "text": { "$regex": "privacy", "$options": 'i' } },
+        //             { "text": { "$regex": "Privacy", "$options": 'i' } },
+
+        //             { "text": { "$regex": "privacy policy", "$options": 'i' } },
+        //             { "text": { "$regex": "Privacy policy", "$options": 'i' } },
+        //             { "text": { "$regex": "Privacy Policy", "$options": 'i' } },
+        //         ]
+        //     }
+        // },
         {    
             "$match": {
                 "$or": [
-                    { "text": { "$regex": "security", "$options": 'i' } },
-                    { "text": { "$regex": "security", "$options": 'i' } },
-                    
+                    { "text": { "$regex": "Security", "$options": 'i' } },
                     { "text": { "$regex": "privacy", "$options": 'i' } },
-                    { "text": { "$regex": "Privacy", "$options": 'i' } },
+                    { "text": { "$regex": "policy", "$options": 'i' } },
+                    { "text": { "$regex": "collection", "$options": 'i' } },
+                    { "text": { "$regex": "third-party", "$options": 'i' } },
+                    { "text": { "$regex": "share data", "$options": 'i' } },
+                    { "text": { "$regex": "collect data", "$options": 'i' } },
+                    
+                    { "text": { "$regex": "profile", "$options": 'i' } },
+                    { "text": { "$regex": "profiling", "$options": 'i' } },
+                    
+                    { "text": { "$regex": "analytics", "$options": 'i' } },
+                    { "text": { "$regex": "analysis", "$options": 'i' } },
+                    { "text": { "$regex": "analyze", "$options": 'i' } },
+                    { "text": { "$regex": "analyse", "$options": 'i' } },
+                    { "text": { "$regex": "analyzing", "$options": 'i' } },
 
-                    { "text": { "$regex": "privacy policy", "$options": 'i' } },
-                    { "text": { "$regex": "Privacy policy", "$options": 'i' } },
-                    { "text": { "$regex": "Privacy Policy", "$options": 'i' } },
+                    { "text": { "$regex": "statistical", "$options": 'i' } },
+                    { "text": { "$regex": "statistics", "$options": 'i' } },
+
+                    { "text": { "$regex": "ads", "$options": 'i' } },
+                    { "text": { "$regex": "advertising", "$options": 'i' } },
+                    { "text": { "$regex": "advertisement", "$options": 'i' } },
+                    { "text": { "$regex": "advertisers", "$options": 'i' } },
+
+                    { "text": { "$regex": "maintain", "$options": 'i' } },
+                    { "text": { "$regex": "maintenance", "$options": 'i' } },
+                    { "text": { "$regex": "advertisement", "$options": 'i' } },
+                    { "text": { "$regex": "maintained", "$options": 'i' } },
+
+                    { "text": { "$regex": "identifier", "$options": 'i' } },
+                    { "text": { "$regex": "identifying", "$options": 'i' } },
+                    { "text": { "$regex": "authentication", "$options": 'i' } },
+                    { "text": { "$regex": "authenticate", "$options": 'i' } },
+                    { "text": { "$regex": "authenticates", "$options": 'i' } },
+                    { "text": { "$regex": "identity", "$options": 'i' } },
+                    { "text": { "$regex": "identities", "$options": 'i' } },
+                    { "text": { "$regex": "identifiable", "$options": 'i' } },
+                    { "text": { "$regex": "identifies", "$options": 'i' } },
+
+                    { "text": { "$regex": "troubleshooting", "$options": 'i' } },
+                    { "text": { "$regex": "tests", "$options": 'i' } },
+                    { "text": { "$regex": "testing", "$options": 'i' } },
+                    { "text": { "$regex": "troubleshoot", "$options": 'i' } },
+
+                    { "text": { "$regex": "purchase", "$options": 'i' } },
+                    { "text": { "$regex": "purchasing", "$options": 'i' } },
+                    { "text": { "$regex": "payment", "$options": 'i' } },
+                   
+                    
+                    { "text": { "$regex": "delivery", "$options": 'i' } },
+                    { "text": { "$regex": "shipping", "$options": 'i' } },
+                    { "text": { "$regex": "delivering", "$options": 'i' } },
+
+                    { "text": { "$regex": "contacting", "$options": 'i' } },
+                    { "text": { "$regex": "contacts", "$options": 'i' } },
+                    { "text": { "$regex": "contacted", "$options": 'i' } },
+                    { "text": { "$regex": "communications", "$options": 'i' } },
+
+                    { "text": { "$regex": "research", "$options": 'i' } },
+                    { "text": { "$regex": "researching", "$options": 'i' } },
+
+                    { "text": { "$regex": "survey", "$options": 'i' } },
+
+                    { "text": { "$regex": "treatment", "$options": 'i' } },
+
+                    { "text": { "$regex": "diagnostics", "$options": 'i' } },
+                    { "text": { "$regex": "diagnosis", "$options": 'i' } },
+
+                    { "text": { "$regex": "medical", "$options": 'i' } },
+                    { "text": { "$regex": "healthcare", "$options": 'i' } },
+                    { "text": { "$regex": "health", "$options": 'i' } },
+                    { "text": { "$regex": "care", "$options": 'i' } },
+                    { "text": { "$regex": "disease", "$options": 'i' } },
+
+                    { "text": { "$regex": "improve", "$options": 'i' } },
+                    { "text": { "$regex": "improving", "$options": 'i' } },
+                    { "text": { "$regex": "improvement", "$options": 'i' } },
+
+                    { "text": { "$regex": "name", "$options": 'i' } },
+                    { "text": { "$regex": "contact", "$options": 'i' } },
+                    { "text": { "$regex": "email", "$options": 'i' } },
+                    { "text": { "$regex": "account", "$options": 'i' } },
+                    { "text": { "$regex": "identifiable", "$options": 'i' } },
+                    { "text": { "$regex": "identity", "$options": 'i' } },
+                    { "text": { "$regex": "social network", "$options": 'i' } },
+                    { "text": { "$regex": "behavioral", "$options": 'i' } },
+                    { "text": { "$regex": "behavior", "$options": 'i' } },
+                    { "text": { "$regex": "about you", "$options": 'i' } },
+                    { "text": { "$regex": "card", "$options": 'i' } },
+
+                    { "text": { "$regex": "location", "$options": 'i' } },
+                    { "text": { "$regex": "address", "$options": 'i' } },
+
+                    { "text": { "$regex": "media", "$options": 'i' } },
+                    { "text": { "$regex": "video", "$options": 'i' } },
+                    { "text": { "$regex": "audio", "$options": 'i' } },
+                    { "text": { "$regex": "picture", "$options": 'i' } },
+                    { "text": { "$regex": "image", "$options": 'i' } },
+
+                    { "text": { "$regex": "health", "$options": 'i' } },
+                    { "text": { "$regex": "fitness", "$options": 'i' } },
+                    { "text": { "$regex": "blood", "$options": 'i' } },
+                    { "text": { "$regex": "step", "$options": 'i' } },
+                    { "text": { "$regex": "activity", "$options": 'i' } },
+                    { "text": { "$regex": "activities", "$options": 'i' } },
+
+                    { "text": { "$regex": "camera", "$options": 'i' } },
+                    { "text": { "$regex": "IP address", "$options": 'i' } },
+                    { "text": { "$regex": "MAC address", "$options": 'i' } },
+                    { "text": { "$regex": "sensor", "$options": 'i' } },
+                    { "text": { "$regex": "accelerometer", "$options": 'i' } },
+                    { "text": { "$regex": "gyroscope", "$options": 'i' } },
+                    { "text": { "$regex": "microphone", "$options": 'i' } },
+                    { "text": { "$regex": "volumn", "$options": 'i' } },
+
+                    { "text": { "$regex": "Wifi", "$options": 'i' } },
+                    { "text": { "$regex": "Bluetooth", "$options": 'i' } },
+                    { "text": { "$regex": "NFC", "$options": 'i' } },
+                    { "text": { "$regex": "Cookie", "$options": 'i' } },
+                    { "text": { "$regex": "connections", "$options": 'i' } },
+                    { "text": { "$regex": "beacons", "$options": 'i' } },
+
+                    { "text": { "$regex": "call", "$options": 'i' } },
+                    { "text": { "$regex": "messager", "$options": 'i' } },
+                    { "text": { "$regex": "phone number", "$options": 'i' } },
+                    { "text": { "$regex": "phone calls", "$options": 'i' } },
                 ]
             }
         },
@@ -258,12 +391,20 @@ async function statCommentsUserByKeywordsV2() {
     const appCommentsGroup = _.groupBy(comments, 'appId')
 
     // const rows = await Promise.all(Object.entries(appCommentsGroup).map(buildRow))
+    const chunks = _.chunk(Object.entries(appCommentsGroup), 10)
 
-    for (let i = 0; i < Object.entries(appCommentsGroup).length; i++) {
-        const [appId, appComments] = Object.entries(appCommentsGroup)[i];
-        
-        rows.push(await buildRow(appId, appComments))
+    console.log(chunks)
+    for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i];
+
+        const result = await Promise.all(chunk.map(item => buildRow(...item)))
+        rows = [...rows, ...result]
     }
+    // for (let i = 0; i < Object.entries(appCommentsGroup).length; i++) {
+    //     const [appId, appComments] = Object.entries(appCommentsGroup)[i];
+        
+    //     
+    // }
     
     
     rows = _.orderBy(rows, 'totalCommentKeywords', 'desc')
