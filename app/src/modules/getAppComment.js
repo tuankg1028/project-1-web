@@ -220,7 +220,7 @@ async function statCommentsUserByKeywords() {
     )
    
     
-    rows = _.orderBy(rows, 'userName', 'desc')
+    rows = _.orderBy(rows, 'thumbsUp', 'desc')
     rows = rows.map((row, i) => ({...row, stt: i + 1}))
     const csvWriter = createCsvWriter({
         path: `./output/comments-apps-by-keywords.csv`,
