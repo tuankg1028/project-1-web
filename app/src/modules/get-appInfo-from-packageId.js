@@ -108,7 +108,9 @@ async function updateThirdPartyAndPurpose() {
         if (!appsHP[app.app]) appsHP[app.app] = [];
 
         const label = labelData.find(
-          (item) => item[1] === app.host && item[2] === app.path
+          (item) =>
+            item[1].trim() === app.host.trim() &&
+            item[2].trim() === app.path.trim()
         );
 
         if (label) {
@@ -128,20 +130,24 @@ async function updateThirdPartyAndPurpose() {
       });
   });
 
+  const promises = [];
   for (const appId in appsHP) {
     const rows = appsHP[appId];
 
-    console.log(appId);
-    await Models.App.updateOne(
-      {
-        appIdCHPlay: appId,
-      },
-      {
-        thirdPartiesHP: _.uniq(_.map(rows, "thirdParty")),
-        purposesHP: _.uniq(_.map(rows, "purpose")),
-      }
+    promises.push(
+      Models.App.updateOne(
+        {
+          appIdCHPlay: appId,
+        },
+        {
+          thirdPartiesHP: _.uniq(_.map(rows, "thirdParty")),
+          purposesHP: _.uniq(_.map(rows, "purpose")),
+        }
+      )
     );
   }
+
+  await Promise.all(promises);
   console.log("DONE");
 }
 async function updateGroupStaticAndDynamic() {
