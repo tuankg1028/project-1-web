@@ -78,13 +78,72 @@ async function main() {
   // getInfoForApp();
   // await getLabelsAndKeyValueForApp();
   // update functions and apis for app
-  await getFunctionsApisForApps(); /////
+  // await getFunctionsApisForApps(); /////
   // update group static and dynamic
   // await updateGroupStaticAndDynamic();
   // await getHostPath();
+
+  updateThirdPartyAndPurpose();
 }
 main();
 
+async function updateThirdPartyAndPurpose() {
+  console.log("RUNNING updateThirdPartyAndPurpose");
+  const { DATA_COLLECTION_PURPOSE } = process.env;
+
+  let labelData = await csv({
+    noheader: true,
+    output: "csv",
+  }).fromFile("/Users/a1234/Downloads/Purpose_Third_party.csv");
+
+  const appsHP = {};
+  await new Promise((resolve, reject) => {
+    var readline = require("linebyline"),
+      rl = readline(DATA_COLLECTION_PURPOSE);
+    rl.on("line", function (line, lineCount, byteCount) {
+      // do something with the line of text
+      const app = JSON.parse(line);
+
+      if (app) {
+        if (!appsHP[app.app]) appsHP[app.app] = [];
+
+        const label = labelData.find(
+          (item) => item[1] === app.host && item[2] === app.path
+        );
+
+        if (label) {
+          appsHP[app.app].push({
+            host: app.host,
+            path: app.path,
+            stt: label[3],
+            thirdParty: label[4],
+            purpose: label[5],
+          });
+        }
+      }
+    })
+      .on("error", function (e) {})
+      .on("close", function (e) {
+        resolve();
+      });
+  });
+
+  for (const appId in appsHP) {
+    const rows = appsHP[appId];
+
+    console.log(appId);
+    await Models.App.updateOne(
+      {
+        appIdCHPlay: appId,
+      },
+      {
+        thirdPartiesHP: _.uniq(_.map(rows, "thirdParty")),
+        purposesHP: _.uniq(_.map(rows, "purpose")),
+      }
+    );
+  }
+  console.log("DONE");
+}
 async function updateGroupStaticAndDynamic() {
   console.log("Running");
 

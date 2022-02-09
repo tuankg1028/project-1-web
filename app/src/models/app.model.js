@@ -54,7 +54,7 @@ var schema = new Schema(
         id: Schema.Types.ObjectId,
         name: String,
         classes: [String],
-        functions: [String]
+        functions: [String],
       },
     ],
     distance: Number,
@@ -71,6 +71,8 @@ var schema = new Schema(
     riskLevel: Number,
     dynamicGroup: String,
     staticGroup: String,
+    thirdPartiesHP: [String],
+    purposesHP: [String], // HP means host and path
   },
   {
     timestamps: true,
