@@ -6,7 +6,10 @@ import _ from "lodash";
 import csv from "csvtojson";
 import Helpers from "../helpers";
 import path from "path";
+import fs from "fs";
+
 var gplay = require("google-play-scraper");
+const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
 var categoryGroups = {
   Beauty: ["Beauty", "Lifestyle"],
@@ -73,11 +76,12 @@ function getCategoryName(originalCategoryName) {
 
 async function main() {
   // getInfoForApp();
-  await getLabelsAndKeyValueForApp();
+  // await getLabelsAndKeyValueForApp();
   // update functions and apis for app
-  await getFunctionsApisForApps();
+  await getFunctionsApisForApps(); /////
   // update group static and dynamic
-  await updateGroupStaticAndDynamic();
+  // await updateGroupStaticAndDynamic();
+  // await getHostPath();
 }
 main();
 
@@ -96,7 +100,7 @@ async function updateGroupStaticAndDynamic() {
     output: "csv",
   }).fromFile(path.join(__dirname, "../../data/file2.csv"));
 
-  const promises = []
+  const promises = [];
   for (let i = 0; i < apps.length; i++) {
     const app = apps[i];
 
@@ -225,44 +229,47 @@ async function updateGroupStaticAndDynamic() {
       }
     });
 
-    delete app.createdAt
-    delete app.updatedAt
-    const isExisted = await Models.AppFunction.findById(app.id)
+    delete app.createdAt;
+    delete app.updatedAt;
+    const isExisted = await Models.AppFunction.findById(app.id);
 
-    promises.push(Models.App.updateOne(
-      {
-        _id: app.id,
-      },
-      {
-        dynamicGroup: JSON.stringify(groupDynamic),
-        staticGroup: JSON.stringify(groupStatic),
-      }
-    ))
-    if(isExisted) {
-      promises.push(Models.AppFunction.updateOne(
+    promises.push(
+      Models.App.updateOne(
         {
           _id: app.id,
         },
         {
-          ...app.toJSON(),
           dynamicGroup: JSON.stringify(groupDynamic),
           staticGroup: JSON.stringify(groupStatic),
         }
-      ))
+      )
+    );
+    if (isExisted) {
+      promises.push(
+        Models.AppFunction.updateOne(
+          {
+            _id: app.id,
+          },
+          {
+            ...app.toJSON(),
+            dynamicGroup: JSON.stringify(groupDynamic),
+            staticGroup: JSON.stringify(groupStatic),
+          }
+        )
+      );
     } else {
-      promises.push(Models.AppFunction.create(
-        {
+      promises.push(
+        Models.AppFunction.create({
           _id: app.id,
           ...app.toJSON(),
           dynamicGroup: JSON.stringify(groupDynamic),
           staticGroup: JSON.stringify(groupStatic),
-        },
-      ))
+        })
+      );
     }
-    
   }
 
-  await Promise.all(promises)
+  await Promise.all(promises);
   console.log("DONE");
 }
 async function getInfoForApp() {
@@ -380,6 +387,8 @@ async function getLabelsAndKeyValueForApp() {
 
           !appsKeyValues[app.app] && (appsKeyValues[app.app] = []);
           appsKeyValues[app.app].push(`${key.trim()}: ${valueOfKey.trim()}`);
+
+          console.log(appsKeyValues);
         }
       }
     })
@@ -388,7 +397,7 @@ async function getLabelsAndKeyValueForApp() {
         resolve();
       });
   });
-
+  return;
   const apps = await Models.App.find({
     isExistedMobiPurpose: true,
     isCompleted: true,
@@ -456,19 +465,35 @@ async function getLabelsAndKeyValueForApp() {
 // getFunctionsApisForApps();
 async function getFunctionsApisForApps() {
   console.log("Running getFunctionsApisForApps");
+  let file1 = await csv({
+    noheader: true,
+    output: "csv",
+  }).fromFile(path.join(__dirname, "../../data/file1-key-value-type.csv"));
   let file2 = await csv({
     noheader: true,
     output: "csv",
   }).fromFile(path.join(__dirname, "../../data/file2.csv"));
   const apps = await Models.App.find({
+    _id: {
+      $in: [
+        "602973a6163e554ddd9a7b5c",
+        // "60297f85163e554ddd9aa45d",
+        // "60299854163e554ddd9aeb0d",
+      ],
+    },
     isExistedMobiPurpose: true,
     isCompleted: true,
     nodes: { $exists: true }, //
     dataTypes: { $exists: true }, //
-  });
-  
+  }).limit(100);
+
+  const dataTypeInFile1 = _.map(file1, 4).filter(
+    (item) => !!(item || "").trim()
+  );
+
+  console.log("dataTypeInFile1", dataTypeInFile1);
   console.log("Total apps: {getFunctionsApisForApps}");
-  const promises = []
+  const promises = [];
   for (let i = 0; i < apps.length; i++) {
     const app = apps[i];
     console.log(`Running ${i}/${apps.length}`);
@@ -485,14 +510,17 @@ async function getFunctionsApisForApps() {
       }
     });
 
-    // filter functions has lables
     const functionsInfiles2 = functionsInfiles.filter((item) =>
       dataTypes.includes(item[7].trim())
     );
 
-    const functionsInfiles1 = functionsInfiles.filter(
-      (item) => !dataTypes.includes(item[7].trim())
+    const functionsInfiles1 = functionsInfiles2.filter((item) =>
+      dataTypeInFile1.includes(item[7].trim())
     );
+
+    functionsInfiles2 = functionsInfiles2.filter((item) => {
+      return !_.map(functionsInfiles1, 0).includes(item[0]);
+    });
 
     const dynamicFunctions = _.uniq(_.map(functionsInfiles1, 4));
     const dynamicApis = _.uniq(_.map(functionsInfiles1, 2));
@@ -500,45 +528,133 @@ async function getFunctionsApisForApps() {
     const staticFunctions = _.uniq(_.map(functionsInfiles2, 4));
     const staticApis = _.uniq(_.map(functionsInfiles2, 2));
 
-    
-    delete app.createdAt
-    delete app.updatedAt
-    const isExisted = await Models.AppFunction.findById(app.id)
+    delete app.createdAt;
+    delete app.updatedAt;
+    const isExisted = await Models.AppFunction.findById(app.id);
 
-    promises.push(Models.App.updateOne(
-      {
-        _id: app.id,
-      },
-      {
-        $set: { dynamicFunctions, dynamicApis, staticFunctions, staticApis },
-      },
-      {},
-      (err, data) =>
-        Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
-    ))
-    if(isExisted) {
-      promises.push(Models.AppFunction.updateOne(
+    console.log({ dynamicFunctions, dynamicApis, staticFunctions, staticApis });
+    return;
+    promises.push(
+      Models.App.updateOne(
         {
           _id: app.id,
         },
         {
-          $set: { ...app, dynamicFunctions, dynamicApis, staticFunctions, staticApis },
+          $set: { dynamicFunctions, dynamicApis, staticFunctions, staticApis },
         },
         {},
         (err, data) =>
           Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
-      ))
+      )
+    );
+
+    if (isExisted) {
+      promises.push(
+        Models.AppFunction.updateOne(
+          {
+            _id: app.id,
+          },
+          {
+            $set: {
+              ...app,
+              dynamicFunctions,
+              dynamicApis,
+              staticFunctions,
+              staticApis,
+            },
+          },
+          {},
+          (err, data) =>
+            Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
+        )
+      );
     } else {
-      promises.push(Models.AppFunction.create(
-        {
+      promises.push(
+        Models.AppFunction.create({
           _id: app.id,
-          ...app, 
-          dynamicFunctions, dynamicApis, staticFunctions, staticApis
-        },
-      ));
+          ...app,
+          dynamicFunctions,
+          dynamicApis,
+          staticFunctions,
+          staticApis,
+        })
+      );
     }
   }
 
-  await Promise.all(promises)
+  await Promise.all(promises);
   console.log("Done");
+}
+
+async function getHostPath() {
+  const header = [
+    {
+      id: "stt",
+      title: "#",
+    },
+    {
+      id: "host",
+      title: "Host",
+    },
+    {
+      id: "path",
+      title: "Path",
+    },
+    {
+      id: "count",
+      title: "So luong apps",
+    },
+  ];
+  let rows = [];
+
+  const { DATA_COLLECTION_PURPOSE } = process.env;
+  const result = [];
+
+  await new Promise((resolve, reject) => {
+    var readline = require("linebyline"),
+      rl = readline(DATA_COLLECTION_PURPOSE);
+    rl.on("line", function (line, lineCount, byteCount) {
+      // do something with the line of text
+      const app = JSON.parse(line);
+      if (app) {
+        const index = result.findIndex(
+          (item) => item.host === app.host && item.path === app.path
+        );
+
+        if (~index) {
+          result[index].count[app.app]
+            ? null
+            : (result[index].count[app.app] = 1);
+        } else {
+          result.push({
+            host: app.host,
+            path: app.path,
+            count: {
+              [app.app]: 1,
+            },
+          });
+        }
+      }
+    })
+      .on("error", function (e) {})
+      .on("close", function (e) {
+        resolve();
+      });
+  });
+
+  rows = result.map((item, index) => {
+    return {
+      stt: index + 1,
+      ...item,
+      count: _.sum(Object.values(item.count)),
+    };
+  });
+
+  const csvWriter = createCsvWriter({
+    path: "./output/host-path.csv",
+    header,
+  });
+  await csvWriter.writeRecords(rows);
+
+  console.log("DONE host path");
 }
