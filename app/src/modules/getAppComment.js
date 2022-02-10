@@ -70,11 +70,12 @@ async function test() {
     console.log("DONE");
   });
  
-  // w2v.loadModel("./vector.txt", (error, model) => {
-  //   console.log("SIZE: ", model.size);
-  //   console.log("WORDS: ", model.words);
-  //   console.log(model.mostSimilar(word, 20));
-  // });
+  w2v.loadModel("./vector.txt", (error, model) => {
+    console.log("SIZE: ", model.size);
+    console.log("WORDS: ", model.words);
+    console.log('security', model.mostSimilar('security', 20));
+    console.log('privacy', model.mostSimilar('privacy', 20));
+  });
 }
 async function trainningAndTesting() {
   console.log("Running trainningAndTesting");

@@ -80,6 +80,7 @@
     "slug": "^4.0.2",
     "sync-exec": "^0.6.2",
     "uuid": "^8.3.2",
+    "word2vec": "^1.1.5",
     "worker-threads-promise": "^1.0.1",
     "xml2js": "^0.4.23"
   },
