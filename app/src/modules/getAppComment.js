@@ -34,10 +34,48 @@ async function main() {
   // statCommentsByUsers()
   // statCommentsUserByKeywords();
   // statCommentsUserByKeywordsV2()
-  statCommentsUserByKeywordsLabel();
+  // statCommentsUserByKeywordsLabel();
   // trainningAndTesting();
+
+  await test()
 }
 
+async function test() {
+  // const fileData = await csv({
+  //   noheader: true,
+  //   output: "csv",
+  // }).fromFile("/Users/xander/Downloads/TRAINING-TEST.csv");
+
+  // let [, ...rows] = fileData;
+
+  // const dataSet = rows.filter(row => row[6] === 'Y').reduce((acc, item) => {
+
+  //   acc = [...acc, ...item[2].split(' ')]
+  //   return acc
+  // }, [])
+  // console.log(dataSet.length )
+
+  // function clearText(text) {
+  //   return text
+  //     .toLowerCase()
+  //     .replace(/[^A-Za-zА-Яа-яЁёЇїІіҐґЄє0-9\-]|\s]/g, " ")
+  //     .replace(/\s{2,}/g, " ");
+  // }
+  // const text = clearText(dataSet.join(" "))
+  // fs.writeFileSync('./vector.txt', text)
+  
+
+  var w2v = require( 'word2vec' );
+  w2v.word2vec('./', "vector.txt", { size: 300 }, () => {
+    console.log("DONE");
+  });
+ 
+  // w2v.loadModel("./vector.txt", (error, model) => {
+  //   console.log("SIZE: ", model.size);
+  //   console.log("WORDS: ", model.words);
+  //   console.log(model.mostSimilar(word, 20));
+  // });
+}
 async function trainningAndTesting() {
   console.log("Running trainningAndTesting");
   const percentage = 60
