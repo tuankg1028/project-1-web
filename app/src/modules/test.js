@@ -11,7 +11,25 @@ import axios from "axios";
 import cheerio from "cheerio";
 var parse = require("fast-json-parse");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+const retry = async (promise, time = 20) => {
+  let counter = 1;
+  let status = false;
+  let result;
 
+  do {
+    try {
+      result = await promise;
+      status = true;
+    } catch (error) {
+      result = error;
+      counter++;
+    }
+  } while (!status && counter <= time);
+
+  if (!status) throw result;
+
+  return result;
+};
 // getPermissionFromMainFestFile();
 async function getPermissionFromMainFestFile() {
   const permissions = [];
@@ -34,8 +52,10 @@ const getVietTelNumber = async (phoneNumber) => {
 
   const $ = cheerio.load(response.data);
 
-  const price =
-    $(".OIJeQ_price_l3YLB").text() || $(".tmJWs_price_WauoS").text();
+  const price = (
+    $(".OIJeQ_price_l3YLB").text() || $(".tmJWs_price_WauoS").text()
+  ).trim();
+
   console.log(1, phoneNumber, price);
   const isAvailable =
     price.trim() !== "Sim đã bán hoặc chưa được cập nhật" &&
@@ -44,7 +64,7 @@ const getVietTelNumber = async (phoneNumber) => {
   if (!isAvailable) return;
 
   return {
-    price: $(".OIJeQ_price_l3YLB").text(),
+    price,
   };
 };
 
@@ -132,7 +152,7 @@ async function genPhoneNumbersVietnamobile() {
   // result = _.uniq(result);
 
   let rows = JSON.parse(
-    "[{\"sdt\":\"0921413333\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921898684\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923333384\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923214832\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923898384\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923383338\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923321119\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929894132\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921833333\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929132132\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923333333\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921423866\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929861113\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921118333\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921333333\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923838918\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921869111\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929898333\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929842194\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923211133\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921118913\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923333338\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921914238\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929861842\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921842968\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929666111\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923323291\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929898329\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923213232\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923323333\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921114238\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929869698\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929138483\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921913294\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929614189\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923842389\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929619183\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929413321\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923338333\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929133323\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923233332\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921896694\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921333298\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921418968\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921111141\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921323214\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929486961\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923238948\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921868661\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921486619\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929683333\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921842384\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921868614\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921333868\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923861113\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929661421\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929666142\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921338489\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923833383\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921948414\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921119691\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929489132\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921111183\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923332333\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929898683\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921411148\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929413333\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923294296\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929483332\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929611189\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921333332\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929668961\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921429868\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929841896\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923868486\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921333894\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921869483\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921423389\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921113332\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921113219\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929833333\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929429694\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929111113\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923332941\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0923333329\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921484218\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921913389\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929414869\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929186896\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929861919\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0921911194\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"},{\"sdt\":\"0929683869\",\"price\":\"60.000\",\"commitTime\":\"36 Tháng\",\"commitPrice\":\"\\n50.000 đ\\n-50%\\n100.000 đ\"}]"
+    '[{"sdt":"0921413333","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921898684","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923333384","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923214832","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923898384","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923383338","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923321119","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929894132","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921833333","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929132132","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923333333","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921423866","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929861113","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921118333","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921333333","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923838918","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921869111","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929898333","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929842194","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923211133","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921118913","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923333338","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921914238","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929861842","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921842968","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929666111","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923323291","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929898329","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923213232","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923323333","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921114238","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929869698","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929138483","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921913294","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929614189","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923842389","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929619183","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929413321","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923338333","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929133323","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923233332","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921896694","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921333298","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921418968","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921111141","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921323214","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929486961","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923238948","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921868661","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921486619","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929683333","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921842384","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921868614","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921333868","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923861113","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929661421","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929666142","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921338489","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923833383","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921948414","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921119691","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929489132","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921111183","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923332333","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929898683","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921411148","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929413333","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923294296","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929483332","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929611189","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921333332","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929668961","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921429868","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929841896","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923868486","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921333894","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921869483","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921423389","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921113332","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921113219","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929833333","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929429694","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929111113","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923332941","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0923333329","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921484218","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921913389","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929414869","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929186896","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929861919","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0921911194","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"},{"sdt":"0929683869","price":"60.000","commitTime":"36 Tháng","commitPrice":"\\n50.000 đ\\n-50%\\n100.000 đ"}]'
   );
 
   rows = rows.map((item, index) => {
@@ -197,31 +217,36 @@ async function genPhoneNumbersVietTel(type) {
     },
     {
       id: "sdt",
-      title: "Số điện thoại",
+      title: "So dien thoai",
     },
     {
+      id: "tong",
+      title: "Tong cua day so",
+    },
+
+    {
       id: "category",
-      title: "Loại thuê bao",
+      title: "Loai thue bao",
     },
     {
       id: "price",
-      title: "Giá/phí hoà mạng",
+      title: "Gia/Phi hoa mang",
     },
     {
       id: "commitTime",
-      title: "Thời gian cam kết",
+      title: "Thoi gian cam ket",
     },
     {
       id: "commitPrice",
-      title: "Cước cam kết",
+      title: "Cuoc cam ket",
     },
     {
       id: "status",
-      title: "Tình trạng",
+      title: "Tinh trang",
     },
     {
       id: "address",
-      title: "Địa điểm hoà mạng",
+      title: "Dia diem hoa",
     },
   ];
 
@@ -248,26 +273,28 @@ async function genPhoneNumbersVietTel(type) {
 
   let stt = 1;
 
-  const chunks = _.chunk(result, 10);
+  const chunks = _.chunk(result, 100);
 
   for (let i = 0; i < chunks.length; i++) {
     const chunk = chunks[i];
     console.log(`${i}/${chunks.length}`);
     await Promise.all(
       chunk.map((phoneNumber) => {
-        return getVietTelNumber(phoneNumber)
-          .then((data) => {
-            if (data) {
-              rows.push({
-                stt: stt++,
-                sdt: phoneNumber,
-                tong: _.sum(phoneNumber.split("").map((num) => Number(num))),
-                ...data,
-              });
-            }
-            return;
-          })
-          .catch(console.log);
+        return retry(
+          getVietTelNumber(phoneNumber)
+            .then((data) => {
+              if (data) {
+                rows.push({
+                  stt: stt++,
+                  sdt: phoneNumber,
+                  tong: _.sum(phoneNumber.split("").map((num) => Number(num))),
+                  ...data,
+                });
+              }
+              return;
+            })
+            .catch(console.error)
+        );
       })
     );
   }
@@ -286,6 +313,7 @@ async function genPhoneNumbersVietTel(type) {
 
   console.log("DONE");
 }
+
 const categoryGroups = {
   Beauty: ["Beauty", "Lifestyle"],
   Business: ["Business"],
@@ -683,25 +711,6 @@ const types = [
   "very_active_minutes",
   "water_logs",
 ];
-const retry = async (promise, time = 20) => {
-  let counter = 1;
-  let status = false;
-  let result;
-
-  do {
-    try {
-      result = await promise;
-      status = true;
-    } catch (error) {
-      result = error;
-      counter++;
-    }
-  } while (!status && counter <= time);
-
-  if (!status) throw result;
-
-  return result;
-};
 
 // main4Eda()
 async function main4Eda() {
