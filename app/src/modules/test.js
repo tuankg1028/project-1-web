@@ -207,10 +207,12 @@ async function main444() {
   // await genPhoneNumbersVietTel("viettel");
   // await genPhoneNumbersVietTel("mobiphone");
   // await genPhoneNumbersVietTel("vietnamobile");
-  await viettel();
+  // await simthanglong("viettel");
+  await simthanglong("vinaphone");
+  await simthanglong("mobifone");
 }
 main444();
-async function viettel() {
+async function simthanglong(type) {
   const header = [
     {
       id: "stt",
@@ -251,19 +253,22 @@ async function viettel() {
     },
   ];
 
+  const links = {
+    viettel: "https://simthanglong.vn/sim-viettel",
+    vinaphone: "https://simthanglong.vn/sim-so-dep-vinaphone",
+    mobifone: "https://simthanglong.vn/sim-so-dep-mobifone",
+  };
+
+  const link = links[type];
   let stt = 1;
   let rows = [];
-  for (let i = 1; i <= 500; i++) {
+  for (let i = 1; i <= 1000; i++) {
     await Promise.all(
       [...Array(100).keys()].map((item, index) => {
         console.log("page", (i - 1) * 100 + (index + 1));
         return retry(
           axios
-            .get(
-              `https://simthanglong.vn/sim-viettel?pageNum=${
-                (i - 1) * 100 + (index + 1)
-              }`
-            )
+            .get(`${link}?pageNum=${(i - 1) * 100 + (index + 1)}`)
             .then((response) => {
               if (!response.data) return;
               const $ = cheerio.load(response.data);
@@ -293,7 +298,7 @@ async function viettel() {
   });
 
   const csvWriterNo = createCsvWriter({
-    path: "./viettel(simthanglong).csv",
+    path: `./${type}(simthanglong).csv`,
     header,
   });
   await csvWriterNo.writeRecords(rows);
