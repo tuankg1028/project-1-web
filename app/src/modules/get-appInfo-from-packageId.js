@@ -83,10 +83,38 @@ async function main() {
   // await updateGroupStaticAndDynamic();
   // await getHostPath();
 
-  updateThirdPartyAndPurpose();
+  // updateThirdPartyAndPurpose();
+  test()
 }
 main();
 
+async function test() {
+  var fs = require('fs');
+  var obj = JSON.parse(fs.readFileSync('/Users/xander/Downloads/Static-DynamicDataOf_1379_TargetApps.json', 'utf8'));
+
+  let apps = await Models.App.find({
+    // _id: {
+    //   $in: _.map(obj, '_id.$oid')
+    // },
+    isExistedMobiPurpose: true,
+    isCompleted: true,
+  }).select('_id appName categoryName appIdCHPlay dynamicFunctions dynamicApis staticFunctions staticApis thirdPartiesHP purposesHP')
+
+  console.log(1, apps.length)
+
+  apps = apps.map(app => {
+    app.thirdParties = app.thirdPartiesHP
+    app.purposes = app.purposesHP
+
+    delete app.thirdPartiesHP
+    delete app.purposesHP
+
+    return app
+  })
+  fs.writeFileSync('./output1111.json', JSON.stringify(apps, null, 2))
+
+  console.log("DONE")
+}
 async function updateThirdPartyAndPurpose() {
   console.log("RUNNING updateThirdPartyAndPurpose");
   const { DATA_COLLECTION_PURPOSE } = process.env;
