@@ -69,7 +69,7 @@ async function main() {
         },
         {
           $set: {
-            nodesCount: leafNodesCount,
+            nodesCount: leafNodesCount.filter((item) => item.count),
           },
         },
         {}
