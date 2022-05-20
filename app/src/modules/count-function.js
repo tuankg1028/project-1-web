@@ -32,7 +32,6 @@ async function main() {
       leafNode.name.toLowerCase().replace(/\([A-Za-z0-9_.<>, \[\]]*\)/i, "");
     keyword = keyword.split("(")[0].split(" ")[0];
     const regex = new RegExp(`${keyword}`, "g");
-		console.log(regex)
     return {
       ...leafNode.toJSON(),
       regex,
@@ -70,13 +69,11 @@ async function main() {
         },
         {
           $set: {
-            nodesCount: git,
+            nodesCount: leafNodesCount,
           },
         },
         {}
       );
-
-      console.log(leafNodesCount);
     } catch (err) {
       console.log(err);
       console.log("NO");
