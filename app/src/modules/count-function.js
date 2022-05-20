@@ -17,18 +17,18 @@ async function main() {
     try {
       const app = apps[i];
 
-      const pathFileApk = _getApkFileFromSource(app.id, app.appName);
-      console.log(pathFileApk);
-      if (!pathFileApk) throw new Error("Cannot find apk file");
-      Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
+      // const pathFileApk = _getApkFileFromSource(app.id, app.appName);
+      // console.log(pathFileApk);
+      // if (!pathFileApk) throw new Error("Cannot find apk file");
+      // Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
 
       const apkSourcePath = `/data/JavaCode/${app.id}`;
-      if (!fs.existsSync(apkSourcePath)) execSync(`mkdir ${apkSourcePath}`);
-      const jadxScript = `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`;
-      console.log("jadxScript", jadxScript);
-      execSync(jadxScript, {
-        timeout: 1000 * 60 * 5, // 5 mins
-      });
+      // if (!fs.existsSync(apkSourcePath)) execSync(`mkdir ${apkSourcePath}`);
+      // const jadxScript = `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`;
+      // console.log("jadxScript", jadxScript);
+      // execSync(jadxScript, {
+      //   timeout: 1000 * 60 * 5, // 5 mins
+      // });
 
       console.log(apkSourcePath);
       const contents = await Helpers.File.getContentOfFolder(
