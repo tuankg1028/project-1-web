@@ -39,6 +39,14 @@ var schema = new Schema(
         parent: Schema.Types.ObjectId,
       },
     ],
+    nodes: [
+      {
+        id: Schema.Types.ObjectId,
+        name: String,
+        count: Number,
+        parent: Schema.Types.ObjectId,
+      },
+    ],
     apis: [
       {
         id: Schema.Types.ObjectId,

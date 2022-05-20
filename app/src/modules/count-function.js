@@ -11,32 +11,62 @@ async function main() {
   let apps = await Models.App.find({
     categoryName: "Business",
     isCompleted: true,
-		isCompletedJVCode: true,
-  }).limit(10);
+    isCompletedJVCode: true,
+  });
 
+  const leafNodes = await Models.Tree.find({
+    $where: function () {
+      return this.right - this.left === 1;
+    },
+  }).populate("parent");
   for (let i = 0; i < apps.length; i++) {
     try {
       const app = apps[i];
-
-      // const pathFileApk = _getApkFileFromSource(app.id, app.appName);
-      // console.log(pathFileApk);
-      // if (!pathFileApk) throw new Error("Cannot find apk file");
-      // Helpers.Logger.step("Step 2: Parse APK to Text files by jadx");
-
       const apkSourcePath = `/data/JavaCode/${app.id}`;
-      // if (!fs.existsSync(apkSourcePath)) execSync(`mkdir ${apkSourcePath}`);
-      // const jadxScript = `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`;
-      // console.log("jadxScript", jadxScript);
-      // execSync(jadxScript, {
-      //   timeout: 1000 * 60 * 5, // 5 mins
-      // });
 
       console.log(apkSourcePath);
-      const contents = await Helpers.File.getContentOfFolder(
+      let contents = await Helpers.File.getContentOfFolder(
         `${apkSourcePath}/sources`
       );
+      contents = contents.toLowerCase();
 
-      if (contents) console.log("YES");
+      const leafNodesCount = leafNodes.map((leafNode) => {
+        const { parent } = leafNode;
+        const lastFunctionOfParent = parent.name.split(".").pop();
+
+        const keyword =
+          lastFunctionOfParent.toLowerCase() +
+          "." +
+          leafNode.name
+            .toLowerCase()
+            .replace(/\([A-Za-z0-9_.<>, \[\]]*\)/i, "");
+        const regex = new RegExp(`${keyword}`, "g");
+        const count = (contents.match(regex) || []).length;
+        return {
+          _id: leafNode._id,
+          id: leafNode._id,
+          name: leafNode.name,
+          desc: leafNode.desc,
+          left: leafNode.left,
+          right: leafNode.right,
+          parent: leafNode.parent,
+          count,
+        };
+      });
+
+      await Models.App.updateOne(
+        {
+          _id: app.id,
+        },
+        {
+          $set: {
+            nodesCount: git,
+          },
+        },
+        {}
+      );
+
+      console.log(leafNodesCount);
     } catch (err) {
       // console.log(err);
       console.log("NO");
