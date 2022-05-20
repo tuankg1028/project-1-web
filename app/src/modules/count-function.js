@@ -15,12 +15,15 @@ async function main() {
   });
 
   let leafNodes = await Models.Tree.find({
+    name: {
+      $ne: null,
+    },
     $where: function () {
       return this.right - this.left === 1;
     },
   }).populate("parent");
   leafNodes = leafNodes.map((leafNode) => {
-		console.log(leafNode)
+    console.log(leafNode);
     const { parent } = leafNode;
     const lastFunctionOfParent = parent.name.split(".").pop();
 
