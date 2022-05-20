@@ -20,6 +20,7 @@ async function main() {
     },
   }).populate("parent");
   for (let i = 0; i < apps.length; i++) {
+    console.log(`Running ${i}`);
     try {
       const app = apps[i];
       const apkSourcePath = `/data/JavaCode/${app.id}`;
@@ -68,7 +69,7 @@ async function main() {
 
       console.log(leafNodesCount);
     } catch (err) {
-      // console.log(err);
+      console.log(err);
       console.log("NO");
     }
   }
