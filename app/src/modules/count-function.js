@@ -8,12 +8,6 @@ const path = require("path");
 
 main();
 async function main() {
-  let apps = await Models.App.find({
-    categoryName: "Business",
-    isCompleted: true,
-    isCompletedJVCode: true,
-  });
-
   let leafNodes = await Models.Tree.find({
     name: {
       $ne: null,
@@ -38,7 +32,7 @@ async function main() {
     };
   });
 
-  const runApp = async (app) => {
+  const runApp = async (app, leafNodes) => {
     try {
       const apkSourcePath = `/data/JavaCode/${app.id}`;
 
@@ -96,7 +90,7 @@ async function main() {
       .populate("parent");
 
     do {
-      await Promise.all(apps.map((app) => runApp(app)));
+      await Promise.all(apps.map((app) => runApp(app, leafNodes)));
 
       skip += limit;
       apps = await Models.App.find(contition).limit(limit).skip(skip);
