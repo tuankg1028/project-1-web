@@ -4,6 +4,7 @@ import Models from "../models";
 import _ from "lodash";
 import Helpers from "../helpers";
 const fs = require("fs");
+const path = require("path");
 
 main();
 async function main() {
