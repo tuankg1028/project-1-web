@@ -11,6 +11,7 @@ async function main() {
   let apps = await Models.App.find({
     categoryName: "Business",
     isCompleted: true,
+		isCompletedJVCode: true,
   }).limit(10);
 
   for (let i = 0; i < apps.length; i++) {
