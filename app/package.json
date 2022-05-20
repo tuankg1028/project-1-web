@@ -30,7 +30,8 @@
     "userAnswer": "babel-node --max-old-space-size=30000 src/modules/user-answer.js",
     "getApis": "babel-node --expose-gc --always-compact --max-old-space-size=20000 src/modules/getApiAndLibsMainfestV2.js",
     "fitbit": "babel-node --max-old-space-size=100000 src/modules/fitbit.js",
-    "getComments": "babel-node --max-old-space-size=100000 src/modules/getAppComment.js"
+    "getComments": "babel-node --max-old-space-size=100000 src/modules/getAppComment.js",
+    "countFunction": "babel-watch src/modules/count-function.js"
   },
   "keywords": [],
   "author": "",
