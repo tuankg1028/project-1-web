@@ -3,14 +3,81 @@ import "../configs/mongoose.config";
 import Models from "../models";
 import _ from "lodash";
 import Helpers from "../helpers";
+import slug from "slug";
 const fs = require("fs");
 const path = require("path");
+const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
 // stats();
 async function stats() {
-  let apps = await Models.App.find({ nodesCount: { $exists: true } });
+  let tree = [];
+  const header = [
+    {
+      id: "appName",
+      title: "",
+    },
+  ];
+  const nodes = {};
+  const rows = [];
+  let apps = await Models.App.find({ nodesCount: { $exists: true } })
+    .limit(2)
+    .select("appName nodesCount");
 
-  console.log(apps);
+  for (let i = 0; i < apps.length; i++) {
+    const app = apps[i];
+
+    let row = {
+      appName: app.appName,
+    };
+    for (let j = 0; j < app.nodesCount.length; j++) {
+      const node = app.nodesCount[j];
+
+      let { parent: parentId } = node;
+      let parent = tree.find((item) => item.id == parentId);
+      if (!parent) {
+        parent = await Models.Tree.findById(parentId);
+        tree.push(parent);
+      }
+
+      const lastFunctionOfParent = parent.name;
+
+      const key = slug(lastFunctionOfParent + "." + node.name);
+      row[key] = node.count;
+
+      if (nodes[key]) {
+        nodes[key].count += node.count;
+      } else {
+        nodes[key] = {
+          count: node.count,
+          name: lastFunctionOfParent + "." + node.name,
+        };
+      }
+    }
+
+    rows.push(row);
+  }
+
+  const result = _.orderBy(
+    Object.entries(nodes),
+    (item) => item[1].count,
+    "desc"
+  );
+  let catRow = {
+    appName: "Business category",
+  };
+  result.forEach(([key, data]) => {
+    catRow[key] = data.count / apps.length;
+    header.push({ id: key, title: data.name });
+  });
+  rows.push(catRow);
+  const csvWriterHas = createCsvWriter({
+    path: "count-func&constant(Business category).csv",
+    header,
+  });
+
+  await csvWriterHas.writeRecords(rows);
+
+  console.log("DONE");
 }
 main();
 async function main() {
@@ -24,7 +91,9 @@ async function main() {
   }).populate("parent");
   leafNodes = leafNodes.map((leafNode) => {
     const { parent } = leafNode;
-    const lastFunctionOfParent = parent.name.split(".").pop();
+    const lastFunctionOfParent = _.takeRight(parent.name.split("."), 2).join(
+      "."
+    );
 
     let keyword =
       lastFunctionOfParent.toLowerCase() +
