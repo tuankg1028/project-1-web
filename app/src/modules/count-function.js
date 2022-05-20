@@ -80,7 +80,7 @@ async function main() {
   };
 
   try {
-    const limit = 3;
+    const limit = 10;
     let skip = 0;
     const contition = {
       categoryName: "Business",
