@@ -14,11 +14,28 @@ async function main() {
     isCompletedJVCode: true,
   });
 
-  const leafNodes = await Models.Tree.find({
+  let leafNodes = await Models.Tree.find({
     $where: function () {
       return this.right - this.left === 1;
     },
   }).populate("parent");
+  leafNodes = leafNodes.map((leafNode) => {
+		console.log(leafNode)
+    const { parent } = leafNode;
+    const lastFunctionOfParent = parent.name.split(".").pop();
+
+    let keyword =
+      lastFunctionOfParent.toLowerCase() +
+      "." +
+      leafNode.name.toLowerCase().replace(/\([A-Za-z0-9_.<>, \[\]]*\)/i, "");
+    keyword = keyword.split("(")[0].split(" ")[0];
+    const regex = new RegExp(`${keyword}`, "g");
+
+    return {
+      ...leafNode.toJSON(),
+      regex,
+    };
+  });
   for (let i = 0; i < apps.length; i++) {
     console.log(`Running ${i}`);
     try {
@@ -32,18 +49,7 @@ async function main() {
       contents = contents.toLowerCase();
 
       const leafNodesCount = leafNodes.map((leafNode) => {
-        const { parent } = leafNode;
-        const lastFunctionOfParent = parent.name.split(".").pop();
-
-        let keyword =
-          lastFunctionOfParent.toLowerCase() +
-          "." +
-          leafNode.name
-            .toLowerCase()
-            .replace(/\([A-Za-z0-9_.<>, \[\]]*\)/i, "");
-        keyword = keyword.split("(")[0].split(" ")[0];
-        const regex = new RegExp(`${keyword}`, "g");
-        const count = (contents.match(regex) || []).length;
+        const count = (contents.match(leafNode.regex) || []).length;
         return {
           _id: leafNode._id,
           id: leafNode._id,
