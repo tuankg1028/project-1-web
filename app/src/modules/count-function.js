@@ -6,6 +6,12 @@ import Helpers from "../helpers";
 const fs = require("fs");
 const path = require("path");
 
+// stats();
+async function stats() {
+  let apps = await Models.App.find({ nodesCount: { $exists: true } });
+
+  console.log(apps);
+}
 main();
 async function main() {
   let leafNodes = await Models.Tree.find({
@@ -77,12 +83,9 @@ async function main() {
     const limit = 3;
     let skip = 0;
     const contition = {
-      name: {
-        $ne: null,
-      },
-      $where: function () {
-        return this.right - this.left === 1;
-      },
+      categoryName: "Business",
+      isCompleted: true,
+      isCompletedJVCode: true,
     };
     let apps = await Models.App.find(contition)
       .limit(limit)
