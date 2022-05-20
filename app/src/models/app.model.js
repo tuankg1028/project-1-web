@@ -39,7 +39,7 @@ var schema = new Schema(
         parent: Schema.Types.ObjectId,
       },
     ],
-    nodes: [
+    nodesCount: [
       {
         id: Schema.Types.ObjectId,
         name: String,
