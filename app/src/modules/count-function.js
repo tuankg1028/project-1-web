@@ -23,7 +23,6 @@ async function main() {
     },
   }).populate("parent");
   leafNodes = leafNodes.map((leafNode) => {
-    console.log(leafNode);
     const { parent } = leafNode;
     const lastFunctionOfParent = parent.name.split(".").pop();
 
@@ -33,7 +32,7 @@ async function main() {
       leafNode.name.toLowerCase().replace(/\([A-Za-z0-9_.<>, \[\]]*\)/i, "");
     keyword = keyword.split("(")[0].split(" ")[0];
     const regex = new RegExp(`${keyword}`, "g");
-
+		console.log(regex)
     return {
       ...leafNode.toJSON(),
       regex,
