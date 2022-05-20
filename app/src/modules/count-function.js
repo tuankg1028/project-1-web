@@ -10,6 +10,7 @@ main();
 async function main() {
   let apps = await Models.App.find({
     categoryName: "Business",
+    isCompleted: true,
   }).limit(10);
 
   for (let i = 0; i < apps.length; i++) {
@@ -36,7 +37,7 @@ async function main() {
 
       if (contents) console.log("YES");
     } catch (err) {
-			console.log(err);
+      console.log(err);
       console.log("NO");
     }
   }
