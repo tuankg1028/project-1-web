@@ -7,7 +7,7 @@ import Helpers from "../helpers";
 main();
 async function main() {
   let apps = await Models.App.find({
-    categoryName: "Beauty",
+    categoryName: "Business",
   }).limit(10);
 
   for (let i = 0; i < apps.length; i++) {
