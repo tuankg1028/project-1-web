@@ -37,7 +37,7 @@ async function main() {
 
       if (contents) console.log("YES");
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       console.log("NO");
     }
   }
