@@ -37,10 +37,9 @@ async function main() {
       regex,
     };
   });
-  for (let i = 0; i < apps.length; i++) {
-    console.log(`Running ${i}`);
+
+  const runApp = async (app) => {
     try {
-      const app = apps[i];
       const apkSourcePath = `/data/JavaCode/${app.id}`;
 
       console.log(apkSourcePath);
@@ -78,6 +77,32 @@ async function main() {
       console.log(err);
       console.log("NO");
     }
+  };
+
+  try {
+    const limit = 3;
+    let skip = 0;
+    const contition = {
+      name: {
+        $ne: null,
+      },
+      $where: function () {
+        return this.right - this.left === 1;
+      },
+    };
+    let apps = await Models.App.find(contition)
+      .limit(limit)
+      .skip(skip)
+      .populate("parent");
+
+    do {
+      await Promise.all(apps.map((app) => runApp(app)));
+
+      skip += limit;
+      apps = await Models.App.find(contition).limit(limit).skip(skip);
+    } while (apps && apps.length);
+  } catch (err) {
+    console.log(err);
   }
 }
 
