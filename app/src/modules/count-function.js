@@ -19,9 +19,9 @@ async function stats() {
   ];
   const nodes = {};
   const rows = [];
-  let apps = await Models.App.find({ nodesCount: { $exists: true } })
-    .limit(2)
-    .select("appName nodesCount");
+  let apps = await Models.App.find({ nodesCount: { $exists: true } }).select(
+    "appName nodesCount"
+  );
 
   for (let i = 0; i < apps.length; i++) {
     const app = apps[i];
@@ -66,7 +66,7 @@ async function stats() {
     appName: "Business category",
   };
   result.forEach(([key, data]) => {
-    catRow[key] = data.count / apps.length;
+    catRow[key] = (data.count / apps.length).toFixed(2);
     header.push({ id: key, title: data.name });
   });
   rows.push(catRow);
@@ -152,7 +152,7 @@ async function main() {
     const limit = 10;
     let skip = 0;
     const contition = {
-      categoryName: "Business",
+      // categoryName: "Business",
       isCompleted: true,
       isCompletedJVCode: true,
     };
