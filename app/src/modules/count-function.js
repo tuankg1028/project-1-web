@@ -150,7 +150,7 @@ async function main() {
   };
 
   try {
-    const limit = 10;
+    const limit = 5;
     let skip = 0;
     const contition = {
       // categoryName: "Business",
