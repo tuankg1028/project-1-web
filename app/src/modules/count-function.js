@@ -137,6 +137,7 @@ async function main() {
         },
         {
           $set: {
+            isNodesCounted: true,
             nodesCount: leafNodesCount.filter((item) => item.count),
           },
         },
@@ -155,6 +156,7 @@ async function main() {
       // categoryName: "Business",
       isCompleted: true,
       isCompletedJVCode: true,
+      $or: [{ isNodesCounted: false }, { isNodesCounted: { $exists: false } }],
     };
     let apps = await Models.App.find(contition)
       .limit(limit)

@@ -47,6 +47,10 @@ var schema = new Schema(
         parent: Schema.Types.ObjectId,
       },
     ],
+    isNodesCounted: {
+      default: false,
+      type: Boolean,
+    },
     apis: [
       {
         id: Schema.Types.ObjectId,
