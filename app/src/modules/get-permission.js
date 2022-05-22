@@ -30,31 +30,34 @@ async function main() {
   console.log("DONE");
 }
 async function getApisAndLibs(app) {
-  console.log(app);
-  const xmlPath = `/data/JavaCode/${app.id}/resources/AndroidManifest.xml`;
-  const xml = fs.readFileSync(xmlPath);
+  try {
+    const xmlPath = `/data/JavaCode/${app.id}/resources/AndroidManifest.xml`;
+    const xml = fs.readFileSync(xmlPath);
 
-  const permissions = await new Promise((resolve, reject) => {
-    parseString(xml, function (err, result) {
-      const permissions = result.manifest["uses-permission"].map(
-        (item) => item["$"]["android:name"]
-      );
+    const permissions = await new Promise((resolve, reject) => {
+      parseString(xml, function (err, result) {
+        const permissions = result.manifest["uses-permission"].map(
+          (item) => item["$"]["android:name"]
+        );
 
-      resolve(permissions);
+        resolve(permissions);
+      });
     });
-  });
 
-  await Models.App.updateOne(
-    {
-      _id: app.id,
-    },
-    {
-      $set: {
-        permissions,
+    await Models.App.updateOne(
+      {
+        _id: app.id,
       },
-    },
-    {}
-  );
+      {
+        $set: {
+          permissions,
+        },
+      },
+      {}
+    );
 
-  return;
+    return;
+  } catch (err) {
+    console.log(err);
+  }
 }
