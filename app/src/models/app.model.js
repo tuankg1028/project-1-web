@@ -81,6 +81,7 @@ var schema = new Schema(
     staticGroup: String,
     thirdPartiesHP: [String],
     purposesHP: [String], // HP means host and path
+    permissions: [String], // get from mainfest file
   },
   {
     timestamps: true,
