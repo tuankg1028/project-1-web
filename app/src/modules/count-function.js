@@ -150,7 +150,7 @@ async function main() {
   };
 
   try {
-    const limit = 5;
+    const limit = 20;
     let skip = 0;
     const contition = {
       // categoryName: "Business",
@@ -158,10 +158,7 @@ async function main() {
       isCompletedJVCode: true,
       $or: [{ isNodesCounted: false }, { isNodesCounted: { $exists: false } }],
     };
-    let apps = await Models.App.find(contition)
-      .limit(limit)
-      .skip(skip)
-      .populate("parent");
+    let apps = await Models.App.find(contition).limit(limit).skip(skip);
 
     do {
       await Promise.all(apps.map((app) => runApp(app, leafNodes)));
