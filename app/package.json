@@ -18,7 +18,7 @@
     "appsByCategories": "babel-watch src/modules/apps_by_categories.js",
     "testData": "babel-node --max-old-space-size=100000 src/modules/test.js",
     "em": "babel-watch src/modules/em.js",
-    "apktojava": "babel-watch src/modules/apk_to_java.js",
+    "apktojava": "babel-watch src/modules/apk-to-java-code.js",
     "computingDistance": "babel-watch src/modules/distance-app.js",
     "computingDistanceV2": "babel-watch src/modules/distance-app-v2.js",
     "getAppInfo": "babel-node --max-old-space-size=30000 src/modules/get-appInfo-from-packageId.js",
