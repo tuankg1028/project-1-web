@@ -16,8 +16,9 @@ async function main() {
     const limit = 3;
     let skip = 0;
     const contition = {
-      isExistedMobiPurpose: true,
-      isCompleted: false,
+      // isExistedMobiPurpose: true,
+      isCompleted: true,
+      categoryName: 'Shopping',
       appAPKPureId: { $exists: true },
     };
     let apps = await Models.App.find(contition).limit(limit).skip(skip);
@@ -48,68 +49,79 @@ const _createNodes = async (appIdDB) => {
     // execSync(`jadx -d "${apkSourcePath}" "${pathFileApk}"`);
     apkSourcePath = `/data/JavaCode/${appIdDB}`;
 
-    if (!fs.existsSync(apkSourcePath)) execSync(`mkdir ${apkSourcePath}`);
-    const jadxScript = `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`;
-    console.log("jadxScript", jadxScript);
-    execSync(jadxScript, {
-      timeout: 1000 * 60 * 5, // 5 mins
-    });
+    if (!fs.existsSync(apkSourcePath))  {
+      execSync(`mkdir ${apkSourcePath}`)
+      const jadxScript = `sh ./jadx/build/jadx/bin/jadx -d "${apkSourcePath}" "${pathFileApk}"`;
+      console.log("jadxScript", jadxScript);
+      execSync(jadxScript, {
+        timeout: 1000 * 60 * 5, // 5 mins
+      });
 
-    await Models.AppTemp.create({
-      appName: app.appName,
-      type: "36k",
-    });
-    await Models.App.updateOne(
-      {
-        _id: appIdDB,
-      },
-      {
-        isCompletedJVCode: true,
-      }
-    );
+      await Models.App.updateOne(
+        {
+          _id: appIdDB,
+        },
+        {
+          isCompletedJVCode: true,
+        }
+      );
+    }
 
-    Helpers.Logger.step("Step 3: Get content APK from source code");
-    const contents = await Helpers.File.getContentOfFolder(
-      `${apkSourcePath}/sources`
-    );
+    // await Models.AppTemp.create({
+    //   appName: app.appName,
+    //   type: "36k",
+    // });
+    // await Models.App.updateOne(
+    //   {
+    //     _id: appIdDB,
+    //   },
+    //   {
+    //     isCompletedJVCode: true,
+    //   }
+    // );
 
-    Helpers.Logger.step("Step 4: Get base line value for leaf nodes");
-    const leafNodeBaseLines = await Services.BaseLine.initBaseLineForTree(
-      contents
-    );
+    // Helpers.Logger.step("Step 3: Get content APK from source code");
+    // const contents = await Helpers.File.getContentOfFolder(
+    //   `${apkSourcePath}/sources`
+    // );
 
-    const functionConstants = leafNodeBaseLines.filter((node) => {
-      return node.right - node.left === 1 && node.baseLine === 1;
-    });
-    Helpers.Logger.info(
-      `Node data: ${JSON.stringify(functionConstants, null, 2)}`
-    );
+    // Helpers.Logger.step("Step 4: Get base line value for leaf nodes");
+    // const leafNodeBaseLines = await Services.BaseLine.initBaseLineForTree(
+    //   contents
+    // );
 
-    const appData = {
-      isCompleted: true,
-      nodes: functionConstants.map((item) => {
-        return {
-          id: item._id,
-          name: item.name,
-          value: item.baseLine,
-          parent: item.parent._id,
-        };
-      }),
-    };
+    // const functionConstants = leafNodeBaseLines.filter((node) => {
+    //   return node.right - node.left === 1 && node.baseLine === 1;
+    // });
+    // Helpers.Logger.info(
+    //   `Node data: ${JSON.stringify(functionConstants, null, 2)}`
+    // );
 
-    Helpers.Logger.info(`APP DATA: ${JSON.stringify(appData, null, 2)}`);
-    // create app
-    await Models.App.updateOne(
-      {
-        _id: appIdDB,
-      },
-      {
-        $set: appData,
-      },
-      {},
-      (err, data) =>
-        Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
-    );
+    // const appData = {
+    //   isCompleted: true,
+    //   nodes: functionConstants.map((item) => {
+    //     return {
+    //       id: item._id,
+    //       name: item.name,
+    //       value: item.baseLine,
+    //       parent: item.parent._id,
+    //     };
+    //   }),
+    // };
+
+    // Helpers.Logger.info(`APP DATA: ${JSON.stringify(appData, null, 2)}`);
+    // // create app
+    // await Models.App.updateOne(
+    //   {
+    //     _id: appIdDB,
+    //   },
+    //   {
+    //     $set: appData,
+    //   },
+    //   {},
+    //   (err, data) =>
+    //     Helpers.Logger.info(`Data saved: ${JSON.stringify(data, null, 2)}`)
+    // );
 
     return;
   } catch (err) {

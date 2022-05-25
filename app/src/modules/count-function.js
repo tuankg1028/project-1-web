@@ -18,7 +18,7 @@ async function stats() {
     },
   ];
   const nodes = {};
-  const rows = [];
+  let rows = [];
   let apps = await Models.App.find({ nodesCount: { $exists: true } }).select(
     "appName nodesCount"
   );
@@ -63,15 +63,42 @@ async function stats() {
     "desc"
   );
   let catRow = {
-    appName: "Business category",
+    appName: "",
   };
   result.forEach(([key, data]) => {
     catRow[key] = (data.count / apps.length).toFixed(2);
     header.push({ id: key, title: data.name });
   });
+
+  rows = rows.map((row) => {
+    let sum = 0;
+    for (let key in catRow) {
+      if (key !== "appName" && row[key] >= Number(catRow[key])) {
+        sum++;
+      }
+
+      if (!row[key]) row[key] = 0;
+    }
+
+    row.higher = ((sum / (Object.keys(catRow).length - 1)) * 100).toFixed(2);
+    row.lower = (100 - row.higher).toFixed(2);
+    return row;
+  });
+
+  header.push({
+    id: "higher",
+    title: "Higher/Equal",
+  });
+
+  header.push({
+    id: "lower",
+    title: "Lower",
+  });
+
+  //
   rows.push(catRow);
   const csvWriterHas = createCsvWriter({
-    path: "count-func&constant(Business category).csv",
+    path: "count-func&constant.csv",
     header,
   });
 
@@ -153,7 +180,7 @@ async function main() {
     const limit = 20;
     let skip = 0;
     const contition = {
-      // categoryName: "Business",
+      categoryName: "Shopping",
       isCompleted: true,
       isCompletedJVCode: true,
       $or: [{ isNodesCounted: false }, { isNodesCounted: { $exists: false } }],
