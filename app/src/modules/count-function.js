@@ -185,7 +185,8 @@ async function main() {
       $or: [{ isNodesCounted: false }, { isNodesCounted: { $exists: false } }],
     };
     let apps = await Models.App.find(contition)
-
+    apps = _.sampleSize(apps, apps.length)
+    
     const appChunk = _.chunk(apps, 5);
 
     for (let i = 0; i < appChunk.length; i++) {
