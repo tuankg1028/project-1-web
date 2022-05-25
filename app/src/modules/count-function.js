@@ -177,22 +177,28 @@ async function main() {
   };
 
   try {
-    const limit = 20;
-    let skip = 0;
+  
     const contition = {
       categoryName: "Shopping",
-      isCompleted: true,
-      isCompletedJVCode: true,
+      // isCompleted: true,
+      // isCompletedJVCode: true,
       $or: [{ isNodesCounted: false }, { isNodesCounted: { $exists: false } }],
     };
-    let apps = await Models.App.find(contition).limit(limit).skip(skip);
+    let apps = await Models.App.find(contition)
 
-    do {
-      await Promise.all(apps.map((app) => runApp(app, leafNodes)));
+    const appChunk = _.chunk(apps, 5);
 
-      skip += limit;
-      apps = await Models.App.find(contition).limit(limit).skip(skip);
-    } while (apps && apps.length);
+    for (let i = 0; i < appChunk.length; i++) {
+      const chunk = appChunk[i];
+      
+      await Promise.all(chunk.map((app) => runApp(app, leafNodes)));
+    } 
+    // do {
+    //   await Promise.all(apps.map((app) => runApp(app, leafNodes)));
+
+    //   skip += limit;
+    //   apps = await Models.App.find(contition).limit(limit).skip(skip);
+    // } while (apps && apps.length);
   } catch (err) {
     console.log(err);
   }
