@@ -56,16 +56,16 @@ const _createNodes = async (appIdDB) => {
       execSync(jadxScript, {
         timeout: 1000 * 60 * 5, // 5 mins
       });
-
-      await Models.App.updateOne(
-        {
-          _id: appIdDB,
-        },
-        {
-          isCompletedJVCode: true,
-        }
-      );
     }
+
+    await Models.App.updateOne(
+      {
+        _id: appIdDB,
+      },
+      {
+        isCompletedJVCode: true,
+      }
+    );
 
     // await Models.AppTemp.create({
     //   appName: app.appName,
