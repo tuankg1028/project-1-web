@@ -179,7 +179,7 @@ async function main() {
   try {
   
     const contition = {
-      categoryName: "Shopping",
+      // categoryName: "Shopping",
       // isCompleted: true,
       // isCompletedJVCode: true,
       $or: [{ isNodesCounted: false }, { isNodesCounted: { $exists: false } }],
